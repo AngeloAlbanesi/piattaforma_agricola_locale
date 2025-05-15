@@ -22,7 +22,7 @@ public interface IPacchettoService {
      * @param prezzoPacchetto prezzo del pacchetto
      * @return il pacchetto creato
      */
-    void creaPacchetto(DistributoreDiTipicita distributore, String nome, String descrizione, double prezzoPacchetto);
+    void creaPacchetto(DistributoreDiTipicita distributore, String nome, String descrizione,int quantita, double prezzoPacchetto);
 
     /**
      * Restituisce un pacchetto di prodotti dato il suo ID.
@@ -30,14 +30,15 @@ public interface IPacchettoService {
      * @param id l'ID del pacchetto da restituire
      * @return il pacchetto trovato
      */
-    Pacchetto getPacchettoById(int id);
+
+   // Pacchetto getPacchettoById(int id);
 
     /**
      * Restituisce tutti i pacchetti di prodotti.
      *
      * @return la lista dei pacchetti trovati
      */
-    List<Pacchetto> getAllPacchetti();
+    //List<Pacchetto> getAllPacchetti();
 
     /**
      * Aggiunge un pacchetto al catalogo.
@@ -45,7 +46,7 @@ public interface IPacchettoService {
      * @param pacchetto il pacchetto da aggiungere
      * @return true se l'aggiunta ha successo, false altrimenti
      */
-    boolean aggiungiPacchettoCatalogo(Pacchetto pacchetto);
+   // boolean aggiungiPacchettoCatalogo(Pacchetto pacchetto);
 
     /**
      * Rimuove un pacchetto dal catalogo.

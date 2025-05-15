@@ -1,12 +1,9 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
 /**
@@ -17,7 +14,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
  */
 public class ProdottoService implements IProdottoService {
 
-    private List<Prodotto> catalogoProdotti = new ArrayList<>();
+ //   private List<Prodotto> catalogoProdotti = new ArrayList<>();
 
     @Override
     public void creaProdotto(String nome, String descrizione, double prezzo, int quantitaDisponibile,
@@ -27,7 +24,7 @@ public class ProdottoService implements IProdottoService {
         }
         int idProdotto = UUID.randomUUID().hashCode();
         Prodotto prodotto = new Prodotto(idProdotto, nome, descrizione, prezzo, quantitaDisponibile, venditore);
-        this.catalogoProdotti.add(prodotto);
+      //  this.catalogoProdotti.add(prodotto);
         venditore.getProdottiOfferti().add(prodotto);
     }
 
@@ -51,13 +48,42 @@ public class ProdottoService implements IProdottoService {
         return prodotto.getVenditore().getProdottiOfferti().remove(prodotto);
     }
 
+    //TODO contralle se lasciare boolean o void
     @Override
-    public boolean aggiornaProdottoCatalogo(Prodotto prodotto, int nuovaQuantita) {
+    public boolean aggiornaQuantitaProdotto(Prodotto prodotto, int nuovaQuantita) {
         if (prodotto == null || nuovaQuantita <= 0) {
             return false;
         }
-        prodotto.aggiornaQuantitaDisponibile(nuovaQuantita);
+        prodotto.setQuantitaDisponibile(nuovaQuantita);
+
         return true;
+    }
+
+    //TODO contralle se lasciare boolean o void
+    @Override
+    public boolean aggiungiQuantitaProdotto(Prodotto prodotto, int quantitaAggiunta) {
+        if (prodotto == null || quantitaAggiunta <= 0) {
+            return false;
+        }
+        prodotto.setQuantitaDisponibile(prodotto.getQuantitaDisponibile()+quantitaAggiunta);
+
+        return true;
+    }
+    //TODO contralle se lasciare boolean o void
+    @Override
+    public boolean rimuoviQuantitaProdotto(Prodotto prodotto, int quantitaRimossa) {
+        if (prodotto == null || prodotto.getQuantitaDisponibile() - quantitaRimossa < 0) {
+            return false;
+        }
+        prodotto.setQuantitaDisponibile(prodotto.getQuantitaDisponibile()-quantitaRimossa);
+
+        return true;
+    }
+
+    public void mostraProdotti (Venditore venditore){
+        for (Prodotto p : venditore.getProdottiOfferti()){
+            System.out.println(p.getNome()+" - "+p.getPrezzo()+"€ - disponibili:"+ p.getQuantitaDisponibile());
+        }
     }
 
 }

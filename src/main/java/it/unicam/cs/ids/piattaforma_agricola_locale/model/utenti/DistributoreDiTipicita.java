@@ -12,6 +12,8 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 
 public class DistributoreDiTipicita extends Venditore {
     // Costruttore overload per factory (solo parametri base Venditore)
+    private List<Pacchetto> pacchettiOfferti;
+
     public DistributoreDiTipicita(String idUtente, String nome, String cognome, String email, String passwordHash,
             String numeroTelefono, DatiAzienda datiAzienda,
             java.util.List<Prodotto> prodottiOfferti, TipoRuolo tipoRuolo, boolean isAttivo) {
@@ -20,7 +22,7 @@ public class DistributoreDiTipicita extends Venditore {
         this.pacchettiOfferti = new java.util.ArrayList<>();
     }
 
-    private List<Pacchetto> pacchettiOfferti;
+
 
     public DistributoreDiTipicita(String idUtente, String nome, String cognome, String email, String passwordHash,
             String numeroTelefono, DatiAzienda datiAzienda,
@@ -44,6 +46,7 @@ public class DistributoreDiTipicita extends Venditore {
         return pacchettiOfferti;
     }
 
+    /*
     public boolean aggiungiProdottoAlPacchetto(Pacchetto pacchetto, Acquistabile prodotto) {
         if (this.pacchettiOfferti.contains(pacchetto)) {
             pacchetto.aggiungiElemento(prodotto);
@@ -51,7 +54,7 @@ public class DistributoreDiTipicita extends Venditore {
             return true;
         }
         return false;
-    }
+    }*/
 
     public boolean rimuoviProdottoDalPacchetto(Pacchetto pacchetto, Acquistabile prodotto) {
         if (this.pacchettiOfferti.contains(pacchetto)) {

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.PacchettoService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ProdottoService;
 
 public class Main {
 
@@ -19,7 +20,7 @@ public class Main {
         List<Certificazione> certificazioni = new ArrayList<>();
         List<Prodotto> prodotti1 = new ArrayList<>();
         List<Prodotto> prodotti2 = new ArrayList<>();
-
+        ProdottoService prodottoService = new ProdottoService();
         PacchettoService pacchettoService = new PacchettoService();
 
         // DatiAzienda per i distributori
@@ -47,44 +48,68 @@ public class Main {
             );
 
         // 4 prodotti per ciascun distributore
-        prodotti1.add(new Prodotto(
-            1, "Olio EVO Marche", "Olio extravergine d'oliva marchigiano", 12.5, 100, distributore1));
-        prodotti1.add(new Prodotto(
-            2, "Vincisgrassi", "Pasta tipica marchigiana", 8.0, 50, distributore1));
-        prodotti1.add(new Prodotto(
-            3, "Ciauscolo", "Salame spalmabile IGP", 15.0, 30, distributore1));
-        prodotti1.add(new Prodotto(
-            4, "Vino Rosso Piceno", "Vino DOC delle Marche", 10.0, 60, distributore1));
+        prodottoService.creaProdotto("Olio EVO Marche", "Olio extravergine d'oliva marchigiano", 12.5, 100, distributore1);
+        prodottoService.creaProdotto("Vincisgrassi", "Pasta tipica marchigiana", 8.0, 50, distributore1);
+        prodottoService.creaProdotto("Ciauscolo", "Salame spalmabile IGP", 15.0, 30, distributore1);
+        prodottoService.creaProdotto( "Vino Rosso Piceno", "Vino DOC delle Marche", 10.0, 60, distributore1);
 
-        prodotti2.add(new Prodotto(
-            5, "Olio EVO Toscano", "Olio extravergine d'oliva toscano", 13.0, 90, distributore2));
-        prodotti2.add(new Prodotto(
-            6, "Pecorino Toscano", "Formaggio DOP", 18.0, 40, distributore2));
-        prodotti2.add(new Prodotto(
-            7, "Finocchiona", "Salame tipico toscano", 14.0, 35, distributore2));
-        prodotti2.add(new Prodotto(
-            8, "Vino Chianti", "Vino DOCG della Toscana", 11.0, 70, distributore2));
+        prodottoService.creaProdotto("Olio EVO Toscano", "Olio extravergine d'oliva toscano", 13.0, 90, distributore2);
+        prodottoService.creaProdotto("Pecorino Toscano", "Formaggio DOP", 18.0, 40, distributore2);
+        prodottoService.creaProdotto("Finocchiona", "Salame tipico toscano", 14.0, 35, distributore2);
+        prodottoService.creaProdotto("Vino Chianti", "Vino DOCG della Toscana", 11.0, 70, distributore2);
 
         // Pacchetti con 2 prodotti ciascuno
-        Pacchetto pacchetto1 =
-            new Pacchetto(
-                distributore1, 1, "Box Marche", "Selezione tipica marchigiana", 20.0);
-        pacchetto1.aggiungiElemento(prodotti1.get(0));
-        pacchetto1.aggiungiElemento(prodotti1.get(1));
-        distributore1.aggiungiPacchettoCatalogo(pacchetto1);
+        pacchettoService.creaPacchetto(distributore1,"Box Marche", "Selezione tipica Marchigiana",3,20.0);
+        pacchettoService.creaPacchetto(distributore2,"Box Toscano", "Selezione tipica Toscana",2,25.0);
 
-        Pacchetto pacchetto2 =
-            new Pacchetto(
-                distributore2, 2, "Box Toscana", "Selezione tipica toscana", 22.0);
-        pacchetto2.aggiungiElemento(prodotti2.get(0));
-        pacchetto2.aggiungiElemento(prodotti2.get(1));
-        distributore2.aggiungiPacchettoCatalogo(pacchetto2);
+        pacchettoService.aggiungiProdottoAlPacchetto(distributore1.getPacchettiOfferti().get(0),distributore1.getProdottiOfferti().get(0) );
+        pacchettoService.aggiungiProdottoAlPacchetto(distributore1.getPacchettiOfferti().get(0),distributore1.getProdottiOfferti().get(1) );
+        pacchettoService.aggiungiProdottoAlPacchetto(distributore1.getPacchettiOfferti().get(0),distributore1.getProdottiOfferti().get(2) );
+
+
+        pacchettoService.aggiungiProdottoAlPacchetto(distributore2.getPacchettiOfferti().get(0),distributore2.getProdottiOfferti().get(0) );
+        pacchettoService.aggiungiProdottoAlPacchetto(distributore2.getPacchettiOfferti().get(0),distributore2.getProdottiOfferti().get(1) );
+        pacchettoService.aggiungiProdottoAlPacchetto(distributore2.getPacchettiOfferti().get(0),distributore2.getProdottiOfferti().get(2) );
+
+
 
         // Stampa di verifica
         System.out.println("Distributore 1: " + distributore1.getDatiAzienda().getNomeAzienda());
         pacchettoService.mostraPacchetti(distributore1);
+        System.out.println(" ");
         System.out.println("Distributore 2: " + distributore2.getDatiAzienda().getNomeAzienda());
         pacchettoService.mostraPacchetti(distributore2);
+        System.out.println(" ");
+
+        pacchettoService.aggiungiQuantitaPacchetto(distributore1.getPacchettiOfferti().get(0),5);
+        System.out.println("Distributore 1: " + distributore1.getDatiAzienda().getNomeAzienda());
+        pacchettoService.mostraPacchetti(distributore1);
+        /*
+        pacchettoService.rimuoviProdottoDalPacchetto(distributore1.getPacchettiOfferti().get(0),distributore1.getProdottiOfferti().get(0) );
+        System.out.println("Distributore 1: " + distributore1.getDatiAzienda().getNomeAzienda());
+        pacchettoService.mostraPacchetti(distributore1);
+
+        pacchettoService.rimuoviPacchettoCatalogo(distributore2.getPacchettiOfferti().get(0));
+        System.out.println("Distributore 2: " + distributore2.getDatiAzienda().getNomeAzienda());
+        pacchettoService.mostraPacchetti(distributore2);
+        System.out.println(" ");
+        */
+
+       /*
+        prodottoService.mostraProdotti(distributore1);
+        prodottoService.aggiornaQuantitaProdotto(distributore1.getProdottiOfferti().get(0),19);
+        prodottoService.aggiungiQuantitaProdotto(distributore1.getProdottiOfferti().get(1),3);
+        prodottoService.rimuoviQuantitaProdotto(distributore1.getProdottiOfferti().get(2),60);
+        prodottoService.rimuoviQuantitaProdotto(distributore1.getProdottiOfferti().get(3),51);
+
+        System.out.println(" ");
+        prodottoService.mostraProdotti(distributore1);
+        */
+
+
+
+
     }
+
 
 }

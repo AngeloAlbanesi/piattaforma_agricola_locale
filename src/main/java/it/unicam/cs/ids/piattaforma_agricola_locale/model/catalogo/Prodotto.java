@@ -75,17 +75,25 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
         return venditore;
     }
 
+    public void setQuantitaDisponibile(int quantita) {
+        this.quantitaDisponibile = quantita;
+    }
+
+
+
+    /*
     public void aggiungiCertificazione(Certificazione certificazione) {
         this.certificazioniProdotto.add(certificazione);
-    }
+    }*/
 
     public List<Certificazione> getCertificazioni() {
         return certificazioniProdotto;
     }
 
+    /*
     public void aggiornaQuantitaDisponibile(int quantita) {
-        this.quantitaDisponibile += quantitaDisponibile;
-    }
+        this.quantitaDisponibile += quantita;
+    } */
 
     @Override
     public String getIdElemento() {

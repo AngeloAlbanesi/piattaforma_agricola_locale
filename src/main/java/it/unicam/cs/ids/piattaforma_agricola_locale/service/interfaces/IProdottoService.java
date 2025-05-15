@@ -47,5 +47,11 @@ public interface IProdottoService {
      * @param nuovaQuantita la nuova quantità disponibile
      * @return true se l'aggiornamento ha successo, false altrimenti
      */
-    boolean aggiornaProdottoCatalogo(Prodotto prodotto, int nuovaQuantita);
+    boolean aggiornaQuantitaProdotto(Prodotto prodotto, int nuovaQuantita);
+
+       //TODO controllare se lasciare boolean o void
+    boolean aggiungiQuantitaProdotto(Prodotto prodotto, int quantitaAggiunta);
+
+    //TODO controllare se lasciare boolean o void
+    boolean rimuoviQuantitaProdotto(Prodotto prodotto, int quantitaRimossa);
 }

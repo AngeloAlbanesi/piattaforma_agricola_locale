@@ -17,18 +17,18 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
  */
 public class PacchettoService implements IPacchettoService {
 
-    private List<Pacchetto> catalogoPacchetti = new ArrayList<>();
+   // private List<Pacchetto> catalogoPacchetti = new ArrayList<>();
 
     @Override
-    public void creaPacchetto(DistributoreDiTipicita distributore, String nome, String descrizione,
+    public void creaPacchetto(DistributoreDiTipicita distributore, String nome,  String descrizione, int quantita,
             double prezzoPacchetto) {
         int idPacchetto = UUID.randomUUID().hashCode();
-        Pacchetto pacchetto = new Pacchetto(distributore, idPacchetto, nome, descrizione, prezzoPacchetto);
+        Pacchetto pacchetto = new Pacchetto(distributore, idPacchetto, nome, descrizione,quantita, prezzoPacchetto);
         distributore.getPacchettiOfferti().add(pacchetto);
-        this.catalogoPacchetti.add(pacchetto);
+       // this.catalogoPacchetti.add(pacchetto);
         
     }
-
+/*
     @Override
     public Pacchetto getPacchettoById(int id) {
         for (Pacchetto pacchetto : catalogoPacchetti) {
@@ -37,29 +37,29 @@ public class PacchettoService implements IPacchettoService {
             }
         }
         return null;
-    }
+    }*/
 
-    @Override
+    //TODO da sviluppare quando avremo array di venditore
+    /*@Override
     public List<Pacchetto> getAllPacchetti() {
-        return new ArrayList<>(catalogoPacchetti);
-    }
 
+        //return new ArrayList<>(catalogoPacchetti);
+    } */
+
+    /*
     @Override
     public boolean aggiungiPacchettoCatalogo(Pacchetto pacchetto) {
         if (pacchetto != null && !catalogoPacchetti.contains(pacchetto)) {
             return catalogoPacchetti.add(pacchetto);
         }
         return false;
-    }
+    } */
 
     @Override
     public boolean rimuoviPacchettoCatalogo(Pacchetto pacchetto) {
         if (pacchetto != null) {
-            boolean rimossoDalCatalogo = catalogoPacchetti.remove(pacchetto);
-            if (rimossoDalCatalogo && pacchetto.getDistributore() != null) {
-                pacchetto.getDistributore().getPacchettiOfferti().remove(pacchetto);
-            }
-            return rimossoDalCatalogo;
+          pacchetto.getDistributore().getPacchettiOfferti().remove(pacchetto);
+          return true;
         }
         return false;
     }
@@ -67,8 +67,7 @@ public class PacchettoService implements IPacchettoService {
     @Override
     public boolean aggiungiProdottoAlPacchetto(Pacchetto pacchetto, Acquistabile prodotto) {
         if (pacchetto != null && prodotto != null && pacchetto.getElementiInclusi() != null) {
-            pacchetto.aggiungiElemento(prodotto);
-            return true;
+           pacchetto.getElementiInclusi().add(prodotto);
         }
         return false;
     }
@@ -84,9 +83,26 @@ public class PacchettoService implements IPacchettoService {
     @Override
     public void mostraPacchetti(DistributoreDiTipicita distributore) {
         for (Pacchetto pacchetto : distributore.getPacchettiOfferti()) {
-            System.out.println("Pacchetto: " + pacchetto.getNome() + ", Prezzo: " + pacchetto.getPrezzo());
+            System.out.println("Pacchetto: " + pacchetto.getNome() + ", Prezzo: " + pacchetto.getPrezzo()+" Disponibili: "+pacchetto.getQuantitaDisponibile() );
             stampaProdottiPacchetto(pacchetto);
         }
+    }
+
+    public void aggiungiQuantitaPacchetto(Pacchetto pacchetto, int quantitaAggiunta){
+        if (pacchetto == null || quantitaAggiunta <= 0) {
+            throw new IllegalArgumentException("quantità errata");
+        }
+        pacchetto.setQuantitaDisponibile(pacchetto.getQuantitaDisponibile()+quantitaAggiunta);
+
+
+    }
+    public void rimuoviQuantitaPacchetto(Pacchetto pacchetto, int quantitaRimossa){
+        if (pacchetto == null || pacchetto.getQuantitaDisponibile()-quantitaRimossa < 0) {
+            throw new IllegalArgumentException("Impossibile rimuovere "+quantitaRimossa);
+        }
+        pacchetto.setQuantitaDisponibile(pacchetto.getQuantitaDisponibile()-quantitaRimossa);
+
+
     }
 
     //Metodo per stampare a video i prodotti che sono dentro un pacchetto

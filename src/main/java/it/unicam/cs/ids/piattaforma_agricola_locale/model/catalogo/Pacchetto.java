@@ -10,15 +10,17 @@ public class Pacchetto implements Acquistabile {
     private int idPacchetto;
     private String nome;
     private String descrizione;
+    private int quantitaDisponibile;
     private double prezzoPacchetto;
     private List <Acquistabile> elementiInclusi;
     private DistributoreDiTipicita distributore;
 
-    public Pacchetto(DistributoreDiTipicita distributore, int idPacchetto, String nome, String descrizione, double prezzoPacchetto) {
+    public Pacchetto(DistributoreDiTipicita distributore, int idPacchetto, String nome, String descrizione,int quantita, double prezzoPacchetto) {
         this.idPacchetto = idPacchetto;
         this.nome = nome;
         this.descrizione = descrizione;
         this.prezzoPacchetto = prezzoPacchetto;
+        this.quantitaDisponibile =   quantita;
         this.elementiInclusi = new java.util.ArrayList<>();
         this.distributore = distributore;
     }
@@ -35,9 +37,11 @@ public class Pacchetto implements Acquistabile {
     public double getPrezzo() {
         return prezzoPacchetto;
     }
+
+/*
     public  void aggiungiElemento(Acquistabile elemento) {
         this.elementiInclusi.add(elemento);
-    }
+    }*/
 
     public void rimuoviElemento(Acquistabile elemento) {
         this.elementiInclusi.remove(elemento);
@@ -51,7 +55,11 @@ public class Pacchetto implements Acquistabile {
         return distributore;
     }
 
-    public int numeroPacchettiTotali() {
-        return this.elementiInclusi.size();
+    public int getQuantitaDisponibile() {
+        return quantitaDisponibile;
+    }
+
+    public void setQuantitaDisponibile(int quantitaDisponibile) {
+        this.quantitaDisponibile = quantitaDisponibile;
     }
 }

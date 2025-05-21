@@ -1,8 +1,11 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
@@ -33,24 +36,17 @@ public class ProdottoService implements IProdottoService {
         return venditore.getProdottiOfferti();
     }
 
+    //TODO contrallare se lasciare boolean o void
     @Override
-    public boolean aggiungiProdottoCatalogo(Prodotto prodotto) {
-        if (prodotto == null || prodotto.getNome() == null || prodotto.getDescrizione() == null
-                || prodotto.getPrezzo() <= 0 || prodotto.getQuantitaDisponibile() <= 0) {
-            return false;
-        }
-        prodotto.getVenditore().getProdottiOfferti().add(prodotto);
-        return true;
-    }
-
-    @Override
-    public boolean rimuoviProdottoCatalogo(Prodotto prodotto) {
+    public boolean rimuoviProdottoCatalogo(Venditore venditore, Prodotto prodotto) {
+        if(venditore != prodotto.getVenditore()) return false; // TODO cambiare con eccezione??
         return prodotto.getVenditore().getProdottiOfferti().remove(prodotto);
     }
 
-    //TODO contralle se lasciare boolean o void
+    //TODO contrallare se lasciare boolean o void
     @Override
-    public boolean aggiornaQuantitaProdotto(Prodotto prodotto, int nuovaQuantita) {
+    public boolean aggiornaQuantitaProdotto(Venditore venditore ,Prodotto prodotto, int nuovaQuantita) {
+        if(venditore != prodotto.getVenditore()) return false; // TODO cambiare con eccezione??
         if (prodotto == null || nuovaQuantita <= 0) {
             return false;
         }
@@ -61,7 +57,8 @@ public class ProdottoService implements IProdottoService {
 
     //TODO contralle se lasciare boolean o void
     @Override
-    public boolean aggiungiQuantitaProdotto(Prodotto prodotto, int quantitaAggiunta) {
+    public boolean aggiungiQuantitaProdotto(Venditore venditore ,Prodotto prodotto, int quantitaAggiunta) {
+        if(venditore != prodotto.getVenditore()) return false; // TODO cambiare con eccezione??
         if (prodotto == null || quantitaAggiunta <= 0) {
             return false;
         }
@@ -71,7 +68,8 @@ public class ProdottoService implements IProdottoService {
     }
     //TODO contralle se lasciare boolean o void
     @Override
-    public boolean rimuoviQuantitaProdotto(Prodotto prodotto, int quantitaRimossa) {
+    public boolean rimuoviQuantitaProdotto(Venditore venditore ,Prodotto prodotto, int quantitaRimossa) {
+        if(venditore != prodotto.getVenditore()) return false; // TODO cambiare con eccezione??
         if (prodotto == null || prodotto.getQuantitaDisponibile() - quantitaRimossa < 0) {
             return false;
         }
@@ -83,7 +81,20 @@ public class ProdottoService implements IProdottoService {
     public void mostraProdotti (Venditore venditore){
         for (Prodotto p : venditore.getProdottiOfferti()){
             System.out.println(p.getNome()+" - "+p.getPrezzo()+"€ - disponibili:"+ p.getQuantitaDisponibile());
+            stampaCertificazioni(p);
         }
     }
 
+    public void aggiungiCertificazione(String nomeCertificazione, String enteRilascio, Date dataRilascio, Date dataScadenza, Prodotto prodotto){
+        int idCertificazione = UUID.randomUUID().hashCode();
+        Certificazione certificazione = new Certificazione(idCertificazione,nomeCertificazione,enteRilascio,dataRilascio,dataScadenza);
+        prodotto.getCertificazioni().add(certificazione);
+    }
+
+    public void stampaCertificazioni (Prodotto prodotto){
+        List<Certificazione> certificazioni = prodotto.getCertificazioni();
+        for (Certificazione c : certificazioni){
+           c.stampaCertificazione();
+        }
+    }
 }

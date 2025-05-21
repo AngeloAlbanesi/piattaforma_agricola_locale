@@ -54,7 +54,7 @@ public interface IPacchettoService {
      * @param pacchetto il pacchetto da rimuovere
      * @return true se la rimozione ha successo, false altrimenti
      */
-    boolean rimuoviPacchettoCatalogo(Pacchetto pacchetto);
+    boolean rimuoviPacchettoCatalogo(DistributoreDiTipicita distributore, Pacchetto pacchetto);
 
     /**
      * Aggiunge un prodotto a un pacchetto.
@@ -63,7 +63,7 @@ public interface IPacchettoService {
      * @param prodotto il prodotto da aggiungere
      * @return true se l'aggiunta ha successo, false altrimenti
      */
-    boolean aggiungiProdottoAlPacchetto(Pacchetto pacchetto, Acquistabile prodotto);
+    boolean aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, Acquistabile prodotto);
 
     /**
      * Rimuove un prodotto da un pacchetto.
@@ -72,7 +72,7 @@ public interface IPacchettoService {
      * @param prodotto il prodotto da rimuovere
      * @return true se la rimozione ha successo, false altrimenti
      */
-    boolean rimuoviProdottoDalPacchetto(Pacchetto pacchetto, Acquistabile prodotto);
+    boolean rimuoviProdottoDalPacchetto(DistributoreDiTipicita distributore ,Pacchetto pacchetto, Acquistabile prodotto);
 
     /**
      * Mostra tutti i pacchetti offerti da un distributore.

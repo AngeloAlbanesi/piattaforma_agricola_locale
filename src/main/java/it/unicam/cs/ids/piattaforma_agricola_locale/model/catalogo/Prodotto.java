@@ -71,6 +71,7 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
         this.feedbackVerifica = feedbackVerifica;
     }
 
+    @Override
     public Venditore getVenditore() {
         return venditore;
     }
@@ -95,9 +96,5 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
         this.quantitaDisponibile += quantita;
     } */
 
-    @Override
-    public String getIdElemento() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIdElemento'");
-    }
+
 }

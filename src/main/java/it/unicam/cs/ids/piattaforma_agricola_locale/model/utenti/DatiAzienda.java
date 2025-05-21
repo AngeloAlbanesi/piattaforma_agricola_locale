@@ -4,6 +4,7 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
@@ -12,28 +13,27 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaCo
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 
 public class DatiAzienda implements ElementoVerificabile {
+    private int idAzienda;
     private String nomeAzienda;
     private String partitaIva;
     private String indirizzoAzienda;
     private String descrizioneAzienda;
     private String logoUrl;
     private String sitoWebUrl;
-    private String statoVerificaContenuto;
+    private StatoVerificaValori statoVerifica;
     private String feedbackVerificaContenuto;
     private List<Certificazione> certificazioniAzienda;
 
     public DatiAzienda(String nomeAzienda, String partitaIva, String indirizzoAzienda, String descrizioneAzienda,
-            String logoUrl, String sitoWebUrl, String statoVerificaContenuto, String feedbackVerificaContenuto,
-            List<Certificazione> certificazioniAzienda) {
+            String logoUrl, String sitoWebUrl) {
         this.nomeAzienda = nomeAzienda;
         this.partitaIva = partitaIva;
         this.indirizzoAzienda = indirizzoAzienda;
         this.descrizioneAzienda = descrizioneAzienda;
         this.logoUrl = logoUrl;
         this.sitoWebUrl = sitoWebUrl;
-        this.statoVerificaContenuto = statoVerificaContenuto;
-        this.feedbackVerificaContenuto = feedbackVerificaContenuto;
-        this.certificazioniAzienda = certificazioniAzienda;
+        this.statoVerifica = StatoVerificaValori.IN_REVISIONE;
+        this.certificazioniAzienda = new ArrayList<>();
     }
     public String getNomeAzienda() {
         return nomeAzienda;
@@ -83,21 +83,9 @@ public class DatiAzienda implements ElementoVerificabile {
         this.sitoWebUrl = sitoWebUrl;
     }
 
-    public String getStatoVerificaContenuto() {
-        return statoVerificaContenuto;
-    }
 
-    public void setStatoVerificaContenuto(String statoVerificaContenuto) {
-        this.statoVerificaContenuto = statoVerificaContenuto;
-    }
 
-    public String getFeedbackVerificaContenuto() {
-        return feedbackVerificaContenuto;
-    }
 
-    public void setFeedbackVerificaContenuto(String feedbackVerificaContenuto) {
-        this.feedbackVerificaContenuto = feedbackVerificaContenuto;
-    }
 
     public List<Certificazione> getCertificazioniAzienda() {
         return certificazioniAzienda;
@@ -108,29 +96,24 @@ public class DatiAzienda implements ElementoVerificabile {
     }
    
     @Override
-    public String getIdElemento() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIdElemento'");
+    public int getId() {
+       return idAzienda;
     }
     @Override
     public String getFeedbackVerifica() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getFeedbackVerifica'");
+       return feedbackVerificaContenuto;
     }
     @Override
     public void setFeedbackVerifica(String feedbackVerifica) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setFeedbackVerifica'");
+        this.feedbackVerificaContenuto=feedbackVerifica;
     }
     @Override
     public void setStatoVerifica(StatoVerificaValori statoVerifica) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setStatoVerifica'");
+        this.statoVerifica=statoVerifica;
     }
     @Override
     public StatoVerificaValori getStatoVerifica() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getStatoVerifica'");
+        return statoVerifica;
     }
 
 }

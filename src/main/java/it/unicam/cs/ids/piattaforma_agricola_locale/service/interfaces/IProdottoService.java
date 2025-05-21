@@ -24,13 +24,6 @@ public interface IProdottoService {
      */
     List<Prodotto> getProdottiOfferti(Venditore venditore);
 
-    /**
-     * Aggiunge un prodotto al catalogo.
-     *
-     * @param prodotto il prodotto da aggiungere
-     * @return true se l'aggiunta ha successo, false altrimenti
-     */
-    boolean aggiungiProdottoCatalogo(Prodotto prodotto);
 
     /**
      * Rimuove un prodotto dal catalogo.
@@ -38,7 +31,7 @@ public interface IProdottoService {
      * @param prodotto il prodotto da rimuovere
      * @return true se la rimozione ha successo, false altrimenti
      */
-    boolean rimuoviProdottoCatalogo(Prodotto prodotto);
+    boolean rimuoviProdottoCatalogo(Venditore venditore, Prodotto prodotto);
     
     /**
      * Aggiorna la quantità disponibile di un prodotto nel catalogo.
@@ -47,11 +40,11 @@ public interface IProdottoService {
      * @param nuovaQuantita la nuova quantità disponibile
      * @return true se l'aggiornamento ha successo, false altrimenti
      */
-    boolean aggiornaQuantitaProdotto(Prodotto prodotto, int nuovaQuantita);
+    boolean aggiornaQuantitaProdotto(Venditore venditore ,Prodotto prodotto, int nuovaQuantita);
 
        //TODO controllare se lasciare boolean o void
-    boolean aggiungiQuantitaProdotto(Prodotto prodotto, int quantitaAggiunta);
+    boolean aggiungiQuantitaProdotto(Venditore venditore ,Prodotto prodotto, int quantitaAggiunta);
 
     //TODO controllare se lasciare boolean o void
-    boolean rimuoviQuantitaProdotto(Prodotto prodotto, int quantitaRimossa);
+    boolean rimuoviQuantitaProdotto(Venditore venditore ,Prodotto prodotto, int quantitaRimossa);
 }

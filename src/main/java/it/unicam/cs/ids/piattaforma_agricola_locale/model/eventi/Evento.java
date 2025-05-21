@@ -127,4 +127,9 @@ public class Evento implements Acquistabile {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getPrezzo'");
     }
+
+    @Override
+    public Venditore getVenditore() {
+        return null;
+    }
 }

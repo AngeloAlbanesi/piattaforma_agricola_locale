@@ -56,7 +56,10 @@ public class PacchettoService implements IPacchettoService {
     } */
 
     @Override
-    public boolean rimuoviPacchettoCatalogo(Pacchetto pacchetto) {
+    public boolean rimuoviPacchettoCatalogo(DistributoreDiTipicita distributore, Pacchetto pacchetto) {
+       if(distributore != pacchetto.getDistributore()){
+           return false;
+       }
         if (pacchetto != null) {
           pacchetto.getDistributore().getPacchettiOfferti().remove(pacchetto);
           return true;
@@ -65,7 +68,10 @@ public class PacchettoService implements IPacchettoService {
     }
 
     @Override
-    public boolean aggiungiProdottoAlPacchetto(Pacchetto pacchetto, Acquistabile prodotto) {
+    public boolean aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, Acquistabile prodotto) {
+        if(distributore != pacchetto.getDistributore() || distributore != prodotto.getVenditore()){
+            return false;
+        }
         if (pacchetto != null && prodotto != null && pacchetto.getElementiInclusi() != null) {
            pacchetto.getElementiInclusi().add(prodotto);
         }
@@ -73,7 +79,7 @@ public class PacchettoService implements IPacchettoService {
     }
 
     @Override
-    public boolean rimuoviProdottoDalPacchetto(Pacchetto pacchetto, Acquistabile prodotto) {
+    public boolean rimuoviProdottoDalPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, Acquistabile prodotto) {
         if (pacchetto != null && prodotto != null && pacchetto.getElementiInclusi() != null) {
             return pacchetto.getElementiInclusi().remove(prodotto);
         }
@@ -88,7 +94,7 @@ public class PacchettoService implements IPacchettoService {
         }
     }
 
-    public void aggiungiQuantitaPacchetto(Pacchetto pacchetto, int quantitaAggiunta){
+    public void aggiungiQuantitaPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, int quantitaAggiunta){
         if (pacchetto == null || quantitaAggiunta <= 0) {
             throw new IllegalArgumentException("quantità errata");
         }
@@ -96,7 +102,7 @@ public class PacchettoService implements IPacchettoService {
 
 
     }
-    public void rimuoviQuantitaPacchetto(Pacchetto pacchetto, int quantitaRimossa){
+    public void rimuoviQuantitaPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, int quantitaRimossa){
         if (pacchetto == null || pacchetto.getQuantitaDisponibile()-quantitaRimossa < 0) {
             throw new IllegalArgumentException("Impossibile rimuovere "+quantitaRimossa);
         }
@@ -111,7 +117,7 @@ public class PacchettoService implements IPacchettoService {
         for (Acquistabile elemento : pacchetto.getElementiInclusi()) {
             if (elemento instanceof Prodotto) {
                 Prodotto prodotto = (Prodotto) elemento;
-                System.out.println("- " + prodotto.getNome() + " (ID: " + prodotto.getId() + ")");
+                System.out.println("- " + prodotto.getNome() + " (ID: " + prodotto.getId() + ") "+ prodotto.getStatoVerifica());
             }
         }
     }

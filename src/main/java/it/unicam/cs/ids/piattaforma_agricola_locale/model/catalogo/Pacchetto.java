@@ -38,6 +38,11 @@ public class Pacchetto implements Acquistabile {
         return prezzoPacchetto;
     }
 
+    @Override
+    public Venditore getVenditore() {
+        return distributore;
+    }
+
 /*
     public  void aggiungiElemento(Acquistabile elemento) {
         this.elementiInclusi.add(elemento);

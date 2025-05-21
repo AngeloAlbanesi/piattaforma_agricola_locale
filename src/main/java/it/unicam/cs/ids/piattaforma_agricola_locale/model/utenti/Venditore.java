@@ -4,8 +4,11 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 
 public abstract class Venditore extends Utente {
@@ -20,6 +23,18 @@ public abstract class Venditore extends Utente {
         this.prodottiOfferti = prodottiOfferti;
     }
 
+    public void aggiungiCertificazioneAzienda(String nomeCertificazione, String enteRilascio, Date dataRilascio, Date dataScadenza){
+        int idCertificazione = UUID.randomUUID().hashCode();
+        Certificazione certificazione = new Certificazione(idCertificazione,nomeCertificazione,enteRilascio,dataRilascio,dataScadenza);
+        this.datiAzienda.getCertificazioniAzienda().add(certificazione);
+    }
+    public void stampaDatiAzienda(){
+        System.out.println(datiAzienda.getNomeAzienda()+ " " +datiAzienda.getDescrizioneAzienda()+" "+ datiAzienda.getIndirizzoAzienda());
+        List<Certificazione> certificazioniAzienda = datiAzienda.getCertificazioniAzienda();
+        for(Certificazione c : certificazioniAzienda){
+            c.stampaCertificazione();
+        }
+    }
     public DatiAzienda getDatiAzienda() {
         return datiAzienda;
     }

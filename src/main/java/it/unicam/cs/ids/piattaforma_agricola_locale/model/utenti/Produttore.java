@@ -17,5 +17,7 @@ public class Produttore extends Venditore {
                 isAttivo);
     }
 
+	
+
 
 }

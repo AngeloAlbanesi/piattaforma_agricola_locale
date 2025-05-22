@@ -34,6 +34,7 @@ public class DatiAzienda implements ElementoVerificabile {
         this.sitoWebUrl = sitoWebUrl;
         this.statoVerifica = StatoVerificaValori.IN_REVISIONE;
         this.certificazioniAzienda = new ArrayList<>();
+        
     }
     public String getNomeAzienda() {
         return nomeAzienda;

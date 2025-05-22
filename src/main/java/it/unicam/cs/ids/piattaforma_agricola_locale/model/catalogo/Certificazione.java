@@ -16,6 +16,14 @@ public class Certificazione {
     private Date dataRilascio;
     private Date dataScadenza;
 
+    public Certificazione(int idCertificazione, String nomeCertificazione, String enteRilascio, Date dataRilascio,
+            Date dataScadenza) {
+        this.idCertificazione = idCertificazione;
+        this.nomeCertificazione = nomeCertificazione;
+        this.enteRilascio = enteRilascio;
+        this.dataRilascio = dataRilascio;
+        this.dataScadenza = dataScadenza;
+    }
 
     public int getIdCertificazione() {
         return idCertificazione;
@@ -57,18 +65,10 @@ public class Certificazione {
         this.dataScadenza = dataScadenza;
     }
 
-    public Certificazione(int idCertificazione, String nomeCertificazione, String enteRilascio, Date dataRilascio,
-                          Date dataScadenza) {
-        this.idCertificazione = idCertificazione;
-        this.nomeCertificazione = nomeCertificazione;
-        this.enteRilascio = enteRilascio;
-        this.dataRilascio = dataRilascio;
-        this.dataScadenza = dataScadenza;
-    }
-
-    public void stampaCertificazione(){
-        System.out.println(this.getIdCertificazione() +" "+this.getNomeCertificazione()+" Ente: "+ this.getEnteRilascio()+
-                " Rilasciata il: "+this.getDataRilascio() +" Scandeza: " +this.getDataScadenza());
+    public void stampaCertificazione() {
+        System.out.println(
+                this.getIdCertificazione() + " " + this.getNomeCertificazione() + " Ente: " + this.getEnteRilascio() +
+                        " Rilasciata il: " + this.getDataRilascio() + " Scandeza: " + this.getDataScadenza());
     }
 
 }

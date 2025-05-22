@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.PacchettoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ProdottoService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.VenditoreService;
 
 public class Main {
 
@@ -49,9 +50,11 @@ public class Main {
         Curatore curatore1 = new Curatore("cur1","Pinco","Pallo", "pinco.pallo@curatori.it", "pwCuratore", "3334455678",
                 TipoRuolo.CURATORE, true);
 
-        distributore1.aggiungiCertificazioneAzienda("Azienda Biologica", "Regione marche", new Date("10/02/2022"),  new Date("10/02/2026"));
-        distributore1.aggiungiCertificazioneAzienda("Azienda Impatto Zero", "Ministero Agricoltura", new Date("18/02/2022"),  new Date("18/02/2026"));
-        distributore2.aggiungiCertificazioneAzienda("TOP 100 fattorie da visitare", "TripAdvisor", new Date("18/02/2022"),  new Date("18/02/2026"));
+        VenditoreService venditoreService = new VenditoreService();
+
+        venditoreService.aggiungiCertificazioneAzienda(distributore1,"Azienda Biologica", "Regione marche", new Date("10/02/2022"),  new Date("10/02/2026"));
+        venditoreService.aggiungiCertificazioneAzienda(distributore1,"Azienda Impatto Zero", "Ministero Agricoltura", new Date("18/02/2022"),  new Date("18/02/2026"));
+        venditoreService.aggiungiCertificazioneAzienda(distributore2,"TOP 100 fattorie da visitare", "TripAdvisor", new Date("18/02/2022"),  new Date("18/02/2026"));
 
 
         distributore1.stampaDatiAzienda();

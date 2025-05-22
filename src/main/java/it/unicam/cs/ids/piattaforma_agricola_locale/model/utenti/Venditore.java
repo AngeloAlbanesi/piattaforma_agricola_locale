@@ -23,18 +23,16 @@ public abstract class Venditore extends Utente {
         this.prodottiOfferti = prodottiOfferti;
     }
 
-    public void aggiungiCertificazioneAzienda(String nomeCertificazione, String enteRilascio, Date dataRilascio, Date dataScadenza){
-        int idCertificazione = UUID.randomUUID().hashCode();
-        Certificazione certificazione = new Certificazione(idCertificazione,nomeCertificazione,enteRilascio,dataRilascio,dataScadenza);
-        this.datiAzienda.getCertificazioniAzienda().add(certificazione);
-    }
-    public void stampaDatiAzienda(){
-        System.out.println(datiAzienda.getNomeAzienda()+ " " +datiAzienda.getDescrizioneAzienda()+" "+ datiAzienda.getIndirizzoAzienda());
+
+    public void stampaDatiAzienda() {
+        System.out.println(datiAzienda.getNomeAzienda() + " " + datiAzienda.getDescrizioneAzienda() + " "
+                + datiAzienda.getIndirizzoAzienda());
         List<Certificazione> certificazioniAzienda = datiAzienda.getCertificazioniAzienda();
-        for(Certificazione c : certificazioniAzienda){
+        for (Certificazione c : certificazioniAzienda) {
             c.stampaCertificazione();
         }
     }
+
     public DatiAzienda getDatiAzienda() {
         return datiAzienda;
     }
@@ -45,5 +43,10 @@ public abstract class Venditore extends Utente {
 
     public boolean gestisciOrdineRicevuto() {
         return true;// TODO:Completa metodo con anche i parametri del metodo
+    }
+
+
+    public void setDatiAzienda(DatiAzienda datiAzienda) {
+        this.datiAzienda = datiAzienda;
     }
 }

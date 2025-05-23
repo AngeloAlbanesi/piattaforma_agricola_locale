@@ -5,7 +5,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
 public abstract class Utente {
-    private String idUtente;
+    private int idUtente;
     private String nome;
     private String cognome;
     private String email;
@@ -15,7 +15,7 @@ public abstract class Utente {
     private boolean isAttivo;
 
     public Utente(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
-            String idUtente,
+            int idUtente,
             TipoRuolo tipoRuolo, boolean isAttivo) {
         this.idUtente = idUtente;
         this.nome = nome;
@@ -90,6 +90,10 @@ public abstract class Utente {
 
     public void riattivaAccount() {
         this.isAttivo = true;
+    }
+
+    public int getId() {
+        return idUtente;
     }
 
     

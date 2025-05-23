@@ -13,7 +13,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaCo
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 
 public class DatiAzienda implements ElementoVerificabile {
-    private int idAzienda;
+    private int idAzienda; // ID del venditore
     private String nomeAzienda;
     private String partitaIva;
     private String indirizzoAzienda;
@@ -34,8 +34,9 @@ public class DatiAzienda implements ElementoVerificabile {
         this.sitoWebUrl = sitoWebUrl;
         this.statoVerifica = StatoVerificaValori.IN_REVISIONE;
         this.certificazioniAzienda = new ArrayList<>();
-        
+
     }
+
     public String getNomeAzienda() {
         return nomeAzienda;
     }
@@ -84,10 +85,6 @@ public class DatiAzienda implements ElementoVerificabile {
         this.sitoWebUrl = sitoWebUrl;
     }
 
-
-
-
-
     public List<Certificazione> getCertificazioniAzienda() {
         return certificazioniAzienda;
     }
@@ -95,23 +92,27 @@ public class DatiAzienda implements ElementoVerificabile {
     public void setCertificazioniAzienda(List<Certificazione> certificazioniAzienda) {
         this.certificazioniAzienda = certificazioniAzienda;
     }
-   
+
     @Override
     public int getId() {
-       return idAzienda;
+        return idAzienda;
     }
+
     @Override
     public String getFeedbackVerifica() {
-       return feedbackVerificaContenuto;
+        return feedbackVerificaContenuto;
     }
+
     @Override
     public void setFeedbackVerifica(String feedbackVerifica) {
-        this.feedbackVerificaContenuto=feedbackVerifica;
+        this.feedbackVerificaContenuto = feedbackVerifica;
     }
+
     @Override
     public void setStatoVerifica(StatoVerificaValori statoVerifica) {
-        this.statoVerifica=statoVerifica;
+        this.statoVerifica = statoVerifica;
     }
+
     @Override
     public StatoVerificaValori getStatoVerifica() {
         return statoVerifica;

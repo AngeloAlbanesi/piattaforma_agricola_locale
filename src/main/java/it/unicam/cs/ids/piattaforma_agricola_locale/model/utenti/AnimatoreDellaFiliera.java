@@ -9,7 +9,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
 public class AnimatoreDellaFiliera extends Utente {
 
     public AnimatoreDellaFiliera(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
-            String idUtente, TipoRuolo tipoRuolo, boolean isAttivo) {
+            int idUtente, TipoRuolo tipoRuolo, boolean isAttivo) {
         super(nome, cognome, email, passwordHash, numeroTelefono, idUtente, tipoRuolo, isAttivo);
     }
 

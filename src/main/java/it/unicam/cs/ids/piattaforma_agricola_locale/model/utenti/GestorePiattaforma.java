@@ -14,7 +14,7 @@ public class GestorePiattaforma extends Utente {
     private UtenteFactory utenteFactory;
 
     public GestorePiattaforma(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
-            String idUtente, TipoRuolo tipoRuolo, boolean isAttivo, UtenteFactory utenteFactory) {
+            int idUtente, TipoRuolo tipoRuolo, boolean isAttivo, UtenteFactory utenteFactory) {
         super(nome, cognome, email, passwordHash, numeroTelefono, idUtente, tipoRuolo, isAttivo);
         this.utenteFactory = utenteFactory;
         this.utentiRegistrati = new HashMap<>(); 

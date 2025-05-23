@@ -18,7 +18,6 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
     private int quantitaDisponibile;
     private StatoVerificaValori statoVerifica;
     private String feedbackVerifica;
-    private String categoriaProdotto;
     private Venditore venditore;
     private List<Certificazione> certificazioniProdotto;
 

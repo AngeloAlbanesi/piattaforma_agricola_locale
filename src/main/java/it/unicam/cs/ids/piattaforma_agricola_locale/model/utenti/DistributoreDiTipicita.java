@@ -15,7 +15,7 @@ public class DistributoreDiTipicita extends Venditore {
     // Costruttore overload per factory (solo parametri base Venditore)
     private List<Pacchetto> pacchettiOfferti;
 
-    public DistributoreDiTipicita(String idUtente, String nome, String cognome, String email, String passwordHash,
+    public DistributoreDiTipicita(int idUtente, String nome, String cognome, String email, String passwordHash,
             String numeroTelefono, DatiAzienda datiAzienda,
             java.util.List<Prodotto> prodottiOfferti, TipoRuolo tipoRuolo, boolean isAttivo) {
         super(idUtente, nome, cognome, email, passwordHash, numeroTelefono, datiAzienda, prodottiOfferti, tipoRuolo,

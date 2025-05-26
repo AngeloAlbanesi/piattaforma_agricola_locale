@@ -3,6 +3,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 
@@ -63,7 +64,7 @@ public interface IPacchettoService {
      * @param prodotto il prodotto da aggiungere
      * @return true se l'aggiunta ha successo, false altrimenti
      */
-    boolean aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, Acquistabile prodotto);
+    boolean aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, Prodotto prodotto);
 
     /**
      * Rimuove un prodotto da un pacchetto.
@@ -72,7 +73,7 @@ public interface IPacchettoService {
      * @param prodotto il prodotto da rimuovere
      * @return true se la rimozione ha successo, false altrimenti
      */
-    boolean rimuoviProdottoDalPacchetto(DistributoreDiTipicita distributore ,Pacchetto pacchetto, Acquistabile prodotto);
+    boolean rimuoviProdottoDalPacchetto(DistributoreDiTipicita distributore ,Pacchetto pacchetto, Prodotto prodotto);
 
     /**
      * Mostra tutti i pacchetti offerti da un distributore.

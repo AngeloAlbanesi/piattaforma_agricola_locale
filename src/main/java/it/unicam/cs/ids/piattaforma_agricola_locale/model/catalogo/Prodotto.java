@@ -79,7 +79,18 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
         this.quantitaDisponibile = quantita;
     }
 
-
+    @Override
+    public String toString() {
+        return "Prodotto{" +
+                "idProdotto=" + idProdotto +
+                ", nome='" + nome + '\'' +
+                ", descrizione='" + descrizione + '\'' +
+                ", prezzo=" + prezzo +
+                ", quantitaDisponibile=" + quantitaDisponibile +
+                ", statoVerifica=" + statoVerifica +
+                ", feedbackVerifica='" + feedbackVerifica + '\'' +
+                '}';
+    }
 
     /*
     public void aggiungiCertificazione(Certificazione certificazione) {

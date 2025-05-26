@@ -14,8 +14,7 @@ public abstract class Utente {
     private TipoRuolo tipoRuolo;
     private boolean isAttivo;
 
-    public Utente(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
-            int idUtente,
+    public Utente(int idUtente, String nome, String cognome, String email, String passwordHash, String numeroTelefono,
             TipoRuolo tipoRuolo, boolean isAttivo) {
         this.idUtente = idUtente;
         this.nome = nome;

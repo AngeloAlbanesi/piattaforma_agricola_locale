@@ -8,7 +8,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 public interface IPacchettoRepository {
 
     // Metodi per gestire i pacchetti
-    void save(Pacchetto pacchetto);
+    void salva(Pacchetto pacchetto);
 
     Pacchetto findById(int id);
 

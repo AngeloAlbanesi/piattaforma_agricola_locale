@@ -18,7 +18,7 @@ public abstract class Venditore extends Utente {
     public Venditore(int idUtente, String nome, String cognome, String email, String passwordHash,
             String numeroTelefono, DatiAzienda datiAzienda,
             List<Prodotto> prodottiOfferti, TipoRuolo tipoRuolo, boolean isAttivo) {
-        super(nome, cognome, email, passwordHash, numeroTelefono, idUtente, tipoRuolo, isAttivo);
+        super(idUtente,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo, isAttivo);
         this.datiAzienda = datiAzienda;
         this.prodottiOfferti = prodottiOfferti;
     }

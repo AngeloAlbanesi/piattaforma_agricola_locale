@@ -67,4 +67,18 @@ public class Pacchetto implements Acquistabile {
     public void setQuantitaDisponibile(int quantitaDisponibile) {
         this.quantitaDisponibile = quantitaDisponibile;
     }
+
+    @Override
+    public String toString() {
+        return "Pacchetto{" +
+                "idPacchetto=" + idPacchetto +
+                ", nome='" + nome + '\'' +
+                ", descrizione='" + descrizione + '\'' +
+                ", quantitaDisponibile=" + quantitaDisponibile +
+                ", prezzoPacchetto=" + prezzoPacchetto +
+                ", elementiInclusi=" + elementiInclusi +
+                ", distributore=" + distributore.getId() +
+                '}';
+    }
 }
+

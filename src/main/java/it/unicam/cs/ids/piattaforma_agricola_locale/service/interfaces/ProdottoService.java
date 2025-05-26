@@ -19,7 +19,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 public class ProdottoService implements IProdottoService {
 
     // private List<Prodotto> catalogoProdotti = new ArrayList<>();
-    private ProdottoRepository prodottoRepository;
+    private ProdottoRepository prodottoRepository = new ProdottoRepository();
 
     @Override
     public void creaProdotto(String nome, String descrizione, double prezzo, int quantitaDisponibile,
@@ -106,5 +106,9 @@ public class ProdottoService implements IProdottoService {
         for (Certificazione c : certificazioni) {
             c.stampaCertificazione();
         }
+    }
+
+    public ProdottoRepository getProdottoRepository() {
+        return prodottoRepository;
     }
 }

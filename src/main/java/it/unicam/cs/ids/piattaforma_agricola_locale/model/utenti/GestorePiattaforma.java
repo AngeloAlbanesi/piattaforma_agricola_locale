@@ -13,16 +13,16 @@ public class GestorePiattaforma extends Utente {
     private Map<String, Utente> utentiRegistrati;
     private UtenteFactory utenteFactory;
 
-    public GestorePiattaforma(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
-            int idUtente, TipoRuolo tipoRuolo, boolean isAttivo, UtenteFactory utenteFactory) {
-        super(nome, cognome, email, passwordHash, numeroTelefono, idUtente, tipoRuolo, isAttivo);
+    public GestorePiattaforma(int idUtente,String nome, String cognome, String email, String passwordHash, String numeroTelefono,
+             TipoRuolo tipoRuolo, boolean isAttivo, UtenteFactory utenteFactory) {
+        super(idUtente,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo, isAttivo);
         this.utenteFactory = utenteFactory;
         this.utentiRegistrati = new HashMap<>(); 
     }
 
     public void registraNuovoUtente(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
             String idUtente, TipoRuolo tipoRuolo) {
-        Utente nuovoUtente = utenteFactory.creaUtente(nome, cognome, email, passwordHash, numeroTelefono, idUtente,
+        Utente nuovoUtente = utenteFactory.creaUtente(nome, cognome, email, passwordHash, numeroTelefono,
                 tipoRuolo, true, null, null);
         utentiRegistrati.put(idUtente, nuovoUtente);
     }

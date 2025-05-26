@@ -13,7 +13,7 @@ public class PacchettoRepository implements IPacchettoRepository {
     private HashMap<Integer, Pacchetto> store = new HashMap<>();
 
     @Override
-    public void save(Pacchetto pacchetto) {
+    public void salva(Pacchetto pacchetto) {
         // Implementazione del metodo per salvare un pacchetto
         store.put(pacchetto.getId(), pacchetto);
     }

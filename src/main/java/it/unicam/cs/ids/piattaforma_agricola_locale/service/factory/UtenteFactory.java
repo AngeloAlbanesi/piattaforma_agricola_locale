@@ -5,12 +5,11 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.TipoRuolo;
 
 public interface UtenteFactory {
     Utente creaUtente(
-        String nome,
+            String nome,
         String cognome,
         String email,
         String passwordHash,
         String numeroTelefono,
-        String idUtente,
         TipoRuolo tipoRuolo,
         boolean isAttivo,
         it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda datiAzienda,

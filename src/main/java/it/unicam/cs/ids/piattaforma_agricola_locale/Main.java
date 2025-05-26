@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.PacchettoRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
@@ -37,17 +39,17 @@ public class Main {
         // Distributori
         DistributoreDiTipicita distributore1 =
             new DistributoreDiTipicita(
-                "distr1", "Mario", "Rossi", "mario.rossi@marche.it", "pw1", "3331112222",
+                00001, "Mario", "Rossi", "mario.rossi@marche.it", "pw1", "3331112222",
                 datiAzienda1, prodotti1,
                 TipoRuolo.DISTRIBUTORE_DI_TIPICITA, true
             );
         DistributoreDiTipicita distributore2 =
             new DistributoreDiTipicita(
-                "distr2", "Luca", "Bianchi", "luca.bianchi@toscana.it", "pw2", "3332223333",
+                00002, "Luca", "Bianchi", "luca.bianchi@toscana.it", "pw2", "3332223333",
                 datiAzienda2, prodotti2,
                 TipoRuolo.DISTRIBUTORE_DI_TIPICITA, true
             );
-        Curatore curatore1 = new Curatore("cur1","Pinco","Pallo", "pinco.pallo@curatori.it", "pwCuratore", "3334455678",
+        Curatore curatore1 = new Curatore(11111,"Pinco","Pallo", "pinco.pallo@curatori.it", "pwCuratore", "3334455678",
                 TipoRuolo.CURATORE, true);
 
         VenditoreService venditoreService = new VenditoreService();
@@ -78,13 +80,13 @@ public class Main {
         //prodottoService.mostraProdotti(distributore1);
 
         // CREAZIONE PACCHETTI
-        /*
+
         pacchettoService.creaPacchetto(distributore1,"Box Marche", "Selezione tipica Marchigiana",3,20.0);
         pacchettoService.creaPacchetto(distributore2,"Box Toscano", "Selezione tipica Toscana",2,25.0);
-        */
+
 
         //AGGIUNTE PRODOTTI AI PACCHETTI
-        /*
+
         pacchettoService.aggiungiProdottoAlPacchetto(distributore1,distributore1.getPacchettiOfferti().get(0),distributore1.getProdottiOfferti().get(0) );
         pacchettoService.aggiungiProdottoAlPacchetto(distributore1,distributore1.getPacchettiOfferti().get(0),distributore1.getProdottiOfferti().get(1) );
         pacchettoService.aggiungiProdottoAlPacchetto(distributore1,distributore1.getPacchettiOfferti().get(0),distributore1.getProdottiOfferti().get(2) );
@@ -93,7 +95,7 @@ public class Main {
         pacchettoService.aggiungiProdottoAlPacchetto(distributore2,distributore2.getPacchettiOfferti().get(0),distributore2.getProdottiOfferti().get(0) );
         pacchettoService.aggiungiProdottoAlPacchetto(distributore2,distributore2.getPacchettiOfferti().get(0),distributore2.getProdottiOfferti().get(1) );
         pacchettoService.aggiungiProdottoAlPacchetto(distributore2,distributore2.getPacchettiOfferti().get(0),distributore2.getProdottiOfferti().get(2) );
-       */
+
 
 
         // STAMPE DEI PACCHETTI
@@ -104,6 +106,21 @@ public class Main {
         pacchettoService.mostraPacchetti(distributore2);
         System.out.println(" ");
         */
+
+        ProdottoRepository repo = prodottoService.getProdottoRepository();
+        List<Prodotto> tuttiprodotti = repo.mostraTuttiIProdotti();
+        System.out.println(tuttiprodotti.size());
+        for (Prodotto p : tuttiprodotti) {
+            System.out.println(p.toString());
+        }
+
+        PacchettoRepository pacchettoRepository = pacchettoService.getRepository();
+        List<Pacchetto> tuttipacchetti = pacchettoRepository.mostraTuttiIPacchetti();
+        System.out.println(tuttipacchetti.size());
+        for(Pacchetto p : tuttipacchetti){
+            System.out.println(p.toString());
+        }
+
 
 
 

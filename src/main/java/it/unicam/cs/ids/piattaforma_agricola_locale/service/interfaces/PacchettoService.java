@@ -7,6 +7,8 @@ import java.util.UUID;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.PacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
@@ -17,7 +19,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
  */
 public class PacchettoService implements IPacchettoService {
 
-   // private List<Pacchetto> catalogoPacchetti = new ArrayList<>();
+    PacchettoRepository pacchettoRepository = new PacchettoRepository();
 
     @Override
     public void creaPacchetto(DistributoreDiTipicita distributore, String nome,  String descrizione, int quantita,
@@ -25,35 +27,10 @@ public class PacchettoService implements IPacchettoService {
         int idPacchetto = UUID.randomUUID().hashCode();
         Pacchetto pacchetto = new Pacchetto(distributore, idPacchetto, nome, descrizione,quantita, prezzoPacchetto);
         distributore.getPacchettiOfferti().add(pacchetto);
-       // this.catalogoPacchetti.add(pacchetto);
+        pacchettoRepository.salva(pacchetto);
         
     }
-/*
-    @Override
-    public Pacchetto getPacchettoById(int id) {
-        for (Pacchetto pacchetto : catalogoPacchetti) {
-            if (pacchetto.getId() == id) {
-                return pacchetto;
-            }
-        }
-        return null;
-    }*/
 
-    //TODO da sviluppare quando avremo array di venditore
-    /*@Override
-    public List<Pacchetto> getAllPacchetti() {
-
-        //return new ArrayList<>(catalogoPacchetti);
-    } */
-
-    /*
-    @Override
-    public boolean aggiungiPacchettoCatalogo(Pacchetto pacchetto) {
-        if (pacchetto != null && !catalogoPacchetti.contains(pacchetto)) {
-            return catalogoPacchetti.add(pacchetto);
-        }
-        return false;
-    } */
 
     @Override
     public boolean rimuoviPacchettoCatalogo(DistributoreDiTipicita distributore, Pacchetto pacchetto) {
@@ -68,8 +45,12 @@ public class PacchettoService implements IPacchettoService {
     }
 
     @Override
-    public boolean aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, Acquistabile prodotto) {
-        if(distributore != pacchetto.getDistributore() || distributore != prodotto.getVenditore()){
+    public boolean aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, Prodotto prodotto) {
+        if( prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO){
+            return false;
+        }
+
+        if(distributore != pacchetto.getDistributore() || distributore != prodotto.getVenditore() ){
             return false;
         }
         if (pacchetto != null && prodotto != null && pacchetto.getElementiInclusi() != null) {
@@ -79,7 +60,7 @@ public class PacchettoService implements IPacchettoService {
     }
 
     @Override
-    public boolean rimuoviProdottoDalPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, Acquistabile prodotto) {
+    public boolean rimuoviProdottoDalPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, Prodotto prodotto) {
         if (pacchetto != null && prodotto != null && pacchetto.getElementiInclusi() != null) {
             return pacchetto.getElementiInclusi().remove(prodotto);
         }
@@ -120,6 +101,9 @@ public class PacchettoService implements IPacchettoService {
                 System.out.println("- " + prodotto.getNome() + " (ID: " + prodotto.getId() + ") "+ prodotto.getStatoVerifica());
             }
         }
+    }
+    public PacchettoRepository getRepository() {
+        return pacchettoRepository;
     }
 
 }

@@ -1,12 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
-
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.ElementoVerificabile;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaContenuto;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 
 public class Certificazione {
 

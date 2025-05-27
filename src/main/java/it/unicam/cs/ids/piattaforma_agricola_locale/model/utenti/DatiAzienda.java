@@ -9,7 +9,6 @@ import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.ElementoVerificabile;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaContenuto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 
 public class DatiAzienda implements ElementoVerificabile {

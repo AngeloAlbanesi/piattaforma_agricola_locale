@@ -1,7 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 
-import java.util.Date;
-import java.util.UUID;
+
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
@@ -27,15 +26,10 @@ public class VenditoreService implements IVenditoreService {
                 logoUrl, sitoWebUrl);
         venditore.setDatiAzienda(datiAzienda);
     }
-
     @Override
-    public void aggiungiCertificazioneAzienda(Venditore venditore, String nomeCertificazione, String enteRilascio,
-            Date dataRilascio,
-            Date dataScadenza) {
-        int idCertificazione = UUID.randomUUID().hashCode();
-        Certificazione certificazione = new Certificazione(idCertificazione, nomeCertificazione, enteRilascio,
-                dataRilascio, dataScadenza);
-        venditore.getDatiAzienda().getCertificazioniAzienda().add(certificazione);
-
+    public void aggiungiCertificazioneAzienda(Venditore venditore, Certificazione certificazione) {
+        venditore.aggiungiCertificazione(certificazione);
     }
+
+
 }

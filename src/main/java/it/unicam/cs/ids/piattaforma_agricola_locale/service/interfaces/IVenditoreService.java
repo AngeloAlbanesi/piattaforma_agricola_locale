@@ -14,8 +14,7 @@ public interface IVenditoreService {
     void aggiungiDatiAzienda(Venditore venditore, String nomeAzienda,String partitaIva,  String indirizzoAzienda, String descrizioneAzienda,
             String logoUrl, String sitoWebUrl);
 
-    void aggiungiCertificazioneAzienda(Venditore venditore, String nomeCertificazione, String enteRilascio, Date dataRilascio,
-            Date dataScadenza);
+    void aggiungiCertificazioneAzienda(Venditore venditore, Certificazione certificazione);
 
     // List<Ordine> getOrdiniRicevuti(String idVenditore, StatoOrdineValori
     // statoFiltro);

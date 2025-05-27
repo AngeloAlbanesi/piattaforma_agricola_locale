@@ -5,7 +5,6 @@ import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.ElementoVerificabile;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaContenuto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
@@ -92,19 +91,16 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
                 '}';
     }
 
-    /*
-    public void aggiungiCertificazione(Certificazione certificazione) {
-        this.certificazioniProdotto.add(certificazione);
-    }*/
+
 
     public List<Certificazione> getCertificazioni() {
         return certificazioniProdotto;
     }
 
-    /*
-    public void aggiornaQuantitaDisponibile(int quantita) {
-        this.quantitaDisponibile += quantita;
-    } */
+    public void aggiungiCertificazione(Certificazione certificazione) {
+        certificazioniProdotto.add(certificazione);
+    }
+
 
 
 }

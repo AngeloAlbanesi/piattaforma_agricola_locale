@@ -93,13 +93,10 @@ public class ProdottoService implements IProdottoService {
         }
     }
 
-    public void aggiungiCertificazione(String nomeCertificazione, String enteRilascio, Date dataRilascio,
-            Date dataScadenza, Prodotto prodotto) {
-        int idCertificazione = UUID.randomUUID().hashCode();
-        Certificazione certificazione = new Certificazione(idCertificazione, nomeCertificazione, enteRilascio,
-                dataRilascio, dataScadenza);
-        prodotto.getCertificazioni().add(certificazione);
+    public void aggiungiCertificazione(Prodotto prodotto, Certificazione certificazione) {
+        prodotto.aggiungiCertificazione(certificazione);
     }
+
 
     public void stampaCertificazioni(Prodotto prodotto) {
         List<Certificazione> certificazioni = prodotto.getCertificazioni();

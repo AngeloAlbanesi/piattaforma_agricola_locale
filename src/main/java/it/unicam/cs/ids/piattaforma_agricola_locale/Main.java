@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.CertificazioneRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.PacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.CertificazioneService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.PacchettoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ProdottoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.VenditoreService;
@@ -52,12 +54,19 @@ public class Main {
         Curatore curatore1 = new Curatore(11111,"Pinco","Pallo", "pinco.pallo@curatori.it", "pwCuratore", "3334455678",
                 TipoRuolo.CURATORE, true);
 
-        VenditoreService venditoreService = new VenditoreService();
+        Certificazione certAzienda = new Certificazione(101, "Biologico", "Ente Certificatore",
+                new Date(), new Date(System.currentTimeMillis() + 31536000000L)); // +1 anno
+        Certificazione certProdotto = new Certificazione(102, "DOP", "Consorzio DOP",
+                new Date(), new Date(System.currentTimeMillis() + 15768000000L)); // +6 mesi
+
+
+        // VenditoreService venditoreService = new VenditoreService();
+/*
 
         venditoreService.aggiungiCertificazioneAzienda(distributore1,"Azienda Biologica", "Regione marche", new Date("10/02/2022"),  new Date("10/02/2026"));
         venditoreService.aggiungiCertificazioneAzienda(distributore1,"Azienda Impatto Zero", "Ministero Agricoltura", new Date("18/02/2022"),  new Date("18/02/2026"));
         venditoreService.aggiungiCertificazioneAzienda(distributore2,"TOP 100 fattorie da visitare", "TripAdvisor", new Date("18/02/2022"),  new Date("18/02/2026"));
-
+*/
 
         distributore1.stampaDatiAzienda();
         distributore2.stampaDatiAzienda();
@@ -72,10 +81,10 @@ public class Main {
         prodottoService.creaProdotto("Pecorino Toscano", "Formaggio DOP", 18.0, 40, distributore2);
         prodottoService.creaProdotto("Finocchiona", "Salame tipico toscano", 14.0, 35, distributore2);
         prodottoService.creaProdotto("Vino Chianti", "Vino DOCG della Toscana", 11.0, 70, distributore2);
-
+/*
         prodottoService.aggiungiCertificazione("IGP","Regione Marche", new Date("10/02/2022"),  new Date("10/02/2026"),distributore1.getProdottiOfferti().get(0)  );
         prodottoService.aggiungiCertificazione("DOP","Ministero Agricolura", new Date("12/06/2021"),  new Date("12/06/2025"),distributore1.getProdottiOfferti().get(0)  );
-
+*/
         //STAMPA PRODOTTI
         //prodottoService.mostraProdotti(distributore1);
 
@@ -96,6 +105,13 @@ public class Main {
         pacchettoService.aggiungiProdottoAlPacchetto(distributore2,distributore2.getPacchettiOfferti().get(0),distributore2.getProdottiOfferti().get(1) );
         pacchettoService.aggiungiProdottoAlPacchetto(distributore2,distributore2.getPacchettiOfferti().get(0),distributore2.getProdottiOfferti().get(2) );
 
+        CertificazioneRepository certificazioneRepository = new CertificazioneRepository();
+        CertificazioneService certificazioneService = new CertificazioneService(certificazioneRepository);
+
+        certificazioneService.creaCertificazione()
+        distributore1.aggiungiCertificazione(certAzienda);
+        distributore1.getProdottiOfferti().getFirst().aggiungiCertificazione(certProdotto);
+
 
 
         // STAMPE DEI PACCHETTI
@@ -106,6 +122,23 @@ public class Main {
         pacchettoService.mostraPacchetti(distributore2);
         System.out.println(" ");
         */
+
+        // Stampo risultati
+        System.out.println("Certificazioni Azienda:");
+        for (Certificazione c : distributore1.getDatiAzienda().getCertificazioniAzienda()) {
+            System.out.println(c.getNomeCertificazione() + " - " + c.getEnteRilascio());
+        }
+
+        System.out.println("\nCertificazioni Prodotto:");
+        for (Certificazione c :  distributore1.getProdottiOfferti().getFirst().getCertificazioni()) {
+            System.out.println(c.getNomeCertificazione() + " - " + c.getEnteRilascio());
+        }
+
+
+
+
+
+
 
         ProdottoRepository repo = prodottoService.getProdottoRepository();
         List<Prodotto> tuttiprodotti = repo.mostraTuttiIProdotti();

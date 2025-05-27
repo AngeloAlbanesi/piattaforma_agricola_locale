@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# File compilati Java
+*.class
+
 ### STS ###
 .apt_generated
 .classpath

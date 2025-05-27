@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
+package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,6 +9,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazion
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
 
 /**
  * Implementazione concreta di {@link IProdottoService} che gestisce la logica

@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
+package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaVa
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.PacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IPacchettoService;
 
 /**
  * Implementazione concreta di {@link IPacchettoService} che gestisce la logica

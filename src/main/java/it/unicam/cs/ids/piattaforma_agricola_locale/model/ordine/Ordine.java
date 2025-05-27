@@ -1,6 +1,8 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine;
 
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.IStatoOrdine;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.StatoOrdineNuovoInAttesaDiPagamento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 
 import java.util.ArrayList;
@@ -8,20 +10,20 @@ import java.util.Date;
 import java.util.List;
 
 public class Ordine {
-    int idOrdine;
-    Date dataOrdine;
-    double importoTotale;
-    StatoCorrente StatoOrdine;
-    Acquirente acquirente;
-    List<RigaOrdine> righeOrdine;
+    private int idOrdine;
+    private Date dataOrdine;
+    private double importoTotale;
+    private Acquirente acquirente;
+    private List<RigaOrdine> righeOrdine;
+    private IStatoOrdine stato;
 
-    public Ordine(int idOrdine,Date dataOrdine,StatoCorrente StatoOrdine,Acquirente acquirente) {
+    public Ordine(int idOrdine, Date dataOrdine, Acquirente acquirente) {
         this.idOrdine = idOrdine;
         this.dataOrdine = dataOrdine;
         this.importoTotale = 0.0;
-        this.StatoOrdine = StatoOrdine;
         this.acquirente = acquirente;
         this.righeOrdine = new ArrayList<>();
+        this.stato = new StatoOrdineNuovoInAttesaDiPagamento();
     }
 
     public int getIdOrdine() {
@@ -56,12 +58,28 @@ public class Ordine {
         this.acquirente = acquirente;
     }
 
+    /**
+     * Restituisce la rappresentazione descrittiva dello stato corrente
+     * @return l'enum StatoCorrente corrispondente allo stato attuale
+     */
     public StatoCorrente getStatoOrdine() {
-        return StatoOrdine;
+        return stato.getStatoCorrente();
     }
 
-    public void setStatoOrdine(StatoCorrente statoOrdine) {
-        StatoOrdine = statoOrdine;
+    /**
+     * Restituisce l'oggetto stato corrente (per il pattern State)
+     * @return l'istanza di IStatoOrdine che rappresenta lo stato corrente
+     */
+    public IStatoOrdine getStato() {
+        return stato;
+    }
+
+    /**
+     * Imposta un nuovo stato per l'ordine (per il pattern State)
+     * @param nuovoStato il nuovo stato da impostare
+     */
+    public void setStato(IStatoOrdine nuovoStato) {
+        this.stato = nuovoStato;
     }
 
     public List<RigaOrdine> getRigheOrdine() {
@@ -71,4 +89,33 @@ public class Ordine {
     public void setRigheOrdine(List<RigaOrdine> righeOrdine) {
         this.righeOrdine = righeOrdine;
     }
+
+    // Metodi per gestire lo stato dell'ordine (delegano al pattern State)
+    public void processa() {
+        stato.processaOrdine(this);
+    }
+
+    public void spedisci() {
+        stato.spedisciOrdine(this);
+    }
+
+    public void annulla() {
+        stato.annullaOrdine(this);
+    }
+
+    public void consegna() {
+        stato.consegnaOrdine(this);
+    }
+
+    /**
+     * Metodo per effettuare il pagamento dell'ordine
+     */
+    public void paga() {
+        // Questo metodo potrebbe essere aggiunto per gestire il pagamento
+        // In questo caso, la transizione da "in attesa di pagamento" a "pagato"
+        // sarà gestita tramite il metodo processa() che nel caso dello stato
+        // "in attesa di pagamento" dovrebbe gestire il pagamento
+        processa();
+    }
+
 }

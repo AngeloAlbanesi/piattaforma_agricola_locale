@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
+package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
 import java.util.Date;
 import java.util.UUID;
@@ -6,6 +6,7 @@ import java.util.UUID;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IVenditoreService;
 
 public class VenditoreService implements IVenditoreService {
 

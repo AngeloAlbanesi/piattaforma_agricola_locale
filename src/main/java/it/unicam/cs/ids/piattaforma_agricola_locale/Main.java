@@ -12,9 +12,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.PacchettoService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ProdottoService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.VenditoreService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.PacchettoService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.ProdottoService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.VenditoreService;
 
 public class Main {
 

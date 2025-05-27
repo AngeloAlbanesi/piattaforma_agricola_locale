@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
+package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaVa
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.UtenteRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICuratoreService;
 
 public class CuratoreService implements ICuratoreService {
 

@@ -8,6 +8,8 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.StatoCorrente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.IMetodoPagamentoStrategy;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.PagamentoException;
 
 public interface IOrdineService {
 
@@ -111,13 +113,14 @@ public interface IOrdineService {
     Ordine creaOrdineDaCarrello(Acquirente acquirente) throws OrdineException;
 
     /**
-     * Conferma il pagamento di un ordine e gestisce la transizione di stato.
-     * Questo metodo attiva il pattern Observer quando l'ordine transisce
-     * allo stato PRONTO_PER_LAVORAZIONE.
-     * 
+     * Conferma il pagamento di un ordine utilizzando la strategia di pagamento specificata
+     * e gestisce la transizione di stato. Questo metodo attiva il pattern Observer quando
+     * l'ordine transisce allo stato PRONTO_PER_LAVORAZIONE.
+     *
      * @param ordine l'ordine di cui confermare il pagamento
-     * @throws OrdineException se si verifica un errore durante la conferma del
-     *                         pagamento
+     * @param strategiaPagamento la strategia di pagamento da utilizzare
+     * @throws OrdineException se si verifica un errore durante la conferma del pagamento
+     * @throws PagamentoException se si verifica un errore durante l'elaborazione del pagamento
      */
-    void confermaPagamento(Ordine ordine) throws OrdineException;
+    void confermaPagamento(Ordine ordine, IMetodoPagamentoStrategy strategiaPagamento) throws OrdineException, PagamentoException;
 }

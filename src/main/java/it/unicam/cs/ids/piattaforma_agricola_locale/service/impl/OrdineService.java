@@ -27,6 +27,8 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IOrdineService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IOrdineObservable;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IVenditoreObserver;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.IMetodoPagamentoStrategy;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.PagamentoException;
 
 public class OrdineService implements IOrdineService, IOrdineObservable {
 
@@ -314,36 +316,53 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
     }
 
     /**
-     * Conferma il pagamento di un ordine e gestisce la transizione di stato.
-     * Questo metodo attiva il pattern Observer quando l'ordine transisce
-     * allo stato PRONTO_PER_LAVORAZIONE.
-     * 
+     * Conferma il pagamento di un ordine utilizzando la strategia di pagamento specificata
+     * e gestisce la transizione di stato. Questo metodo attiva il pattern Observer quando
+     * l'ordine transisce allo stato PRONTO_PER_LAVORAZIONE.
+     *
      * @param ordine l'ordine di cui confermare il pagamento
-     * @throws OrdineException se si verifica un errore durante la conferma del
-     *                         pagamento
+     * @param strategiaPagamento la strategia di pagamento da utilizzare
+     * @throws OrdineException se si verifica un errore durante la conferma del pagamento
+     * @throws PagamentoException se si verifica un errore durante l'elaborazione del pagamento
      */
-    public void confermaPagamento(Ordine ordine) throws OrdineException {
+    public void confermaPagamento(Ordine ordine, IMetodoPagamentoStrategy strategiaPagamento) throws OrdineException, PagamentoException {
+        // Validazione parametri
         if (ordine == null) {
             throw new OrdineException("Impossibile confermare il pagamento: l'ordine non può essere null");
         }
+        
+        if (strategiaPagamento == null) {
+            throw new OrdineException("Impossibile confermare il pagamento: la strategia di pagamento non può essere null");
+        }
 
-        // Verifica che l'ordine sia nello stato corretto per il pagamento PRIMA del
-        // blocco try generale
+        // Verifica che l'ordine sia nello stato corretto per il pagamento
         if (ordine.getStatoOrdine() != StatoCorrente.ATTESA_PAGAMENTO) {
             throw new OrdineException("L'ordine non è in attesa di pagamento e non può essere processato");
         }
 
         try {
-            // Effettua la transizione di stato tramite il pattern State
-            // Questo cambierà lo stato da ATTESA_PAGAMENTO a PRONTO_PER_LAVORAZIONE
-            ordine.paga();
+            // Elabora il pagamento utilizzando la strategia fornita
+            boolean successo = strategiaPagamento.elaboraPagamento(ordine);
+            
+            if (successo) {
+                // Se il pagamento è andato a buon fine:
+                // 1. Effettua la transizione di stato tramite il pattern State
+                // Questo cambierà lo stato da ATTESA_PAGAMENTO a PRONTO_PER_LAVORAZIONE
+                ordine.paga();
 
-            // Aggiorna l'ordine nel repository con il nuovo stato
-            ordineRepository.update(ordine);
+                // 2. Aggiorna l'ordine nel repository con il nuovo stato
+                ordineRepository.update(ordine);
 
-            // Notifica gli observer dopo la conferma del pagamento e l'update
-            notificaObservers(ordine, null);
+                // 3. Notifica gli observer dopo la conferma del pagamento e l'update
+                notificaObservers(ordine, null);
+            } else {
+                // Se il pagamento non è andato a buon fine, lancia PagamentoException
+                throw new PagamentoException("Il pagamento dell'ordine ID " + ordine.getIdOrdine() + " non è andato a buon fine");
+            }
 
+        } catch (PagamentoException e) {
+            // Rilancia le PagamentoException senza modificarle
+            throw e;
         } catch (UnsupportedOperationException e) {
             // Questa eccezione proviene dal pattern State se si tenta un'operazione non
             // valida sullo stato corrente

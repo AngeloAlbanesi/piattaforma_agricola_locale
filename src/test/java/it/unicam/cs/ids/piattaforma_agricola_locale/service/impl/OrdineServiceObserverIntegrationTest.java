@@ -13,6 +13,8 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.TipoRuolo;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.impl.PagamentoSimulatoStrategy;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.PagamentoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -136,7 +138,7 @@ public class OrdineServiceObserverIntegrationTest {
         assertEquals(10, prodottoAggiornato.getQuantitaDisponibile()); // Dovrebbe essere ancora 10
         
         // 3. Conferma il pagamento (questo dovrebbe attivare l'observer)
-        ordineService.confermaPagamento(ordine);
+        ordineService.confermaPagamento(ordine, new PagamentoSimulatoStrategy());
         
         // Verifica che lo stato sia cambiato
         assertEquals(StatoCorrente.PRONTO_PER_LAVORAZIONE, ordine.getStatoOrdine());
@@ -163,7 +165,7 @@ public class OrdineServiceObserverIntegrationTest {
 
         // Tenta di confermare nuovamente il pagamento
         OrdineException exception = assertThrows(OrdineException.class, () -> {
-            ordineService.confermaPagamento(ordine);
+            ordineService.confermaPagamento(ordine, new PagamentoSimulatoStrategy());
         });
 
         // Verifica che l'eccezione contenga un messaggio relativo allo stato non valido
@@ -175,9 +177,93 @@ public class OrdineServiceObserverIntegrationTest {
     void testConfermaPagamentoConOrdineNull() {
         // Tenta di confermare il pagamento di un ordine null
         OrdineException exception = assertThrows(OrdineException.class, () -> {
-            ordineService.confermaPagamento(null);
+            ordineService.confermaPagamento(null, new PagamentoSimulatoStrategy());
         });
 
         assertTrue(exception.getMessage().contains("l'ordine non può essere null"));
+    }
+
+    @Test
+    void testConfermaPagamentoConPagamentoFallito() throws Exception {
+        // Setup: crea un ordine dal carrello
+        carrelloService.aggiungiElementoAlCarrello(acquirente, prodotto, 2);
+        Ordine ordine = ordineService.creaOrdineDaCarrello(acquirente);
+        
+        // Verifica stato iniziale
+        assertEquals(StatoCorrente.ATTESA_PAGAMENTO, ordine.getStatoOrdine());
+        assertEquals(5.00, ordine.getImportoTotale(), 0.01); // 2 * 2.50
+        
+        // Verifica che l'inventario NON sia ancora stato decrementato
+        Prodotto prodottoAggiornato = prodottoRepository.findById(prodotto.getId());
+        assertNotNull(prodottoAggiornato);
+        assertEquals(10, prodottoAggiornato.getQuantitaDisponibile()); // Dovrebbe essere ancora 10
+        
+        // Tenta di confermare il pagamento con strategia che fallisce
+        PagamentoException exception = assertThrows(PagamentoException.class, () -> {
+            ordineService.confermaPagamento(ordine, new PagamentoSimulatoStrategy(false));
+        });
+        
+        // Verifica che lo stato dell'ordine NON sia cambiato
+        assertEquals(StatoCorrente.ATTESA_PAGAMENTO, ordine.getStatoOrdine());
+        
+        // Verifica che l'inventario NON sia stato decrementato (nessun observer attivato)
+        prodottoAggiornato = prodottoRepository.findById(prodotto.getId());
+        assertNotNull(prodottoAggiornato);
+        assertEquals(10, prodottoAggiornato.getQuantitaDisponibile()); // Dovrebbe essere ancora 10
+        
+        // Verifica il messaggio dell'eccezione
+        assertTrue(exception.getMessage().contains("non è andato a buon fine"));
+    }
+
+    @Test
+    void testConfermaPagamentoConStrategiaNulla() throws Exception {
+        // Setup: crea un ordine dal carrello
+        carrelloService.aggiungiElementoAlCarrello(acquirente, prodotto, 1);
+        Ordine ordine = ordineService.creaOrdineDaCarrello(acquirente);
+        
+        // Verifica stato iniziale
+        assertEquals(StatoCorrente.ATTESA_PAGAMENTO, ordine.getStatoOrdine());
+        
+        // Tenta di confermare il pagamento con strategia null
+        OrdineException exception = assertThrows(OrdineException.class, () -> {
+            ordineService.confermaPagamento(ordine, null);
+        });
+        
+        // Verifica che lo stato dell'ordine NON sia cambiato
+        assertEquals(StatoCorrente.ATTESA_PAGAMENTO, ordine.getStatoOrdine());
+        
+        // Verifica il messaggio dell'eccezione
+        assertTrue(exception.getMessage().contains("strategia di pagamento non può essere null"));
+    }
+
+    @Test
+    void testIntegrazionePagamentoSuccessoEFallimento() throws Exception {
+        // Test che dimostra l'integrazione completa: prima fallimento, poi successo
+        
+        // Setup: crea un ordine dal carrello
+        carrelloService.aggiungiElementoAlCarrello(acquirente, prodotto, 3);
+        Ordine ordine = ordineService.creaOrdineDaCarrello(acquirente);
+        
+        // Primo tentativo: pagamento fallito
+        assertThrows(PagamentoException.class, () -> {
+            ordineService.confermaPagamento(ordine, new PagamentoSimulatoStrategy(false));
+        });
+        
+        // Verifica che l'ordine sia ancora in attesa di pagamento
+        assertEquals(StatoCorrente.ATTESA_PAGAMENTO, ordine.getStatoOrdine());
+        
+        // Verifica che l'inventario NON sia stato decrementato
+        Prodotto prodottoAggiornato = prodottoRepository.findById(prodotto.getId());
+        assertEquals(10, prodottoAggiornato.getQuantitaDisponibile());
+        
+        // Secondo tentativo: pagamento riuscito
+        ordineService.confermaPagamento(ordine, new PagamentoSimulatoStrategy(true));
+        
+        // Verifica che l'ordine sia ora pronto per lavorazione
+        assertEquals(StatoCorrente.PRONTO_PER_LAVORAZIONE, ordine.getStatoOrdine());
+        
+        // Verifica che l'inventario sia stato decrementato (observer attivato)
+        prodottoAggiornato = prodottoRepository.findById(prodotto.getId());
+        assertEquals(7, prodottoAggiornato.getQuantitaDisponibile()); // 10 - 3 = 7
     }
 }

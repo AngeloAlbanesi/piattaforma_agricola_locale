@@ -13,7 +13,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICuratore
 
 public class CuratoreService implements ICuratoreService {
 
-    private UtenteRepository utenteRepository;
+    private UtenteRepository utenteRepository = new UtenteRepository();
 
     @Override
     public List<DatiAzienda> getDatiAziendaInAttesaRevisione() {

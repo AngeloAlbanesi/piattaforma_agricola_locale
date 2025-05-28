@@ -118,14 +118,12 @@ public class Evento implements Acquistabile {
 
     @Override
     public int getId() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getId'");
+        return idEvento;
     }
 
     @Override
     public double getPrezzo() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPrezzo'");
+        return 0.0; // Gli eventi potrebbero essere gratuiti
     }
 
     @Override

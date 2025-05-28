@@ -10,6 +10,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
 
 /**
  * Implementazione concreta di {@link IProdottoService} che gestisce la logica
@@ -85,6 +86,34 @@ public class ProdottoService implements IProdottoService {
         prodotto.setQuantitaDisponibile(prodotto.getQuantitaDisponibile() - quantitaRimossa);
 
         return true;
+    }
+
+    @Override
+    public void decrementaQuantita(int idProdotto, int quantitaDaDecrementare) {
+        // Validazione parametri di input
+        if (quantitaDaDecrementare <= 0) {
+            throw new IllegalArgumentException("La quantità da decrementare deve essere maggiore di zero");
+        }
+
+        // Ricerca del prodotto tramite repository
+        Prodotto prodotto = prodottoRepository.findById(idProdotto);
+        if (prodotto == null) {
+            throw new IllegalArgumentException("Prodotto con ID " + idProdotto + " non trovato");
+        }
+
+        // Verifica che ci sia abbastanza quantità disponibile
+        int quantitaDisponibile = prodotto.getQuantitaDisponibile();
+        if (quantitaDaDecrementare > quantitaDisponibile) {
+            throw new QuantitaNonDisponibileException(
+                    (long) idProdotto,
+                    quantitaDaDecrementare,
+                    quantitaDisponibile,
+                    "Prodotto");
+        }
+
+        // Decrementa la quantità e salva nel repository
+        prodotto.setQuantitaDisponibile(quantitaDisponibile - quantitaDaDecrementare);
+        prodottoRepository.save(prodotto);
     }
 
     public void mostraProdotti(Venditore venditore) {

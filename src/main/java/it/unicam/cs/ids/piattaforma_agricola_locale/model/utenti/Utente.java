@@ -95,5 +95,8 @@ public abstract class Utente {
         return idUtente;
     }
 
-    
+    public boolean isAttivo() {
+        return isAttivo;
+    }
+
 }

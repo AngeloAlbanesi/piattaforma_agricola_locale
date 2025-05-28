@@ -6,13 +6,13 @@ import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 
-public class carrello {
+public class Carrello {
     private int idCarrello;
     private Acquirente acquirente;
     private List<ElementoCarrello> elementiCarrello;
     private Date ultimaModifica;
 
-    public carrello(int idCarrello, Acquirente acquirente) {
+    public Carrello(int idCarrello, Acquirente acquirente) {
         this.idCarrello = idCarrello;
         this.acquirente = acquirente;
         this.elementiCarrello = new ArrayList<>();

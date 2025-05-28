@@ -3,7 +3,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 import java.util.List;
 import java.util.Optional;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.carrello;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.Carrello;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 
 public interface ICarrelloRepository {
@@ -13,7 +13,7 @@ public interface ICarrelloRepository {
      * 
      * @param carrello il carrello da salvare
      */
-    void save(carrello carrello);
+    void save(Carrello carrello);
 
     /**
      * Trova un carrello per ID
@@ -21,7 +21,7 @@ public interface ICarrelloRepository {
      * @param idCarrello l'ID del carrello
      * @return Optional contenente il carrello se trovato
      */
-    Optional<carrello> findById(int idCarrello);
+    Optional<Carrello> findById(int idCarrello);
 
     /**
      * Trova il carrello di un acquirente
@@ -29,14 +29,14 @@ public interface ICarrelloRepository {
      * @param acquirente l'acquirente proprietario del carrello
      * @return Optional contenente il carrello se trovato
      */
-    Optional<carrello> findByAcquirente(Acquirente acquirente);
+    Optional<Carrello> findByAcquirente(Acquirente acquirente);
 
     /**
      * Restituisce tutti i carrelli
      * 
      * @return lista di tutti i carrelli
      */
-    List<carrello> findAll();
+    List<Carrello> findAll();
 
     /**
      * Elimina un carrello per ID

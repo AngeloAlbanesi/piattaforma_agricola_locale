@@ -6,32 +6,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.carrello;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.Carrello;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 
 public class CarrelloRepository implements ICarrelloRepository {
 
-    private final Map<Integer, carrello> store = new HashMap<>();
+    private final Map<Integer, Carrello> store = new HashMap<>();
 
     @Override
-    public void save(carrello carrello) {
+    public void save(Carrello carrello) {
         store.put(carrello.getIdCarrello(), carrello);
     }
 
     @Override
-    public Optional<carrello> findById(int idCarrello) {
+    public Optional<Carrello> findById(int idCarrello) {
         return Optional.ofNullable(store.get(idCarrello));
     }
 
     @Override
-    public Optional<carrello> findByAcquirente(Acquirente acquirente) {
+    public Optional<Carrello> findByAcquirente(Acquirente acquirente) {
         return store.values().stream()
                 .filter(c -> c.getAcquirente().equals(acquirente))
                 .findFirst();
     }
 
     @Override
-    public List<carrello> findAll() {
+    public List<Carrello> findAll() {
         return new ArrayList<>(store.values());
     }
 

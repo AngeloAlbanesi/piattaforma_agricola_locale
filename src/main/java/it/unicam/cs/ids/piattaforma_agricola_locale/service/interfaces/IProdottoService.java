@@ -6,16 +6,16 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
 /**
- * Interfaccia che definisce i metodi per la gestione dei prodotti offerti dai venditori
+ * Interfaccia che definisce i metodi per la gestione dei prodotti offerti dai
+ * venditori
  * all'interno della piattaforma agricola locale.
  *
  */
 public interface IProdottoService {
 
-
-    void creaProdotto( String nome, String descrizione, double prezzo, int quantitaDisponibile,
+    void creaProdotto(String nome, String descrizione, double prezzo, int quantitaDisponibile,
             Venditore venditore);
-    
+
     /**
      * Restituisce la lista dei prodotti offerti da un venditore.
      *
@@ -24,7 +24,6 @@ public interface IProdottoService {
      */
     List<Prodotto> getProdottiOfferti(Venditore venditore);
 
-
     /**
      * Rimuove un prodotto dal catalogo.
      *
@@ -32,19 +31,52 @@ public interface IProdottoService {
      * @return true se la rimozione ha successo, false altrimenti
      */
     boolean rimuoviProdottoCatalogo(Venditore venditore, Prodotto prodotto);
-    
+
     /**
      * Aggiorna la quantità disponibile di un prodotto nel catalogo.
      *
-     * @param prodotto il prodotto da aggiornare
+     * @param prodotto      il prodotto da aggiornare
      * @param nuovaQuantita la nuova quantità disponibile
      * @return true se l'aggiornamento ha successo, false altrimenti
      */
-    boolean aggiornaQuantitaProdotto(Venditore venditore ,Prodotto prodotto, int nuovaQuantita);
+    boolean aggiornaQuantitaProdotto(Venditore venditore, Prodotto prodotto, int nuovaQuantita);
 
-       //TODO controllare se lasciare boolean o void
-    boolean aggiungiQuantitaProdotto(Venditore venditore ,Prodotto prodotto, int quantitaAggiunta);
+    // TODO controllare se lasciare boolean o void
+    boolean aggiungiQuantitaProdotto(Venditore venditore, Prodotto prodotto, int quantitaAggiunta);
 
-    //TODO controllare se lasciare boolean o void
-    boolean rimuoviQuantitaProdotto(Venditore venditore ,Prodotto prodotto, int quantitaRimossa);
+    // TODO controllare se lasciare boolean o void
+    boolean rimuoviQuantitaProdotto(Venditore venditore, Prodotto prodotto, int quantitaRimossa);
+
+    /**
+     * Decrementa la quantità disponibile di un prodotto nel catalogo.
+     * Questo metodo è utilizzato internamente dal sistema per aggiornare lo stock
+     * dopo la creazione di un ordine.
+     *
+     * @param idProdotto             l'ID del prodotto di cui decrementare la
+     *                               quantità
+     * @param quantitaDaDecrementare la quantità da decrementare
+     * @throws IllegalArgumentException                                                               se
+     *                                                                                                l'ID
+     *                                                                                                del
+     *                                                                                                prodotto
+     *                                                                                                non
+     *                                                                                                è
+     *                                                                                                valido
+     *                                                                                                o
+     *                                                                                                la
+     *                                                                                                quantità
+     *                                                                                                è
+     *                                                                                                negativa
+     * @throws it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException se
+     *                                                                                                la
+     *                                                                                                quantità
+     *                                                                                                da
+     *                                                                                                decrementare
+     *                                                                                                è
+     *                                                                                                maggiore
+     *                                                                                                di
+     *                                                                                                quella
+     *                                                                                                disponibile
+     */
+    void decrementaQuantita(int idProdotto, int quantitaDaDecrementare);
 }

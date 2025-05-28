@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.ElementoCarrello;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.carrello;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.Carrello;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 
@@ -16,7 +16,7 @@ public interface ICarrelloService {
      * @param acquirente l'acquirente
      * @return il carrello creato
      */
-    carrello creaNuovoCarrello(Acquirente acquirente);
+    Carrello creaNuovoCarrello(Acquirente acquirente);
 
     /**
      * Ottiene il carrello di un acquirente
@@ -24,7 +24,7 @@ public interface ICarrelloService {
      * @param acquirente l'acquirente
      * @return il carrello se esiste
      */
-    Optional<carrello> getCarrelloAcquirente(Acquirente acquirente);
+    Optional<Carrello> getCarrelloAcquirente(Acquirente acquirente);
 
     /**
      * Aggiunge un elemento al carrello
@@ -63,6 +63,6 @@ public interface ICarrelloService {
      * 
      * @return lista di tutti i carrelli
      */
-    List<carrello> getTuttiICarrelli();
+    List<Carrello> getTuttiICarrelli();
 
 }

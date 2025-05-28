@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.carrello;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.Carrello;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
@@ -45,27 +45,27 @@ public class TestRepositories {
                 "hashedPassword", "123456789", TipoRuolo.ACQUIRENTE, true);
 
         // Crea un carrello
-        carrello carrelloTest = new carrello(1, acquirente);
+        Carrello carrelloTest = new Carrello(1, acquirente);
 
         // Salva il carrello
         carrelloRepo.save(carrelloTest);
         System.out.println("✓ Carrello salvato con ID: " + carrelloTest.getIdCarrello());
 
         // Cerca il carrello per ID
-        Optional<carrello> carrelloTrovato = carrelloRepo.findById(1);
+        Optional<Carrello> carrelloTrovato = carrelloRepo.findById(1);
         if (carrelloTrovato.isPresent()) {
             System.out.println("✓ Carrello trovato per ID: " + carrelloTrovato.get().getIdCarrello());
         }
 
         // Cerca il carrello per acquirente
-        Optional<carrello> carrelloPerAcquirente = carrelloRepo.findByAcquirente(acquirente);
+        Optional<Carrello> carrelloPerAcquirente = carrelloRepo.findByAcquirente(acquirente);
         if (carrelloPerAcquirente.isPresent()) {
             System.out.println(
                     "✓ Carrello trovato per acquirente: " + carrelloPerAcquirente.get().getAcquirente().getNome());
         }
 
         // Lista tutti i carrelli
-        List<carrello> tuttiCarrelli = carrelloRepo.findAll();
+        List<Carrello> tuttiCarrelli = carrelloRepo.findAll();
         System.out.println("✓ Numero totale carrelli: " + tuttiCarrelli.size());
 
         System.out.println();

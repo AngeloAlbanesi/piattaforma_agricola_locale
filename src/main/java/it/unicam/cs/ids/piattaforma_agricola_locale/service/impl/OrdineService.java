@@ -25,17 +25,17 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.RigaOrdineR
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IOrdineService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.OrdineObservable;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.VenditoreObserver;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IOrdineObservable;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IVenditoreObserver;
 
-public class OrdineService implements IOrdineService, OrdineObservable {
+public class OrdineService implements IOrdineService, IOrdineObservable {
 
     private OrdineRepository ordineRepository = new OrdineRepository();
     private RigaOrdineRepository rigaOrdineRepository = new RigaOrdineRepository();
     private CarrelloService carrelloService = new CarrelloService();
 
     // Gestione Observer Pattern
-    private final List<VenditoreObserver> observers;
+    private final List<IVenditoreObserver> observers;
 
     public OrdineService() {
         this.observers = new ArrayList<>();
@@ -327,7 +327,8 @@ public class OrdineService implements IOrdineService, OrdineObservable {
             throw new OrdineException("Impossibile confermare il pagamento: l'ordine non può essere null");
         }
 
-        // Verifica che l'ordine sia nello stato corretto per il pagamento PRIMA del blocco try generale
+        // Verifica che l'ordine sia nello stato corretto per il pagamento PRIMA del
+        // blocco try generale
         if (ordine.getStatoOrdine() != StatoCorrente.ATTESA_PAGAMENTO) {
             throw new OrdineException("L'ordine non è in attesa di pagamento e non può essere processato");
         }
@@ -344,18 +345,21 @@ public class OrdineService implements IOrdineService, OrdineObservable {
             notificaObservers(ordine, null);
 
         } catch (UnsupportedOperationException e) {
-            // Questa eccezione proviene dal pattern State se si tenta un'operazione non valida sullo stato corrente
-            throw new OrdineException("Operazione di pagamento non permessa per lo stato corrente dell'ordine: " + ordine.getStatoOrdine() + ". Dettagli: " + e.getMessage(), e);
+            // Questa eccezione proviene dal pattern State se si tenta un'operazione non
+            // valida sullo stato corrente
+            throw new OrdineException("Operazione di pagamento non permessa per lo stato corrente dell'ordine: "
+                    + ordine.getStatoOrdine() + ". Dettagli: " + e.getMessage(), e);
         } catch (Exception e) {
             // Per altre eccezioni impreviste durante paga(), update() o notificaObservers()
-            throw new OrdineException("Errore imprevisto durante la conferma del pagamento dell'ordine ID " + ordine.getIdOrdine(), e);
+            throw new OrdineException(
+                    "Errore imprevisto durante la conferma del pagamento dell'ordine ID " + ordine.getIdOrdine(), e);
         }
     }
 
     // Implementazione dei metodi dell'interfaccia OrdineObservable
 
     @Override
-    public void aggiungiObserver(VenditoreObserver observer) {
+    public void aggiungiObserver(IVenditoreObserver observer) {
         if (observer == null) {
             throw new IllegalArgumentException("L'observer non può essere null");
         }
@@ -365,7 +369,7 @@ public class OrdineService implements IOrdineService, OrdineObservable {
     }
 
     @Override
-    public void rimuoviObserver(VenditoreObserver observer) {
+    public void rimuoviObserver(IVenditoreObserver observer) {
         if (observer == null) {
             throw new IllegalArgumentException("L'observer non può essere null");
         }
@@ -399,17 +403,19 @@ public class OrdineService implements IOrdineService, OrdineObservable {
 
         if (!righeDiCompetenza.isEmpty()) {
             observers.forEach(obs -> {
-                if (obs instanceof VenditoreOrderHandlerService) {
+                if (obs instanceof VenditoreObserverService) {
                     try {
                         obs.update(ordine, righeDiCompetenza);
                     } catch (Exception e) {
-                        System.err.println("Errore durante la notifica dell'observer (VenditoreOrderHandlerService) per il venditore specifico " +
-                                venditore.getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
+                        System.err.println(
+                                "Errore durante la notifica dell'observer (VenditoreOrderHandlerService) per il venditore specifico "
+                                        +
+                                        venditore.getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
                     }
-                } else if (obs instanceof Venditore && obs instanceof VenditoreObserver &&
-                           ((Venditore) obs).getId() == venditore.getId()) {
+                } else if (obs instanceof Venditore && obs instanceof IVenditoreObserver &&
+                        ((Venditore) obs).getId() == venditore.getId()) {
                     try {
-                        ((VenditoreObserver) obs).update(ordine, righeDiCompetenza);
+                        ((IVenditoreObserver) obs).update(ordine, righeDiCompetenza);
                     } catch (Exception e) {
                         System.err.println("Errore durante la notifica dell'observer (Venditore) " +
                                 ((Venditore) obs).getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
@@ -419,7 +425,7 @@ public class OrdineService implements IOrdineService, OrdineObservable {
         }
     }
 
-    public List<VenditoreObserver> getObservers() {
+    public List<IVenditoreObserver> getObservers() {
         return observers;
     }
 
@@ -446,17 +452,19 @@ public class OrdineService implements IOrdineService, OrdineObservable {
             List<RigaOrdine> righeDiCompetenza = entry.getValue();
 
             observers.forEach(obs -> {
-                if (obs instanceof VenditoreOrderHandlerService) {
+                if (obs instanceof VenditoreObserverService) {
                     try {
                         obs.update(ordine, righeDiCompetenza);
                     } catch (Exception e) {
-                        System.err.println("Errore durante la notifica dell'observer (VenditoreOrderHandlerService) per il venditore " +
-                                venditore.getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
+                        System.err.println(
+                                "Errore durante la notifica dell'observer (VenditoreOrderHandlerService) per il venditore "
+                                        +
+                                        venditore.getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
                     }
-                } else if (obs instanceof Venditore && obs instanceof VenditoreObserver &&
-                           ((Venditore) obs).getId() == venditore.getId()) {
+                } else if (obs instanceof Venditore && obs instanceof IVenditoreObserver &&
+                        ((Venditore) obs).getId() == venditore.getId()) {
                     try {
-                        ((VenditoreObserver) obs).update(ordine, righeDiCompetenza);
+                        ((IVenditoreObserver) obs).update(ordine, righeDiCompetenza);
                     } catch (Exception e) {
                         System.err.println("Errore durante la notifica dell'observer (Venditore) " +
                                 ((Venditore) obs).getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());

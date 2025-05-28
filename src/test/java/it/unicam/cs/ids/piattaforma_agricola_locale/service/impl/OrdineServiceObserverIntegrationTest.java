@@ -29,7 +29,7 @@ public class OrdineServiceObserverIntegrationTest {
 
     private OrdineService ordineService;
     private CarrelloService carrelloService;
-    private VenditoreOrderHandlerService venditoreHandler;
+    private VenditoreObserverService venditoreHandler;
 
     // Repository utilizzati nel test
     private IProdottoRepository prodottoRepository; // Usiamo l'interfaccia
@@ -91,7 +91,7 @@ public class OrdineServiceObserverIntegrationTest {
 
 
         // Crea il handler con i servizi che usano i repository condivisi
-        venditoreHandler = new VenditoreOrderHandlerService(ps, pks);
+        venditoreHandler = new VenditoreObserverService(ps, pks);
 
         // Registra l'observer
         ordineService.aggiungiObserver(venditoreHandler);

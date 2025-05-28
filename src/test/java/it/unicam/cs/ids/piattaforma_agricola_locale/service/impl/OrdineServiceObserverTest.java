@@ -16,7 +16,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Produttore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.TipoRuolo;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.VenditoreObserver;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IVenditoreObserver;
 
 /**
  * Test per verificare l'implementazione del pattern Observer
@@ -159,7 +159,7 @@ public class OrdineServiceObserverTest {
     /**
      * Mock implementation di VenditoreObserver per i test
      */
-    private static class MockVenditoreObserver extends Produttore implements VenditoreObserver {
+    private static class MockVenditoreObserver extends Produttore implements IVenditoreObserver {
         private boolean notificato = false;
         private Ordine ultimoOrdine;
         private List<RigaOrdine> righeDiCompetenza;

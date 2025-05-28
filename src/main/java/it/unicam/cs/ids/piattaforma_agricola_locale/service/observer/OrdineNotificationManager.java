@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * permettendo notifiche mirate e efficaci gestione dell'inventario.
  */
 @Service
-public class OrdineNotificationManager implements OrdineObservable {
+public class OrdineNotificationManager implements IOrdineObservable {
 
     private static final Logger logger = Logger.getLogger(OrdineNotificationManager.class.getName());
 
@@ -28,14 +28,14 @@ public class OrdineNotificationManager implements OrdineObservable {
      * Mappa che associa ogni venditore alla lista dei suoi observer.
      * Utilizza strutture dati thread-safe per supportare applicazioni concorrenti.
      */
-    private final Map<Venditore, List<VenditoreObserver>> observersByVenditore;
+    private final Map<Venditore, List<IVenditoreObserver>> observersByVenditore;
 
     public OrdineNotificationManager() {
         this.observersByVenditore = new ConcurrentHashMap<>();
     }
 
     @Override
-    public void aggiungiObserver(VenditoreObserver observer) {
+    public void aggiungiObserver(IVenditoreObserver observer) {
         if (observer == null) {
             throw new IllegalArgumentException("L'observer non può essere null");
         }
@@ -54,14 +54,14 @@ public class OrdineNotificationManager implements OrdineObservable {
     }
 
     @Override
-    public void rimuoviObserver(VenditoreObserver observer) {
+    public void rimuoviObserver(IVenditoreObserver observer) {
         if (observer == null) {
             throw new IllegalArgumentException("L'observer non può essere null");
         }
 
         if (observer instanceof Venditore) {
             Venditore venditore = (Venditore) observer;
-            List<VenditoreObserver> observers = observersByVenditore.get(venditore);
+            List<IVenditoreObserver> observers = observersByVenditore.get(venditore);
 
             if (observers != null) {
                 observers.remove(observer);
@@ -94,7 +94,7 @@ public class OrdineNotificationManager implements OrdineObservable {
      * Notifica un venditore specifico con le righe d'ordine di sua competenza.
      */
     private void notificaVenditore(Ordine ordine, Venditore venditore) {
-        List<VenditoreObserver> observers = observersByVenditore.get(venditore);
+        List<IVenditoreObserver> observers = observersByVenditore.get(venditore);
         if (observers == null || observers.isEmpty()) {
             return;
         }
@@ -105,7 +105,7 @@ public class OrdineNotificationManager implements OrdineObservable {
                 .toList();
 
         if (!righeDiCompetenza.isEmpty()) {
-            for (VenditoreObserver observer : observers) {
+            for (IVenditoreObserver observer : observers) {
                 try {
                     observer.update(ordine, righeDiCompetenza);
                 } catch (Exception e) {
@@ -130,7 +130,7 @@ public class OrdineNotificationManager implements OrdineObservable {
      * Utile per debugging e monitoraggio.
      */
     public int getNumeroObserverPerVenditore(Venditore venditore) {
-        List<VenditoreObserver> observers = observersByVenditore.get(venditore);
+        List<IVenditoreObserver> observers = observersByVenditore.get(venditore);
         return observers != null ? observers.size() : 0;
     }
 

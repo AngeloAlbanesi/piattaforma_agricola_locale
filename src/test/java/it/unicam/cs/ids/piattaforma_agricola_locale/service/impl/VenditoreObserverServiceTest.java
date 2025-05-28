@@ -26,9 +26,9 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
  * per gestire l'aggiornamento dell'inventario quando vengono creati nuovi
  * ordini.
  */
-public class VenditoreOrderHandlerServiceTest {
+public class VenditoreObserverServiceTest {
 
-    private VenditoreOrderHandlerService handlerService;
+    private VenditoreObserverService handlerService;
     private ProdottoService mockProdottoService;
     private PacchettoService mockPacchettoService;
     private OrdineService ordineService;
@@ -45,7 +45,7 @@ public class VenditoreOrderHandlerServiceTest {
         mockPacchettoService = mock(PacchettoService.class);
 
         // Crea handler con mock services per il testing
-        handlerService = new VenditoreOrderHandlerService(mockProdottoService, mockPacchettoService);
+        handlerService = new VenditoreObserverService(mockProdottoService, mockPacchettoService);
 
         // Crea OrdineService per test di integrazione
         ordineService = new OrdineService();
@@ -235,7 +235,7 @@ public class VenditoreOrderHandlerServiceTest {
     @Test
     void testRegistrazioneMultipliHandler() {
         // Test registrazione di più handler per lo stesso venditore
-        VenditoreOrderHandlerService handler2 = new VenditoreOrderHandlerService(mockProdottoService, mockPacchettoService);
+        VenditoreObserverService handler2 = new VenditoreObserverService(mockProdottoService, mockPacchettoService);
 
         ordineService.aggiungiObserver(handlerService);
         ordineService.aggiungiObserver(handler2);

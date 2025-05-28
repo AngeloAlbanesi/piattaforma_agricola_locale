@@ -13,7 +13,7 @@ import java.util.List;
  * di callback che viene invocato quando un ordine subisce modifiche
  * che interessano i prodotti del venditore.
  */
-public interface VenditoreObserver {
+public interface IVenditoreObserver {
     
     /**
      * Metodo di callback invocato quando un ordine viene modificato

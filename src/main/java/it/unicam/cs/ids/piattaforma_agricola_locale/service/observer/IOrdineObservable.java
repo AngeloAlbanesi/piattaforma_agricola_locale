@@ -11,7 +11,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
  * di una lista di observer che vengono notificati quando avvengono
  * cambiamenti negli ordini che interessano i venditori.
  */
-public interface OrdineObservable {
+public interface IOrdineObservable {
     
     /**
      * Aggiunge un observer alla lista degli observer.
@@ -19,7 +19,7 @@ public interface OrdineObservable {
      * @param observer l'observer da aggiungere alla lista delle notifiche
      * @throws IllegalArgumentException se l'observer è null
      */
-    void aggiungiObserver(VenditoreObserver observer);
+    void aggiungiObserver(IVenditoreObserver observer);
     
     /**
      * Rimuove un observer dalla lista degli observer.
@@ -27,7 +27,7 @@ public interface OrdineObservable {
      * @param observer l'observer da rimuovere dalla lista delle notifiche
      * @throws IllegalArgumentException se l'observer è null
      */
-    void rimuoviObserver(VenditoreObserver observer);
+    void rimuoviObserver(IVenditoreObserver observer);
     
     /**
      * Notifica tutti gli observer interessati ad un determinato ordine.

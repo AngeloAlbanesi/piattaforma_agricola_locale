@@ -5,19 +5,19 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.VenditoreObserver;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IVenditoreObserver;
 
 import java.util.List;
 
 /**
- * Implementazione concreta di {@link VenditoreObserver} che gestisce la logica
+ * Implementazione concreta di {@link IVenditoreObserver} che gestisce la logica
  * di aggiornamento dell'inventario quando vengono creati nuovi ordini.
  * 
  * Questa classe implementa il pattern Observer per permettere ai venditori
  * di reagire automaticamente alle notifiche d'ordine, decrementando
  * le quantità disponibili dei prodotti e pacchetti ordinati.
  */
-public class VenditoreOrderHandlerService implements VenditoreObserver {
+public class VenditoreObserverService implements IVenditoreObserver {
 
     private final ProdottoService prodottoService;
     private final PacchettoService pacchettoService;
@@ -29,7 +29,7 @@ public class VenditoreOrderHandlerService implements VenditoreObserver {
      * @param prodottoService  il service per gestire i prodotti
      * @param pacchettoService il service per gestire i pacchetti
      */
-    public VenditoreOrderHandlerService(ProdottoService prodottoService, PacchettoService pacchettoService) {
+    public VenditoreObserverService(ProdottoService prodottoService, PacchettoService pacchettoService) {
         this.prodottoService = prodottoService;
         this.pacchettoService = pacchettoService;
     }

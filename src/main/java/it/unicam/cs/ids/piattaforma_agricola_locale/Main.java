@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.PacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
@@ -107,14 +109,14 @@ public class Main {
         System.out.println(" ");
         */
 
-        ProdottoRepository repo = prodottoService.getProdottoRepository();
+        IProdottoRepository repo = prodottoService.getProdottoRepository();
         List<Prodotto> tuttiprodotti = repo.mostraTuttiIProdotti();
         System.out.println(tuttiprodotti.size());
         for (Prodotto p : tuttiprodotti) {
             System.out.println(p.toString());
         }
 
-        PacchettoRepository pacchettoRepository = pacchettoService.getRepository();
+        IPacchettoRepository pacchettoRepository = pacchettoService.getRepository();
         List<Pacchetto> tuttipacchetti = pacchettoRepository.mostraTuttiIPacchetti();
         System.out.println(tuttipacchetti.size());
         for(Pacchetto p : tuttipacchetti){

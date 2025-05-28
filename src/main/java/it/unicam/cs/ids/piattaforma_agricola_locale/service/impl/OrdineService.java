@@ -327,12 +327,12 @@ public class OrdineService implements IOrdineService, OrdineObservable {
             throw new OrdineException("Impossibile confermare il pagamento: l'ordine non può essere null");
         }
 
-        try {
-            // Verifica che l'ordine sia nello stato corretto per il pagamento
-            if (ordine.getStatoOrdine() != StatoCorrente.ATTESA_PAGAMENTO) {
-                throw new OrdineException("L'ordine non è in attesa di pagamento e non può essere processato");
-            }
+        // Verifica che l'ordine sia nello stato corretto per il pagamento PRIMA del blocco try generale
+        if (ordine.getStatoOrdine() != StatoCorrente.ATTESA_PAGAMENTO) {
+            throw new OrdineException("L'ordine non è in attesa di pagamento e non può essere processato");
+        }
 
+        try {
             // Effettua la transizione di stato tramite il pattern State
             // Questo cambierà lo stato da ATTESA_PAGAMENTO a PRONTO_PER_LAVORAZIONE
             ordine.paga();
@@ -340,13 +340,15 @@ public class OrdineService implements IOrdineService, OrdineObservable {
             // Aggiorna l'ordine nel repository con il nuovo stato
             ordineRepository.update(ordine);
 
-            // IMPORTANTE: Notifica gli observer dopo la conferma del pagamento
-            // Questo è il momento giusto per attivare la gestione dell'inventario
-            // tramite VenditoreOrderHandlerService
+            // Notifica gli observer dopo la conferma del pagamento e l'update
             notificaObservers(ordine, null);
 
+        } catch (UnsupportedOperationException e) {
+            // Questa eccezione proviene dal pattern State se si tenta un'operazione non valida sullo stato corrente
+            throw new OrdineException("Operazione di pagamento non permessa per lo stato corrente dell'ordine: " + ordine.getStatoOrdine() + ". Dettagli: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new OrdineException("Errore durante la conferma del pagamento dell'ordine", e);
+            // Per altre eccezioni impreviste durante paga(), update() o notificaObservers()
+            throw new OrdineException("Errore imprevisto durante la conferma del pagamento dell'ordine ID " + ordine.getIdOrdine(), e);
         }
     }
 
@@ -396,18 +398,29 @@ public class OrdineService implements IOrdineService, OrdineObservable {
                 .collect(Collectors.toList());
 
         if (!righeDiCompetenza.isEmpty()) {
-            // Trova gli observer associati a questo venditore e li notifica
-            observers.stream()
-                    .filter(observer -> observer instanceof Venditore &&
-                            ((Venditore) observer).getId() == venditore.getId())
-                    .forEach(observer -> {
-                        try {
-                            observer.update(ordine, righeDiCompetenza);
-                        } catch (Exception e) {
-                            System.err.println("Errore durante la notifica dell'observer: " + e.getMessage());
-                        }
-                    });
+            observers.forEach(obs -> {
+                if (obs instanceof VenditoreOrderHandlerService) {
+                    try {
+                        obs.update(ordine, righeDiCompetenza);
+                    } catch (Exception e) {
+                        System.err.println("Errore durante la notifica dell'observer (VenditoreOrderHandlerService) per il venditore specifico " +
+                                venditore.getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
+                    }
+                } else if (obs instanceof Venditore && obs instanceof VenditoreObserver &&
+                           ((Venditore) obs).getId() == venditore.getId()) {
+                    try {
+                        ((VenditoreObserver) obs).update(ordine, righeDiCompetenza);
+                    } catch (Exception e) {
+                        System.err.println("Errore durante la notifica dell'observer (Venditore) " +
+                                ((Venditore) obs).getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
+                    }
+                }
+            });
         }
+    }
+
+    public List<VenditoreObserver> getObservers() {
+        return observers;
     }
 
     /**
@@ -432,19 +445,28 @@ public class OrdineService implements IOrdineService, OrdineObservable {
             Venditore venditore = entry.getKey();
             List<RigaOrdine> righeDiCompetenza = entry.getValue();
 
-            // Trova gli observer associati a questo venditore e li notifica
-            observers.stream()
-                    .filter(observer -> observer instanceof Venditore &&
-                            ((Venditore) observer).getId() == venditore.getId())
-                    .forEach(observer -> {
-                        try {
-                            observer.update(ordine, righeDiCompetenza);
-                        } catch (Exception e) {
-                            System.err.println("Errore durante la notifica dell'observer per il venditore " +
-                                    venditore.getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
-                        }
-                    });
+            observers.forEach(obs -> {
+                if (obs instanceof VenditoreOrderHandlerService) {
+                    try {
+                        obs.update(ordine, righeDiCompetenza);
+                    } catch (Exception e) {
+                        System.err.println("Errore durante la notifica dell'observer (VenditoreOrderHandlerService) per il venditore " +
+                                venditore.getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
+                    }
+                } else if (obs instanceof Venditore && obs instanceof VenditoreObserver &&
+                           ((Venditore) obs).getId() == venditore.getId()) {
+                    try {
+                        ((VenditoreObserver) obs).update(ordine, righeDiCompetenza);
+                    } catch (Exception e) {
+                        System.err.println("Errore durante la notifica dell'observer (Venditore) " +
+                                ((Venditore) obs).getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
+                    }
+                }
+            });
         }
     }
 
+    public OrdineRepository getOrdineRepository() {
+        return ordineRepository;
+    }
 }

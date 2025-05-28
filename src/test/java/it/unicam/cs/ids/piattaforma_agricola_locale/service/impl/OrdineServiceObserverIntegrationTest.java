@@ -5,6 +5,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.Carrello;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.ElementoCarrello;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.StatoCorrente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,8 +32,9 @@ public class OrdineServiceObserverIntegrationTest {
     private VenditoreOrderHandlerService venditoreHandler;
 
     // Repository utilizzati nel test
-    private ProdottoRepository prodottoRepository;
+    private IProdottoRepository prodottoRepository; // Usiamo l'interfaccia
     private UtenteRepository utenteRepository;
+    private IPacchettoRepository pacchettoRepository; // Per coerenza
 
     private Acquirente acquirente;
     private DistributoreDiTipicita venditore;
@@ -42,6 +45,7 @@ public class OrdineServiceObserverIntegrationTest {
         // Inizializza i repository concreti
         prodottoRepository = new ProdottoRepository();
         utenteRepository = new UtenteRepository();
+        pacchettoRepository = new PacchettoRepository(); // Inizializza repo pacchetti
         CarrelloRepository carrelloRepository = new CarrelloRepository();
 
         // Crea dati di test con costruttori corretti
@@ -81,20 +85,13 @@ public class OrdineServiceObserverIntegrationTest {
         carrelloService = new CarrelloService(carrelloRepository);
         ordineService = new OrdineService(carrelloService);
 
-        // Crea il ProdottoService con una classe anonima che utilizza il repository
-        // condiviso
-        final ProdottoRepository sharedRepo = prodottoRepository;
-        ProdottoService prodottoService = new ProdottoService() {
-            @Override
-            public ProdottoRepository getProdottoRepository() {
-                return sharedRepo;
-            }
-        };
+        // Inizializza ProdottoService e PacchettoService con i repository corretti
+        ProdottoService ps = new ProdottoService(prodottoRepository); // Inietta sharedRepo
+        PacchettoService pks = new PacchettoService(pacchettoRepository); // Inietta repo pacchetti
 
-        PacchettoService pacchettoService = new PacchettoService();
 
         // Crea il handler con i servizi che usano i repository condivisi
-        venditoreHandler = new VenditoreOrderHandlerService(prodottoService, pacchettoService);
+        venditoreHandler = new VenditoreOrderHandlerService(ps, pks);
 
         // Registra l'observer
         ordineService.aggiungiObserver(venditoreHandler);
@@ -144,9 +141,8 @@ public class OrdineServiceObserverIntegrationTest {
         // Verifica che lo stato sia cambiato
         assertEquals(StatoCorrente.PRONTO_PER_LAVORAZIONE, ordine.getStatoOrdine());
         
-        // IMPORTANTE: Notifica direttamente l'handler in quanto il sistema di notifica esistente
-        // filtra gli observer che sono istanze di Venditore, ma il nostro handler è un VenditoreOrderHandlerService
-        venditoreHandler.update(ordine, ordine.getRigheOrdine());
+        // La chiamata diretta a venditoreHandler.update() è rimossa.
+        // La notifica dovrebbe avvenire automaticamente tramite ordineService.confermaPagamento -> notificaObservers.
         
         // Verifica che l'observer abbia decrementato l'inventario
         prodottoAggiornato = prodottoRepository.findById(prodotto.getId());
@@ -171,7 +167,6 @@ public class OrdineServiceObserverIntegrationTest {
         });
 
         // Verifica che l'eccezione contenga un messaggio relativo allo stato non valido
-        // Usando una parte più generica del messaggio
         assertTrue(exception.getMessage().toLowerCase().contains("non è in attesa") ||
                 exception.getMessage().toLowerCase().contains("attesa di pagamento"));
     }

@@ -8,6 +8,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.PacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
@@ -22,7 +23,15 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponi
  */
 public class PacchettoService implements IPacchettoService {
 
-    PacchettoRepository pacchettoRepository = new PacchettoRepository();
+    private final IPacchettoRepository pacchettoRepository;
+
+    public PacchettoService(IPacchettoRepository pacchettoRepository) {
+        this.pacchettoRepository = pacchettoRepository;
+    }
+
+    public PacchettoService() {
+        this.pacchettoRepository = new PacchettoRepository(); // Costruttore di default per compatibilità
+    }
 
     @Override
     public void creaPacchetto(DistributoreDiTipicita distributore, String nome, String descrizione, int quantita,
@@ -119,7 +128,7 @@ public class PacchettoService implements IPacchettoService {
         }
 
         // Ricerca del pacchetto tramite repository
-        Pacchetto pacchetto = pacchettoRepository.findById(idPacchetto);
+        Pacchetto pacchetto = this.pacchettoRepository.findById(idPacchetto);
         if (pacchetto == null) {
             throw new IllegalArgumentException("Pacchetto con ID " + idPacchetto + " non trovato");
         }
@@ -136,10 +145,10 @@ public class PacchettoService implements IPacchettoService {
 
         // Decrementa la quantità e salva nel repository
         pacchetto.setQuantitaDisponibile(quantitaDisponibile - quantitaDaDecrementare);
-        pacchettoRepository.salva(pacchetto);
+        this.pacchettoRepository.salva(pacchetto);
     }
 
-    public PacchettoRepository getRepository() {
+    public IPacchettoRepository getRepository() {
         return pacchettoRepository;
     }
 

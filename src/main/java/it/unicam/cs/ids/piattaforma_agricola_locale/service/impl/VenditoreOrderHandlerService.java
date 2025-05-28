@@ -22,14 +22,6 @@ public class VenditoreOrderHandlerService implements VenditoreObserver {
     private final ProdottoService prodottoService;
     private final PacchettoService pacchettoService;
 
-    /**
-     * Costruttore che inizializza il service con le dipendenze necessarie
-     * per gestire l'aggiornamento dell'inventario.
-     */
-    public VenditoreOrderHandlerService() {
-        this.prodottoService = new ProdottoService();
-        this.pacchettoService = new PacchettoService();
-    }
 
     /**
      * Costruttore per il testing che permette di iniettare mock dependencies.

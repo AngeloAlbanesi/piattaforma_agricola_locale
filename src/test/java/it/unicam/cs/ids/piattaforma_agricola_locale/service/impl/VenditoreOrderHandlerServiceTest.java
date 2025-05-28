@@ -77,14 +77,6 @@ public class VenditoreOrderHandlerServiceTest {
                 5, 10.00);
     }
 
-    @Test
-    void testCostruttoreDefault() {
-        // Test costruttore senza parametri
-        VenditoreOrderHandlerService defaultHandler = new VenditoreOrderHandlerService();
-
-        assertNotNull(defaultHandler.getProdottoService());
-        assertNotNull(defaultHandler.getPacchettoService());
-    }
 
     @Test
     void testCostruttoreConParametri() {
@@ -243,7 +235,7 @@ public class VenditoreOrderHandlerServiceTest {
     @Test
     void testRegistrazioneMultipliHandler() {
         // Test registrazione di più handler per lo stesso venditore
-        VenditoreOrderHandlerService handler2 = new VenditoreOrderHandlerService();
+        VenditoreOrderHandlerService handler2 = new VenditoreOrderHandlerService(mockProdottoService, mockPacchettoService);
 
         ordineService.aggiungiObserver(handlerService);
         ordineService.aggiungiObserver(handler2);

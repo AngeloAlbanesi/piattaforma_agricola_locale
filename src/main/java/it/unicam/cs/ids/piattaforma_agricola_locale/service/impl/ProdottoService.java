@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
@@ -20,8 +21,15 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponi
  */
 public class ProdottoService implements IProdottoService {
 
-    // private List<Prodotto> catalogoProdotti = new ArrayList<>();
-    private ProdottoRepository prodottoRepository = new ProdottoRepository();
+    private final IProdottoRepository prodottoRepository;
+
+    public ProdottoService(IProdottoRepository prodottoRepository) {
+        this.prodottoRepository = prodottoRepository;
+    }
+
+    public ProdottoService() {
+        this.prodottoRepository = new ProdottoRepository(); // Costruttore di default per compatibilità
+    }
 
     @Override
     public void creaProdotto(String nome, String descrizione, double prezzo, int quantitaDisponibile,
@@ -33,7 +41,7 @@ public class ProdottoService implements IProdottoService {
         Prodotto prodotto = new Prodotto(idProdotto, nome, descrizione, prezzo, quantitaDisponibile, venditore);
         // this.catalogoProdotti.add(prodotto);
         venditore.getProdottiOfferti().add(prodotto);
-        prodottoRepository.save(prodotto);
+        this.prodottoRepository.save(prodotto);
     }
 
     @Override
@@ -96,7 +104,7 @@ public class ProdottoService implements IProdottoService {
         }
 
         // Ricerca del prodotto tramite repository
-        Prodotto prodotto = prodottoRepository.findById(idProdotto);
+        Prodotto prodotto = this.prodottoRepository.findById(idProdotto);
         if (prodotto == null) {
             throw new IllegalArgumentException("Prodotto con ID " + idProdotto + " non trovato");
         }
@@ -113,7 +121,7 @@ public class ProdottoService implements IProdottoService {
 
         // Decrementa la quantità e salva nel repository
         prodotto.setQuantitaDisponibile(quantitaDisponibile - quantitaDaDecrementare);
-        prodottoRepository.save(prodotto);
+        this.prodottoRepository.save(prodotto);
     }
 
     public void mostraProdotti(Venditore venditore) {
@@ -138,7 +146,7 @@ public class ProdottoService implements IProdottoService {
         }
     }
 
-    public ProdottoRepository getProdottoRepository() {
+    public IProdottoRepository getProdottoRepository() {
         return prodottoRepository;
     }
 }

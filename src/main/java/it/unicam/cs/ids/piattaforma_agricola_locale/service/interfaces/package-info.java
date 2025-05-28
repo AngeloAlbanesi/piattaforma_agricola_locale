@@ -9,8 +9,8 @@
  * <ul>
  *   <li>{@link it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IPacchettoService} - Gestione dei pacchetti di prodotti.</li>
  *   <li>{@link it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService} - Gestione dei prodotti offerti dai venditori.</li>
- *   <li>{@link it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.PacchettoService} - Implementazione concreta delle operazioni sui pacchetti.</li>
- *   <li>{@link it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ProdottoService} - Implementazione concreta delle operazioni sui prodotti.</li>
+ *   <li>{@link it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.PacchettoService} - Implementazione concreta delle operazioni sui pacchetti.</li>
+ *   <li>{@link it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.ProdottoService} - Implementazione concreta delle operazioni sui prodotti.</li>
  * </ul>
  *
  */

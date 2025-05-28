@@ -11,15 +11,15 @@ public interface IVenditoreService {
 
     void aggiornaDatiAzienda(Venditore venditore,  DatiAzienda datiAggiornati);
 
-    void aggiungiDatiAzienda(Venditore venditore, String nomeAzienda,String partitaIva,  String indirizzoAzienda, String descrizioneAzienda,
-            String logoUrl, String sitoWebUrl);
 
-    void aggiungiCertificazioneAzienda(Venditore venditore, Certificazione certificazione);
+    DatiAzienda aggiungiDatiAzienda(Venditore venditore, String nomeAzienda, String partitaIva, String indirizzoAzienda,
+                                    String descrizioneAzienda, String logoUrl, String sitoWebUrl);
 
-    // List<Ordine> getOrdiniRicevuti(String idVenditore, StatoOrdineValori
-    // statoFiltro);
+    Certificazione aggiungiCertificazioneAdAzienda(Venditore venditore, String nomeCertificazione, String enteRilascio, Date dataRilascio, Date dataScadenza);
 
-    // boolean aggiornaStatoOrdineRicevuto(String idVenditore, String idOrdine,
-    // StatoOrdineValori nuovoStato);
+    void stampaCertificazioniAzienda(Venditore venditore);
 
+    List<Certificazione> getCertificazioniAzienda(Venditore venditore);
+
+    boolean rimuoviCertificazioneDaAzienda(Venditore venditore, int idCertificazione);
 }

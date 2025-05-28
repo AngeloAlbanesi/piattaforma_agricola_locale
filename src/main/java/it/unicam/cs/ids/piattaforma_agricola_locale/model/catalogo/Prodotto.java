@@ -98,8 +98,14 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
     }
 
     public void aggiungiCertificazione(Certificazione certificazione) {
-        certificazioniProdotto.add(certificazione);
+        if (certificazione != null && certificazione.getIdProdottoAssociato() != null && certificazione.getIdProdottoAssociato().equals(this.idProdotto)) {
+            this.certificazioniProdotto.add(certificazione);
+        } else {
+            // Gestire l'errore: la certificazione non appartiene a questo prodotto
+            System.err.println("Errore: tentativo di aggiungere certificazione non pertinente al prodotto.");
+        }
     }
+//
 
 
 

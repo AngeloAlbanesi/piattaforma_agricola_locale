@@ -1,26 +1,8 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.CertificazioneRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.PacchettoRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ProdottoRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
-
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.CertificazioneService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.PacchettoService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ProdottoService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.VenditoreService;
-
 public class Main {
 
-    public static void main(String[] args) {
+ /*   public static void main(String[] args) {
         // Dummy certificazioni e liste vuote
         List<Certificazione> certificazioni = new ArrayList<>();
         List<Prodotto> prodotti1 = new ArrayList<>();
@@ -61,12 +43,12 @@ public class Main {
 
 
         // VenditoreService venditoreService = new VenditoreService();
-/*
+
 
         venditoreService.aggiungiCertificazioneAzienda(distributore1,"Azienda Biologica", "Regione marche", new Date("10/02/2022"),  new Date("10/02/2026"));
         venditoreService.aggiungiCertificazioneAzienda(distributore1,"Azienda Impatto Zero", "Ministero Agricoltura", new Date("18/02/2022"),  new Date("18/02/2026"));
         venditoreService.aggiungiCertificazioneAzienda(distributore2,"TOP 100 fattorie da visitare", "TripAdvisor", new Date("18/02/2022"),  new Date("18/02/2026"));
-*/
+
 
         distributore1.stampaDatiAzienda();
         distributore2.stampaDatiAzienda();
@@ -89,7 +71,7 @@ public class Main {
         //prodottoService.mostraProdotti(distributore1);
 
         // CREAZIONE PACCHETTI
-
+/*
         pacchettoService.creaPacchetto(distributore1,"Box Marche", "Selezione tipica Marchigiana",3,20.0);
         pacchettoService.creaPacchetto(distributore2,"Box Toscano", "Selezione tipica Toscana",2,25.0);
 
@@ -124,6 +106,7 @@ public class Main {
         */
 
         // Stampo risultati
+    /*
         System.out.println("Certificazioni Azienda:");
         for (Certificazione c : distributore1.getDatiAzienda().getCertificazioniAzienda()) {
             System.out.println(c.getNomeCertificazione() + " - " + c.getEnteRilascio());
@@ -203,4 +186,4 @@ public class Main {
     }
 
 
-}
+

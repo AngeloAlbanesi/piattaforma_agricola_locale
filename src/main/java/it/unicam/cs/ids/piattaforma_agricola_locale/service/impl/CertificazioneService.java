@@ -1,0 +1,142 @@
+package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
+
+
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.*;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
+
+import java.util.Date;
+import java.util.List;
+import java.util.UUID; // O usa il nextId dal repository
+
+public class CertificazioneService implements ICertificazioneService {
+
+   private IProdottoRepository prodottoRepository;
+    private ICertificazioneRepository certificazioneRepository;
+    private IDatiAziendaRepository datiAziendaRepository;
+
+
+    // Potresti aver bisogno anche dei repository di Prodotto e DatiAzienda/Venditore
+    // per recuperare gli oggetti completi se necessario, o per aggiornarli.
+    // private IProdottoRepository prodottoRepository;
+    // private IVenditoreRepository venditoreRepository; // o IDatiAziendaRepository
+
+    public CertificazioneService(ICertificazioneRepository certificazioneRepository, IDatiAziendaRepository datiAziendaRepository, IProdottoRepository prodottoRepository) {
+        this.certificazioneRepository = certificazioneRepository;
+        this.datiAziendaRepository = datiAziendaRepository;
+        this.prodottoRepository = prodottoRepository;
+    }
+
+    // Metodo per generare ID univoci. Potrebbe stare nel repository o essere un servizio a parte.
+    private int generaIdUnivocoCertificazione() {
+        // Per l'esempio, usiamo il metodo del repository se disponibile, altrimenti UUID
+        if (certificazioneRepository instanceof CertificazioneRepository) { // Controllo per l'esempio
+            return ((CertificazioneRepository) certificazioneRepository).getNextId();
+        }
+        return Math.abs(UUID.randomUUID().hashCode()); // Non garantisce unicità assoluta ma buono per test
+    }
+
+
+    @Override
+    public Certificazione creaCertificazionePerProdotto(String nome, String ente, Date rilascio, Date scadenza, Prodotto prodotto) {
+        if (prodotto == null || nome == null || nome.trim().isEmpty()) {
+            // Lanciare eccezione o ritornare null
+            return null;
+        }
+        int idCert = generaIdUnivocoCertificazione();
+        Certificazione cert = new Certificazione(idCert, nome, ente, rilascio, scadenza, prodotto.getId());
+        certificazioneRepository.save(cert);
+        prodotto.aggiungiCertificazione(cert); // Aggiunge alla lista interna del prodotto
+        // Se ProdottoRepository gestisce la persistenza di Prodotto, potresti dover salvare Prodotto qui
+        prodottoRepository.save(prodotto);
+        return cert;
+    }
+
+    @Override
+    public Certificazione creaCertificazionePerAzienda(String nome, String ente, Date rilascio, Date scadenza, DatiAzienda azienda) {
+        if (azienda == null || nome == null || nome.trim().isEmpty()) {
+            return null;
+        }
+        int idCert = generaIdUnivocoCertificazione();
+        // Assumendo che DatiAzienda abbia un getIdAzienda()
+        Certificazione cert = new Certificazione(idCert, nome, ente, rilascio, scadenza, azienda.getIdAzienda(), true);
+        certificazioneRepository.save(cert);
+        azienda.aggiungiCertificazione(cert);
+        datiAziendaRepository.save(azienda);
+        return cert;
+    }
+
+    @Override
+    public Certificazione getCertificazioneById(int idCertificazione) {
+        return certificazioneRepository.findById(idCertificazione);
+    }
+
+    @Override
+    public List<Certificazione> getCertificazioniProdotto(int idProdotto) {
+        return certificazioneRepository.findByProdottoId(idProdotto);
+    }
+
+    @Override
+    public List<Certificazione> getCertificazioniAzienda(int idAzienda) {
+        return certificazioneRepository.findByAziendaId(idAzienda);
+    }
+
+    @Override
+    public boolean rimuoviCertificazione(int idCertificazione, Prodotto prodotto) {
+        Certificazione cert = certificazioneRepository.findById(idCertificazione);
+        if (cert != null && cert.getIdProdottoAssociato() != null && cert.getIdProdottoAssociato().equals(prodotto.getId())) {
+            prodotto.getCertificazioni().remove(cert); // Rimuovi dalla lista interna
+             prodottoRepository.save(prodotto); // Se necessario
+            certificazioneRepository.deleteById(idCertificazione);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean rimuoviCertificazione(int idCertificazione, DatiAzienda azienda) {
+        Certificazione cert = certificazioneRepository.findById(idCertificazione);
+        if (cert != null && cert.getIdAziendaAssociata() != null && cert.getIdAziendaAssociata().equals(azienda.getIdAzienda())) {
+            azienda.getCertificazioniAzienda().remove(cert);
+            datiAziendaRepository.save(azienda); // Se necessario
+            certificazioneRepository.deleteById(idCertificazione);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void rimuoviCertificazioneGlobale(int idCertificazione) {
+        // Qui devi anche rimuovere la certificazione dalle liste interne
+        // di Prodotto o DatiAzienda se vuoi mantenere la consistenza
+        // Questo metodo è più per pulizia se l'oggetto padre è già stato cancellato.
+        Certificazione cert = certificazioneRepository.findById(idCertificazione);
+        if (cert == null) return;
+
+        // Logica opzionale per rimuovere dalle liste dei proprietari
+        // if (cert.getIdProdottoAssociato() != null) {
+        //     Prodotto p = prodottoRepository.findById(cert.getIdProdottoAssociato());
+        //     if (p != null) p.getCertificazioniProdotto().removeIf(c -> c.getIdCertificazione() == idCertificazione);
+        // } else if (cert.getIdAziendaAssociata() != null) {
+        //     DatiAzienda da = //... recupera DatiAzienda
+        //     if (da != null) da.getCertificazioniAzienda().removeIf(c -> c.getIdCertificazione() == idCertificazione);
+        // }
+        certificazioneRepository.deleteById(idCertificazione);
+    }
+
+
+    @Override
+    public Certificazione aggiornaCertificazione(int idCertificazione, String nuovoNome, String nuovoEnte, Date nuovaDataRilascio, Date nuovaDataScadenza) {
+        Certificazione cert = certificazioneRepository.findById(idCertificazione);
+        if (cert != null) {
+            if (nuovoNome != null) cert.setNomeCertificazione(nuovoNome);
+            if (nuovoEnte != null) cert.setEnteRilascio(nuovoEnte);
+            if (nuovaDataRilascio != null) cert.setDataRilascio(nuovaDataRilascio);
+            if (nuovaDataScadenza != null) cert.setDataScadenza(nuovaDataScadenza);
+            certificazioneRepository.save(cert); // L'implementazione di save deve gestire l'aggiornamento
+        }
+        return cert;
+    }
+}

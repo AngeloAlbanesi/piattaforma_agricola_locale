@@ -9,7 +9,6 @@ import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.ElementoVerificabile;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaContenuto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 
 public class DatiAzienda implements ElementoVerificabile {
@@ -24,8 +23,9 @@ public class DatiAzienda implements ElementoVerificabile {
     private String feedbackVerificaContenuto;
     private List<Certificazione> certificazioniAzienda;
 
-    public DatiAzienda(String nomeAzienda, String partitaIva, String indirizzoAzienda, String descrizioneAzienda,
+    public DatiAzienda(int idVenditore,String nomeAzienda, String partitaIva, String indirizzoAzienda, String descrizioneAzienda,
             String logoUrl, String sitoWebUrl) {
+        this.idAzienda = idVenditore;
         this.nomeAzienda = nomeAzienda;
         this.partitaIva = partitaIva;
         this.indirizzoAzienda = indirizzoAzienda;
@@ -35,6 +35,18 @@ public class DatiAzienda implements ElementoVerificabile {
         this.statoVerifica = StatoVerificaValori.IN_REVISIONE;
         this.certificazioniAzienda = new ArrayList<>();
 
+    }
+
+    public DatiAzienda(){
+
+    }
+
+    public int getIdAzienda() {
+        return idAzienda;
+    }
+
+    public void setIdAzienda(int idAzienda) {
+        this.idAzienda = idAzienda;
     }
 
     public String getNomeAzienda() {
@@ -89,8 +101,13 @@ public class DatiAzienda implements ElementoVerificabile {
         return certificazioniAzienda;
     }
 
-    public void setCertificazioniAzienda(List<Certificazione> certificazioniAzienda) {
-        this.certificazioniAzienda = certificazioniAzienda;
+    public void aggiungiCertificazione(Certificazione certificazione) {
+        if (certificazione != null && certificazione.getIdAziendaAssociata() != null && certificazione.getIdAziendaAssociata().equals(this.idAzienda)) {
+            this.certificazioniAzienda.add(certificazione);
+        } else {
+            // Gestire l'errore: la certificazione non appartiene a questa azienda
+            System.err.println("Errore: tentativo di aggiungere certificazione non pertinente all'azienda.");
+        }
     }
 
     @Override

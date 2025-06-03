@@ -49,4 +49,8 @@ public abstract class Venditore extends Utente {
     public void setDatiAzienda(DatiAzienda datiAzienda) {
         this.datiAzienda = datiAzienda;
     }
+
+    public void aggiungiCertificazione(Certificazione certificazione) {
+        this.getDatiAzienda().getCertificazioniAzienda().add(certificazione);
+    }
 }

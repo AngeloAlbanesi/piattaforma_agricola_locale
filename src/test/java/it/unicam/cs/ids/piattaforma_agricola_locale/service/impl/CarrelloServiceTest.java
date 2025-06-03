@@ -59,7 +59,7 @@ class CarrelloServiceTest {
                 true);
 
         // Crea un venditore di test
-        DatiAzienda datiAzienda = new DatiAzienda(
+        DatiAzienda datiAzienda = new DatiAzienda(2,
                 "Azienda Test",
                 "12345678901",
                 "Via Test 123",
@@ -80,7 +80,7 @@ class CarrelloServiceTest {
                 true);
 
         // Crea un distributore di test per i pacchetti
-        DatiAzienda datiAziendaDistributore = new DatiAzienda(
+        DatiAzienda datiAziendaDistributore = new DatiAzienda(1,
                 "Distributore Tipicità",
                 "98765432109",
                 "Via Tipicità 456",

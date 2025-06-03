@@ -54,7 +54,7 @@ public class OrdineServiceObserverIntegrationTest {
         acquirente = new Acquirente(1, "Mario", "Rossi", "mario.rossi@email.com", "password123",
                 "3334567890", TipoRuolo.ACQUIRENTE, true);
 
-        DatiAzienda datiAzienda = new DatiAzienda(
+        DatiAzienda datiAzienda = new DatiAzienda(1,
                 "Azienda Test",
                 "12345678901",
                 "Via Test 123",

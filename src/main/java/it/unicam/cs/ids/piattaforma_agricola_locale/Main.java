@@ -29,11 +29,11 @@ public class Main {
         PacchettoService pacchettoService = new PacchettoService();
 
         // DatiAzienda per i distributori
-        DatiAzienda datiAzienda1 = new DatiAzienda(
+        DatiAzienda datiAzienda1 = new DatiAzienda(1,
             "Terre Marche", "IT12345678901", "Via Marche 1, Ancona", "Azienda di prodotti tipici marchigiani",
             "", ""
         );
-        DatiAzienda datiAzienda2 = new DatiAzienda(
+        DatiAzienda datiAzienda2 = new DatiAzienda(2,
             "Sapori Toscani", "IT98765432109", "Via Toscana 10, Firenze", "Azienda di prodotti tipici toscani",
             "", ""
         );
@@ -54,11 +54,11 @@ public class Main {
         Curatore curatore1 = new Curatore(11111,"Pinco","Pallo", "pinco.pallo@curatori.it", "pwCuratore", "3334455678",
                 TipoRuolo.CURATORE, true);
 
-        VenditoreService venditoreService = new VenditoreService();
+        // VenditoreService venditoreService = new VenditoreService();
 
-        venditoreService.aggiungiCertificazioneAzienda(distributore1,"Azienda Biologica", "Regione marche", new Date("10/02/2022"),  new Date("10/02/2026"));
-        venditoreService.aggiungiCertificazioneAzienda(distributore1,"Azienda Impatto Zero", "Ministero Agricoltura", new Date("18/02/2022"),  new Date("18/02/2026"));
-        venditoreService.aggiungiCertificazioneAzienda(distributore2,"TOP 100 fattorie da visitare", "TripAdvisor", new Date("18/02/2022"),  new Date("18/02/2026"));
+        // venditoreService.aggiungiCertificazioneAzienda(distributore1,"Azienda Biologica", "Regione marche", new Date("10/02/2022"),  new Date("10/02/2026"));
+        // venditoreService.aggiungiCertificazioneAzienda(distributore1,"Azienda Impatto Zero", "Ministero Agricoltura", new Date("18/02/2022"),  new Date("18/02/2026"));
+        // venditoreService.aggiungiCertificazioneAzienda(distributore2,"TOP 100 fattorie da visitare", "TripAdvisor", new Date("18/02/2022"),  new Date("18/02/2026"));
 
 
         distributore1.stampaDatiAzienda();
@@ -75,8 +75,8 @@ public class Main {
         prodottoService.creaProdotto("Finocchiona", "Salame tipico toscano", 14.0, 35, distributore2);
         prodottoService.creaProdotto("Vino Chianti", "Vino DOCG della Toscana", 11.0, 70, distributore2);
 
-        prodottoService.aggiungiCertificazione("IGP","Regione Marche", new Date("10/02/2022"),  new Date("10/02/2026"),distributore1.getProdottiOfferti().get(0)  );
-        prodottoService.aggiungiCertificazione("DOP","Ministero Agricolura", new Date("12/06/2021"),  new Date("12/06/2025"),distributore1.getProdottiOfferti().get(0)  );
+        // prodottoService.aggiungiCertificazione("IGP","Regione Marche", new Date("10/02/2022"),  new Date("10/02/2026"),distributore1.getProdottiOfferti().get(0)  );
+        // prodottoService.aggiungiCertificazione("DOP","Ministero Agricolura", new Date("12/06/2021"),  new Date("12/06/2025"),distributore1.getProdottiOfferti().get(0)  );
 
         //STAMPA PRODOTTI
         //prodottoService.mostraProdotti(distributore1);

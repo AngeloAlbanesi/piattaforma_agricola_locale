@@ -4,9 +4,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository; // Usa interfaccia
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 // Assumendo che ICertificazioneService sia in service.interfaces
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
@@ -24,11 +26,19 @@ public class ProdottoService implements IProdottoService {
         this.certificazioneService = certificazioneService;
     }
 
+    public ProdottoService(IProdottoRepository prodottoRepository) {
+        this.prodottoRepository = prodottoRepository;
+    }
+
     // Costruttore precedente (per compatibilità temporanea, ma da rimuovere in favore dell'iniezione)
     // public ProdottoService() {
     //     this.prodottoRepository = new ProdottoRepository();
     //     // this.certificazioneService = new CertificazioneService(new CertificazioneRepository()); // Esempio di istanziazione diretta
     // }
+
+    public ProdottoService() {
+        this.prodottoRepository = new ProdottoRepository(); // Costruttore di default per compatibilità
+    }
 
 
     @Override
@@ -174,4 +184,35 @@ public class ProdottoService implements IProdottoService {
         }
         return certificazioneService.getCertificazioniProdotto(prodotto.getId());
     }
+    
+
+    @Override
+    public void decrementaQuantita(int idProdotto, int quantitaDaDecrementare) {
+        // Validazione parametri di input
+        if (quantitaDaDecrementare <= 0) {
+            throw new IllegalArgumentException("La quantità da decrementare deve essere maggiore di zero");
+        }
+
+        // Ricerca del prodotto tramite repository
+        Prodotto prodotto = this.prodottoRepository.findById(idProdotto);
+        if (prodotto == null) {
+            throw new IllegalArgumentException("Prodotto con ID " + idProdotto + " non trovato");
+        }
+
+        // Verifica che ci sia abbastanza quantità disponibile
+        int quantitaDisponibile = prodotto.getQuantitaDisponibile();
+        if (quantitaDaDecrementare > quantitaDisponibile) {
+            throw new QuantitaNonDisponibileException(
+                    (long) idProdotto,
+                    quantitaDaDecrementare,
+                    quantitaDisponibile,
+                    "Prodotto");
+        }
+
+        // Decrementa la quantità e salva nel repository
+        prodotto.setQuantitaDisponibile(quantitaDisponibile - quantitaDaDecrementare);
+        this.prodottoRepository.save(prodotto);
+    }
+
+
 }

@@ -56,7 +56,7 @@ public class EsempioUtilizzoServizi {
                 "hashedPassword", "123456789", TipoRuolo.ACQUIRENTE, true);
 
         // Crea un DistributoreDiTipicita (classe concreta che estende Venditore)
-        DatiAzienda datiAzienda = new DatiAzienda("Azienda Agricola", "12345678901",
+        DatiAzienda datiAzienda = new DatiAzienda(1,"Azienda Agricola", "12345678901",
                 "Via Campagna 10", "Azienda agricola specializzata", "logo.jpg", "www.azienda.com");
         DistributoreDiTipicita venditore = new DistributoreDiTipicita(1, "Nome", "Cognome",
                 "farm@email.com", "hashedPassword", "987654321", datiAzienda,

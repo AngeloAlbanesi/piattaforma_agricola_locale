@@ -116,7 +116,7 @@ public class TestRepositories {
                 "hashedPassword", "123456789", TipoRuolo.ACQUIRENTE, true);
 
         // Crea un DistributoreDiTipicita (classe concreta che estende Venditore)
-        DatiAzienda datiAzienda = new DatiAzienda("Azienda Test", "12345678901",
+        DatiAzienda datiAzienda = new DatiAzienda(1,"Azienda Test", "12345678901",
                 "Via Test 123", "Descrizione test", "logo.jpg", "www.test.com");
         DistributoreDiTipicita venditore = new DistributoreDiTipicita(1, "Nome", "Cognome",
                 "venditore@email.com", "hashedPassword", "987654321", datiAzienda,

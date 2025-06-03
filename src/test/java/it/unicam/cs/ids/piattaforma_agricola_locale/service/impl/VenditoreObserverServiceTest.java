@@ -51,7 +51,7 @@ public class VenditoreObserverServiceTest {
         ordineService = new OrdineService();
 
         // Crea dati azienda per il venditore
-        DatiAzienda datiAzienda = new DatiAzienda("Azienda Test", "12345678901",
+        DatiAzienda datiAzienda = new DatiAzienda(1,"Azienda Test", "12345678901",
                 "Via Test 1", "Descrizione Test", "logo.png", "www.test.it");
 
         // Crea venditore

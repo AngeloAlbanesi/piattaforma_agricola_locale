@@ -34,7 +34,7 @@ public class DecrementaQuantitaTest {
         pacchettoService = new PacchettoService();
 
         // Crea dati azienda di test
-        DatiAzienda datiAzienda = new DatiAzienda("Test Farm", "123456789", "Via Test 123", "Azienda di test",
+        DatiAzienda datiAzienda = new DatiAzienda(1,"Test Farm", "123456789", "Via Test 123", "Azienda di test",
                 "logo.jpg", "www.test.com");
 
         // Crea produttore e distributore di test

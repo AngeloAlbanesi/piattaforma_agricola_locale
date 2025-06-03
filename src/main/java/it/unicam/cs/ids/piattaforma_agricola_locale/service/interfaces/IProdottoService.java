@@ -21,4 +21,7 @@ public interface IProdottoService {
     List<Certificazione> getCertificazioniDelProdotto(Prodotto prodotto);
     void stampaCertificazioni(Prodotto prodotto); // Già presente, ma ora usa il service
     void mostraProdotti(Venditore venditore); // Già presente
+
+    void decrementaQuantita(int idProdotto, int quantitaDaDecrementare);
+    
 }

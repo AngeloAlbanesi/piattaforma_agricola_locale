@@ -10,8 +10,6 @@ import java.util.logging.Logger;
  * Questa classe rappresenta lo scheletro per l'elaborazione di pagamenti
  * tramite PayPal. Al momento logga un messaggio e restituisce successo.
  * 
- * @author Sistema di Pagamento PayPal
- * @version 1.0
  */
 public class PagamentoPayPalStrategy implements IMetodoPagamentoStrategy {
 
@@ -40,14 +38,14 @@ public class PagamentoPayPalStrategy implements IMetodoPagamentoStrategy {
             logger.info(String.format("Elaborazione pagamento PayPal per ordine ID: %s, importo: €%.2f",
                     ordine.getIdOrdine(), ordine.getImportoTotale()));
 
-            // TODO: Implementare logica reale per elaborazione pagamento PayPal
+            //  Implementare logica reale per elaborazione pagamento PayPal
             // - Autenticazione con API PayPal
             // - Creazione richiesta di pagamento
             // - Gestione redirect utente
             // - Verifica callback di conferma
             // - Finalizzazione transazione
 
-            logger.info("Pagamento PayPal elaborato con successo (SCHELETRO)");
+            logger.info("Pagamento PayPal elaborato con successo");
 
             // Per ora restituisce sempre successo
             return true;

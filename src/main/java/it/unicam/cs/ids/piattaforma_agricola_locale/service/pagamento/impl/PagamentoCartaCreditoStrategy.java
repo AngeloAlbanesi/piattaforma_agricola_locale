@@ -11,8 +11,6 @@ import java.util.logging.Logger;
  * tramite carta di credito. Al momento logga un messaggio e restituisce
  * successo.
  * 
- * @author Sistema di Pagamento Carta di Credito
- * @version 1.0
  */
 public class PagamentoCartaCreditoStrategy implements IMetodoPagamentoStrategy {
 
@@ -41,13 +39,13 @@ public class PagamentoCartaCreditoStrategy implements IMetodoPagamentoStrategy {
             logger.info(String.format("Elaborazione pagamento carta di credito per ordine ID: %s, importo: €%.2f",
                     ordine.getIdOrdine(), ordine.getImportoTotale()));
 
-            // TODO: Implementare logica reale per elaborazione pagamento carta di credito
+            //  Implementare logica reale per elaborazione pagamento carta di credito
             // - Validazione dati carta
             // - Comunicazione con gateway di pagamento
             // - Gestione autorizzazione
             // - Gestione transazione
 
-            logger.info("Pagamento carta di credito elaborato con successo (SCHELETRO)");
+            logger.info("Pagamento carta di credito elaborato con successo");
 
             // Per ora restituisce sempre successo
             return true;

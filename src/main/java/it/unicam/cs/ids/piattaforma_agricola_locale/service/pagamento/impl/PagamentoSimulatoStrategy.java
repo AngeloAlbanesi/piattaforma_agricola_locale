@@ -9,8 +9,6 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.PagamentoE
  * Questa classe simula il processo di elaborazione del pagamento
  * stampando i dettagli dell'ordine e restituendo sempre successo.
  * 
- * @author Sistema di Pagamento Simulato
- * @version 1.0
  */
 public class PagamentoSimulatoStrategy implements IMetodoPagamentoStrategy {
     

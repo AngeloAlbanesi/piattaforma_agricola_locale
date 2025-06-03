@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
-//prova
+
 public class Carrello {
     private int idCarrello;
     private Acquirente acquirente;

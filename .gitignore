@@ -36,3 +36,4 @@ build/
 .vscode/
 .DS_Store
 docs/sequence-diagram-aggiornamento-quantita-prodotto.puml
+docs/

@@ -43,16 +43,16 @@ public class Main {
             new DistributoreDiTipicita(
                 00001, "Mario", "Rossi", "mario.rossi@marche.it", "pw1", "3331112222",
                 datiAzienda1, prodotti1,
-                TipoRuolo.DISTRIBUTORE_DI_TIPICITA, true
+                TipoRuolo.DISTRIBUTORE_DI_TIPICITA
             );
         DistributoreDiTipicita distributore2 =
             new DistributoreDiTipicita(
                 00002, "Luca", "Bianchi", "luca.bianchi@toscana.it", "pw2", "3332223333",
                 datiAzienda2, prodotti2,
-                TipoRuolo.DISTRIBUTORE_DI_TIPICITA, true
+                TipoRuolo.DISTRIBUTORE_DI_TIPICITA
             );
         Curatore curatore1 = new Curatore(11111,"Pinco","Pallo", "pinco.pallo@curatori.it", "pwCuratore", "3334455678",
-                TipoRuolo.CURATORE, true);
+                TipoRuolo.CURATORE);
 
         // VenditoreService venditoreService = new VenditoreService();
 

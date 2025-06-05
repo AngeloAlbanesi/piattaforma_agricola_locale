@@ -12,9 +12,8 @@ public class Produttore extends Venditore {
 
     public Produttore(int idUtente, String nome, String cognome, String email, String passwordHash,
             String numeroTelefono, DatiAzienda datiAzienda,
-            List<Prodotto> prodottiOfferti, TipoRuolo tipoRuolo, boolean isAttivo) {
-        super(idUtente, nome, cognome, email, passwordHash, numeroTelefono, datiAzienda, prodottiOfferti, tipoRuolo,
-                isAttivo);
+            List<Prodotto> prodottiOfferti, TipoRuolo tipoRuolo) {
+        super(idUtente, nome, cognome, email, passwordHash, numeroTelefono, datiAzienda, prodottiOfferti, tipoRuolo);
     }
 
 	

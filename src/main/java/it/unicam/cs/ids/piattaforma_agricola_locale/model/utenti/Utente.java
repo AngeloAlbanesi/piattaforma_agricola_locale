@@ -15,7 +15,7 @@ public abstract class Utente {
     private boolean isAttivo;
 
     public Utente(int idUtente, String nome, String cognome, String email, String passwordHash, String numeroTelefono,
-            TipoRuolo tipoRuolo, boolean isAttivo) {
+            TipoRuolo tipoRuolo) {
         this.idUtente = idUtente;
         this.nome = nome;
         this.cognome = cognome;
@@ -23,7 +23,7 @@ public abstract class Utente {
         this.passwordHash = passwordHash;
         this.numeroTelefono = numeroTelefono;
         this.tipoRuolo = tipoRuolo;
-        this.isAttivo = isAttivo; // Imposta isAttivo in base al parametro
+        this.isAttivo = true;
     }
 
     public String getNome() {

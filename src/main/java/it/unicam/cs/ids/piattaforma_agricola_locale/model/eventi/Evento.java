@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,8 +22,7 @@ public class Evento implements Acquistabile {
     private List<Venditore> aziendePartecipanti;
 
     public Evento(int idEvento, String nomeEvento, String descrizione, Date DataOraInizio, Date DataOraFine,
-            String luogoEvento, int capienzaMassima, StatoEventoValori statoEvento,
-            AnimatoreDellaFiliera organizzatore, List<Venditore> aziendePartecipanti) {
+            String luogoEvento, int capienzaMassima, AnimatoreDellaFiliera organizzatore) {
         this.idEvento = idEvento;
         this.nomeEvento = nomeEvento;
         this.descrizione = descrizione;
@@ -31,9 +31,9 @@ public class Evento implements Acquistabile {
         this.luogoEvento = luogoEvento;
         this.capienzaMassima = capienzaMassima;
         this.postiAttualmentePrenotati = 0;
-        this.statoEvento = statoEvento;
+        this.statoEvento = StatoEventoValori.IN_PROGRAMMA;
         this.organizzatore = organizzatore;
-        this.aziendePartecipanti = aziendePartecipanti;
+        this.aziendePartecipanti = new ArrayList<>();
     }
 
     public int getIdEvento() {
@@ -92,22 +92,6 @@ public class Evento implements Acquistabile {
         this.capienzaMassima = capienzaMassima;
     }
 
-    public boolean incrementaPostiPrenotati(int quantita) {
-        if (quantita > capienzaMassima - postiAttualmentePrenotati) {
-            return false;
-        }
-        this.postiAttualmentePrenotati += quantita;
-        return true;
-    }
-
-    public boolean decrementaPostiPrenotati(int quantita) {
-        if (quantita > postiAttualmentePrenotati) {
-            return false;
-        }
-        this.postiAttualmentePrenotati -= quantita;
-        return true;
-    }
-
     public int getPostiDisponibili() {
         return capienzaMassima - postiAttualmentePrenotati;
     }
@@ -130,4 +114,38 @@ public class Evento implements Acquistabile {
     public Venditore getVenditore() {
         return null;
     }
+
+    public void addAziendaPartecipante(Venditore venditore){
+        aziendePartecipanti.add(venditore);
+        }
+    public void removeAziendaPartecipante(Venditore venditore) {
+        aziendePartecipanti.remove(venditore);
+    }
+    public List<Venditore> getAziendePartecipanti() {
+        return aziendePartecipanti;
+    }
+    public int getPostiAttualmentePrenotati() {
+        return postiAttualmentePrenotati;
+    }
+    public void setPostiAttualmentePrenotati(int postiAttualmentePrenotati) {
+        if (postiAttualmentePrenotati < 0) {
+            throw new IllegalArgumentException("Il numero di posti prenotati non può essere negativo.");
+        }
+        if (postiAttualmentePrenotati > capienzaMassima) {
+            throw new IllegalArgumentException("Il numero di posti prenotati non può superare la capienza massima.");
+        }
+        this.postiAttualmentePrenotati = postiAttualmentePrenotati;
+    }
+
+    public StatoEventoValori getStatoEvento() {
+        return statoEvento;
+    }
+    public void setStatoEvento(StatoEventoValori statoEvento) {
+        if (statoEvento == null) {
+            throw new IllegalArgumentException("Lo stato dell'evento non può essere nullo.");
+        }
+        this.statoEvento = statoEvento;
+    }
+
 }
+

@@ -127,7 +127,7 @@ class CarrelloServiceTest {
                 100, // capienza massima
                 StatoEventoValori.IN_PROGRAMMA,
                 animatore,
-                aziendePartecipanti);
+                //aziendePartecipanti);
 
         // Crea prodotti con diversi stati di verifica
         prodottoApprovato = new Prodotto(1, "Prodotto Approvato", "Descrizione", 10.0, 100, venditore);

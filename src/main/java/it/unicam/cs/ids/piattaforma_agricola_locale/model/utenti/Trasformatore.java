@@ -12,9 +12,8 @@ public class Trasformatore extends Venditore {
     // Costruttore overload per factory (solo parametri base Venditore)
     public Trasformatore(int idUtente, String nome, String cognome, String email, String passwordHash,
             String numeroTelefono, DatiAzienda datiAzienda,
-            java.util.List<Prodotto> prodottiOfferti, TipoRuolo tipoRuolo, boolean isAttivo) {
-        super(idUtente, nome, cognome, email, passwordHash, numeroTelefono, datiAzienda, prodottiOfferti, tipoRuolo,
-                isAttivo);
+            java.util.List<Prodotto> prodottiOfferti, TipoRuolo tipoRuolo ) {
+        super(idUtente, nome, cognome, email, passwordHash, numeroTelefono, datiAzienda, prodottiOfferti, tipoRuolo);
 
     }
 

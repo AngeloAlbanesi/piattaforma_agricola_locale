@@ -6,6 +6,7 @@ import java.util.List;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Ingrediente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.UtenteRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
@@ -13,7 +14,14 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICuratore
 
 public class CuratoreService implements ICuratoreService {
 
-    private UtenteRepository utenteRepository = new UtenteRepository();
+    private final IUtenteRepository utenteRepository ;
+
+    public CuratoreService(UtenteRepository utenteRepository) {
+        this.utenteRepository = utenteRepository ;
+    }
+    public CuratoreService() {
+        utenteRepository = new UtenteRepository();
+    }
 
     @Override
     public List<DatiAzienda> getDatiAziendaInAttesaRevisione() {

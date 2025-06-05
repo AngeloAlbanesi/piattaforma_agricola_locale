@@ -11,9 +11,9 @@ import java.util.UUID;
 public class AnimatoreDellaFiliera extends Utente {
 
     public AnimatoreDellaFiliera(int idUtente, String nome, String cognome, String email, String passwordHash, String numeroTelefono,
-                                 TipoRuolo tipoRuolo, boolean isAttivo) {
+                                 TipoRuolo tipoRuolo) {
 
-        super(idUtente ,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo, isAttivo);
+        super(idUtente ,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
     }
 
 

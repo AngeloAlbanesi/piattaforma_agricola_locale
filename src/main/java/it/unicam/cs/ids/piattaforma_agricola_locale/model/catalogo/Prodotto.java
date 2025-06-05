@@ -19,9 +19,11 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
     private String feedbackVerifica;
     private Venditore venditore;
     private List<Certificazione> certificazioniProdotto;
+    private Integer idProcessoTrasforamzioneOriginiario;
+    private TipoOrigineProdotto tipoOrigineProdotto;
 
     public Prodotto(int idProdotto, String nome, String descrizione, double prezzo, int quantitaDisponibile,
-            Venditore venditore) {
+            Venditore venditore,int idProcessoTrasforamzioneOriginiario, TipoOrigineProdotto tipoOrigineProdotto) {
         this.idProdotto = idProdotto;
         this.nome = nome;
         this.descrizione = descrizione;
@@ -30,6 +32,8 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
         this.venditore = venditore;
         this.statoVerifica = StatoVerificaValori.IN_REVISIONE;
         this.certificazioniProdotto = new ArrayList<>();
+        this.idProcessoTrasforamzioneOriginiario = idProcessoTrasforamzioneOriginiario;
+        this.tipoOrigineProdotto = tipoOrigineProdotto;
     }
 
     public int getId() {
@@ -91,8 +95,6 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
                 '}';
     }
 
-
-
     public List<Certificazione> getCertificazioni() {
         return certificazioniProdotto;
     }
@@ -105,7 +107,19 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
             System.err.println("Errore: tentativo di aggiungere certificazione non pertinente al prodotto.");
         }
     }
-//
+
+    public Integer getIdProcessoTrasforamzioneOriginiario() {
+        return idProcessoTrasforamzioneOriginiario;
+    }
+    public void setIdProcessoTrasforamzioneOriginiario(Integer idProcessoTrasforamzioneOriginiario) {
+        this.idProcessoTrasforamzioneOriginiario = idProcessoTrasforamzioneOriginiario;
+    }
+    public TipoOrigineProdotto getTipoOrigineProdotto() {
+        return tipoOrigineProdotto;
+    }
+    public void setTipoOrigineProdotto(TipoOrigineProdotto tipoOrigineProdotto) {
+        this.tipoOrigineProdotto = tipoOrigineProdotto;
+    }
 
 
 

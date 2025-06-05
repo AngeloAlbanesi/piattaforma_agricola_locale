@@ -16,21 +16,7 @@ public class AnimatoreDellaFiliera extends Utente {
         super(idUtente ,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo, isAttivo);
     }
 
-    public Evento creaEvento(){
-        return null;//TODO : creare evento, anche i parametri del metodo 
-    }
 
-    public boolean modificaEvento(Evento evento){
-        return false;//TODO : modificare evento
-    }
-
-    public boolean annullaEvento(Evento evento){
-        return false;//TODO : annullare evento
-    }
-
-    public boolean invitaAziendaAdEvento(Evento evento, Venditore venditore){
-        return false;//TODO : invita azienda ad evento
-    }
 
     
     

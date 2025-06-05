@@ -25,35 +25,4 @@ public class DistributoreDiTipicita extends Venditore {
         return pacchettiOfferti;
     }
 
-    /*
-     * public boolean aggiungiPacchettoCatalogo(Pacchetto pacchetto) {
-     * this.pacchettiOfferti.add(pacchetto);
-     * return true;
-     * }
-     * 
-     * public boolean rimuoviPacchettoCatalogo(Pacchetto pacchetto) {
-     * return this.pacchettiOfferti.remove(pacchetto);
-     * }
-     * 
-     * 
-     * public boolean aggiungiProdottoAlPacchetto(Pacchetto pacchetto, Acquistabile
-     * prodotto) {
-     * if (this.pacchettiOfferti.contains(pacchetto)) {
-     * pacchetto.aggiungiElemento(prodotto);
-     * 
-     * return true;
-     * }
-     * return false;
-     * }
-     * 
-     * public boolean rimuoviProdottoDalPacchetto(Pacchetto pacchetto, Acquistabile
-     * prodotto) {
-     * if (this.pacchettiOfferti.contains(pacchetto)) {
-     * pacchetto.rimuoviElemento(prodotto);
-     * return true;
-     * }
-     * return false;
-     * }
-     * 
-     */
 }

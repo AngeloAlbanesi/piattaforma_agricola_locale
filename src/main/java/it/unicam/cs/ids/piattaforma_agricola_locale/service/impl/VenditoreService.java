@@ -50,19 +50,21 @@ public class VenditoreService implements IVenditoreService {
     @Override
     public DatiAzienda aggiungiDatiAzienda(Venditore venditore, String nomeAzienda, String partitaIva, String indirizzoAzienda,
                                            String descrizioneAzienda, String logoUrl, String sitoWebUrl) { // Modificato per ritornare DatiAzienda
-        if (venditore == null) {
-            System.err.println("Venditore non valido.");
-            return null;
-        }
-        // Genera un ID per DatiAzienda se non fornito o gestito diversamente
-        int idAzienda = Math.abs(UUID.randomUUID().hashCode());
-        DatiAzienda datiAzienda = new DatiAzienda(idAzienda, nomeAzienda, partitaIva, indirizzoAzienda, descrizioneAzienda,
-                logoUrl, sitoWebUrl);
-        venditore.setDatiAzienda(datiAzienda);
-        // Se il venditore deve essere salvato dopo questa modifica:
 
-        datiAziendaRepository.save(datiAzienda);
-        return datiAzienda;
+        if(datiAziendaRepository.findById(partitaIva).isEmpty()) {
+            // Genera un ID per DatiAzienda se non fornito o gestito diversamente
+            int idAzienda = Math.abs(UUID.randomUUID().hashCode());
+            DatiAzienda datiAzienda = new DatiAzienda(idAzienda, nomeAzienda, partitaIva, indirizzoAzienda, descrizioneAzienda,
+                    logoUrl, sitoWebUrl);
+            venditore.setDatiAzienda(datiAzienda);
+            // Se il venditore deve essere salvato dopo questa modifica:
+
+            datiAziendaRepository.save(datiAzienda);
+            return datiAzienda;
+        }else
+        {
+            throw new IllegalStateException("DatiAzienda gia presenti");
+        }
     }
 
     // Metodo per aggiungere una certificazione ai DatiAzienda di un Venditore

@@ -17,20 +17,4 @@ public class Curatore extends Utente {
         super(idUtente,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo, isAttivo);
     }
 
-    // METODO PER LA CLI da eliminare
-    /*
-     * public void revisionaProdotto(Prodotto prodotto) {
-     * System.out.println(prodotto.getNome() +" "+prodotto.getDescrizione() +" "
-     * +prodotto.getStatoVerifica());
-     * System.out.println("Approvare questo prodotto? (S/N)");
-     * Scanner scanner = new Scanner(System.in);
-     * String conferma = scanner.nextLine();
-     * if (conferma.equals("s")){
-     * prodotto.setStatoVerifica(StatoVerificaValori.APPROVATO);
-     * }else{
-     * prodotto.setStatoVerifica(StatoVerificaValori.RESPINTO);
-     * }
-     * }
-     */
-    
 }

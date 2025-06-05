@@ -16,7 +16,7 @@ public interface IProdottoRepository {
 
     void deleteById(int id);
 
-    List<Prodotto> findByVenditoreId(Venditore venditore);
+    List<Prodotto> findByVenditore(Venditore venditore);
 
     List<Prodotto> findByNome(String nome);
 

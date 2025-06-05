@@ -36,7 +36,7 @@ public class ProdottoRepository implements IProdottoRepository {
     }
 
     @Override
-    public List<Prodotto> findByVenditoreId(Venditore venditore) {
+    public List<Prodotto> findByVenditore(Venditore venditore) {
         return prodotti.values().stream()
                 .filter(prodotto -> prodotto.getVenditore().equals(venditore))
                 .collect(Collectors.toList());

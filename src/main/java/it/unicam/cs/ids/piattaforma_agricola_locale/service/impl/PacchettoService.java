@@ -9,7 +9,9 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.PacchettoRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.UtenteRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IPacchettoService;
@@ -24,13 +26,16 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponi
 public class PacchettoService implements IPacchettoService {
 
     private final IPacchettoRepository pacchettoRepository;
+    private final IUtenteRepository utenteRepository;
 
-    public PacchettoService(IPacchettoRepository pacchettoRepository) {
+    public PacchettoService(IPacchettoRepository pacchettoRepository, IUtenteRepository utenteRepository) {
         this.pacchettoRepository = pacchettoRepository;
+        this.utenteRepository = utenteRepository;
     }
 
     public PacchettoService() {
-        this.pacchettoRepository = new PacchettoRepository(); // Costruttore di default per compatibilità
+        this.pacchettoRepository = new PacchettoRepository();
+        this.utenteRepository = new UtenteRepository();
     }
 
     @Override
@@ -39,86 +44,94 @@ public class PacchettoService implements IPacchettoService {
         int idPacchetto = UUID.randomUUID().hashCode();
         Pacchetto pacchetto = new Pacchetto(distributore, idPacchetto, nome, descrizione, quantita, prezzoPacchetto);
         distributore.getPacchettiOfferti().add(pacchetto);
-        pacchettoRepository.salva(pacchetto);
+        this.pacchettoRepository.salva(pacchetto);
+        this.utenteRepository.save(distributore);
 
     }
 
     @Override
-    public boolean rimuoviPacchettoCatalogo(DistributoreDiTipicita distributore, Pacchetto pacchetto) {
+    public void rimuoviPacchettoCatalogo(DistributoreDiTipicita distributore, Pacchetto pacchetto) {
         if (distributore != pacchetto.getDistributore()) {
-            return false;
+            throw new IllegalArgumentException("Il distributore non possiede questo pacchetto");
         }
         if (pacchetto != null) {
             pacchetto.getDistributore().getPacchettiOfferti().remove(pacchetto);
-            return true;
+            this.pacchettoRepository.deleteById(pacchetto.getId());
+            this.utenteRepository.save(distributore);
         }
-        return false;
+
     }
 
     @Override
-    public boolean aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
+    public void aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
             Prodotto prodotto) {
+        if (pacchetto == null || prodotto == null || pacchetto.getElementiInclusi() == null) {
+            throw new IllegalArgumentException("Errore nei parametri");
+        }
         if (prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO) {
-            return false;
+            throw new IllegalArgumentException("il prodotto non è stato approvato dal curatore");
         }
 
         if (distributore != pacchetto.getDistributore() || distributore != prodotto.getVenditore()) {
-            return false;
+            throw new IllegalArgumentException("Il distributore non possiede questo pacchetto o prodotto");
         }
-        if (pacchetto != null && prodotto != null && pacchetto.getElementiInclusi() != null) {
-            pacchetto.getElementiInclusi().add(prodotto);
-            return true;
-        }
-        return false;
+
+        pacchetto.aggiungiElemento(prodotto);
+        this.pacchettoRepository.salva(pacchetto);
+
+
     }
 
     @Override
-    public boolean rimuoviProdottoDalPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
+    public void rimuoviProdottoDalPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
             Prodotto prodotto) {
-        if (pacchetto != null && prodotto != null && pacchetto.getElementiInclusi() != null) {
-            return pacchetto.getElementiInclusi().remove(prodotto);
-        }
-        return false;
+
+        if (pacchetto==null)
+            throw new IllegalArgumentException("Il pacchetto non puo essere null");
+        if (prodotto==null)
+            throw new IllegalArgumentException("Il prodotto non puo essere null");
+        if(pacchetto.getDistributore().equals(distributore))
+            throw new IllegalArgumentException("Il distributore non possiede questo pacchetto");
+        if (!pacchetto.getElementiInclusi().contains(prodotto))
+            throw new IllegalArgumentException("il prodotto non fa parte di questo pacchetto");
+
+        pacchetto.rimuoviElemento(prodotto);
+        this.pacchettoRepository.salva(pacchetto);
+
     }
 
-    @Override
-    public void mostraPacchetti(DistributoreDiTipicita distributore) {
-        for (Pacchetto pacchetto : distributore.getPacchettiOfferti()) {
-            System.out.println("Pacchetto: " + pacchetto.getNome() + ", Prezzo: " + pacchetto.getPrezzo()
-                    + " Disponibili: " + pacchetto.getQuantitaDisponibile());
-            stampaProdottiPacchetto(pacchetto);
-        }
-    }
 
     public void aggiungiQuantitaPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
             int quantitaAggiunta) {
-        if (pacchetto == null || quantitaAggiunta <= 0) {
+        if (pacchetto==null)
+            throw new IllegalArgumentException("Il pacchetto non puo essere null");
+        if(pacchetto.getDistributore().equals(distributore))
+            throw new IllegalArgumentException("Il distributore non possiede questo pacchetto");
+        if (pacchetto == null || quantitaAggiunta <= 0)
             throw new IllegalArgumentException("quantità errata");
-        }
+
         pacchetto.setQuantitaDisponibile(pacchetto.getQuantitaDisponibile() + quantitaAggiunta);
+        this.pacchettoRepository.salva(pacchetto);
 
     }
 
     public void rimuoviQuantitaPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
             int quantitaRimossa) {
-        if (pacchetto == null || pacchetto.getQuantitaDisponibile() - quantitaRimossa < 0) {
+
+        if (pacchetto==null)
+            throw new IllegalArgumentException("Il pacchetto non puo essere null");
+        if(pacchetto.getDistributore().equals(distributore))
+            throw new IllegalArgumentException("Il distributore non possiede questo pacchetto");
+
+        if ((pacchetto.getQuantitaDisponibile() - quantitaRimossa) < 0)
             throw new IllegalArgumentException("Impossibile rimuovere " + quantitaRimossa);
-        }
+
         pacchetto.setQuantitaDisponibile(pacchetto.getQuantitaDisponibile() - quantitaRimossa);
+        this.pacchettoRepository.salva(pacchetto);
 
     }
 
-    // Metodo per stampare a video i prodotti che sono dentro un pacchetto
-    public void stampaProdottiPacchetto(Pacchetto pacchetto) {
-        System.out.println("Prodotti nel pacchetto " + pacchetto.getNome() + ":");
-        for (Acquistabile elemento : pacchetto.getElementiInclusi()) {
-            if (elemento instanceof Prodotto) {
-                Prodotto prodotto = (Prodotto) elemento;
-                System.out.println(
-                        "- " + prodotto.getNome() + " (ID: " + prodotto.getId() + ") " + prodotto.getStatoVerifica());
-            }
-        }
-    }
+
 
     @Override
     public void decrementaQuantita(int idPacchetto, int quantitaDaDecrementare) {

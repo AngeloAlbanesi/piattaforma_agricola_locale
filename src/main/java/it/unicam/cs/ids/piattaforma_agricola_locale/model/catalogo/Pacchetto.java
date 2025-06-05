@@ -43,10 +43,10 @@ public class Pacchetto implements Acquistabile {
         return distributore;
     }
 
-/*
+
     public  void aggiungiElemento(Acquistabile elemento) {
         this.elementiInclusi.add(elemento);
-    }*/
+    }
 
     public void rimuoviElemento(Acquistabile elemento) {
         this.elementiInclusi.remove(elemento);

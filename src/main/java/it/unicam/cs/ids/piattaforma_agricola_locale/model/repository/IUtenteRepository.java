@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
+/*package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
 import java.util.List;
 
@@ -32,3 +32,4 @@ public interface IUtenteRepository {
     List<GestorePiattaforma> findAllGestori();
 
 }
+*/

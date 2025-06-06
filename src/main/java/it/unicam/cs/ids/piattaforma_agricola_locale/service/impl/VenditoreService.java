@@ -3,8 +3,9 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl; // o service.
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.DatiAziendaRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IDatiAziendaRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.UtenteRepository;
+
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 // Assumendo che IVenditoreRepository e ICertificazioneService siano in service.interfaces
@@ -18,14 +19,14 @@ import java.util.UUID; // Per generare ID DatiAzienda di esempio
 
 public class VenditoreService implements IVenditoreService {
 
-    private IUtenteRepository utenteRepository; // Se necessario per salvare il venditore
+    private IVenditoreRepository venditoreRepository; // Se necessario per salvare il venditore
     private ICertificazioneService certificazioneService;
     private IDatiAziendaRepository datiAziendaRepository;
 
     // Costruttore per l'iniezione delle dipendenze
-    public VenditoreService(ICertificazioneService certificazioneService , IUtenteRepository utenteRepository, IDatiAziendaRepository datiAziendaRepository) {
+    public VenditoreService(ICertificazioneService certificazioneService , IVenditoreRepository venditoreRepository, IDatiAziendaRepository datiAziendaRepository) {
         this.certificazioneService = certificazioneService;
-        this.utenteRepository = utenteRepository;
+        this.venditoreRepository = venditoreRepository;
         this.datiAziendaRepository = datiAziendaRepository;
 
     }

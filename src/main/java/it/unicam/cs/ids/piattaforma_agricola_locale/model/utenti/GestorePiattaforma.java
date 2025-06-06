@@ -11,7 +11,7 @@ public class GestorePiattaforma extends Utente {
 
     public GestorePiattaforma(int idUtente,String nome, String cognome, String email, String passwordHash, String numeroTelefono,
              TipoRuolo tipoRuolo) {
-        super(idUtente,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
+        super(nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
 
     }
 

@@ -13,7 +13,7 @@ public class DatiAziendaRepository implements IDatiAziendaRepository {
     private final Map<String, DatiAzienda> store = new HashMap<>();
 
     @Override
-    public Optional<DatiAzienda> findById(String partitaIva) {
+    public Optional<DatiAzienda> findById(Long id) {
         return store.values().stream()
                 .filter(datiAzienda -> datiAzienda.getPartitaIva().equals(partitaIva))
                 .findFirst();

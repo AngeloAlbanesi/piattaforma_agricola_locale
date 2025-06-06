@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
+/*package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,6 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 public class UtenteRepository implements IUtenteRepository {
 
     private HashMap<Integer, Utente> store;
-
     public UtenteRepository() {
         this.store = new HashMap<>();
     }
@@ -88,3 +87,4 @@ public class UtenteRepository implements IUtenteRepository {
     }
 
 }
+*/

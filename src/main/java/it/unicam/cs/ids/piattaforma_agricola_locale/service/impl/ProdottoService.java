@@ -8,9 +8,10 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponi
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository; // Usa interfaccia
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteRepository;
+
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ProdottoRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.UtenteRepository;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 // Assumendo che ICertificazioneService sia in service.interfaces
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
@@ -21,13 +22,13 @@ public class ProdottoService implements IProdottoService {
 
     private final IProdottoRepository prodottoRepository; // Usa l'interfaccia
     private  ICertificazioneService certificazioneService; // Inietta il service delle certificazioni
-    private  IUtenteRepository utenteRepository;
+    private IVenditoreRepository venditoreRepository;
 
     // Costruttore per l'iniezione delle dipendenze
-    public ProdottoService(IProdottoRepository prodottoRepository, ICertificazioneService certificazioneService, IUtenteRepository utenteRepository) {
+    public ProdottoService(IProdottoRepository prodottoRepository, ICertificazioneService certificazioneService, IVenditoreRepository venditoreRepository) {
         this.prodottoRepository = prodottoRepository;
         this.certificazioneService = certificazioneService;
-        this.utenteRepository = utenteRepository;
+        this.venditoreRepository = venditoreRepository;
     }
 
     public ProdottoService(IProdottoRepository prodottoRepository) {
@@ -52,13 +53,13 @@ public class ProdottoService implements IProdottoService {
 
         venditore.getProdottiOfferti().add(prodotto); // Aggiunge alla lista del venditore
         prodottoRepository.save(prodotto); // Salva nel repository dei prodotti
-        utenteRepository.save(venditore);
+        venditoreRepository.save(venditore);
         return prodotto;
     }
 
     @Override
     public List<Prodotto> getProdottiOfferti(Venditore venditore) {
-        return prodottoRepository.findByVenditore(venditore); // Assumendo che Venditore abbia getIdUtente()
+        return prodottoRepository.findByVenditore(venditore);
     }
 
     @Override

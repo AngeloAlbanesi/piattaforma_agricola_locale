@@ -9,7 +9,9 @@ public interface IDatiAziendaRepository {
 
     Optional<DatiAzienda> findById(Long id);
 
-    public Optional<DatiAzienda> findByPartitaIva(String partitaIva);
+    Optional<DatiAzienda> findByPartitaIva(String partitaIva);
+
+    Optional<DatiAzienda> findById(String partitaIva);
 
     void save(DatiAzienda datiAzienda);
 

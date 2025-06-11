@@ -7,30 +7,29 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Ingrediente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.*;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.*;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICuratoreService;
 
 public class CuratoreService implements ICuratoreService {
+   
 
-    private final IVenditoreRepository venditoreRepository;
-    private final IProdottoRepository prodottoRepository;
-    private final IDatiAziendaRepository datiAziendaRepository;
+    private final IVenditoreRepository venditoreRepository ;
+    private final IProdottoRepository prodottoRepository ;
+    private final IDatiAziendaRepository datiAziendaRepository ;
 
-    public CuratoreService(IVenditoreRepository venditoreRepository, IProdottoRepository prodottoRepository,
-            IDatiAziendaRepository datiAziendaRepository) {
-        this.venditoreRepository = venditoreRepository;
-        this.prodottoRepository = prodottoRepository;
-        this.datiAziendaRepository = datiAziendaRepository;
+    public CuratoreService(IVenditoreRepository venditoreRepository, IProdottoRepository prodottoRepository, IDatiAziendaRepository datiAziendaRepository) {
+        this.venditoreRepository = venditoreRepository ;
+        this.prodottoRepository = prodottoRepository ;
+        this.datiAziendaRepository = datiAziendaRepository ;
+
     }
 
     public CuratoreService() {
         venditoreRepository = new VenditoreRepository();
         prodottoRepository = new ProdottoRepository();
         datiAziendaRepository = new DatiAziendaRepository();
-    
     }
 
     @Override
@@ -46,7 +45,7 @@ public class CuratoreService implements ICuratoreService {
 
     @Override
     public void approvaDatiAzienda(Venditore venditore, String feedbackVerifica) {
-        
+
         DatiAzienda datiAzienda = venditore.getDatiAzienda();
         if (datiAzienda != null && datiAzienda.getStatoVerifica() == StatoVerificaValori.IN_REVISIONE) {
             datiAzienda.setStatoVerifica(StatoVerificaValori.APPROVATO);
@@ -56,9 +55,10 @@ public class CuratoreService implements ICuratoreService {
         }
     }
 
+
     @Override
     public void respingiDatiAzienda(Venditore venditore, String feedbackVerifica) {
-        
+
         DatiAzienda datiAzienda = venditore.getDatiAzienda();
         if (datiAzienda != null && datiAzienda.getStatoVerifica() == StatoVerificaValori.IN_REVISIONE) {
             datiAzienda.setStatoVerifica(StatoVerificaValori.RESPINTO);

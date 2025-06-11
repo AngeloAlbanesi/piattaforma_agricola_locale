@@ -13,6 +13,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICuratoreService;
 
 public class CuratoreService implements ICuratoreService {
+   
 
     private final IVenditoreRepository venditoreRepository ;
     private final IProdottoRepository prodottoRepository ;
@@ -22,7 +23,9 @@ public class CuratoreService implements ICuratoreService {
         this.venditoreRepository = venditoreRepository ;
         this.prodottoRepository = prodottoRepository ;
         this.datiAziendaRepository = datiAziendaRepository ;
+
     }
+
     public CuratoreService() {
         venditoreRepository = new VenditoreRepository();
         prodottoRepository = new ProdottoRepository();
@@ -42,6 +45,7 @@ public class CuratoreService implements ICuratoreService {
 
     @Override
     public void approvaDatiAzienda(Venditore venditore, String feedbackVerifica) {
+
         DatiAzienda datiAzienda = venditore.getDatiAzienda();
         if (datiAzienda != null && datiAzienda.getStatoVerifica() == StatoVerificaValori.IN_REVISIONE) {
             datiAzienda.setStatoVerifica(StatoVerificaValori.APPROVATO);
@@ -54,6 +58,7 @@ public class CuratoreService implements ICuratoreService {
 
     @Override
     public void respingiDatiAzienda(Venditore venditore, String feedbackVerifica) {
+
         DatiAzienda datiAzienda = venditore.getDatiAzienda();
         if (datiAzienda != null && datiAzienda.getStatoVerifica() == StatoVerificaValori.IN_REVISIONE) {
             datiAzienda.setStatoVerifica(StatoVerificaValori.RESPINTO);
@@ -81,13 +86,11 @@ public class CuratoreService implements ICuratoreService {
         }
     }
 
-
-
     @Override
     public List<Prodotto> getProdottiInAttesaRevisione() {
         List<Prodotto> prodottiInAttesa = new ArrayList<>();
-        for (Prodotto p : prodottoRepository.mostraTuttiIProdotti()){
-            if(p.getStatoVerifica() == StatoVerificaValori.IN_REVISIONE){
+        for (Prodotto p : prodottoRepository.mostraTuttiIProdotti()) {
+            if (p.getStatoVerifica() == StatoVerificaValori.IN_REVISIONE) {
                 prodottiInAttesa.add(p);
             }
         }

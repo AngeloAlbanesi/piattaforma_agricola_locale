@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.piattaforma_agricola_locale.piattaforma_agricola_locale;
+/*package it.unicam.cs.ids.piattaforma_agricola_locale.piattaforma_agricola_locale;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.StatoCorrente;
@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * Classe di test per dimostrare il funzionamento del pattern State refactorizzato
  */
-public class TestPatternState {
+/*public class TestPatternState {
     
     public static void main(String[] args) {
         System.out.println("=== Test del Pattern State Refactorizzato ===\n");
@@ -101,4 +101,4 @@ public class TestPatternState {
         System.out.println("✓ Lo stato descrittivo è coerente con lo stato comportamentale");
         System.out.println("✓ Il codice è pulito e manutenibile");
     }
-}
+}*/

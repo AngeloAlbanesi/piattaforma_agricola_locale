@@ -41,4 +41,11 @@ public class DatiAziendaRepository implements IDatiAziendaRepository {
         store.remove(partitaIva);
     }
 
+    @Override
+    public Optional<DatiAzienda> findById(String partitaIva) {
+        return store.values().stream()
+                .filter(datiAzienda -> datiAzienda.getPartitaIva().equals(partitaIva))
+                .findFirst();
+    }
+
 }

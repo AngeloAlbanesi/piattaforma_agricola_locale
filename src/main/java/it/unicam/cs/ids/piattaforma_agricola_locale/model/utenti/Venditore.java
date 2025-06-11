@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2025 
+ *   Copyright (c) 2025
  *   All rights reserved.
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
@@ -13,18 +13,16 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazion
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 
 public abstract class Venditore extends Utente {
-    private StatoAccreditamento statoAccreditamento;
     private DatiAzienda datiAzienda;
     private List<Prodotto> prodottiOfferti;
+    private StatoAccreditamento statoAccreditamento;
 
     public Venditore(String nome, String cognome, String email, String passwordHash,
-            String numeroTelefono, DatiAzienda datiAzienda, TipoRuolo tipoRuolo ) {
+                     String numeroTelefono, DatiAzienda datiAzienda, TipoRuolo tipoRuolo) {
         super(nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
-        statoAccreditamento = StatoAccreditamento.PENDING;
         this.datiAzienda = datiAzienda;
         this.prodottiOfferti = new ArrayList<>();
     }
-
 
     public void stampaDatiAzienda() {
         System.out.println(datiAzienda.getNomeAzienda() + " " + datiAzienda.getDescrizioneAzienda() + " "
@@ -47,7 +45,6 @@ public abstract class Venditore extends Utente {
         return true;// TODO:Completa metodo con anche i parametri del metodo
     }
 
-
     public void setDatiAzienda(DatiAzienda datiAzienda) {
         this.datiAzienda = datiAzienda;
     }
@@ -56,6 +53,11 @@ public abstract class Venditore extends Utente {
         this.getDatiAzienda().getCertificazioniAzienda().add(certificazione);
     }
 
+    public void aggiungiProdottoOfferto(Prodotto prodotto) {
+        if (prodotto != null && !this.prodottiOfferti.contains(prodotto)) {
+            this.prodottiOfferti.add(prodotto);
+        }
+    }
     public StatoAccreditamento getStatoAccreditamento() {
         return statoAccreditamento;
     }

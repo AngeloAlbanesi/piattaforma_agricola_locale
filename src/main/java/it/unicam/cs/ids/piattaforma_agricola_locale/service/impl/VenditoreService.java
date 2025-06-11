@@ -4,7 +4,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazion
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.DatiAziendaRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IDatiAziendaRepository;
-
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;

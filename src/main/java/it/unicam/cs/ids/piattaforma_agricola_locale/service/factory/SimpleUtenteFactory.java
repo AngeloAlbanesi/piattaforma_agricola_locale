@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.piattaforma_agricola_locale.service.factory;
+/*package it.unicam.cs.ids.piattaforma_agricola_locale.service.factory;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
@@ -55,4 +55,4 @@ public class SimpleUtenteFactory implements UtenteFactory {
                 throw new IllegalArgumentException("TipoRuolo non supportato: " + tipoRuolo);
         }
     }
-}
+}*/

@@ -15,6 +15,13 @@ public class DatiAziendaRepository implements IDatiAziendaRepository {
     @Override
     public Optional<DatiAzienda> findById(Long id) {
         return store.values().stream()
+                .filter(datiAzienda -> datiAzienda.getIdAzienda() == id)
+                .findFirst();
+    }
+
+    @Override
+    public Optional<DatiAzienda> findByPartitaIva(String partitaIva) {
+        return store.values().stream()
                 .filter(datiAzienda -> datiAzienda.getPartitaIva().equals(partitaIva))
                 .findFirst();
     }

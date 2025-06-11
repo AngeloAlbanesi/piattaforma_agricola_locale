@@ -3,7 +3,6 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Ingrediente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.*;

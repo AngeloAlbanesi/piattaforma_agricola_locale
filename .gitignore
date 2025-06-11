@@ -39,3 +39,7 @@ docs/sequence-diagram-aggiornamento-quantita-prodotto.puml
 docs/
 example/
 EsempioMiglioramento.java
+/tests/
+*.log
+temp/
+.env

@@ -2,7 +2,6 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 
 import java.util.List;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Ingrediente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;

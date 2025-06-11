@@ -32,11 +32,11 @@ public class SimpleUtenteFactory implements UtenteFactory {
         switch (tipoRuolo) {
 
             case ACQUIRENTE:
-                return new Acquirente(idUtente,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo, isAttivo);
+                return new Acquirente(nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
             case PRODUTTORE:
                 return new Produttore(
                     idUtente, nome, cognome, email, passwordHash, numeroTelefono,
-                    datiAzienda, prodottiOfferti, tipoRuolo, isAttivo
+                    datiAzienda, prodottiOfferti, tipoRuolo
                 );
             // case TRASFORMATORE:
             //     return new Trasformatore(
@@ -46,12 +46,11 @@ public class SimpleUtenteFactory implements UtenteFactory {
             case DISTRIBUTORE_DI_TIPICITA:
                 return new DistributoreDiTipicita(
                     idUtente, nome, cognome, email, passwordHash, numeroTelefono,
-                    datiAzienda, prodottiOfferti, tipoRuolo, isAttivo
-                );
+                    datiAzienda, prodottiOfferti, tipoRuolo);
             case CURATORE:
-                return new Curatore(idUtente,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo, isAttivo);
+                return new Curatore(idUtente,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
             case ANIMATORE_DELLA_FILIERA:
-                return new AnimatoreDellaFiliera(idUtente,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo, isAttivo);
+                return new AnimatoreDellaFiliera(idUtente,nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
             default:
                 throw new IllegalArgumentException("TipoRuolo non supportato: " + tipoRuolo);
         }

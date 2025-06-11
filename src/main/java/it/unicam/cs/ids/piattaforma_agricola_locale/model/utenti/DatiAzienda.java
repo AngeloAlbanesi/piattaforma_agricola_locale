@@ -12,7 +12,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.ElementoVerific
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 
 public class DatiAzienda implements ElementoVerificabile {
-    private int idAzienda; // ID del venditore
+    private int idVenditore; // ID del venditore
     private String nomeAzienda;
     private String partitaIva;
     private String indirizzoAzienda;
@@ -25,7 +25,7 @@ public class DatiAzienda implements ElementoVerificabile {
 
     public DatiAzienda(int idVenditore,String nomeAzienda, String partitaIva, String indirizzoAzienda, String descrizioneAzienda,
             String logoUrl, String sitoWebUrl) {
-        this.idAzienda = idVenditore;
+        this.idVenditore = idVenditore;
         this.nomeAzienda = nomeAzienda;
         this.partitaIva = partitaIva;
         this.indirizzoAzienda = indirizzoAzienda;
@@ -42,11 +42,11 @@ public class DatiAzienda implements ElementoVerificabile {
     }
 
     public int getIdAzienda() {
-        return idAzienda;
+        return idVenditore;
     }
 
-    public void setIdAzienda(int idAzienda) {
-        this.idAzienda = idAzienda;
+    public void setIdVenditore(int idVenditore) {
+        this.idVenditore = idVenditore;
     }
 
     public String getNomeAzienda() {
@@ -102,7 +102,7 @@ public class DatiAzienda implements ElementoVerificabile {
     }
 
     public void aggiungiCertificazione(Certificazione certificazione) {
-        if (certificazione != null && certificazione.getIdAziendaAssociata() != null && certificazione.getIdAziendaAssociata().equals(this.idAzienda)) {
+        if (certificazione != null && certificazione.getIdAziendaAssociata() != null && certificazione.getIdAziendaAssociata().equals(this.idVenditore)) {
             this.certificazioniAzienda.add(certificazione);
         } else {
             // Gestire l'errore: la certificazione non appartiene a questa azienda
@@ -112,7 +112,7 @@ public class DatiAzienda implements ElementoVerificabile {
 
     @Override
     public int getId() {
-        return idAzienda;
+        return idVenditore;
     }
 
     @Override

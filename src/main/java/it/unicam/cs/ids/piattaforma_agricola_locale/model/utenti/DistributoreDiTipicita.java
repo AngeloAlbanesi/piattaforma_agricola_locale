@@ -11,12 +11,11 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 
 public class DistributoreDiTipicita extends Venditore {
     // Costruttore overload per factory (solo parametri base Venditore)
-    private List<Pacchetto> pacchettiOfferti;
+    private final List<Pacchetto> pacchettiOfferti;
 
-    public DistributoreDiTipicita(int idUtente, String nome, String cognome, String email, String passwordHash,
-            String numeroTelefono, DatiAzienda datiAzienda,
-            java.util.List<Prodotto> prodottiOfferti, TipoRuolo tipoRuolo) {
-        super(idUtente, nome, cognome, email, passwordHash, numeroTelefono, datiAzienda, prodottiOfferti, tipoRuolo);
+    public DistributoreDiTipicita(String nome, String cognome, String email, String passwordHash,
+            String numeroTelefono, DatiAzienda datiAzienda, TipoRuolo tipoRuolo) {
+        super(nome, cognome, email, passwordHash, numeroTelefono, datiAzienda, tipoRuolo);
         this.pacchettiOfferti = new java.util.ArrayList<>();
     }
 

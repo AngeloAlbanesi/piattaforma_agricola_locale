@@ -22,8 +22,6 @@ public interface ICuratoreService {
 
     List<Prodotto> getProdottiInAttesaRevisione();
 
-    List<Prodotto> getProdottiInAttesaRevisioneByVenditore(Venditore venditore);
 
-    void verificaIngredientiLocaliTrasformatore(Ingrediente ingrediente);
 
 }

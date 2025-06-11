@@ -6,14 +6,15 @@ import java.util.UUID;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteRepository;
+
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.PacchettoRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.UtenteRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.VenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IPacchettoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
 
@@ -26,16 +27,16 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponi
 public class PacchettoService implements IPacchettoService {
 
     private final IPacchettoRepository pacchettoRepository;
-    private final IUtenteRepository utenteRepository;
+    private final IVenditoreRepository venditoreRepository;
 
-    public PacchettoService(IPacchettoRepository pacchettoRepository, IUtenteRepository utenteRepository) {
+    public PacchettoService(IPacchettoRepository pacchettoRepository, IVenditoreRepository venditoreRepository) {
         this.pacchettoRepository = pacchettoRepository;
-        this.utenteRepository = utenteRepository;
+        this.venditoreRepository = venditoreRepository;
     }
 
     public PacchettoService() {
         this.pacchettoRepository = new PacchettoRepository();
-        this.utenteRepository = new UtenteRepository();
+        this.venditoreRepository = new VenditoreRepository();
     }
 
     @Override
@@ -45,7 +46,7 @@ public class PacchettoService implements IPacchettoService {
         Pacchetto pacchetto = new Pacchetto(distributore, idPacchetto, nome, descrizione, quantita, prezzoPacchetto);
         distributore.getPacchettiOfferti().add(pacchetto);
         this.pacchettoRepository.salva(pacchetto);
-        this.utenteRepository.save(distributore);
+        this.venditoreRepository.save(distributore);
 
     }
 
@@ -57,7 +58,7 @@ public class PacchettoService implements IPacchettoService {
         if (pacchetto != null) {
             pacchetto.getDistributore().getPacchettiOfferti().remove(pacchetto);
             this.pacchettoRepository.deleteById(pacchetto.getId());
-            this.utenteRepository.save(distributore);
+            this.venditoreRepository.save(distributore);
         }
 
     }

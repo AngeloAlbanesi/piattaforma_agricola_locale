@@ -55,8 +55,7 @@ class CarrelloServiceTest {
                 "mario.rossi@test.com",
                 "hashedPassword",
                 "1234567890",
-                TipoRuolo.ACQUIRENTE,
-                true);
+                TipoRuolo.ACQUIRENTE);
 
         // Crea un venditore di test
         DatiAzienda datiAzienda = new DatiAzienda(2,
@@ -76,8 +75,7 @@ class CarrelloServiceTest {
                 "0987654321",
                 datiAzienda,
                 null,
-                TipoRuolo.PRODUTTORE,
-                true);
+                TipoRuolo.PRODUTTORE);
 
         // Crea un distributore di test per i pacchetti
         DatiAzienda datiAziendaDistributore = new DatiAzienda(1,
@@ -98,8 +96,7 @@ class CarrelloServiceTest {
                 "9876543210",
                 datiAziendaDistributore,
                 new ArrayList<Prodotto>(),
-                TipoRuolo.DISTRIBUTORE_DI_TIPICITA,
-                true);
+                TipoRuolo.DISTRIBUTORE_DI_TIPICITA);
 
         // Crea un animatore della filiera per gli eventi
         animatore = new AnimatoreDellaFiliera(
@@ -109,8 +106,7 @@ class CarrelloServiceTest {
                 "luigi.verdi@test.com",
                 "hashedPassword",
                 "5551234567",
-                TipoRuolo.ANIMATORE_DELLA_FILIERA,
-                true);
+                TipoRuolo.ANIMATORE_DELLA_FILIERA);
 
         // Crea un evento di test
         Date dataInizio = new Date(System.currentTimeMillis() + 86400000); // domani

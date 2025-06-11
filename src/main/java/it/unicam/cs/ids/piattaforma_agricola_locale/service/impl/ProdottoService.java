@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -22,12 +23,15 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProcesso
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.processo.ProcessoTrasformazioneDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.ProcessoMapper;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IProdottoObservable;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.ICuratoreObserver;
 
-public class ProdottoService implements IProdottoService {
+public class ProdottoService implements IProdottoService, IProdottoObservable {
 
     private final IProdottoRepository prodottoRepository;
     private ICertificazioneService certificazioneService;
     private IVenditoreRepository venditoreRepository;
+    private final List<ICuratoreObserver> observers;
 
     // Costruttore per l'iniezione delle dipendenze complete
     public ProdottoService(IProdottoRepository prodottoRepository, ICertificazioneService certificazioneService,
@@ -35,10 +39,12 @@ public class ProdottoService implements IProdottoService {
         this.prodottoRepository = prodottoRepository;
         this.certificazioneService = certificazioneService;
         this.venditoreRepository = venditoreRepository;
+        this.observers = new ArrayList<>();
     }
 
     public ProdottoService(IProdottoRepository prodottoRepository) {
         this.prodottoRepository = prodottoRepository;
+        this.observers = new ArrayList<>();
     }
 
     @Override
@@ -53,6 +59,10 @@ public class ProdottoService implements IProdottoService {
         venditore.getProdottiOfferti().add(prodotto); // Aggiunge alla lista del venditore
         prodottoRepository.save(prodotto); // Salva nel repository dei prodotti
         venditoreRepository.save(venditore);
+        
+        // Notifica gli observer del nuovo prodotto creato
+        notificaObservers(prodotto);
+        
         return prodotto;
     }
 
@@ -223,7 +233,7 @@ public class ProdottoService implements IProdottoService {
             throw new IllegalArgumentException("Solo i trasformatori possono creare prodotti trasformati");
         }
 
-        // Crea il prodotto base utilizzando il metodo esistente
+        // Crea il prodotto base utilizzando il metodo esistente (che già notifica gli observer)
         Prodotto prodotto = creaProdotto(nome, descrizione, prezzo, quantitaDisponibile, venditore);
 
         // Imposta le proprietà specifiche per i prodotti trasformati
@@ -275,6 +285,45 @@ public class ProdottoService implements IProdottoService {
         // Salva le modifiche
         prodottoRepository.save(prodotto);
         venditoreRepository.save(venditore);
+    }
+
+    // ===== IMPLEMENTAZIONE PATTERN OBSERVER =====
+    
+    @Override
+    public void aggiungiObserver(ICuratoreObserver observer) {
+        if (observer == null) {
+            throw new IllegalArgumentException("L'observer non può essere null");
+        }
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    @Override
+    public void rimuoviObserver(ICuratoreObserver observer) {
+        if (observer == null) {
+            throw new IllegalArgumentException("L'observer non può essere null");
+        }
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notificaObservers(Prodotto prodotto) {
+        if (prodotto == null) {
+            throw new IllegalArgumentException("Il prodotto non può essere null");
+        }
+        
+        // Notifica solo se il prodotto è in stato IN_REVISIONE
+        if (prodotto.getStatoVerifica() == it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori.IN_REVISIONE) {
+            for (ICuratoreObserver observer : observers) {
+                try {
+                    observer.onProdottoCreato(prodotto);
+                } catch (Exception e) {
+                    // Log dell'errore ma continua con gli altri observer
+                    System.err.println("Errore durante la notifica dell'observer: " + e.getMessage());
+                }
+            }
+        }
     }
 
 }

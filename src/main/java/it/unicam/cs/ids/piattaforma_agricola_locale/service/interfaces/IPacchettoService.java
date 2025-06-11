@@ -76,7 +76,6 @@ public interface IPacchettoService {
      */
     void rimuoviProdottoDalPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto, Prodotto prodotto);
 
-
     /**
      * Decrementa la quantità disponibile di un pacchetto nel catalogo.
      * Questo metodo è utilizzato internamente dal sistema per aggiornare lo stock

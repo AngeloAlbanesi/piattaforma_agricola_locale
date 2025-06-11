@@ -43,3 +43,5 @@ EsempioMiglioramento.java
 *.log
 temp/
 .env
+CLAUDE.md
+PRODOTTO_OBSERVER_USAGE.md

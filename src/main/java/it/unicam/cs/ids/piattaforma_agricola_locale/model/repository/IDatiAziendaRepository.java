@@ -9,12 +9,11 @@ public interface IDatiAziendaRepository {
 
     Optional<DatiAzienda> findById(Long id);
 
+    Optional<DatiAzienda> findByPartitaIva(String partitaIva);
+
     void save(DatiAzienda datiAzienda);
 
     List<DatiAzienda> findAll();
 
     void deleteById(String partitaIva);
-
-    Optional<DatiAzienda> findById(String partitaIva);
-
 }

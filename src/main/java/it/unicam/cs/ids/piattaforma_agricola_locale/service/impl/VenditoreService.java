@@ -4,7 +4,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazion
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.DatiAziendaRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IDatiAziendaRepository;
-
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
@@ -44,7 +44,7 @@ public class VenditoreService implements IVenditoreService {
         datiEsistenti.setIndirizzoAzienda(datiAggiornati.getIndirizzoAzienda());
         datiEsistenti.setLogoUrl(datiAggiornati.getLogoUrl());
         datiEsistenti.setSitoWebUrl(datiAggiornati.getSitoWebUrl());
-        datiEsistenti.setStatoVerifica(StatoVerificaValori.IN_REVISIONE); // Imposta lo stato di verifica a IN_ATTESA dopo l'aggiornamento
+        datiEsistenti.setStatoVerifica(StatoVerificaValori.IN_REVISIONE);
         // Non aggiorniamo la Partita IVA o l'ID qui, solitamente sono più stabili.
         // Se il venditore deve essere salvato dopo questa modifica:
         datiAziendaRepository.save(datiEsistenti);
@@ -54,9 +54,9 @@ public class VenditoreService implements IVenditoreService {
     public DatiAzienda aggiungiDatiAzienda(Venditore venditore, String nomeAzienda, String partitaIva, String indirizzoAzienda,
                                            String descrizioneAzienda, String logoUrl, String sitoWebUrl) { // Modificato per ritornare DatiAzienda
 
-        if(datiAziendaRepository.findById(partitaIva).isEmpty()) {
+        if(datiAziendaRepository.findByPartitaIva(partitaIva).isEmpty()) {
             // Genera un ID per DatiAzienda se non fornito o gestito diversamente
-            int idAzienda = Math.abs(UUID.randomUUID().hashCode());
+            int idAzienda = Math.abs(UUID.randomUUID().hashCode()); // da eliminare
             DatiAzienda datiAzienda = new DatiAzienda(idAzienda, nomeAzienda, partitaIva, indirizzoAzienda, descrizioneAzienda,
                     logoUrl, sitoWebUrl);
             venditore.setDatiAzienda(datiAzienda);

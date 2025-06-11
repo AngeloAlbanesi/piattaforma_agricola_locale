@@ -6,28 +6,29 @@ import java.util.List;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Ingrediente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.*;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ProdottoRepository;
-
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.VenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICuratoreService;
 
 public class CuratoreService implements ICuratoreService {
 
-    private final IVenditoreRepository venditoreRepository ;
-    private final IProdottoRepository prodottoRepository ;
+    private final IVenditoreRepository venditoreRepository;
+    private final IProdottoRepository prodottoRepository;
+    private final IDatiAziendaRepository datiAziendaRepository;
 
-    public CuratoreService(IVenditoreRepository venditoreRepository, IProdottoRepository prodottoRepository) {
-        this.venditoreRepository = venditoreRepository ;
-        this.prodottoRepository = prodottoRepository ;
+    public CuratoreService(IVenditoreRepository venditoreRepository, IProdottoRepository prodottoRepository,
+            IDatiAziendaRepository datiAziendaRepository) {
+        this.venditoreRepository = venditoreRepository;
+        this.prodottoRepository = prodottoRepository;
+        this.datiAziendaRepository = datiAziendaRepository;
     }
+
     public CuratoreService() {
         venditoreRepository = new VenditoreRepository();
         prodottoRepository = new ProdottoRepository();
+        datiAziendaRepository = new DatiAziendaRepository();
     }
 
     @Override
@@ -43,19 +44,23 @@ public class CuratoreService implements ICuratoreService {
 
     @Override
     public void approvaDatiAzienda(Venditore venditore, String feedbackVerifica) {
-        if (venditore.getDatiAzienda().getStatoVerifica() == StatoVerificaValori.IN_REVISIONE) {
-            venditore.getDatiAzienda().setStatoVerifica(StatoVerificaValori.APPROVATO);
-            venditore.getDatiAzienda().setFeedbackVerifica(feedbackVerifica);
-            venditoreRepository.save(venditore);
+        DatiAzienda datiAzienda = venditore.getDatiAzienda();
+        if (datiAzienda != null && datiAzienda.getStatoVerifica() == StatoVerificaValori.IN_REVISIONE) {
+            datiAzienda.setStatoVerifica(StatoVerificaValori.APPROVATO);
+            datiAzienda.setFeedbackVerifica(feedbackVerifica);
+
+            datiAziendaRepository.save(datiAzienda);
         }
     }
 
     @Override
     public void respingiDatiAzienda(Venditore venditore, String feedbackVerifica) {
-        if (venditore.getDatiAzienda().getStatoVerifica() == StatoVerificaValori.IN_REVISIONE) {
-            venditore.getDatiAzienda().setStatoVerifica(StatoVerificaValori.RESPINTO);
-            venditore.getDatiAzienda().setFeedbackVerifica(feedbackVerifica);
-            venditoreRepository.save(venditore);
+        DatiAzienda datiAzienda = venditore.getDatiAzienda();
+        if (datiAzienda != null && datiAzienda.getStatoVerifica() == StatoVerificaValori.IN_REVISIONE) {
+            datiAzienda.setStatoVerifica(StatoVerificaValori.RESPINTO);
+            datiAzienda.setFeedbackVerifica(feedbackVerifica);
+
+            datiAziendaRepository.save(datiAzienda);
         }
     }
 
@@ -77,13 +82,11 @@ public class CuratoreService implements ICuratoreService {
         }
     }
 
-
-
     @Override
     public List<Prodotto> getProdottiInAttesaRevisione() {
         List<Prodotto> prodottiInAttesa = new ArrayList<>();
-        for (Prodotto p : prodottoRepository.mostraTuttiIProdotti()){
-            if(p.getStatoVerifica() == StatoVerificaValori.IN_REVISIONE){
+        for (Prodotto p : prodottoRepository.mostraTuttiIProdotti()) {
+            if (p.getStatoVerifica() == StatoVerificaValori.IN_REVISIONE) {
                 prodottiInAttesa.add(p);
             }
         }

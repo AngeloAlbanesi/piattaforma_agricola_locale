@@ -6,7 +6,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.exception;
  */
 public class CarrelloVuotoException extends RuntimeException {
 
-    private final Integer acquirenteId;
+    private final Long acquirenteId;
 
     /**
      * Costruttore dell'eccezione con solo messaggio
@@ -24,7 +24,7 @@ public class CarrelloVuotoException extends RuntimeException {
      * @param acquirenteId l'ID dell'acquirente con carrello vuoto
      * @param message      il messaggio di errore
      */
-    public CarrelloVuotoException(int acquirenteId, String message) {
+    public CarrelloVuotoException(Long acquirenteId, String message) {
         super(message);
         this.acquirenteId = acquirenteId;
     }
@@ -34,7 +34,7 @@ public class CarrelloVuotoException extends RuntimeException {
      * 
      * @param acquirenteId l'ID dell'acquirente con carrello vuoto
      */
-    public CarrelloVuotoException(int acquirenteId) {
+    public CarrelloVuotoException(Long acquirenteId) {
         super("Il carrello dell'acquirente con ID " + acquirenteId + " è vuoto o non esiste");
         this.acquirenteId = acquirenteId;
     }
@@ -44,7 +44,7 @@ public class CarrelloVuotoException extends RuntimeException {
      * 
      * @return l'ID dell'acquirente
      */
-    public Integer getAcquirenteId() {
+    public Long getAcquirenteId() {
         return acquirenteId;
     }
 }

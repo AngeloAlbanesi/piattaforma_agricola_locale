@@ -15,7 +15,7 @@ public class DatiAziendaRepository implements IDatiAziendaRepository {
     @Override
     public Optional<DatiAzienda> findById(Long id) {
         return store.values().stream()
-                .filter(datiAzienda -> datiAzienda.getPartitaIva().equals(partitaIva))
+                .filter(datiAzienda -> datiAzienda.getIdAzienda() == id)
                 .findFirst();
     }
 
@@ -32,6 +32,13 @@ public class DatiAziendaRepository implements IDatiAziendaRepository {
     @Override
     public void deleteById(String partitaIva) {
         store.remove(partitaIva);
+    }
+
+    @Override
+    public Optional<DatiAzienda> findById(String partitaIva) {
+        return store.values().stream()
+                .filter(datiAzienda -> datiAzienda.getPartitaIva().equals(partitaIva))
+                .findFirst();
     }
 
 }

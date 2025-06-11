@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
+/*package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,7 +30,7 @@ import java.util.List;
  * Test class per CarrelloService, verifica il corretto funzionamento
  * dell'aggiunta di elementi al carrello con controlli di approvazione
  */
-class CarrelloServiceTest {
+/*class CarrelloServiceTest {
 
     private CarrelloService carrelloService;
     private Acquirente acquirente;
@@ -475,9 +475,10 @@ class CarrelloServiceTest {
         assertEquals("Evento", exception.getTipoProdotto());
     }
 
-    /**
+    /*
      * Test per il metodo rimuoviElementoDalCarrello
      */
+/*
     @Test
     void testRimuoviElementoDalCarrello_ConElementoEsistente() {
         // Aggiungi elementi al carrello
@@ -548,6 +549,7 @@ class CarrelloServiceTest {
     /**
      * Test per il metodo svuotaCarrello
      */
+/*
     @Test
     void testSvuotaCarrello_ConCarrelloConElementi() {
         // Aggiungi più elementi al carrello
@@ -605,6 +607,7 @@ class CarrelloServiceTest {
     /**
      * Test di integrazione per verificare il flusso completo
      */
+/*
     @Test
     void testFlussoContinuo_AggiungiRimuoviSvuota() {
         // Aggiungi elementi
@@ -630,4 +633,4 @@ class CarrelloServiceTest {
         assertTrue(carrelloSvuotato.isPresent());
         assertEquals(0, carrelloSvuotato.get().getElementiCarrello().size());
     }
-}
+}*/

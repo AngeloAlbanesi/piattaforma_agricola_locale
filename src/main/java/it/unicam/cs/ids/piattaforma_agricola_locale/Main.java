@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.piattaforma_agricola_locale;
+/*package it.unicam.cs.ids.piattaforma_agricola_locale;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
@@ -108,7 +108,7 @@ public class Main {
         pacchettoService.mostraPacchetti(distributore2);
         System.out.println(" ");
         */
-
+/*
         IProdottoRepository repo = prodottoService.getProdottoRepository();
         List<Prodotto> tuttiprodotti = repo.mostraTuttiIProdotti();
         System.out.println(tuttiprodotti.size());
@@ -167,9 +167,9 @@ public class Main {
 
 
 
-
+/*
 
     }
 
 
-}
+}*/

@@ -9,8 +9,8 @@ public class UtenteBaseRepository implements  IUtenteBaseRepository{
     private Long nextId = 1L;
 
     public Utente save(Utente utente) {
-        if (utente.getId() == null) {
-            utente.setId(nextId++);
+        if (utente.getId() == 0) {
+            utente.setIdUtente(nextId++);
         }
         utentiMap.put(utente.getId(), utente);
         return utente;

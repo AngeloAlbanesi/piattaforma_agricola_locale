@@ -7,12 +7,14 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 
 public interface IDatiAziendaRepository {
 
-    Optional<DatiAzienda> findById(String partitaIva);
+    Optional<DatiAzienda> findById(Long id);
 
     void save(DatiAzienda datiAzienda);
 
     List<DatiAzienda> findAll();
 
     void deleteById(String partitaIva);
+
+    Optional<DatiAzienda> findById(String partitaIva);
 
 }

@@ -1,6 +1,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl; // o service.classes
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.DatiAziendaRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IDatiAziendaRepository;
 
@@ -43,6 +44,7 @@ public class VenditoreService implements IVenditoreService {
         datiEsistenti.setIndirizzoAzienda(datiAggiornati.getIndirizzoAzienda());
         datiEsistenti.setLogoUrl(datiAggiornati.getLogoUrl());
         datiEsistenti.setSitoWebUrl(datiAggiornati.getSitoWebUrl());
+        datiEsistenti.setStatoVerifica(StatoVerificaValori.IN_REVISIONE); // Imposta lo stato di verifica a IN_ATTESA dopo l'aggiornamento
         // Non aggiorniamo la Partita IVA o l'ID qui, solitamente sono più stabili.
         // Se il venditore deve essere salvato dopo questa modifica:
         datiAziendaRepository.save(datiEsistenti);

@@ -44,7 +44,7 @@ public class VenditoreService implements IVenditoreService {
         datiEsistenti.setIndirizzoAzienda(datiAggiornati.getIndirizzoAzienda());
         datiEsistenti.setLogoUrl(datiAggiornati.getLogoUrl());
         datiEsistenti.setSitoWebUrl(datiAggiornati.getSitoWebUrl());
-        datiEsistenti.setStatoVerifica(StatoVerificaValori.IN_REVISIONE);
+        datiEsistenti.setStatoVerifica(StatoVerificaValori.IN_REVISIONE); // Imposta lo stato di verifica a IN_ATTESA dopo l'aggiornamento
         // Non aggiorniamo la Partita IVA o l'ID qui, solitamente sono più stabili.
         // Se il venditore deve essere salvato dopo questa modifica:
         datiAziendaRepository.save(datiEsistenti);

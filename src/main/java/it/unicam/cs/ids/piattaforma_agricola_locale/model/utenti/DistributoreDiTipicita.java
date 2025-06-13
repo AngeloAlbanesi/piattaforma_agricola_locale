@@ -7,7 +7,6 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 
 public class DistributoreDiTipicita extends Venditore {
     // Costruttore overload per factory (solo parametri base Venditore)

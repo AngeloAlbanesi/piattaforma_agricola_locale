@@ -9,7 +9,6 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertific
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID; // O usa il nextId dal repository
 
 public class CertificazioneService implements ICertificazioneService {
 

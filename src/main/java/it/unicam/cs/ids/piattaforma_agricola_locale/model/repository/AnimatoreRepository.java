@@ -2,7 +2,6 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.StatoAccreditamento;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -2,7 +2,6 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
 import java.util.Optional;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.coltivazione.MetodoDiColtivazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IMetodoDiColtivazioneRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
@@ -40,7 +39,7 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
                     "Non è possibile associare un metodo di coltivazione a un prodotto trasformato");
         }
 
-        if (prodotto.getIdMetodoDiColtivazione() != 0) {
+        if (prodotto.getIdMetodoDiColtivazione() != null) {
             return aggiornaMetodoDiColtivazione(idProduttore, idProdotto, metodoDiColtivazione);
         }
 
@@ -73,8 +72,8 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
     public void eliminaMetodoDiColtivazione(Long idProduttore, Long idProdotto) {
         Prodotto prodotto = validaProdottoEProduttore(idProduttore, idProdotto);
 
-        long idMetodo = prodotto.getIdMetodoDiColtivazione();
-        if (idMetodo != 0) {
+        Long idMetodo = prodotto.getIdMetodoDiColtivazione();
+        if (idMetodo != null) {
             metodiRepository.deleteById(idMetodo);
             prodotto.setIdMetodoDiColtivazione(null);
             prodottoRepository.save(prodotto);

@@ -1,6 +1,5 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;

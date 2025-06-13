@@ -2,9 +2,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl; // o service.
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.DatiAziendaRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IDatiAziendaRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
@@ -16,7 +14,6 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IVenditor
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID; // Per generare ID DatiAzienda di esempio
 
 public class VenditoreService implements IVenditoreService {
 

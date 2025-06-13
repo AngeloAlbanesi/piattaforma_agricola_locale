@@ -6,8 +6,8 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class VenditoreRepository implements IVenditoreRepository{
-    private final  Map<Long, Venditore> venditoriMap = new HashMap<>();
+public class VenditoreRepository implements IVenditoreRepository {
+    private final Map<Long, Venditore> venditoriMap = new HashMap<>();
     private Long nextId = 1L; // Semplice generazione ID
 
     @Override
@@ -20,7 +20,7 @@ public class VenditoreRepository implements IVenditoreRepository{
     }
 
     @Override
-    public Optional<Venditore> findById(long id) {
+    public Optional<Venditore> findById(Long id) {
         return Optional.ofNullable(venditoriMap.get(id));
     }
 
@@ -36,4 +36,3 @@ public class VenditoreRepository implements IVenditoreRepository{
                 .collect(Collectors.toList());
     }
 }
-

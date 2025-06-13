@@ -3,26 +3,16 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.VenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProcessoTrasformazioneService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.dto.processo.ProcessoTrasformazioneDTO;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.*;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.ProcessoMapper;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IProdottoObservable;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.ICuratoreObserver;
 
@@ -35,7 +25,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
 
     // Costruttore per l'iniezione delle dipendenze complete
     public ProdottoService(IProdottoRepository prodottoRepository, ICertificazioneService certificazioneService,
-                           IVenditoreRepository venditoreRepository) {
+            IVenditoreRepository venditoreRepository) {
         this.prodottoRepository = prodottoRepository;
         this.certificazioneService = certificazioneService;
         this.venditoreRepository = venditoreRepository;
@@ -49,19 +39,19 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
 
     @Override
     public Prodotto creaProdotto(String nome, String descrizione, double prezzo, int quantitaDisponibile,
-                                 Venditore venditore) {
+            Venditore venditore) {
         if (nome == null || descrizione == null || prezzo <= 0 || quantitaDisponibile <= 0 || venditore == null) {
             throw new IllegalArgumentException("Errore nella creazione del prodotto");
         }
-        Prodotto prodotto = new Prodotto( nome, descrizione, prezzo, quantitaDisponibile, venditore);
+        Prodotto prodotto = new Prodotto(nome, descrizione, prezzo, quantitaDisponibile, venditore);
 
         venditore.getProdottiOfferti().add(prodotto); // Aggiunge alla lista del venditore
         prodottoRepository.save(prodotto); // Salva nel repository dei prodotti
         venditoreRepository.save(venditore);
-        
+
         // Notifica gli observer del nuovo prodotto creato
         notificaObservers(prodotto);
-        
+
         return prodotto;
     }
 
@@ -141,7 +131,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
     // Metodo per aggiungere una certificazione a un prodotto (usando il
     // CertificazioneService)
     public Certificazione aggiungiCertificazioneAProdotto(Prodotto prodotto, String nomeCertificazione,
-                                                          String enteRilascio, Date dataRilascio, Date dataScadenza) {
+            String enteRilascio, Date dataRilascio, Date dataScadenza) {
         if (prodotto == null || certificazioneService == null) {
             System.err.println("Prodotto o servizio certificazioni non disponibile.");
             return null;
@@ -220,8 +210,8 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
      *                                  venditore non è un trasformatore
      */
     public Prodotto aggiungiProdottoTrasformato(String nome, String descrizione, double prezzo,
-                                                int quantitaDisponibile, Venditore venditore,
-                                                Long idProcessoTrasformazione) {
+            int quantitaDisponibile, Venditore venditore,
+            Long idProcessoTrasformazione) {
         // Validazione parametri di input
         if (idProcessoTrasformazione == null) {
             throw new IllegalArgumentException("L'ID del processo di trasformazione non può essere nullo");
@@ -232,7 +222,8 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
             throw new IllegalArgumentException("Solo i trasformatori possono creare prodotti trasformati");
         }
 
-        // Crea il prodotto base utilizzando il metodo esistente (che già notifica gli observer)
+        // Crea il prodotto base utilizzando il metodo esistente (che già notifica gli
+        // observer)
         Prodotto prodotto = creaProdotto(nome, descrizione, prezzo, quantitaDisponibile, venditore);
 
         // Imposta le proprietà specifiche per i prodotti trasformati
@@ -257,7 +248,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
      * @throws IllegalArgumentException se i parametri sono invalidi
      */
     public void impostaProdottoComeTrasformato(Prodotto prodotto, Venditore venditore,
-                                               Long idProcessoTrasformazione) {
+            Long idProcessoTrasformazione) {
         // Validazioni
         if (prodotto == null) {
             throw new IllegalArgumentException("Il prodotto non può essere nullo");
@@ -287,7 +278,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
     }
 
     // ===== IMPLEMENTAZIONE PATTERN OBSERVER =====
-    
+
     @Override
     public void aggiungiObserver(ICuratoreObserver observer) {
         if (observer == null) {
@@ -311,9 +302,10 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
         if (prodotto == null) {
             throw new IllegalArgumentException("Il prodotto non può essere null");
         }
-        
+
         // Notifica solo se il prodotto è in stato IN_REVISIONE
-        if (prodotto.getStatoVerifica() == it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori.IN_REVISIONE) {
+        if (prodotto
+                .getStatoVerifica() == it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori.IN_REVISIONE) {
             for (ICuratoreObserver observer : observers) {
                 try {
                     observer.onProdottoCreato(prodotto);

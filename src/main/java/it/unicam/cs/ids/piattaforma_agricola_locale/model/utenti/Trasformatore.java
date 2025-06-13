@@ -21,8 +21,8 @@ public class Trasformatore extends Venditore {
      * Costruttore overload per factory (solo parametri base Venditore).
      */
     public Trasformatore(String nome, String cognome, String email, String passwordHash,
-                         String numeroTelefono, DatiAzienda datiAzienda,
-                         TipoRuolo tipoRuolo) {
+            String numeroTelefono, DatiAzienda datiAzienda,
+            TipoRuolo tipoRuolo) {
         super(nome, cognome, email, passwordHash, numeroTelefono, datiAzienda, tipoRuolo);
     }
 

@@ -20,7 +20,7 @@ public class VenditoreRepository implements IVenditoreRepository{
     }
 
     @Override
-    public Optional<Venditore> findById(Long id) {
+    public Optional<Venditore> findById(long id) {
         return Optional.ofNullable(venditoriMap.get(id));
     }
 

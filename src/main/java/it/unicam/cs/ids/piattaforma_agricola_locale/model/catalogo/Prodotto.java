@@ -21,6 +21,7 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
     private List<Certificazione> certificazioniProdotto;
     private TipoOrigineProdotto tipoOrigine;
     private Long idProcessoTrasformazioneOriginario;
+    private Long idMetodoDiColtivazione;
 
     public Prodotto(int idProdotto, String nome, String descrizione, double prezzo, int quantitaDisponibile,
                     Venditore venditore) {
@@ -189,6 +190,24 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
         return tipoOrigine != null && tipoOrigine.isColtivato();
     }
 
+    /**
+     * Restituisce l'ID del metodo di coltivazione associato al prodotto.
+     *
+     * @return L'ID del metodo di coltivazione, null se non associato
+     */
+    public long getIdMetodoDiColtivazione() {
+        return idMetodoDiColtivazione;
+    }
+
+    /**
+     * Imposta l'ID del metodo di coltivazione per il prodotto.
+     *
+     * @param idMetodoDiColtivazione L'ID del metodo di coltivazione da associare
+     */
+    public void setIdMetodoDiColtivazione(long idMetodoDiColtivazione) {
+        this.idMetodoDiColtivazione = idMetodoDiColtivazione;
+    }
+
     @Override
     public String toString() {
         return "Prodotto{" +
@@ -201,6 +220,7 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
                 ", feedbackVerifica='" + feedbackVerifica + '\'' +
                 ", tipoOrigine=" + tipoOrigine +
                 ", idProcessoTrasformazioneOriginario=" + idProcessoTrasformazioneOriginario +
+                ", idMetodoDiColtivazione=" + idMetodoDiColtivazione +
                 '}';
     }
 

@@ -13,7 +13,7 @@ public interface IVenditoreRepository {
     void save(Venditore venditore);
 
 
-    Optional<Venditore> findById(Long id);
+    Optional<Venditore> findById(long id);
 
     List<Venditore> findAll();
 

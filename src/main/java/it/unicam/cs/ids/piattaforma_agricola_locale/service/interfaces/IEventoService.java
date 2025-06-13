@@ -13,8 +13,8 @@ public interface IEventoService {
                     int capienzaMassima, AnimatoreDellaFiliera organizzatore);
     void aggiornaEvento(int idEvento, String nuovoNomeEvento, String nuovaDescrizione,
                         Date nuovaDataOraInizio, Date nuovaDataOraFine, String nuovoLuogoEvento,
-                        int nuovaCapienzaMassima);
-    void eliminaEvento(int idEvento);
+                        int nuovaCapienzaMassima, AnimatoreDellaFiliera organizzatore);
+    void eliminaEvento(int idEvento,AnimatoreDellaFiliera organizzatore);
 
     void aggiungiAziendaPartecipante(int idEvento, Venditore venditore);
 
@@ -24,10 +24,10 @@ public interface IEventoService {
 
     void eliminaPostiPrenotati(Evento evento, int quantita);
 
-    void iniziaEvento(int idEvento);
+    void iniziaEvento(int idEvento,AnimatoreDellaFiliera organizzatore);
 
-    void terminaEvento(int idEvento);
+    void terminaEvento(int idEvento,AnimatoreDellaFiliera organizzatore);
 
-    void annullaEvento(int idEvento);
+    void annullaEvento(int idEvento,AnimatoreDellaFiliera organizzatore);
 
 }

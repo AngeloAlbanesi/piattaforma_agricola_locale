@@ -49,11 +49,17 @@ public class EventoService implements IEventoService {
     @Override
     public void aggiornaEvento(int idEvento, String nuovoNomeEvento, String nuovaDescrizione,
                               Date nuovaDataOraInizio, Date nuovaDataOraFine, String nuovoLuogoEvento,
-                              int nuovaCapienzaMassima) {
+                              int nuovaCapienzaMassima,AnimatoreDellaFiliera organizzatore) {
+
+
+
 
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
+        }
+        if(!evento.getOrganizzatore().equals(organizzatore)){
+            throw new IllegalArgumentException("Questo animatore non ha i permessi per modificare l'evento");
         }
         if(nuovoNomeEvento != null)
             evento.setNome(nuovoNomeEvento);
@@ -78,10 +84,13 @@ public class EventoService implements IEventoService {
         eventoRepository.save(evento); // L'implementazione di save deve gestire l'aggiornamento
     }
     @Override
-    public void eliminaEvento(int idEvento) {
+    public void eliminaEvento(int idEvento,AnimatoreDellaFiliera organizzatore  ) {
     Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
+        }
+        if(!evento.getOrganizzatore().equals(organizzatore)){
+            throw new IllegalArgumentException("Questo animatore non ha i permessi per modificare l'evento");
         }
         eventoRepository.deleteById(idEvento); // L'implementazione di delete deve gestire la rimozione
     }
@@ -148,10 +157,13 @@ public class EventoService implements IEventoService {
         eventoRepository.save(evento); // L'implementazione di save deve gestire l'aggiornamento
     }
     @Override
-    public void iniziaEvento(int idEvento) {
+    public void iniziaEvento(int idEvento, AnimatoreDellaFiliera organizzatore) {
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
+        }
+        if(!evento.getOrganizzatore().equals(organizzatore)){
+            throw new IllegalArgumentException("Questo animatore non ha i permessi per modificare l'evento");
         }
         if (evento.getStatoEvento() != StatoEventoValori.IN_PROGRAMMA) {
             throw new IllegalArgumentException("L'evento non può essere iniziato se non è in programma.");
@@ -160,10 +172,13 @@ public class EventoService implements IEventoService {
         eventoRepository.save(evento); // L'implementazione di save deve gestire l'aggiornamento
     }
     @Override
-    public void terminaEvento(int idEvento) {
+    public void terminaEvento(int idEvento, AnimatoreDellaFiliera organizzatore) {
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
+        }
+        if(!evento.getOrganizzatore().equals(organizzatore)){
+            throw new IllegalArgumentException("Questo animatore non ha i permessi per modificare l'evento");
         }
         if (evento.getStatoEvento() != StatoEventoValori.IN_CORSO) {
             throw new IllegalArgumentException("L'evento non può essere terminato se non è in corso.");
@@ -172,10 +187,13 @@ public class EventoService implements IEventoService {
         eventoRepository.save(evento); // L'implementazione di save deve gestire l'aggiornamento
     }
     @Override
-    public void annullaEvento(int idEvento) {
+    public void annullaEvento(int idEvento,AnimatoreDellaFiliera organizzatore) {
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
+        }
+        if(!evento.getOrganizzatore().equals(organizzatore)){
+            throw new IllegalArgumentException("Questo animatore non ha i permessi per modificare l'evento");
         }
         if (evento.getStatoEvento() == StatoEventoValori.CONCLUSO) {
             throw new IllegalArgumentException("L'evento non può essere annullato se è già concluso.");

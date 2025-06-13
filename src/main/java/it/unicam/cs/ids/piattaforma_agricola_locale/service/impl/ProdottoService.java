@@ -43,7 +43,9 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
         if (nome == null || descrizione == null || prezzo <= 0 || quantitaDisponibile <= 0 || venditore == null) {
             throw new IllegalArgumentException("Errore nella creazione del prodotto");
         }
-        Prodotto prodotto = new Prodotto(nome, descrizione, prezzo, quantitaDisponibile, venditore);
+
+        Prodotto prodotto = new Prodotto( nome, descrizione, prezzo, quantitaDisponibile, venditore);
+
 
         venditore.getProdottiOfferti().add(prodotto); // Aggiunge alla lista del venditore
         prodottoRepository.save(prodotto); // Salva nel repository dei prodotti

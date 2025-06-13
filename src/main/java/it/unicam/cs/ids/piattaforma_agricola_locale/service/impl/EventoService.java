@@ -24,9 +24,11 @@ public class EventoService implements IEventoService {
 
     @Override
     public void creaEvento(String nomeEvento, String descrizione,
-            Date dataOraInizio, Date dataOraFine, String luogoEvento,
-            int capienzaMassima, AnimatoreDellaFiliera organizzatore) {
-        if (nomeEvento == null || nomeEvento.isEmpty()) {
+
+                           Date dataOraInizio, Date dataOraFine, String luogoEvento,
+                           int capienzaMassima, AnimatoreDellaFiliera organizzatore) {
+        if(nomeEvento == null || nomeEvento.isEmpty()) {
+
             throw new IllegalArgumentException("Il nome dell'evento non può essere vuoto.");
         }
         if (dataOraInizio == null || dataOraFine == null) {
@@ -43,15 +45,22 @@ public class EventoService implements IEventoService {
         }
 
         Evento evento = new Evento(nomeEvento, descrizione,
-                dataOraInizio, dataOraFine, luogoEvento,
-                capienzaMassima, organizzatore);
+
+                                   dataOraInizio, dataOraFine, luogoEvento,
+                                   capienzaMassima, organizzatore);
+
         eventoRepository.save(evento);
     }
 
     @Override
     public void aggiornaEvento(Long idEvento, String nuovoNomeEvento, String nuovaDescrizione,
-            Date nuovaDataOraInizio, Date nuovaDataOraFine, String nuovoLuogoEvento,
-            int nuovaCapienzaMassima, AnimatoreDellaFiliera organizzatore) {
+
+                              Date nuovaDataOraInizio, Date nuovaDataOraFine, String nuovoLuogoEvento,
+                              int nuovaCapienzaMassima,AnimatoreDellaFiliera organizzatore) {
+
+
+
+
 
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
@@ -86,8 +95,10 @@ public class EventoService implements IEventoService {
     }
 
     @Override
-    public void eliminaEvento(Long idEvento, AnimatoreDellaFiliera organizzatore) {
-        Evento evento = eventoRepository.findById(idEvento);
+
+    public void eliminaEvento(Long idEvento,AnimatoreDellaFiliera organizzatore  ) {
+    Evento evento = eventoRepository.findById(idEvento);
+
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
         }
@@ -198,7 +209,9 @@ public class EventoService implements IEventoService {
     }
 
     @Override
-    public void annullaEvento(Long idEvento, AnimatoreDellaFiliera organizzatore) {
+
+    public void annullaEvento(Long idEvento,AnimatoreDellaFiliera organizzatore) {
+
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");

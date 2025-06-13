@@ -38,7 +38,9 @@ public class PacchettoService implements IPacchettoService {
     public void creaPacchetto(DistributoreDiTipicita distributore, String nome, String descrizione, int quantita,
             double prezzoPacchetto) {
         int idPacchetto = UUID.randomUUID().hashCode();
-        Pacchetto pacchetto = new Pacchetto(distributore, nome, descrizione, quantita, prezzoPacchetto);
+
+        Pacchetto pacchetto = new Pacchetto(distributore,  nome, descrizione, quantita, prezzoPacchetto);
+
         distributore.getPacchettiOfferti().add(pacchetto);
         this.pacchettoRepository.salva(pacchetto);
         this.venditoreRepository.save(distributore);

@@ -197,7 +197,7 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
      *
      * @return L'ID del metodo di coltivazione, null se non associato
      */
-    public long getIdMetodoDiColtivazione() {
+    public Long getIdMetodoDiColtivazione() {
         return idMetodoDiColtivazione;
     }
 
@@ -206,7 +206,7 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
      *
      * @param idMetodoDiColtivazione L'ID del metodo di coltivazione da associare
      */
-    public void setIdMetodoDiColtivazione(long idMetodoDiColtivazione) {
+    public void setIdMetodoDiColtivazione(Long idMetodoDiColtivazione) {
         this.idMetodoDiColtivazione = idMetodoDiColtivazione;
     }
 

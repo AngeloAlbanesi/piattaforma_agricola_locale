@@ -13,7 +13,7 @@ public interface IProduttoreService extends IVenditoreService{
      * @return Il metodo di coltivazione creato
      * @throws IllegalArgumentException se il produttore non possiede il prodotto o il prodotto non è coltivato
      */
-    MetodoDiColtivazione creaMetodoDiColtivazione(long idProduttore, int idProdotto, MetodoDiColtivazione metodoDiColtivazione);
+    MetodoDiColtivazione creaMetodoDiColtivazione(Long idProduttore, Long idProdotto, MetodoDiColtivazione metodoDiColtivazione);
 
     /**
      * Aggiorna un metodo di coltivazione esistente.
@@ -24,7 +24,7 @@ public interface IProduttoreService extends IVenditoreService{
      * @return Il metodo di coltivazione aggiornato
      * @throws IllegalArgumentException se il produttore non possiede il prodotto
      */
-    MetodoDiColtivazione aggiornaMetodoDiColtivazione(long idProduttore, int idProdotto, MetodoDiColtivazione metodoDiColtivazione);
+    MetodoDiColtivazione aggiornaMetodoDiColtivazione(Long idProduttore, Long idProdotto, MetodoDiColtivazione metodoDiColtivazione);
 
     /**
      * Elimina il metodo di coltivazione associato a un prodotto.
@@ -33,7 +33,7 @@ public interface IProduttoreService extends IVenditoreService{
      * @param idProdotto L'ID del prodotto
      * @throws IllegalArgumentException se il produttore non possiede il prodotto
      */
-    void eliminaMetodoDiColtivazione(long idProduttore, int idProdotto);
+    void eliminaMetodoDiColtivazione(Long idProduttore, Long idProdotto);
 
     /**
      * Recupera il metodo di coltivazione associato a un prodotto.
@@ -41,6 +41,6 @@ public interface IProduttoreService extends IVenditoreService{
      * @param idProdotto L'ID del prodotto
      * @return Il metodo di coltivazione associato, null se non presente
      */
-    MetodoDiColtivazione getMetodoDiColtivazioneByProdotto(int idProdotto);
+    MetodoDiColtivazione getMetodoDiColtivazioneByProdotto(Long idProdotto);
 
 }

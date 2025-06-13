@@ -2,13 +2,13 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.model.coltivazione;
 
 public class MetodoDiColtivazione {
     
-    private long id;
+    private Long id;
     private String nome;
     private String descrizioneDettagliata;
     private String tecnicaPrincipale;
     private String ambienteColtivazione;
 
-    public MetodoDiColtivazione(long id, String nome, String descrizioneDettagliata, String tecnicaPrincipale, String ambienteColtivazione) {
+    public MetodoDiColtivazione(Long id, String nome, String descrizioneDettagliata, String tecnicaPrincipale, String ambienteColtivazione) {
         this.id = id;
         this.nome = nome;
         this.descrizioneDettagliata = descrizioneDettagliata;
@@ -16,11 +16,11 @@ public class MetodoDiColtivazione {
         this.ambienteColtivazione = ambienteColtivazione;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

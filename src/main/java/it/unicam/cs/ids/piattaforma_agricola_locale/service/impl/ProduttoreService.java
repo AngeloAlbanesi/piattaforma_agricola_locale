@@ -19,11 +19,11 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
     private IVenditoreRepository venditoreRepository;
     private Long nextId = 1L;
 
-    public ProduttoreService(ICertificazioneService certificazioneService, 
-                           IVenditoreRepository venditoreRepository, 
-                           IDatiAziendaRepository datiAziendaRepository,
-                           IMetodoDiColtivazioneRepository metodiRepository,
-                           IProdottoRepository prodottoRepository) {
+    public ProduttoreService(ICertificazioneService certificazioneService,
+            IVenditoreRepository venditoreRepository,
+            IDatiAziendaRepository datiAziendaRepository,
+            IMetodoDiColtivazioneRepository metodiRepository,
+            IProdottoRepository prodottoRepository) {
         super(certificazioneService, venditoreRepository, datiAziendaRepository);
         this.metodiRepository = metodiRepository;
         this.prodottoRepository = prodottoRepository;
@@ -31,11 +31,13 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
     }
 
     @Override
-    public MetodoDiColtivazione creaMetodoDiColtivazione(long idProduttore, int idProdotto, MetodoDiColtivazione metodoDiColtivazione) {
+    public MetodoDiColtivazione creaMetodoDiColtivazione(Long idProduttore, Long idProdotto,
+            MetodoDiColtivazione metodoDiColtivazione) {
         Prodotto prodotto = validaProdottoEProduttore(idProduttore, idProdotto);
-        
+
         if (!prodotto.isColtivato()) {
-            throw new IllegalArgumentException("Non è possibile associare un metodo di coltivazione a un prodotto trasformato");
+            throw new IllegalArgumentException(
+                    "Non è possibile associare un metodo di coltivazione a un prodotto trasformato");
         }
 
         if (prodotto.getIdMetodoDiColtivazione() != 0) {
@@ -44,17 +46,18 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
 
         metodoDiColtivazione.setId(nextId++);
         metodiRepository.save(metodoDiColtivazione);
-        
+
         prodotto.setIdMetodoDiColtivazione(metodoDiColtivazione.getId());
         prodottoRepository.save(prodotto);
-        
+
         return metodoDiColtivazione;
     }
 
     @Override
-    public MetodoDiColtivazione aggiornaMetodoDiColtivazione(long idProduttore, int idProdotto, MetodoDiColtivazione metodoDiColtivazione) {
+    public MetodoDiColtivazione aggiornaMetodoDiColtivazione(Long idProduttore, Long idProdotto,
+            MetodoDiColtivazione metodoDiColtivazione) {
         Prodotto prodotto = validaProdottoEProduttore(idProduttore, idProdotto);
-        
+
         Long idMetodoEsistente = prodotto.getIdMetodoDiColtivazione();
         if (idMetodoEsistente == null) {
             throw new IllegalArgumentException("Nessun metodo di coltivazione associato a questo prodotto");
@@ -62,38 +65,38 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
 
         metodoDiColtivazione.setId(idMetodoEsistente);
         metodiRepository.update(metodoDiColtivazione);
-        
+
         return metodoDiColtivazione;
     }
 
     @Override
-    public void eliminaMetodoDiColtivazione(long idProduttore, int idProdotto) {
+    public void eliminaMetodoDiColtivazione(Long idProduttore, Long idProdotto) {
         Prodotto prodotto = validaProdottoEProduttore(idProduttore, idProdotto);
-        
+
         long idMetodo = prodotto.getIdMetodoDiColtivazione();
         if (idMetodo != 0) {
             metodiRepository.deleteById(idMetodo);
-            prodotto.setIdMetodoDiColtivazione(0);
+            prodotto.setIdMetodoDiColtivazione(null);
             prodottoRepository.save(prodotto);
         }
     }
 
     @Override
-    public MetodoDiColtivazione getMetodoDiColtivazioneByProdotto(int idProdotto) {
+    public MetodoDiColtivazione getMetodoDiColtivazioneByProdotto(Long idProdotto) {
         Prodotto prodotto = prodottoRepository.findById(idProdotto);
         if (prodotto == null) {
             return null;
         }
-        
+
         Long idMetodo = prodotto.getIdMetodoDiColtivazione();
         if (idMetodo == null) {
             return null;
         }
-        
+
         return metodiRepository.findById(idMetodo);
     }
 
-    private Prodotto validaProdottoEProduttore(long idProduttore, int idProdotto) {
+    private Prodotto validaProdottoEProduttore(Long idProduttore, Long idProdotto) {
         Optional<Venditore> produttoreOpt = venditoreRepository.findById(idProduttore);
         if (!produttoreOpt.isPresent()) {
             throw new IllegalArgumentException("Produttore non trovato");

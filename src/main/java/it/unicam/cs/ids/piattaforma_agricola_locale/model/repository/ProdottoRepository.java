@@ -11,17 +11,21 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
 public class ProdottoRepository implements IProdottoRepository {
 
-    private Map<Integer, Prodotto> prodotti = new HashMap<>();
+    private Map<Long, Prodotto> prodotti = new HashMap<>();
+    private Long nextId = 1L;
 
     // Implementazione dei metodi dell'interfaccia IProdottoRepository
 
     @Override
     public void save(Prodotto prodotto) {
+        if (prodotto.getId() == null) {
+            prodotto.setIdProdotto(nextId++);
+        }
         prodotti.put(prodotto.getId(), prodotto);
     }
 
     @Override
-    public Prodotto findById(int id) {
+    public Prodotto findById(Long id) {
         return prodotti.get(id);
     }
 
@@ -31,7 +35,7 @@ public class ProdottoRepository implements IProdottoRepository {
     }
 
     @Override
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         prodotti.remove(id);
     }
 

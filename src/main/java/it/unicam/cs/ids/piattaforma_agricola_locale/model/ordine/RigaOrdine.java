@@ -3,24 +3,24 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 
 public class RigaOrdine {
-    private int idRiga;
+    private Long idRiga;
     private Acquistabile acquistabile;
     private int quantitaOrdinata;
     private double prezzoUnitario;
 
 
-    public RigaOrdine(int idRiga,Acquistabile acquistabile, int quantitaOrdinata, double prezzoUnitario) {
-        this.idRiga = idRiga;
+    public RigaOrdine(Acquistabile acquistabile, int quantitaOrdinata, double prezzoUnitario) {
+
         this.acquistabile = acquistabile;
         this.quantitaOrdinata = quantitaOrdinata;
         this.prezzoUnitario = prezzoUnitario;
     }
 
-    public int getIdRiga() {
+    public Long getIdRiga() {
         return idRiga;
     }
 
-    public void setIdRiga(int idRiga) {
+    public void setIdRiga(Long idRiga) {
         this.idRiga = idRiga;
     }
 

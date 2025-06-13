@@ -10,15 +10,15 @@ import java.util.Date;
 import java.util.List;
 
 public class Ordine {
-    private int idOrdine;
+    private Long idOrdine;
     private Date dataOrdine;
     private double importoTotale;
     private Acquirente acquirente;
     private List<RigaOrdine> righeOrdine;
     private IStatoOrdine stato;
 
-    public Ordine(int idOrdine, Date dataOrdine, Acquirente acquirente) {
-        this.idOrdine = idOrdine;
+    public Ordine( Date dataOrdine, Acquirente acquirente) {
+
         this.dataOrdine = dataOrdine;
         this.importoTotale = 0.0;
         this.acquirente = acquirente;
@@ -26,11 +26,11 @@ public class Ordine {
         this.stato = new StatoOrdineNuovoInAttesaDiPagamento();
     }
 
-    public int getIdOrdine() {
+    public Long getIdOrdine() {
         return idOrdine;
     }
 
-    public void setIdOrdine(int idOrdine) {
+    public void setIdOrdine(Long idOrdine) {
         this.idOrdine = idOrdine;
     }
 

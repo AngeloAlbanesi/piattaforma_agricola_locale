@@ -53,8 +53,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
         if (nome == null || descrizione == null || prezzo <= 0 || quantitaDisponibile <= 0 || venditore == null) {
             throw new IllegalArgumentException("Errore nella creazione del prodotto");
         }
-        int idProdotto = Math.abs(UUID.randomUUID().hashCode()); // Generazione ID
-        Prodotto prodotto = new Prodotto(idProdotto, nome, descrizione, prezzo, quantitaDisponibile, venditore);
+        Prodotto prodotto = new Prodotto( nome, descrizione, prezzo, quantitaDisponibile, venditore);
 
         venditore.getProdottiOfferti().add(prodotto); // Aggiunge alla lista del venditore
         prodottoRepository.save(prodotto); // Salva nel repository dei prodotti
@@ -152,7 +151,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
     }
 
     // Metodo per rimuovere una certificazione da un prodotto
-    public void rimuoviCertificazioneDaProdotto(Prodotto prodotto, int idCertificazione) {
+    public void rimuoviCertificazioneDaProdotto(Prodotto prodotto, Long idCertificazione) {
         if (prodotto == null)
             throw new IllegalArgumentException("prodotto non puo essere null");
         if (certificazioneService.getCertificazioneById(idCertificazione) == null)
@@ -176,7 +175,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
     }
 
     @Override
-    public void decrementaQuantita(int idProdotto, int quantitaDaDecrementare) {
+    public void decrementaQuantita(Long idProdotto, int quantitaDaDecrementare) {
         // Validazione parametri di input
         if (quantitaDaDecrementare <= 0) {
             throw new IllegalArgumentException("La quantità da decrementare deve essere maggiore di zero");

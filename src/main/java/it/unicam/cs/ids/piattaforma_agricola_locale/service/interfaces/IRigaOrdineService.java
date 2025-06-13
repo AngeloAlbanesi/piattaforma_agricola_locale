@@ -17,7 +17,7 @@ public interface IRigaOrdineService {
      * @param idRiga l'ID della riga ordine
      * @return la riga ordine se trovata
      */
-    Optional<RigaOrdine> findRigaOrdineById(int idRiga);
+    Optional<RigaOrdine> findRigaOrdineById(Long idRiga);
 
     /**
      * Ottiene tutte le righe ordine
@@ -54,7 +54,7 @@ public interface IRigaOrdineService {
      * 
      * @param idRiga l'ID della riga ordine da eliminare
      */
-    void eliminaRigaOrdine(int idRiga);
+    void eliminaRigaOrdine(Long idRiga);
 
     /**
      * Elimina tutte le righe ordine di un ordine

@@ -11,15 +11,21 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 
 public class CarrelloRepository implements ICarrelloRepository {
 
-    private final Map<Integer, Carrello> store = new HashMap<>();
+    private final Map<Long, Carrello> store = new HashMap<>();
+    private Long nextId = 1L; // Semplice generazione ID
+
 
     @Override
     public void save(Carrello carrello) {
+        if(carrello.getIdCarrello() == null) {
+            carrello.setIdCarrello(nextId++);
+        }
+
         store.put(carrello.getIdCarrello(), carrello);
     }
 
     @Override
-    public Optional<Carrello> findById(int idCarrello) {
+    public Optional<Carrello> findById(Long idCarrello) {
         return Optional.ofNullable(store.get(idCarrello));
     }
 
@@ -36,7 +42,7 @@ public class CarrelloRepository implements ICarrelloRepository {
     }
 
     @Override
-    public void deleteById(int idCarrello) {
+    public void deleteById(Long idCarrello) {
         store.remove(idCarrello);
     }
 

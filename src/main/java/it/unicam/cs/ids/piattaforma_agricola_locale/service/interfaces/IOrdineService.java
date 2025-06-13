@@ -23,7 +23,7 @@ public interface IOrdineService {
      * @param idOrdine l'ID dell'ordine
      * @return l'ordine se trovato
      */
-    Optional<Ordine> findOrdineById(int idOrdine);
+    Optional<Ordine> findOrdineById(Long idOrdine);
 
     /**
      * Ottiene tutti gli ordini
@@ -78,7 +78,7 @@ public interface IOrdineService {
      * @param idOrdine l'ID dell'ordine da eliminare
      * @throws OrdineException se si verifica un errore durante l'eliminazione
      */
-    void eliminaOrdine(int idOrdine) throws OrdineException;
+    void eliminaOrdine(Long idOrdine) throws OrdineException;
 
     /**
      * Crea un ordine dal carrello dell'acquirente

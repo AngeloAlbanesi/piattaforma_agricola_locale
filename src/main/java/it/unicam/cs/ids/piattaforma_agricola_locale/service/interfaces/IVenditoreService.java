@@ -21,5 +21,5 @@ public interface IVenditoreService {
 
     List<Certificazione> getCertificazioniAzienda(Venditore venditore);
 
-    boolean rimuoviCertificazioneDaAzienda(Venditore venditore, int idCertificazione);
+    boolean rimuoviCertificazioneDaAzienda(Venditore venditore, Long idCertificazione);
 }

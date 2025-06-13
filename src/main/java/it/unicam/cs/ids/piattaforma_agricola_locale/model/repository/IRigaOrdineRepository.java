@@ -22,7 +22,7 @@ public interface IRigaOrdineRepository {
      * @param idRiga l'ID della riga ordine
      * @return Optional contenente la riga ordine se trovata
      */
-    Optional<RigaOrdine> findById(int idRiga);
+    Optional<RigaOrdine> findById(Long idRiga);
 
     /**
      * Restituisce tutte le righe ordine
@@ -52,7 +52,7 @@ public interface IRigaOrdineRepository {
      * 
      * @param idRiga l'ID della riga ordine da eliminare
      */
-    void deleteById(int idRiga);
+    void deleteById(Long idRiga);
 
     /**
      * Elimina tutte le righe ordine di un ordine specifico

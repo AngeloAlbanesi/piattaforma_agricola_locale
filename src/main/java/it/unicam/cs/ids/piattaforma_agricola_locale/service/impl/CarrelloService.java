@@ -41,7 +41,7 @@ public class CarrelloService implements ICarrelloService {
      */
     public Carrello creaNuovoCarrello(Acquirente acquirente) {
         int idCarrello = java.util.UUID.randomUUID().hashCode();
-        Carrello nuovoCarrello = new Carrello(idCarrello, acquirente);
+        Carrello nuovoCarrello = new Carrello(acquirente);
         carrelloRepository.save(nuovoCarrello);
         return nuovoCarrello;
     }

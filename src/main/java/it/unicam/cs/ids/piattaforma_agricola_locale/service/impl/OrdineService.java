@@ -64,7 +64,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
             Date dataOrdine = new Date(); // mette anche l'ora
             // Non è più necessario passare lo stato come parametro,
             // viene inizializzato automaticamente a "in attesa di pagamento"
-            Ordine ordine = new Ordine(idOrdine, dataOrdine, acquirente);
+            Ordine ordine = new Ordine(dataOrdine, acquirente);
             ordineRepository.save(ordine);
 
             // Notifica gli observer dopo la creazione dell'ordine
@@ -107,7 +107,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
      * @param idOrdine l'ID dell'ordine
      * @return l'ordine se trovato
      */
-    public Optional<Ordine> findOrdineById(int idOrdine) {
+    public Optional<Ordine> findOrdineById(Long idOrdine) {
         return ordineRepository.findById(idOrdine);
     }
 
@@ -199,7 +199,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
      * 
      * @param idOrdine l'ID dell'ordine da eliminare
      */
-    public void eliminaOrdine(int idOrdine) throws OrdineException {
+    public void eliminaOrdine(Long idOrdine) throws OrdineException {
         try {
             Optional<Ordine> ordineOpt = ordineRepository.findById(idOrdine);
             if (ordineOpt.isPresent()) {
@@ -238,10 +238,8 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                 throw new CarrelloVuotoException("Il carrello dell'acquirente " + acquirente.getNome() + " è vuoto");
             }
 
-            // 3. Crea un nuovo ordine
-            int idOrdine = UUID.randomUUID().hashCode();
             Date dataOrdine = new Date();
-            Ordine ordine = new Ordine(idOrdine, dataOrdine, acquirente);
+            Ordine ordine = new Ordine( dataOrdine, acquirente);
 
             double importoTotale = 0.0;
 
@@ -268,9 +266,8 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                 }
 
                 // Crea riga ordine
-                int idRiga = UUID.randomUUID().hashCode();
+
                 RigaOrdine rigaOrdine = new RigaOrdine(
-                        idRiga,
                         acquistabile,
                         quantitaRichiesta,
                         acquistabile.getPrezzo());

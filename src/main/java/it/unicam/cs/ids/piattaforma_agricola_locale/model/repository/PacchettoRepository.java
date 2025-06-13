@@ -10,16 +10,21 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
 public class PacchettoRepository implements IPacchettoRepository {
 
-    private HashMap<Integer, Pacchetto> store = new HashMap<>();
+    private HashMap<Long, Pacchetto> store = new HashMap<>();
+    private Long nextId = 1L; // Semplice generazione ID
+
 
     @Override
     public void salva(Pacchetto pacchetto) {
         // Implementazione del metodo per salvare un pacchetto
+        if(pacchetto.getId() == null) {
+            pacchetto.SetId(nextId++);
+        }
         store.put(pacchetto.getId(), pacchetto);
     }
 
     @Override
-    public Pacchetto findById(int id) {
+    public Pacchetto findById(Long id) {
         // Implementazione del metodo per trovare un pacchetto per ID
         return store.get(id);
     }
@@ -31,7 +36,7 @@ public class PacchettoRepository implements IPacchettoRepository {
     }
 
     @Override
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         // Implementazione del metodo per eliminare un pacchetto per ID
         store.remove(id);
     }

@@ -10,7 +10,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
 public class Prodotto implements Acquistabile, ElementoVerificabile {
 
-    private int idProdotto;
+    private Long idProdotto;
     private String nome;
     private String descrizione;
     private double prezzo;
@@ -23,9 +23,9 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
     private Long idProcessoTrasformazioneOriginario;
     private Long idMetodoDiColtivazione;
 
-    public Prodotto(int idProdotto, String nome, String descrizione, double prezzo, int quantitaDisponibile,
+    public Prodotto( String nome, String descrizione, double prezzo, int quantitaDisponibile,
                     Venditore venditore) {
-        this.idProdotto = idProdotto;
+
         this.nome = nome;
         this.descrizione = descrizione;
         this.prezzo = prezzo;
@@ -40,7 +40,6 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
     /**
      * Costruttore per prodotti trasformati.
      *
-     * @param idProdotto                         L'identificativo del prodotto
      * @param nome                               Il nome del prodotto
      * @param descrizione                        La descrizione del prodotto
      * @param prezzo                             Il prezzo del prodotto
@@ -48,15 +47,18 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
      * @param venditore                          Il venditore del prodotto
      * @param idProcessoTrasformazioneOriginario L'ID del processo di trasformazione
      */
-    public Prodotto(int idProdotto, String nome, String descrizione, double prezzo, int quantitaDisponibile,
+    public Prodotto( String nome, String descrizione, double prezzo, int quantitaDisponibile,
                     Venditore venditore, Long idProcessoTrasformazioneOriginario) {
-        this(idProdotto, nome, descrizione, prezzo, quantitaDisponibile, venditore);
+        this(nome, descrizione, prezzo, quantitaDisponibile, venditore);
         this.tipoOrigine = TipoOrigineProdotto.TRASFORMATO;
         this.idProcessoTrasformazioneOriginario = idProcessoTrasformazioneOriginario;
     }
 
-    public int getId() {
+    public Long getId() {
         return idProdotto;
+    }
+    public void setIdProdotto(Long idProdotto) {
+        this.idProdotto = idProdotto;
     }
 
     public String getNome() {

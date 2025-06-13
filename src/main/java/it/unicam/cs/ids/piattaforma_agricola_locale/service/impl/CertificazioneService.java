@@ -30,13 +30,7 @@ public class CertificazioneService implements ICertificazioneService {
     }
 
     // Metodo per generare ID univoci. Potrebbe stare nel repository o essere un servizio a parte.
-    private int generaIdUnivocoCertificazione() {
-        // Per l'esempio, usiamo il metodo del repository se disponibile, altrimenti UUID
-        if (certificazioneRepository instanceof CertificazioneRepository) { // Controllo per l'esempio
-            return ((CertificazioneRepository) certificazioneRepository).getNextId();
-        }
-        return Math.abs(UUID.randomUUID().hashCode()); // Non garantisce unicità assoluta ma buono per test
-    }
+
 
 
     @Override
@@ -45,8 +39,8 @@ public class CertificazioneService implements ICertificazioneService {
             // Lanciare eccezione o ritornare null
             return null;
         }
-        int idCert = generaIdUnivocoCertificazione();
-        Certificazione cert = new Certificazione(idCert, nome, ente, rilascio, scadenza, prodotto.getId());
+
+        Certificazione cert = new Certificazione( nome, ente, rilascio, scadenza, prodotto.getId());
         certificazioneRepository.save(cert);
         prodotto.aggiungiCertificazione(cert); // Aggiunge alla lista interna del prodotto
         // Se ProdottoRepository gestisce la persistenza di Prodotto, potresti dover salvare Prodotto qui
@@ -59,9 +53,8 @@ public class CertificazioneService implements ICertificazioneService {
         if (azienda == null || nome == null || nome.trim().isEmpty()) {
             return null;
         }
-        int idCert = generaIdUnivocoCertificazione();
         // Assumendo che DatiAzienda abbia un getIdAzienda()
-        Certificazione cert = new Certificazione(idCert, nome, ente, rilascio, scadenza, azienda.getIdAzienda(), true);
+        Certificazione cert = new Certificazione( nome, ente, rilascio, scadenza, azienda.getIdAzienda(), true);
         certificazioneRepository.save(cert);
         azienda.aggiungiCertificazione(cert);
         datiAziendaRepository.save(azienda);
@@ -69,22 +62,22 @@ public class CertificazioneService implements ICertificazioneService {
     }
 
     @Override
-    public Certificazione getCertificazioneById(int idCertificazione) {
+    public Certificazione getCertificazioneById(Long idCertificazione) {
         return certificazioneRepository.findById(idCertificazione);
     }
 
     @Override
-    public List<Certificazione> getCertificazioniProdotto(int idProdotto) {
+    public List<Certificazione> getCertificazioniProdotto(Long idProdotto) {
         return certificazioneRepository.findByProdottoId(idProdotto);
     }
 
     @Override
-    public List<Certificazione> getCertificazioniAzienda(int idAzienda) {
+    public List<Certificazione> getCertificazioniAzienda(Long idAzienda) {
         return certificazioneRepository.findByAziendaId(idAzienda);
     }
 
     @Override
-    public boolean rimuoviCertificazione(int idCertificazione, Prodotto prodotto) {
+    public boolean rimuoviCertificazione(Long idCertificazione, Prodotto prodotto) {
         Certificazione cert = certificazioneRepository.findById(idCertificazione);
         if (cert != null && cert.getIdProdottoAssociato() != null && cert.getIdProdottoAssociato().equals(prodotto.getId())) {
             prodotto.getCertificazioni().remove(cert); // Rimuovi dalla lista interna
@@ -96,7 +89,7 @@ public class CertificazioneService implements ICertificazioneService {
     }
 
     @Override
-    public boolean rimuoviCertificazione(int idCertificazione, DatiAzienda azienda) {
+    public boolean rimuoviCertificazione(Long idCertificazione, DatiAzienda azienda) {
         Certificazione cert = certificazioneRepository.findById(idCertificazione);
         if (cert != null && cert.getIdAziendaAssociata() != null && cert.getIdAziendaAssociata().equals(azienda.getIdAzienda())) {
             azienda.getCertificazioniAzienda().remove(cert);
@@ -108,7 +101,7 @@ public class CertificazioneService implements ICertificazioneService {
     }
 
     @Override
-    public void rimuoviCertificazioneGlobale(int idCertificazione) {
+    public void rimuoviCertificazioneGlobale(Long idCertificazione) {
         // Qui devi anche rimuovere la certificazione dalle liste interne
         // di Prodotto o DatiAzienda se vuoi mantenere la consistenza
         // Questo metodo è più per pulizia se l'oggetto padre è già stato cancellato.
@@ -128,7 +121,7 @@ public class CertificazioneService implements ICertificazioneService {
 
 
     @Override
-    public Certificazione aggiornaCertificazione(int idCertificazione, String nuovoNome, String nuovoEnte, Date nuovaDataRilascio, Date nuovaDataScadenza) {
+    public Certificazione aggiornaCertificazione(Long idCertificazione, String nuovoNome, String nuovoEnte, Date nuovaDataRilascio, Date nuovaDataScadenza) {
         Certificazione cert = certificazioneRepository.findById(idCertificazione);
         if (cert != null) {
             if (nuovoNome != null) cert.setNomeCertificazione(nuovoNome);

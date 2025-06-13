@@ -21,7 +21,7 @@ public interface ICarrelloRepository {
      * @param idCarrello l'ID del carrello
      * @return Optional contenente il carrello se trovato
      */
-    Optional<Carrello> findById(int idCarrello);
+    Optional<Carrello> findById(Long idCarrello);
 
     /**
      * Trova il carrello di un acquirente
@@ -43,7 +43,7 @@ public interface ICarrelloRepository {
      * 
      * @param idCarrello l'ID del carrello da eliminare
      */
-    void deleteById(int idCarrello);
+    void deleteById(Long idCarrello);
 
     /**
      * Elimina il carrello di un acquirente

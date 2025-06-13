@@ -42,7 +42,7 @@ public class PacchettoService implements IPacchettoService {
     public void creaPacchetto(DistributoreDiTipicita distributore, String nome, String descrizione, int quantita,
                               double prezzoPacchetto) {
         int idPacchetto = UUID.randomUUID().hashCode();
-        Pacchetto pacchetto = new Pacchetto(distributore, idPacchetto, nome, descrizione, quantita, prezzoPacchetto);
+        Pacchetto pacchetto = new Pacchetto(distributore,  nome, descrizione, quantita, prezzoPacchetto);
         distributore.getPacchettiOfferti().add(pacchetto);
         this.pacchettoRepository.salva(pacchetto);
         this.venditoreRepository.save(distributore);
@@ -134,7 +134,7 @@ public class PacchettoService implements IPacchettoService {
 
 
     @Override
-    public void decrementaQuantita(int idPacchetto, int quantitaDaDecrementare) {
+    public void decrementaQuantita(Long idPacchetto, int quantitaDaDecrementare) {
         // Validazione parametri di input
         if (quantitaDaDecrementare <= 0) {
             throw new IllegalArgumentException("La quantità da decrementare deve essere maggiore di zero");

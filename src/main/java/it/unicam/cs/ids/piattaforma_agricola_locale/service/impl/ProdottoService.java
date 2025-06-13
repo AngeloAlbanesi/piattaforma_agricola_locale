@@ -46,7 +46,6 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
 
         Prodotto prodotto = new Prodotto( nome, descrizione, prezzo, quantitaDisponibile, venditore);
 
-
         venditore.getProdottiOfferti().add(prodotto); // Aggiunge alla lista del venditore
         prodottoRepository.save(prodotto); // Salva nel repository dei prodotti
         venditoreRepository.save(venditore);

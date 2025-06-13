@@ -59,9 +59,6 @@ public class EventoService implements IEventoService {
                               int nuovaCapienzaMassima,AnimatoreDellaFiliera organizzatore) {
 
 
-
-
-
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");

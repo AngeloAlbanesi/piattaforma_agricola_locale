@@ -5,20 +5,19 @@ import java.util.Date;
 
 public class Certificazione {
 
-    private int idCertificazione; // Deve essere univoco globalmente
+    private Long idCertificazione; // Deve essere univoco globalmente
     private String nomeCertificazione;
     private String enteRilascio;
     private Date dataRilascio;
     private Date dataScadenza;
 
     // Chiavi esterne: solo una sarà valorizzata
-    private Integer idProdottoAssociato; // ID del prodotto a cui è associata
-    private Integer idAziendaAssociata;  // ID dell'azienda a cui è associata
+    private Long idProdottoAssociato; // ID del prodotto a cui è associata
+    private Long idAziendaAssociata;  // ID dell'azienda a cui è associata
 
     // Costruttore per certificazione di prodotto
-    public Certificazione(int idCertificazione, String nomeCertificazione, String enteRilascio, Date dataRilascio,
-                          Date dataScadenza, int idProdottoAssociato) {
-        this.idCertificazione = idCertificazione;
+    public Certificazione(String nomeCertificazione, String enteRilascio, Date dataRilascio,
+                          Date dataScadenza, long idProdottoAssociato) {
         this.nomeCertificazione = nomeCertificazione;
         this.enteRilascio = enteRilascio;
         this.dataRilascio = dataRilascio;
@@ -28,10 +27,9 @@ public class Certificazione {
     }
 
     // Costruttore per certificazione di azienda
-    public Certificazione(int idCertificazione, String nomeCertificazione, String enteRilascio, Date dataRilascio,
-                          Date dataScadenza, Integer idAziendaAssociata, boolean isAzienda) { // boolean isAzienda solo per distinguere il costruttore
+    public Certificazione( String nomeCertificazione, String enteRilascio, Date dataRilascio,
+                          Date dataScadenza, long idAziendaAssociata, boolean isAzienda) { // boolean isAzienda solo per distinguere il costruttore
         if (!isAzienda) throw new IllegalArgumentException("Usare l'altro costruttore per prodotti");
-        this.idCertificazione = idCertificazione;
         this.nomeCertificazione = nomeCertificazione;
         this.enteRilascio = enteRilascio;
         this.dataRilascio = dataRilascio;
@@ -42,7 +40,7 @@ public class Certificazione {
 
 
     // Getters e Setters (inclusi per idProdottoAssociato e idAziendaAssociata)
-    public int getIdCertificazione() {
+    public Long getIdCertificazione() {
         return idCertificazione;
     }
 
@@ -62,11 +60,11 @@ public class Certificazione {
         return dataScadenza;
     }
 
-    public Integer getIdProdottoAssociato() {
+    public Long getIdProdottoAssociato() {
         return idProdottoAssociato;
     }
 
-    public Integer getIdAziendaAssociata() {
+    public Long getIdAziendaAssociata() {
         return idAziendaAssociata;
     }
 
@@ -85,6 +83,10 @@ public class Certificazione {
 
     public void setDataScadenza(Date dataScadenza) {
         this.dataScadenza = dataScadenza;
+    }
+
+    public void SetIdCertificazione(Long idCertificazione) {
+        this.idCertificazione = idCertificazione;
     }
 
     // Non dovresti cambiare l'associazione dopo la creazione,

@@ -10,11 +10,11 @@ public interface IProdottoRepository {
     // Metodi per gestire i prodotti
     void save(Prodotto prodotto);
 
-    Prodotto findById(int id);
+    Prodotto findById(Long id);
 
     List<Prodotto> mostraTuttiIProdotti();
 
-    void deleteById(int id);
+    void deleteById(Long id);
 
     List<Prodotto> findByVenditore(Venditore venditore);
 

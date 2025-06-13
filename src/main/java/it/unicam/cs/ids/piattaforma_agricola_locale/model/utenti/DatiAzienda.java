@@ -12,7 +12,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.ElementoVerific
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 
 public class DatiAzienda implements ElementoVerificabile {
-    private int idVenditore; // ID del venditore
+    private Long idVenditore; // ID del venditore
     private String nomeAzienda;
     private String partitaIva;
     private String indirizzoAzienda;
@@ -23,7 +23,7 @@ public class DatiAzienda implements ElementoVerificabile {
     private String feedbackVerificaContenuto;
     private List<Certificazione> certificazioniAzienda;
 
-    public DatiAzienda(int idVenditore,String nomeAzienda, String partitaIva, String indirizzoAzienda, String descrizioneAzienda,
+    public DatiAzienda(Long idVenditore,String nomeAzienda, String partitaIva, String indirizzoAzienda, String descrizioneAzienda,
             String logoUrl, String sitoWebUrl) {
         this.idVenditore = idVenditore;
         this.nomeAzienda = nomeAzienda;
@@ -41,11 +41,11 @@ public class DatiAzienda implements ElementoVerificabile {
 
     }
 
-    public int getIdAzienda() {
+    public Long getIdAzienda() {
         return idVenditore;
     }
 
-    public void setIdVenditore(int idVenditore) {
+    public void setIdVenditore(Long idVenditore) {
         this.idVenditore = idVenditore;
     }
 
@@ -111,7 +111,7 @@ public class DatiAzienda implements ElementoVerificabile {
     }
 
     @Override
-    public int getId() {
+    public Long getId() {
         return idVenditore;
     }
 

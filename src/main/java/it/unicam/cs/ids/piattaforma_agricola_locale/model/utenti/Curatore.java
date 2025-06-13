@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 public class Curatore extends Utente {
     private StatoAccreditamento statoAccreditamento;
-    public Curatore(int idUtente, String nome, String cognome, String email, String passwordHash, String numeroTelefono,
+    public Curatore(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
             TipoRuolo tipoRuolo) {
         super(nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
         statoAccreditamento = StatoAccreditamento.PENDING;

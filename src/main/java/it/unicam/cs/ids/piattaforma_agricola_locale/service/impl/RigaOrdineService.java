@@ -16,8 +16,8 @@ public class RigaOrdineService implements IRigaOrdineService {
 
     @Override
     public void creaRigaOrdine(Ordine ordine, Acquistabile acquistabile, int quantita) {
-        int idRiga = UUID.randomUUID().hashCode();
-        RigaOrdine nuovaRiga = new RigaOrdine(idRiga, acquistabile, quantita, acquistabile.getPrezzo());
+
+        RigaOrdine nuovaRiga = new RigaOrdine( acquistabile, quantita, acquistabile.getPrezzo());
         ordine.getRigheOrdine().add(nuovaRiga);
         rigaOrdineRepository.save(nuovaRiga);
     }
@@ -28,7 +28,7 @@ public class RigaOrdineService implements IRigaOrdineService {
      * @param idRiga l'ID della riga ordine
      * @return la riga ordine se trovata
      */
-    public Optional<RigaOrdine> findRigaOrdineById(int idRiga) {
+    public Optional<RigaOrdine> findRigaOrdineById(Long idRiga) {
         return rigaOrdineRepository.findById(idRiga);
     }
 
@@ -75,7 +75,7 @@ public class RigaOrdineService implements IRigaOrdineService {
      * 
      * @param idRiga l'ID della riga ordine da eliminare
      */
-    public void eliminaRigaOrdine(int idRiga) {
+    public void eliminaRigaOrdine(Long idRiga) {
         rigaOrdineRepository.deleteById(idRiga);
     }
 

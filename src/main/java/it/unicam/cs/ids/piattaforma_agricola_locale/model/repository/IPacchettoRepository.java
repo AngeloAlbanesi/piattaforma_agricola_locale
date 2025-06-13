@@ -10,11 +10,11 @@ public interface IPacchettoRepository {
     // Metodi per gestire i pacchetti
     void salva(Pacchetto pacchetto);
 
-    Pacchetto findById(int id);
+    Pacchetto findById(Long id);
 
     List<Pacchetto> mostraTuttiIPacchetti();
 
-    void deleteById(int id);
+    void deleteById(Long id);
 
     List<Pacchetto> findByNome(String nome);
 

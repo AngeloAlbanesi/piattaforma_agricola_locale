@@ -56,8 +56,8 @@ public class VenditoreService implements IVenditoreService {
 
         if(datiAziendaRepository.findByPartitaIva(partitaIva).isEmpty()) {
             // Genera un ID per DatiAzienda se non fornito o gestito diversamente
-            int idAzienda = Math.abs(UUID.randomUUID().hashCode()); // da eliminare
-            DatiAzienda datiAzienda = new DatiAzienda(idAzienda, nomeAzienda, partitaIva, indirizzoAzienda, descrizioneAzienda,
+            Long idVenditore = venditore.getId();
+            DatiAzienda datiAzienda = new DatiAzienda(idVenditore, nomeAzienda, partitaIva, indirizzoAzienda, descrizioneAzienda,
                     logoUrl, sitoWebUrl);
             venditore.setDatiAzienda(datiAzienda);
             // Se il venditore deve essere salvato dopo questa modifica:
@@ -82,7 +82,7 @@ public class VenditoreService implements IVenditoreService {
     }
 
     // Metodo per rimuovere una certificazione dai DatiAzienda di un Venditore
-    public boolean rimuoviCertificazioneDaAzienda(Venditore venditore, int idCertificazione) {
+    public boolean rimuoviCertificazioneDaAzienda(Venditore venditore, Long idCertificazione) {
         if (venditore == null || venditore.getDatiAzienda() == null || certificazioneService == null) {
             System.err.println("Venditore, dati azienda o servizio certificazioni non disponibile.");
             return false;

@@ -9,11 +9,11 @@ import java.util.List;
 public interface IEventoRepository {
     void save(Evento evento);
 
-    Evento findById(int id);
+    Evento findById(Long id);
 
     List<Evento> mostraTuttiEventi();
 
-    void deleteById(int id);
+    void deleteById(Long id);
 
     List<Evento> findByAnimatoreId(AnimatoreDellaFiliera organizzatore);
 
@@ -21,5 +21,5 @@ public interface IEventoRepository {
 
     List<Evento> findByAziendaPartecipante(Venditore venditore);
 
-    int getNextId();
+
 }

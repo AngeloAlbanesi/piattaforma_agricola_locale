@@ -107,5 +107,5 @@ public interface IPacchettoService {
      *                                                                                                quella
      *                                                                                                disponibile
      */
-    void decrementaQuantita(int idPacchetto, int quantitaDaDecrementare);
+    void decrementaQuantita(Long idPacchetto, int quantitaDaDecrementare);
 }

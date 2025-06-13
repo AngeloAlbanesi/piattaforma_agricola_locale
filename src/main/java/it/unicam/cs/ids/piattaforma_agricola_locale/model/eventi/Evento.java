@@ -9,7 +9,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaF
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
 public class Evento implements Acquistabile {
-    private int idEvento;
+    private Long idEvento;
     private String nomeEvento;
     private String descrizione;
     private Date DataOraInizio;
@@ -21,9 +21,9 @@ public class Evento implements Acquistabile {
     private AnimatoreDellaFiliera organizzatore;
     private List<Venditore> aziendePartecipanti;
 
-    public Evento(int idEvento, String nomeEvento, String descrizione, Date DataOraInizio, Date DataOraFine,
+    public Evento(String nomeEvento, String descrizione, Date DataOraInizio, Date DataOraFine,
             String luogoEvento, int capienzaMassima, AnimatoreDellaFiliera organizzatore) {
-        this.idEvento = idEvento;
+
         this.nomeEvento = nomeEvento;
         this.descrizione = descrizione;
         this.DataOraInizio = DataOraInizio;
@@ -36,11 +36,11 @@ public class Evento implements Acquistabile {
         this.aziendePartecipanti = new ArrayList<>();
     }
 
-    public int getIdEvento() {
+
+    public Long getId() {
         return idEvento;
     }
-
-    public void setIdEvento(int idEvento) {
+    public void setId(Long idEvento) {
         this.idEvento = idEvento;
     }
 
@@ -100,10 +100,7 @@ public class Evento implements Acquistabile {
         return organizzatore;
     }
 
-    @Override
-    public int getId() {
-        return idEvento;
-    }
+
 
     @Override
     public double getPrezzo() {

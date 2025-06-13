@@ -7,23 +7,23 @@ import java.util.List;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 
 public class Carrello {
-    private int idCarrello;
+    private Long idCarrello;
     private Acquirente acquirente;
     private List<ElementoCarrello> elementiCarrello;
     private Date ultimaModifica;
 
-    public Carrello(int idCarrello, Acquirente acquirente) {
-        this.idCarrello = idCarrello;
+    public Carrello( Acquirente acquirente) {
+
         this.acquirente = acquirente;
         this.elementiCarrello = new ArrayList<>();
         this.ultimaModifica = new Date();
     }
 
-    public int getIdCarrello() {
+    public Long getIdCarrello() {
         return idCarrello;
     }
 
-    public void setIdCarrello(int idCarrello) {
+    public void setIdCarrello(Long idCarrello) {
         this.idCarrello = idCarrello;
     }
 

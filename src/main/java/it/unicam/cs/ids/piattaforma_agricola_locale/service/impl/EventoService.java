@@ -24,7 +24,6 @@ public class EventoService implements IEventoService {
     public void creaEvento(String nomeEvento, String descrizione,
                            Date dataOraInizio, Date dataOraFine, String luogoEvento,
                            int capienzaMassima, AnimatoreDellaFiliera organizzatore) {
-        int idEvento = eventoRepository.getNextId();
         if(nomeEvento == null || nomeEvento.isEmpty()) {
             throw new IllegalArgumentException("Il nome dell'evento non può essere vuoto.");
         }
@@ -41,13 +40,13 @@ public class EventoService implements IEventoService {
             throw new IllegalArgumentException("L'organizzatore dell'evento non può essere nullo.");
         }
 
-        Evento evento = new Evento(idEvento, nomeEvento, descrizione,
+        Evento evento = new Evento(nomeEvento, descrizione,
                                    dataOraInizio, dataOraFine, luogoEvento,
                                    capienzaMassima, organizzatore);
         eventoRepository.save(evento);
     }
     @Override
-    public void aggiornaEvento(int idEvento, String nuovoNomeEvento, String nuovaDescrizione,
+    public void aggiornaEvento(Long idEvento, String nuovoNomeEvento, String nuovaDescrizione,
                               Date nuovaDataOraInizio, Date nuovaDataOraFine, String nuovoLuogoEvento,
                               int nuovaCapienzaMassima,AnimatoreDellaFiliera organizzatore) {
 
@@ -84,7 +83,7 @@ public class EventoService implements IEventoService {
         eventoRepository.save(evento); // L'implementazione di save deve gestire l'aggiornamento
     }
     @Override
-    public void eliminaEvento(int idEvento,AnimatoreDellaFiliera organizzatore  ) {
+    public void eliminaEvento(Long idEvento,AnimatoreDellaFiliera organizzatore  ) {
     Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
@@ -95,7 +94,7 @@ public class EventoService implements IEventoService {
         eventoRepository.deleteById(idEvento); // L'implementazione di delete deve gestire la rimozione
     }
     @Override
-    public void aggiungiAziendaPartecipante(int idEvento, Venditore venditore) {
+    public void aggiungiAziendaPartecipante(Long idEvento, Venditore venditore) {
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
@@ -110,7 +109,7 @@ public class EventoService implements IEventoService {
         eventoRepository.save(evento); // L'implementazione di save deve gestire l'aggiornamento
     }
     @Override
-    public void rimuoviAziendaPartecipante(int idEvento, Venditore venditore) {
+    public void rimuoviAziendaPartecipante(Long idEvento, Venditore venditore) {
         // Implementazione della rimozione di un'azienda partecipante da un evento
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
@@ -157,7 +156,7 @@ public class EventoService implements IEventoService {
         eventoRepository.save(evento); // L'implementazione di save deve gestire l'aggiornamento
     }
     @Override
-    public void iniziaEvento(int idEvento, AnimatoreDellaFiliera organizzatore) {
+    public void iniziaEvento(Long idEvento, AnimatoreDellaFiliera organizzatore) {
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
@@ -172,7 +171,7 @@ public class EventoService implements IEventoService {
         eventoRepository.save(evento); // L'implementazione di save deve gestire l'aggiornamento
     }
     @Override
-    public void terminaEvento(int idEvento, AnimatoreDellaFiliera organizzatore) {
+    public void terminaEvento(Long idEvento, AnimatoreDellaFiliera organizzatore) {
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
@@ -187,7 +186,7 @@ public class EventoService implements IEventoService {
         eventoRepository.save(evento); // L'implementazione di save deve gestire l'aggiornamento
     }
     @Override
-    public void annullaEvento(int idEvento,AnimatoreDellaFiliera organizzatore) {
+    public void annullaEvento(Long idEvento,AnimatoreDellaFiliera organizzatore) {
         Evento evento = eventoRepository.findById(idEvento);
         if (evento == null) {
             throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");

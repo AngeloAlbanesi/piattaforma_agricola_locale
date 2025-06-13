@@ -11,23 +11,23 @@ public interface IEventoService {
     void creaEvento(String nomeEvento, String descrizione,
                     Date dataOraInizio, Date dataOraFine, String luogoEvento,
                     int capienzaMassima, AnimatoreDellaFiliera organizzatore);
-    void aggiornaEvento(int idEvento, String nuovoNomeEvento, String nuovaDescrizione,
+    void aggiornaEvento(Long idEvento, String nuovoNomeEvento, String nuovaDescrizione,
                         Date nuovaDataOraInizio, Date nuovaDataOraFine, String nuovoLuogoEvento,
                         int nuovaCapienzaMassima, AnimatoreDellaFiliera organizzatore);
-    void eliminaEvento(int idEvento,AnimatoreDellaFiliera organizzatore);
+    void eliminaEvento(Long idEvento,AnimatoreDellaFiliera organizzatore);
 
-    void aggiungiAziendaPartecipante(int idEvento, Venditore venditore);
+    void aggiungiAziendaPartecipante(Long idEvento, Venditore venditore);
 
-    void rimuoviAziendaPartecipante(int idEvento, Venditore venditore);
+    void rimuoviAziendaPartecipante(Long idEvento, Venditore venditore);
 
     void prenotaPosti(Evento evento, int quantita);
 
     void eliminaPostiPrenotati(Evento evento, int quantita);
 
-    void iniziaEvento(int idEvento,AnimatoreDellaFiliera organizzatore);
+    void iniziaEvento(Long idEvento,AnimatoreDellaFiliera organizzatore);
 
-    void terminaEvento(int idEvento,AnimatoreDellaFiliera organizzatore);
+    void terminaEvento(Long idEvento,AnimatoreDellaFiliera organizzatore);
 
-    void annullaEvento(int idEvento,AnimatoreDellaFiliera organizzatore);
+    void annullaEvento(Long idEvento,AnimatoreDellaFiliera organizzatore);
 
 }

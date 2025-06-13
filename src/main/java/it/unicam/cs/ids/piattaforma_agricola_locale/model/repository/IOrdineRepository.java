@@ -23,7 +23,7 @@ public interface IOrdineRepository {
      * @param idOrdine l'ID dell'ordine
      * @return Optional contenente l'ordine se trovato
      */
-    Optional<Ordine> findById(int idOrdine);
+    Optional<Ordine> findById(Long idOrdine);
 
     /**
      * Restituisce tutti gli ordini
@@ -61,7 +61,7 @@ public interface IOrdineRepository {
      * 
      * @param idOrdine l'ID dell'ordine da eliminare
      */
-    void deleteById(int idOrdine);
+    void deleteById(Long idOrdine);
 
     /**
      * Aggiorna un ordine esistente

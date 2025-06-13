@@ -14,15 +14,21 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
 public class OrdineRepository implements IOrdineRepository {
 
-    private final Map<Integer, Ordine> store = new HashMap<>();
+    private final Map<Long, Ordine> store = new HashMap<>();
+    private Long nextId = 1L; // Semplice generatore di ID per l'esempio
+
 
     @Override
     public void save(Ordine ordine) {
+        if(ordine.getIdOrdine() == null) {
+            ordine.setIdOrdine(nextId++);
+        }
+
         store.put(ordine.getIdOrdine(), ordine);
     }
 
     @Override
-    public Optional<Ordine> findById(int idOrdine) {
+    public Optional<Ordine> findById(Long idOrdine) {
         return Optional.ofNullable(store.get(idOrdine));
     }
 
@@ -54,7 +60,7 @@ public class OrdineRepository implements IOrdineRepository {
     }
 
     @Override
-    public void deleteById(int idOrdine) {
+    public void deleteById(Long idOrdine) {
         store.remove(idOrdine);
     }
 

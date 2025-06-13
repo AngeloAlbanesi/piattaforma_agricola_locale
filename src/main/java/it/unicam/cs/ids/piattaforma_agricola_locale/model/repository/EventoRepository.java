@@ -12,14 +12,19 @@ import java.util.Map;
 
 public class EventoRepository implements IEventoRepository {
 
-    private Map<Integer, Evento> eventi = new HashMap<>();
+    private Map<Long, Evento> eventi = new HashMap<>();
+    private Long nextId = 1L; // Semplice generazione ID
 
     @Override
     public void save(Evento evento) {
-        eventi.put(evento.getIdEvento(), evento);
+        if (evento.getId() == null) {
+            evento.setId(nextId++); // Assumendo che Utente abbia setId
+        }
+        eventi.put(evento.getId(), evento);
     }
+
     @Override
-    public Evento findById(int id) {
+    public Evento findById(Long id) {
         return eventi.get(id);
     }
     @Override
@@ -27,7 +32,7 @@ public class EventoRepository implements IEventoRepository {
         return new ArrayList<>(eventi.values());
     }
     @Override
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         eventi.remove(id);
     }
 
@@ -64,7 +69,4 @@ public class EventoRepository implements IEventoRepository {
         return eventiPartecipati;
     }
 
-    public int getNextId() {
-        return eventi.size() + 1; // Simple ID generation strategy
-    }
 }

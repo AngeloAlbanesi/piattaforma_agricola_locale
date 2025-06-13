@@ -13,15 +13,19 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
 
 public class RigaOrdineRepository implements IRigaOrdineRepository {
 
-    private final Map<Integer, RigaOrdine> store = new HashMap<>();
+    private final Map<Long, RigaOrdine> store = new HashMap<>();
+    private Long nextId = 1L;
 
     @Override
     public void save(RigaOrdine rigaOrdine) {
+        if(rigaOrdine.getIdRiga()==null){
+            rigaOrdine.setIdRiga(nextId++);
+        }
         store.put(rigaOrdine.getIdRiga(), rigaOrdine);
     }
 
     @Override
-    public Optional<RigaOrdine> findById(int idRiga) {
+    public Optional<RigaOrdine> findById(Long idRiga) {
         return Optional.ofNullable(store.get(idRiga));
     }
 
@@ -44,13 +48,13 @@ public class RigaOrdineRepository implements IRigaOrdineRepository {
     }
 
     @Override
-    public void deleteById(int idRiga) {
+    public void deleteById(Long idRiga) {
         store.remove(idRiga);
     }
 
     @Override
     public void deleteByOrdine(Ordine ordine) {
-        List<Integer> righeDaRimuovere = ordine.getRigheOrdine().stream()
+        List<Long> righeDaRimuovere = ordine.getRigheOrdine().stream()
                 .map(RigaOrdine::getIdRiga)
                 .collect(Collectors.toList());
 

@@ -17,9 +17,9 @@ public interface IProdottoService {
 
     // Nuovi metodi per la gestione delle certificazioni tramite ProdottoService
     Certificazione aggiungiCertificazioneAProdotto(Prodotto prodotto, String nomeCertificazione, String enteRilascio, Date dataRilascio, Date dataScadenza);
-     void rimuoviCertificazioneDaProdotto(Prodotto prodotto, int idCertificazione);
+     void rimuoviCertificazioneDaProdotto(Prodotto prodotto, Long idCertificazione);
     List<Certificazione> getCertificazioniDelProdotto(Prodotto prodotto);
 
-    void decrementaQuantita(int idProdotto, int quantitaDaDecrementare);
+    void decrementaQuantita(Long idProdotto, int quantitaDaDecrementare);
     
 }

@@ -8,23 +8,20 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CertificazioneRepository implements ICertificazioneRepository {
-    private Map<Integer, Certificazione> certificazioni = new HashMap<>();
-    private int nextId = 1; // Semplice generatore di ID per l'esempio
+    private Map<Long, Certificazione> certificazioni = new HashMap<>();
+    private Long nextId = 1L; // Semplice generatore di ID per l'esempio
 
     @Override
     public void save(Certificazione certificazione) {
-        // Se l'ID è 0 o non presente, assegna un nuovo ID (per nuove certificazioni)
-        // Altrimenti, si assume un aggiornamento (anche se qui sovrascrive sempre)
-        if (certificazione.getIdCertificazione() == 0) {
-            // Questo non va bene con i costruttori attuali, l'ID viene passato.
-            // Dovresti avere un modo per generare l'ID nel service prima di chiamare il costruttore.
-            // Per ora, assumiamo che l'ID sia già impostato correttamente prima di save.
+
+        if (certificazione.getIdCertificazione() == null) {
+            certificazione.SetIdCertificazione(nextId++);
         }
         certificazioni.put(certificazione.getIdCertificazione(), certificazione);
     }
 
     @Override
-    public Certificazione findById(int id) {
+    public Certificazione findById(Long id) {
         return certificazioni.get(id);
     }
 
@@ -34,36 +31,33 @@ public class CertificazioneRepository implements ICertificazioneRepository {
     }
 
     @Override
-    public List<Certificazione> findByProdottoId(int idProdotto) {
+    public List<Certificazione> findByProdottoId(Long idProdotto) {
         return certificazioni.values().stream()
                 .filter(c -> c.getIdProdottoAssociato() != null && c.getIdProdottoAssociato() == idProdotto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Certificazione> findByAziendaId(int idAzienda) {
+    public List<Certificazione> findByAziendaId(Long idAzienda) {
         return certificazioni.values().stream()
                 .filter(c -> c.getIdAziendaAssociata() != null && c.getIdAziendaAssociata() == idAzienda)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         certificazioni.remove(id);
     }
 
     @Override
-    public void deleteByProdottoId(int idProdotto) {
+    public void deleteByProdottoId(Long idProdotto) {
         certificazioni.values().removeIf(c -> c.getIdProdottoAssociato() != null && c.getIdProdottoAssociato() == idProdotto);
     }
 
     @Override
-    public void deleteByAziendaId(int idAzienda) {
+    public void deleteByAziendaId(Long idAzienda) {
         certificazioni.values().removeIf(c -> c.getIdAziendaAssociata() != null && c.getIdAziendaAssociata() == idAzienda);
     }
 
-    // Metodo di utilità per generare ID univoci, da usare nel Service
-    public int getNextId() {
-        return nextId++;
-    }
+
 }

@@ -7,7 +7,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiT
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
 public class Pacchetto implements Acquistabile {
-    private int idPacchetto;
+    private Long idPacchetto;
     private String nome;
     private String descrizione;
     private int quantitaDisponibile;
@@ -15,8 +15,8 @@ public class Pacchetto implements Acquistabile {
     private List <Acquistabile> elementiInclusi;
     private DistributoreDiTipicita distributore;
 
-    public Pacchetto(DistributoreDiTipicita distributore, int idPacchetto, String nome, String descrizione,int quantita, double prezzoPacchetto) {
-        this.idPacchetto = idPacchetto;
+    public Pacchetto(DistributoreDiTipicita distributore, String nome, String descrizione,int quantita, double prezzoPacchetto) {
+
         this.nome = nome;
         this.descrizione = descrizione;
         this.prezzoPacchetto = prezzoPacchetto;
@@ -25,8 +25,11 @@ public class Pacchetto implements Acquistabile {
         this.distributore = distributore;
     }
 
-    public int getId() {
+    public Long getId() {
         return idPacchetto;
+    }
+    public void SetId(Long idPacchetto) {
+        this.idPacchetto = idPacchetto;
     }
     public String getNome() {
         return nome;

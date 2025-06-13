@@ -1,19 +1,15 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.PacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.VenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IPacchettoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
 
@@ -40,9 +36,11 @@ public class PacchettoService implements IPacchettoService {
 
     @Override
     public void creaPacchetto(DistributoreDiTipicita distributore, String nome, String descrizione, int quantita,
-                              double prezzoPacchetto) {
+            double prezzoPacchetto) {
         int idPacchetto = UUID.randomUUID().hashCode();
+
         Pacchetto pacchetto = new Pacchetto(distributore,  nome, descrizione, quantita, prezzoPacchetto);
+
         distributore.getPacchettiOfferti().add(pacchetto);
         this.pacchettoRepository.salva(pacchetto);
         this.venditoreRepository.save(distributore);
@@ -64,7 +62,7 @@ public class PacchettoService implements IPacchettoService {
 
     @Override
     public void aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
-                                            Prodotto prodotto) {
+            Prodotto prodotto) {
         if (pacchetto == null || prodotto == null || pacchetto.getElementiInclusi() == null) {
             throw new IllegalArgumentException("Errore nei parametri");
         }
@@ -79,18 +77,17 @@ public class PacchettoService implements IPacchettoService {
         pacchetto.aggiungiElemento(prodotto);
         this.pacchettoRepository.salva(pacchetto);
 
-
     }
 
     @Override
     public void rimuoviProdottoDalPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
-                                            Prodotto prodotto) {
+            Prodotto prodotto) {
 
-        if (pacchetto==null)
+        if (pacchetto == null)
             throw new IllegalArgumentException("Il pacchetto non puo essere null");
-        if (prodotto==null)
+        if (prodotto == null)
             throw new IllegalArgumentException("Il prodotto non puo essere null");
-        if(!pacchetto.getDistributore().equals(distributore))
+        if (!pacchetto.getDistributore().equals(distributore))
             throw new IllegalArgumentException("Il distributore non possiede questo pacchetto");
         if (!pacchetto.getElementiInclusi().contains(prodotto))
             throw new IllegalArgumentException("il prodotto non fa parte di questo pacchetto");
@@ -100,12 +97,11 @@ public class PacchettoService implements IPacchettoService {
 
     }
 
-
     public void aggiungiQuantitaPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
-                                          int quantitaAggiunta) {
-        if (pacchetto==null)
+            int quantitaAggiunta) {
+        if (pacchetto == null)
             throw new IllegalArgumentException("Il pacchetto non puo essere null");
-        if(!pacchetto.getDistributore().equals(distributore))
+        if (!pacchetto.getDistributore().equals(distributore))
             throw new IllegalArgumentException("Il distributore non possiede questo pacchetto");
         if (quantitaAggiunta <= 0)
             throw new IllegalArgumentException("quantità errata");
@@ -116,11 +112,11 @@ public class PacchettoService implements IPacchettoService {
     }
 
     public void rimuoviQuantitaPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
-                                         int quantitaRimossa) {
+            int quantitaRimossa) {
 
-        if (pacchetto==null)
+        if (pacchetto == null)
             throw new IllegalArgumentException("Il pacchetto non puo essere null");
-        if(!pacchetto.getDistributore().equals(distributore))
+        if (!pacchetto.getDistributore().equals(distributore))
             throw new IllegalArgumentException("Il distributore non possiede questo pacchetto");
 
         if ((pacchetto.getQuantitaDisponibile() - quantitaRimossa) < 0)
@@ -130,8 +126,6 @@ public class PacchettoService implements IPacchettoService {
         this.pacchettoRepository.salva(pacchetto);
 
     }
-
-
 
     @Override
     public void decrementaQuantita(Long idPacchetto, int quantitaDaDecrementare) {

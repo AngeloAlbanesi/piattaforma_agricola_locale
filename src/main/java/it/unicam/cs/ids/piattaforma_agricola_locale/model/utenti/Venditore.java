@@ -5,9 +5,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
@@ -18,7 +16,7 @@ public abstract class Venditore extends Utente {
     private StatoAccreditamento statoAccreditamento;
 
     public Venditore(String nome, String cognome, String email, String passwordHash,
-                     String numeroTelefono, DatiAzienda datiAzienda, TipoRuolo tipoRuolo) {
+            String numeroTelefono, DatiAzienda datiAzienda, TipoRuolo tipoRuolo) {
         super(nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
         this.datiAzienda = datiAzienda;
         this.prodottiOfferti = new ArrayList<>();
@@ -58,9 +56,11 @@ public abstract class Venditore extends Utente {
             this.prodottiOfferti.add(prodotto);
         }
     }
+
     public StatoAccreditamento getStatoAccreditamento() {
         return statoAccreditamento;
     }
+
     public void setStatoAccreditamento(StatoAccreditamento statoAccreditamento) {
         this.statoAccreditamento = statoAccreditamento;
     }

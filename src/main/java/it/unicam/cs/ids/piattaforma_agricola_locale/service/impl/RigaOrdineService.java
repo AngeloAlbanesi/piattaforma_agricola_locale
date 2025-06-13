@@ -2,7 +2,6 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;

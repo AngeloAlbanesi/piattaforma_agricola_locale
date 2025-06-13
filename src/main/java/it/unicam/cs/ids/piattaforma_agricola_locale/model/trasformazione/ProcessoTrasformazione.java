@@ -1,6 +1,5 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -51,7 +50,7 @@ public class ProcessoTrasformazione {
      * @param metodoProduzione Il metodo di produzione utilizzato
      */
     public ProcessoTrasformazione(String nome, String descrizione, Trasformatore trasformatore,
-                                  Prodotto prodottoFinale, String metodoProduzione) {
+            Prodotto prodottoFinale, String metodoProduzione) {
         this(nome, descrizione, trasformatore);
         this.prodottoFinale = prodottoFinale;
         this.metodoProduzione = metodoProduzione;

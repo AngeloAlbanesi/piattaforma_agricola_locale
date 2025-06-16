@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProcessoTrasformazioneRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.FaseLavorazione;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.ProcessoTrasformazione;
@@ -19,10 +20,14 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProcesso
 public class ProcessoTrasformazioneService implements IProcessoTrasformazioneService {
 
     private final IProcessoTrasformazioneRepository processoRepository;
+    private final IProdottoRepository prodottoRepository;
 
-    public ProcessoTrasformazioneService(IProcessoTrasformazioneRepository processoRepository) {
+    public ProcessoTrasformazioneService(IProcessoTrasformazioneRepository processoRepository,
+            IProdottoRepository prodottoRepository) {
         this.processoRepository = Objects.requireNonNull(processoRepository,
                 "Il repository dei processi non può essere nullo");
+        this.prodottoRepository = Objects.requireNonNull(prodottoRepository,
+                "Il repository dei prodotti non può essere nullo");
     }
 
     @Override
@@ -155,6 +160,12 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
         ProcessoTrasformazione processo = processoOpt.get();
         if (!trasformatore.equals(processo.getTrasformatore())) {
             throw new IllegalArgumentException("Non autorizzato");
+        }
+
+        // Verifica se esistono prodotti che fanno riferimento a questo processo
+        if (prodottoRepository.existsByProcessoId(processoId)) {
+            throw new IllegalStateException(
+                    "Impossibile eliminare il processo: esistono prodotti che fanno riferimento a questo processo di trasformazione");
         }
 
         return processoRepository.deleteById(processoId);

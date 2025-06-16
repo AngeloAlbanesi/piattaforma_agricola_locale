@@ -53,6 +53,14 @@ public class ProdottoRepository implements IProdottoRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public boolean existsByProcessoId(Long processoId) {
+        if (processoId == null) {
+            return false;
+        }
 
+        return prodotti.values().stream()
+                .anyMatch(prodotto -> processoId.equals(prodotto.getIdProcessoTrasformazioneOriginario()));
+    }
 
 }

@@ -20,4 +20,14 @@ public interface IProdottoRepository {
 
     List<Prodotto> findByNome(String nome);
 
+    /**
+     * Verifica se esistono prodotti associati a un processo di trasformazione
+     * specifico.
+     * 
+     * @param processoId L'ID del processo di trasformazione
+     * @return true se esistono prodotti che fanno riferimento al processo, false
+     *         altrimenti
+     */
+    boolean existsByProcessoId(Long processoId);
+
 }

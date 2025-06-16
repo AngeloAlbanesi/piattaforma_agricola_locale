@@ -27,7 +27,7 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
 
     @Override
     public ProcessoTrasformazione creaProcesso(String nome, String descrizione,
-                                               Trasformatore trasformatore, String metodoProduzione) {
+            Trasformatore trasformatore, String metodoProduzione) {
         // Validazione input
         if (nome == null || nome.trim().isEmpty()) {
             throw new IllegalArgumentException("Il nome del processo non può essere nullo o vuoto");
@@ -60,22 +60,49 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
     }
 
     @Override
-    public ProcessoTrasformazione aggiornaProcesso(ProcessoTrasformazione processo) {
-        if (processo == null) {
-            throw new IllegalArgumentException("Il processo non può essere nullo");
+    public ProcessoTrasformazione aggiornaProcesso(Long processoId, String nuovoNome, String nuovaDescrizione,
+            String nuovoMetodoProduzione, Trasformatore trasformatore) {
+        if (processoId == null) {
+            throw new IllegalArgumentException("L'ID del processo non può essere nullo");
+        }
+        if (trasformatore == null) {
+            throw new IllegalArgumentException("Il trasformatore non può essere nullo");
         }
 
-        if (processo.getId() == null) {
-            throw new IllegalArgumentException("Il processo deve avere un ID per essere aggiornato");
+        // Recupera il processo esistente dal database
+        ProcessoTrasformazione processoEsistente = processoRepository.findById(processoId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Il processo con ID " + processoId + " non esiste"));
+
+        // Verifica autorizzazione
+        if (!trasformatore.equals(processoEsistente.getTrasformatore())) {
+            throw new IllegalArgumentException("Non autorizzato ad aggiornare questo processo");
         }
 
-        // Verifica che il processo esista
-        Optional<ProcessoTrasformazione> processoEsistente = processoRepository.findById(processo.getId());
-        if (processoEsistente.isEmpty()) {
-            throw new IllegalArgumentException("Il processo con ID " + processo.getId() + " non esiste");
+        // Aggiorna il nome se fornito
+        if (nuovoNome != null && !nuovoNome.trim().isEmpty()) {
+            // Verifica che non esista già un altro processo con lo stesso nome per questo
+            // trasformatore
+            if (!nuovoNome.trim().equals(processoEsistente.getNome()) &&
+                    processoRepository.existsByNomeAndTrasformatore(nuovoNome.trim(), trasformatore)) {
+                throw new IllegalArgumentException(
+                        "Esiste già un processo con il nome '" + nuovoNome + "' per questo trasformatore");
+            }
+            processoEsistente.setNome(nuovoNome.trim());
         }
 
-        return processoRepository.save(processo);
+        // Aggiorna la descrizione se fornita
+        if (nuovaDescrizione != null && !nuovaDescrizione.trim().isEmpty()) {
+            processoEsistente.setDescrizione(nuovaDescrizione.trim());
+        }
+
+        // Aggiorna il metodo di produzione se fornito (può essere null per rimuoverlo)
+        if (nuovoMetodoProduzione != null) {
+            processoEsistente
+                    .setMetodoProduzione(nuovoMetodoProduzione.trim().isEmpty() ? null : nuovoMetodoProduzione.trim());
+        }
+
+        return processoRepository.save(processoEsistente);
     }
 
     @Override
@@ -131,6 +158,89 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
         }
 
         return processoRepository.deleteById(processoId);
+    }
+
+    /**
+     * Aggiorna il nome di un processo esistente
+     */
+    public ProcessoTrasformazione aggiornaNomeProcesso(Long processoId, String nuovoNome, Trasformatore trasformatore) {
+        if (processoId == null) {
+            throw new IllegalArgumentException("L'ID del processo non può essere nullo");
+        }
+        if (nuovoNome == null || nuovoNome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Il nuovo nome non può essere nullo o vuoto");
+        }
+        if (trasformatore == null) {
+            throw new IllegalArgumentException("Il trasformatore non può essere nullo");
+        }
+
+        ProcessoTrasformazione processo = processoRepository.findById(processoId)
+                .orElseThrow(() -> new IllegalArgumentException("Processo con ID " + processoId + " non trovato"));
+
+        // Verifica autorizzazione
+        if (!trasformatore.equals(processo.getTrasformatore())) {
+            throw new IllegalArgumentException("Non autorizzato ad aggiornare questo processo");
+        }
+
+        // Verifica unicità del nome
+        if (processoRepository.existsByNomeAndTrasformatore(nuovoNome.trim(), trasformatore) &&
+                !nuovoNome.trim().equals(processo.getNome())) {
+            throw new IllegalArgumentException("Esiste già un processo con il nome '" + nuovoNome + "'");
+        }
+
+        processo.setNome(nuovoNome.trim());
+        return processoRepository.save(processo);
+    }
+
+    /**
+     * Aggiorna la descrizione di un processo esistente
+     */
+    public ProcessoTrasformazione aggiornaDescrizioneProcesso(Long processoId, String nuovaDescrizione,
+            Trasformatore trasformatore) {
+        if (processoId == null) {
+            throw new IllegalArgumentException("L'ID del processo non può essere nullo");
+        }
+        if (nuovaDescrizione == null || nuovaDescrizione.trim().isEmpty()) {
+            throw new IllegalArgumentException("La nuova descrizione non può essere nulla o vuota");
+        }
+        if (trasformatore == null) {
+            throw new IllegalArgumentException("Il trasformatore non può essere nullo");
+        }
+
+        ProcessoTrasformazione processo = processoRepository.findById(processoId)
+                .orElseThrow(() -> new IllegalArgumentException("Processo con ID " + processoId + " non trovato"));
+
+        // Verifica autorizzazione
+        if (!trasformatore.equals(processo.getTrasformatore())) {
+            throw new IllegalArgumentException("Non autorizzato ad aggiornare questo processo");
+        }
+
+        processo.setDescrizione(nuovaDescrizione.trim());
+        return processoRepository.save(processo);
+    }
+
+    /**
+     * Aggiorna il metodo di produzione di un processo esistente
+     */
+    public ProcessoTrasformazione aggiornaMetodoProduzione(Long processoId, String nuovoMetodo,
+            Trasformatore trasformatore) {
+        if (processoId == null) {
+            throw new IllegalArgumentException("L'ID del processo non può essere nullo");
+        }
+        if (trasformatore == null) {
+            throw new IllegalArgumentException("Il trasformatore non può essere nullo");
+        }
+
+        ProcessoTrasformazione processo = processoRepository.findById(processoId)
+                .orElseThrow(() -> new IllegalArgumentException("Processo con ID " + processoId + " non trovato"));
+
+        // Verifica autorizzazione
+        if (!trasformatore.equals(processo.getTrasformatore())) {
+            throw new IllegalArgumentException("Non autorizzato ad aggiornare questo processo");
+        }
+
+        processo.setMetodoProduzione(nuovoMetodo != null ? nuovoMetodo.trim() : null);
+        return processoRepository.save(processo);
     }
 
 }

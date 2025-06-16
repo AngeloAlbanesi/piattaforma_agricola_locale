@@ -23,16 +23,24 @@ public interface IProcessoTrasformazioneService {
      *                                  validi
      */
     ProcessoTrasformazione creaProcesso(String nome, String descrizione, Trasformatore trasformatore,
-                                        String metodoProduzione);
+            String metodoProduzione);
 
     /**
      * Aggiorna un processo di trasformazione esistente.
      *
-     * @param processo Il processo da aggiornare
+     * @param processoId            L'ID del processo da aggiornare
+     * @param nuovoNome             La nuova denominazione (può essere null se non
+     *                              si vuole cambiare)
+     * @param nuovaDescrizione      La nuova descrizione (può essere null se non si
+     *                              vuole cambiare)
+     * @param nuovoMetodoProduzione Il nuovo metodo di produzione (può essere null)
+     * @param trasformatore         Il trasformatore che richiede l'aggiornamento
      * @return Il processo aggiornato
-     * @throws IllegalArgumentException se il processo è nullo o non valido
+     * @throws IllegalArgumentException se il processo non esiste o il trasformatore
+     *                                  non è autorizzato
      */
-    ProcessoTrasformazione aggiornaProcesso(ProcessoTrasformazione processo);
+    ProcessoTrasformazione aggiornaProcesso(Long processoId, String nuovoNome, String nuovaDescrizione,
+            String nuovoMetodoProduzione, Trasformatore trasformatore);
 
     /**
      * Aggiunge una fase di lavorazione a un processo.
@@ -65,5 +73,57 @@ public interface IProcessoTrasformazioneService {
      * @throws IllegalArgumentException se il trasformatore non è autorizzato
      */
     boolean eliminaProcesso(Long processoId, Trasformatore trasformatore);
+
+    /**
+     * Aggiorna il nome di un processo esistente.
+     *
+     * @param processoId    L'ID del processo da aggiornare
+     * @param nuovoNome     Il nuovo nome del processo
+     * @param trasformatore Il trasformatore che richiede l'aggiornamento
+     * @return Il processo aggiornato
+     * @throws IllegalArgumentException se il processo non esiste, il nome non è
+     *                                  valido
+     *                                  o il trasformatore non è autorizzato
+     */
+    ProcessoTrasformazione aggiornaNomeProcesso(Long processoId, String nuovoNome, Trasformatore trasformatore);
+
+    /**
+     * Aggiorna la descrizione di un processo esistente.
+     *
+     * @param processoId       L'ID del processo da aggiornare
+     * @param nuovaDescrizione La nuova descrizione del processo
+     * @param trasformatore    Il trasformatore che richiede l'aggiornamento
+     * @return Il processo aggiornato
+     * @throws IllegalArgumentException se il processo non esiste, la descrizione
+     *                                  non è valida
+     *                                  o il trasformatore non è autorizzato
+     */
+    ProcessoTrasformazione aggiornaDescrizioneProcesso(Long processoId, String nuovaDescrizione,
+            Trasformatore trasformatore);
+
+    /**
+     * Aggiorna il metodo di produzione di un processo esistente.
+     *
+     * @param processoId    L'ID del processo da aggiornare
+     * @param nuovoMetodo   Il nuovo metodo di produzione (può essere null)
+     * @param trasformatore Il trasformatore che richiede l'aggiornamento
+     * @return Il processo aggiornato
+     * @throws IllegalArgumentException se il processo non esiste o il trasformatore
+     *                                  non è autorizzato
+     */
+    ProcessoTrasformazione aggiornaMetodoProduzione(Long processoId, String nuovoMetodo, Trasformatore trasformatore);
+
+    /**
+     * Aggiorna un processo usando un DTO di aggiornamento.
+     * 
+     * @param processoId    L'ID del processo da aggiornare
+     * @param aggiornamento I dati di aggiornamento
+     * @param trasformatore Il trasformatore che richiede l'aggiornamento
+     * @return Il processo aggiornato
+     * @throws IllegalArgumentException se il processo non esiste o il trasformatore
+     *                                  non è autorizzato
+     */
+    // ProcessoTrasformazione aggiornaProcessoConDTO(Long processoId,
+    // ProcessoAggiornamentoDTO aggiornamento, Trasformatore trasformatore);
 
 }

@@ -46,3 +46,26 @@ temp/
 CLAUDE.md
 PRODOTTO_OBSERVER_USAGE.md
 test/
+
+
+# Logs
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev-debug.log
+# Dependency directories
+node_modules/
+# Environment variables
+# Editor directories and files
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.roo
+.taskmaster
+# OS specific
+.roomodes
+.claude/

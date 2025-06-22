@@ -39,10 +39,6 @@ public abstract class Venditore extends Utente {
         return prodottiOfferti;
     }
 
-    public boolean gestisciOrdineRicevuto() {
-        return true;// TODO:Completa metodo con anche i parametri del metodo
-    }
-
     public void setDatiAzienda(DatiAzienda datiAzienda) {
         this.datiAzienda = datiAzienda;
     }

@@ -47,7 +47,6 @@ CLAUDE.md
 PRODOTTO_OBSERVER_USAGE.md
 test/
 
-
 # Logs
 logs
 npm-debug.log*
@@ -69,3 +68,4 @@ node_modules/
 # OS specific
 .roomodes
 .claude/
+.agent.md

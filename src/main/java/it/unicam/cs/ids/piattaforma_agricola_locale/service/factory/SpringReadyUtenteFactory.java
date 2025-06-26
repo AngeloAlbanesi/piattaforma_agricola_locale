@@ -1,23 +1,26 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.factory;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteBaseRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
 
 /**
- * Implementazione concreta del factory pattern per la creazione di utenti.
- * Questa classe fornisce metodi type-safe per creare diversi tipi di utenti
- * e si integra con il repository per la persistenza.
+ * Implementazione del factory pattern per la creazione di utenti, pronta per l'integrazione con Spring Boot.
+ * Questa classe è progettata per essere facilmente convertita in un componente Spring.
+ * 
+ * Quando il progetto verrà migrato a Spring Boot, sarà sufficiente aggiungere le annotazioni
+ * @Component o @Service e @Autowired per l'iniezione delle dipendenze.
  */
-public class SimpleUtenteFactory extends AbstractUtenteFactory {
+public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
     
     private final IUtenteBaseRepository utenteRepository;
     
     /**
      * Costruttore che accetta un repository per la persistenza degli utenti.
+     * In un contesto Spring, questo costruttore sarà utilizzato per l'iniezione delle dipendenze.
      * 
      * @param utenteRepository Repository per la persistenza degli utenti
      */
-    public SimpleUtenteFactory(IUtenteBaseRepository utenteRepository) {
+    public SpringReadyUtenteFactory(IUtenteBaseRepository utenteRepository) {
         this.utenteRepository = utenteRepository;
     }
     
@@ -30,6 +33,7 @@ public class SimpleUtenteFactory extends AbstractUtenteFactory {
             String numeroTelefono) {
         
         validateUserData(nome, cognome, email, passwordHash);
+        checkEmailNotInUse(email);
         
         Acquirente acquirente = new Acquirente(
                 nome, 
@@ -53,6 +57,7 @@ public class SimpleUtenteFactory extends AbstractUtenteFactory {
         
         validateUserData(nome, cognome, email, passwordHash);
         validateDatiAzienda(datiAzienda);
+        checkEmailNotInUse(email);
         
         Produttore produttore = new Produttore(
                 nome, 
@@ -77,6 +82,7 @@ public class SimpleUtenteFactory extends AbstractUtenteFactory {
         
         validateUserData(nome, cognome, email, passwordHash);
         validateDatiAzienda(datiAzienda);
+        checkEmailNotInUse(email);
         
         Trasformatore trasformatore = new Trasformatore(
                 nome, 
@@ -101,6 +107,7 @@ public class SimpleUtenteFactory extends AbstractUtenteFactory {
         
         validateUserData(nome, cognome, email, passwordHash);
         validateDatiAzienda(datiAzienda);
+        checkEmailNotInUse(email);
         
         DistributoreDiTipicita distributore = new DistributoreDiTipicita(
                 nome, 
@@ -123,6 +130,7 @@ public class SimpleUtenteFactory extends AbstractUtenteFactory {
             String numeroTelefono) {
         
         validateUserData(nome, cognome, email, passwordHash);
+        checkEmailNotInUse(email);
         
         Curatore curatore = new Curatore(
                 nome, 
@@ -144,6 +152,7 @@ public class SimpleUtenteFactory extends AbstractUtenteFactory {
             String numeroTelefono) {
         
         validateUserData(nome, cognome, email, passwordHash);
+        checkEmailNotInUse(email);
         
         AnimatoreDellaFiliera animatore = new AnimatoreDellaFiliera(
                 nome, 
@@ -165,6 +174,7 @@ public class SimpleUtenteFactory extends AbstractUtenteFactory {
             String numeroTelefono) {
         
         validateUserData(nome, cognome, email, passwordHash);
+        checkEmailNotInUse(email);
         
         GestorePiattaforma gestore = new GestorePiattaforma(
                 nome, 
@@ -188,6 +198,7 @@ public class SimpleUtenteFactory extends AbstractUtenteFactory {
             DatiAzienda datiAzienda) {
         
         validateUserData(nome, cognome, email, passwordHash);
+        checkEmailNotInUse(email);
         
         // Verifica che i dati azienda siano forniti per i ruoli che li richiedono
         if (requiresDatiAzienda(tipoRuolo) && datiAzienda == null) {
@@ -229,20 +240,12 @@ public class SimpleUtenteFactory extends AbstractUtenteFactory {
     }
     
     /**
-     * Estende la validazione dell'utente per verificare anche se l'email è già in uso.
+     * Verifica che l'email non sia già in uso.
      * 
-     * @param nome Nome dell'utente
-     * @param cognome Cognome dell'utente
-     * @param email Email dell'utente
-     * @param passwordHash Hash della password
-     * @throws IllegalArgumentException se i dati non sono validi o l'email è già in uso
+     * @param email Email da verificare
+     * @throws IllegalArgumentException se l'email è già in uso
      */
-    @Override
-    protected void validateUserData(String nome, String cognome, String email, String passwordHash) {
-        // Chiama il metodo della classe padre per la validazione di base
-        super.validateUserData(nome, cognome, email, passwordHash);
-        
-        // Verifica aggiuntiva specifica per questa implementazione: email già in uso
+    private void checkEmailNotInUse(String email) {
         if (utenteRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("L'email è già in uso");
         }

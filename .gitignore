@@ -69,3 +69,5 @@ node_modules/
 .roomodes
 .claude/
 .agent.md
+.agent.local.md
+.agent.local.md.new

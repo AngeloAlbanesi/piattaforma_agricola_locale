@@ -1,23 +1,29 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.coltivazione.MetodoDiColtivazione;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IDatiAziendaRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IMetodoDiColtivazioneRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IDatiAziendaRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProduttoreService;
 
+@Service
 public class ProduttoreService extends VenditoreService implements IProduttoreService {
 
-    private IMetodoDiColtivazioneRepository metodiRepository;
-    private IProdottoRepository prodottoRepository;
-    private IVenditoreRepository venditoreRepository;
+    private final IMetodoDiColtivazioneRepository metodiRepository;
+    private final IProdottoRepository prodottoRepository;
+    private final IVenditoreRepository venditoreRepository;
     private Long nextId = 1L;
 
+    @Autowired
     public ProduttoreService(ICertificazioneService certificazioneService,
             IVenditoreRepository venditoreRepository,
             IDatiAziendaRepository datiAziendaRepository,
@@ -63,7 +69,7 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
         }
 
         metodoDiColtivazione.setId(idMetodoEsistente);
-        metodiRepository.update(metodoDiColtivazione);
+        metodiRepository.save(metodoDiColtivazione);
 
         return metodoDiColtivazione;
     }
@@ -82,7 +88,7 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
 
     @Override
     public MetodoDiColtivazione getMetodoDiColtivazioneByProdotto(Long idProdotto) {
-        Prodotto prodotto = prodottoRepository.findById(idProdotto);
+        Prodotto prodotto = prodottoRepository.findById(idProdotto).orElse(null);
         if (prodotto == null) {
             return null;
         }
@@ -92,7 +98,7 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
             return null;
         }
 
-        return metodiRepository.findById(idMetodo);
+        return metodiRepository.findById(idMetodo).orElse(null);
     }
 
     private Prodotto validaProdottoEProduttore(Long idProduttore, Long idProdotto) {
@@ -102,7 +108,7 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
         }
         Venditore produttore = produttoreOpt.get();
 
-        Prodotto prodotto = prodottoRepository.findById(idProdotto);
+        Prodotto prodotto = prodottoRepository.findById(idProdotto).orElse(null);
         if (prodotto == null) {
             throw new IllegalArgumentException("Prodotto non trovato");
         }

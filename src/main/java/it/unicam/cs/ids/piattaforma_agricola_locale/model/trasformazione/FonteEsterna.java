@@ -1,19 +1,29 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
+import jakarta.persistence.*;
 import java.util.Objects;
 
 /**
  * Rappresenta una fonte di materia prima esterna alla piattaforma,
  * identificata da una stringa.
  */
-public class FonteEsterna implements FonteMateriaPrima {
+@Entity
+@DiscriminatorValue("ESTERNA")
+public class FonteEsterna extends FonteMateriaPrima {
 
-    private final String nomeFornitore;
+    @Column(name = "nome_fornitore", nullable = false)
+    private String nomeFornitore;
+
+    public FonteEsterna() {}
 
     public FonteEsterna(String nomeFornitore) {
         if (nomeFornitore == null || nomeFornitore.trim().isEmpty()) {
             throw new IllegalArgumentException("Il nome del fornitore non può essere nullo o vuoto");
         }
+        this.nomeFornitore = nomeFornitore;
+    }
+
+    public void setNomeFornitore(String nomeFornitore) {
         this.nomeFornitore = nomeFornitore;
     }
 

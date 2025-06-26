@@ -2,22 +2,17 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 
-public interface IPacchettoRepository {
+@Repository
+public interface IPacchettoRepository extends JpaRepository<Pacchetto, Long> {
 
-    // Metodi per gestire i pacchetti
-    void salva(Pacchetto pacchetto);
+    List<Pacchetto> findByNomeContainingIgnoreCase(String nome);
 
-    Pacchetto findById(Long id);
-
-    List<Pacchetto> mostraTuttiIPacchetti();
-
-    void deleteById(Long id);
-
-    List<Pacchetto> findByNome(String nome);
-
-    List<Pacchetto> findByVenditoreId(Venditore venditore);
+    List<Pacchetto> findByDistributore(DistributoreDiTipicita distributore);
 
 }

@@ -9,6 +9,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.CarrelloVuotoException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.OrdineException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileAlCheckoutException;
@@ -20,8 +23,8 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.StatoCorrente;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.OrdineRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.RigaOrdineRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IOrdineRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IRigaOrdineRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IOrdineService;
@@ -30,27 +33,22 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IVenditoreO
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.IMetodoPagamentoStrategy;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.PagamentoException;
 
+@Service
 public class OrdineService implements IOrdineService, IOrdineObservable {
 
-    private OrdineRepository ordineRepository = new OrdineRepository();
-    private RigaOrdineRepository rigaOrdineRepository = new RigaOrdineRepository();
-    private CarrelloService carrelloService = new CarrelloService();
+    private final IOrdineRepository ordineRepository;
+    private final IRigaOrdineRepository rigaOrdineRepository;
+    private final CarrelloService carrelloService;
 
     // Gestione Observer Pattern
     private final List<IVenditoreObserver> observers;
 
-    public OrdineService() {
-        this.observers = new ArrayList<>();
-    }
-
-    /**
-     * Costruttore con CarrelloService esterno per testing e dependency injection
-     * 
-     * @param carrelloService il servizio carrello da utilizzare
-     */
-    public OrdineService(CarrelloService carrelloService) {
-        this.observers = new ArrayList<>();
+    @Autowired
+    public OrdineService(IOrdineRepository ordineRepository, IRigaOrdineRepository rigaOrdineRepository, CarrelloService carrelloService) {
+        this.ordineRepository = ordineRepository;
+        this.rigaOrdineRepository = rigaOrdineRepository;
         this.carrelloService = carrelloService;
+        this.observers = new ArrayList<>();
     }
 
     @Override
@@ -95,7 +93,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                 prezzoTotOrdine += prezzoRiga;
             }
             ordine.setImportoTotale(prezzoTotOrdine);
-            ordineRepository.update(ordine);
+            ordineRepository.save(ordine);
         } catch (Exception e) {
             throw new OrdineException("Errore durante il calcolo del prezzo dell'ordine", e);
         }
@@ -185,7 +183,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
         }
 
         try {
-            ordineRepository.update(ordine);
+            ordineRepository.save(ordine);
 
             // Notifica gli observer dopo l'aggiornamento
             notificaObservers(ordine, null);
@@ -268,6 +266,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                 // Crea riga ordine
 
                 RigaOrdine rigaOrdine = new RigaOrdine(
+                        ordine,
                         acquistabile,
                         quantitaRichiesta,
                         acquistabile.getPrezzo());
@@ -348,7 +347,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                 ordine.paga();
 
                 // 2. Aggiorna l'ordine nel repository con il nuovo stato
-                ordineRepository.update(ordine);
+                ordineRepository.save(ordine);
 
                 // 3. Notifica gli observer dopo la conferma del pagamento e l'update
                 notificaObservers(ordine, null);
@@ -490,7 +489,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
         }
     }
 
-    public OrdineRepository getOrdineRepository() {
+    public IOrdineRepository getOrdineRepository() {
         return ordineRepository;
     }
 }

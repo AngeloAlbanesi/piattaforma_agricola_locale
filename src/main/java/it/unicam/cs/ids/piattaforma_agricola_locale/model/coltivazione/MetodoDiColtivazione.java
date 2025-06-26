@@ -1,12 +1,29 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.coltivazione;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "metodi_coltivazione")
 public class MetodoDiColtivazione {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+    
+    @Column(name = "nome", nullable = false)
     private String nome;
+    
+    @Column(name = "descrizione_dettagliata", columnDefinition = "TEXT")
     private String descrizioneDettagliata;
+    
+    @Column(name = "tecnica_principale")
     private String tecnicaPrincipale;
+    
+    @Column(name = "ambiente_coltivazione")
     private String ambienteColtivazione;
+
+    public MetodoDiColtivazione() {}
 
     public MetodoDiColtivazione(Long id, String nome, String descrizioneDettagliata, String tecnicaPrincipale, String ambienteColtivazione) {
         this.id = id;

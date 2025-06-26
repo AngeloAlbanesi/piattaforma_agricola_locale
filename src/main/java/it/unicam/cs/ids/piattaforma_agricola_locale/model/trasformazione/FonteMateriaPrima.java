@@ -1,15 +1,37 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
+import jakarta.persistence.*;
+
 /**
- * Interfaccia che rappresenta l'origine di una materia prima,
+ * Classe astratta che rappresenta l'origine di una materia prima,
  * astraendo se la fonte è interna (un produttore della piattaforma)
  * o esterna.
  */
-public interface FonteMateriaPrima {
+@Entity
+@Table(name = "fonti_materia_prima")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_fonte", discriminatorType = DiscriminatorType.STRING)
+public abstract class FonteMateriaPrima {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+    
+    public FonteMateriaPrima() {}
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     /**
      * Restituisce una descrizione testuale della fonte.
      *
      * @return una stringa che descrive la fonte.
      */
-    String getDescrizione();
+    public abstract String getDescrizione();
 }

@@ -1,5 +1,10 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
@@ -7,21 +12,14 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
 
-import java.util.Date;
-import java.util.List;
-
+@Service
 public class CertificazioneService implements ICertificazioneService {
 
-   private IProdottoRepository prodottoRepository;
-    private ICertificazioneRepository certificazioneRepository;
-    private IDatiAziendaRepository datiAziendaRepository;
+    private final IProdottoRepository prodottoRepository;
+    private final ICertificazioneRepository certificazioneRepository;
+    private final IDatiAziendaRepository datiAziendaRepository;
 
-
-    // Potresti aver bisogno anche dei repository di Prodotto e DatiAzienda/Venditore
-    // per recuperare gli oggetti completi se necessario, o per aggiornarli.
-    // private IProdottoRepository prodottoRepository;
-    // private IVenditoreRepository venditoreRepository; // o IDatiAziendaRepository
-
+    @Autowired
     public CertificazioneService(ICertificazioneRepository certificazioneRepository, IDatiAziendaRepository datiAziendaRepository, IProdottoRepository prodottoRepository) {
         this.certificazioneRepository = certificazioneRepository;
         this.datiAziendaRepository = datiAziendaRepository;
@@ -62,22 +60,22 @@ public class CertificazioneService implements ICertificazioneService {
 
     @Override
     public Certificazione getCertificazioneById(Long idCertificazione) {
-        return certificazioneRepository.findById(idCertificazione);
+        return certificazioneRepository.findById(idCertificazione).orElse(null);
     }
 
     @Override
     public List<Certificazione> getCertificazioniProdotto(Long idProdotto) {
-        return certificazioneRepository.findByProdottoId(idProdotto);
+        return certificazioneRepository.findByIdProdottoAssociato(idProdotto);
     }
 
     @Override
     public List<Certificazione> getCertificazioniAzienda(Long idAzienda) {
-        return certificazioneRepository.findByAziendaId(idAzienda);
+        return certificazioneRepository.findByIdAziendaAssociata(idAzienda);
     }
 
     @Override
     public boolean rimuoviCertificazione(Long idCertificazione, Prodotto prodotto) {
-        Certificazione cert = certificazioneRepository.findById(idCertificazione);
+        Certificazione cert = certificazioneRepository.findById(idCertificazione).orElse(null);
         if (cert != null && cert.getIdProdottoAssociato() != null && cert.getIdProdottoAssociato().equals(prodotto.getId())) {
             prodotto.getCertificazioni().remove(cert); // Rimuovi dalla lista interna
              prodottoRepository.save(prodotto); // Se necessario
@@ -89,7 +87,7 @@ public class CertificazioneService implements ICertificazioneService {
 
     @Override
     public boolean rimuoviCertificazione(Long idCertificazione, DatiAzienda azienda) {
-        Certificazione cert = certificazioneRepository.findById(idCertificazione);
+        Certificazione cert = certificazioneRepository.findById(idCertificazione).orElse(null);
         if (cert != null && cert.getIdAziendaAssociata() != null && cert.getIdAziendaAssociata().equals(azienda.getIdAzienda())) {
             azienda.getCertificazioniAzienda().remove(cert);
             datiAziendaRepository.save(azienda); // Se necessario
@@ -104,7 +102,7 @@ public class CertificazioneService implements ICertificazioneService {
         // Qui devi anche rimuovere la certificazione dalle liste interne
         // di Prodotto o DatiAzienda se vuoi mantenere la consistenza
         // Questo metodo è più per pulizia se l'oggetto padre è già stato cancellato.
-        Certificazione cert = certificazioneRepository.findById(idCertificazione);
+        Certificazione cert = certificazioneRepository.findById(idCertificazione).orElse(null);
         if (cert == null) return;
 
         // Logica opzionale per rimuovere dalle liste dei proprietari
@@ -121,7 +119,7 @@ public class CertificazioneService implements ICertificazioneService {
 
     @Override
     public Certificazione aggiornaCertificazione(Long idCertificazione, String nuovoNome, String nuovoEnte, Date nuovaDataRilascio, Date nuovaDataScadenza) {
-        Certificazione cert = certificazioneRepository.findById(idCertificazione);
+        Certificazione cert = certificazioneRepository.findById(idCertificazione).orElse(null);
         if (cert != null) {
             if (nuovoNome != null) cert.setNomeCertificazione(nuovoNome);
             if (nuovoEnte != null) cert.setEnteRilascio(nuovoEnte);

@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
+import jakarta.persistence.*;
 import java.util.Objects;
 
 /**
@@ -8,15 +9,39 @@ import java.util.Objects;
  * Ogni fase è caratterizzata da una descrizione, una materia prima utilizzata
  * e la sua fonte (interna o esterna).
  */
+@Entity
+@Table(name = "fasi_lavorazione")
 public class FaseLavorazione {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+    
+    @Column(name = "nome", nullable = false)
     private String nome;
+    
+    @Column(name = "descrizione", columnDefinition = "TEXT")
     private String descrizione;
+    
+    @Column(name = "ordine_esecuzione", nullable = false)
     private int ordineEsecuzione;
+    
+    @Column(name = "materia_prima_utilizzata", nullable = false)
     private String materiaPrimaUtilizzata;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_processo_trasformazione")
+    private ProcessoTrasformazione processoTrasformazione;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_fonte_materia_prima")
     private FonteMateriaPrima fonte;
+    
+    @Column(name = "note", columnDefinition = "TEXT")
     private String note;
+
+    public FaseLavorazione() {}
 
     /**
      * Costruttore per una fase di lavorazione.

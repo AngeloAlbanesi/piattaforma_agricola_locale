@@ -4,13 +4,19 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
+import jakarta.persistence.*;
 import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 
+@Entity
+@DiscriminatorValue("DISTRIBUTORE_TIPICITA")
 public class DistributoreDiTipicita extends Venditore {
-    // Costruttore overload per factory (solo parametri base Venditore)
-    private final List<Pacchetto> pacchettiOfferti;
+    
+    @OneToMany(mappedBy = "distributore", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Pacchetto> pacchettiOfferti;
+
+    public DistributoreDiTipicita() {}
 
     public DistributoreDiTipicita(String nome, String cognome, String email, String passwordHash,
             String numeroTelefono, DatiAzienda datiAzienda, TipoRuolo tipoRuolo) {

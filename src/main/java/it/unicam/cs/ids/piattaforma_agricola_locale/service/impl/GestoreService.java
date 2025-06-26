@@ -1,29 +1,32 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.*;
-
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IGestoreService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.*;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IGestoreService;
+
+@Service
 public class GestoreService implements IGestoreService {
 
+    private final IUtenteBaseRepository utenteBaseRepository;
+    private final IVenditoreRepository venditoreRepository;
+    private final ICuratoreRepository curatoreRepository;
+    private final IAnimatoreRepository animatoreRepository;
+    private final IDatiAziendaRepository datiAziendaRepository;
 
-    private final UtenteBaseRepository utenteBaseRepository;
-    private final VenditoreRepository venditoreRepository;
-    private final CuratoreRepository curatoreRepository;
-    private final AnimatoreRepository animatoreRepository;
-    private final DatiAziendaRepository datiAziendaRepository; // Ancora utile per visualizzare info
-
-    public GestoreService(UtenteBaseRepository utenteBaseRepository,
-                          VenditoreRepository venditoreRepository,
-                          CuratoreRepository curatoreRepository,
-                          AnimatoreRepository animatoreRepository,
-                          DatiAziendaRepository datiAziendaRepository) {
+    @Autowired
+    public GestoreService(IUtenteBaseRepository utenteBaseRepository,
+                          IVenditoreRepository venditoreRepository,
+                          ICuratoreRepository curatoreRepository,
+                          IAnimatoreRepository animatoreRepository,
+                          IDatiAziendaRepository datiAziendaRepository) {
         this.utenteBaseRepository = utenteBaseRepository;
         this.venditoreRepository = venditoreRepository;
         this.curatoreRepository = curatoreRepository;

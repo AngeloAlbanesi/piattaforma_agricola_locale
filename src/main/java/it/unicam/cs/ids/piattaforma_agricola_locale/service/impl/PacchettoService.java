@@ -2,16 +2,17 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.PacchettoRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.VenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IPacchettoService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
 
 /**
  * Implementazione concreta di {@link IPacchettoService} che gestisce la logica
@@ -19,19 +20,16 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponi
  * piattaforma agricola locale.
  *
  */
+@Service
 public class PacchettoService implements IPacchettoService {
 
     private final IPacchettoRepository pacchettoRepository;
     private final IVenditoreRepository venditoreRepository;
 
+    @Autowired
     public PacchettoService(IPacchettoRepository pacchettoRepository, IVenditoreRepository venditoreRepository) {
         this.pacchettoRepository = pacchettoRepository;
         this.venditoreRepository = venditoreRepository;
-    }
-
-    public PacchettoService() {
-        this.pacchettoRepository = new PacchettoRepository();
-        this.venditoreRepository = new VenditoreRepository();
     }
 
     @Override
@@ -42,7 +40,7 @@ public class PacchettoService implements IPacchettoService {
         Pacchetto pacchetto = new Pacchetto(distributore,  nome, descrizione, quantita, prezzoPacchetto);
 
         distributore.getPacchettiOfferti().add(pacchetto);
-        this.pacchettoRepository.salva(pacchetto);
+        this.pacchettoRepository.save(pacchetto);
         this.venditoreRepository.save(distributore);
 
     }
@@ -75,7 +73,7 @@ public class PacchettoService implements IPacchettoService {
         }
 
         pacchetto.aggiungiElemento(prodotto);
-        this.pacchettoRepository.salva(pacchetto);
+        this.pacchettoRepository.save(pacchetto);
 
     }
 
@@ -93,7 +91,7 @@ public class PacchettoService implements IPacchettoService {
             throw new IllegalArgumentException("il prodotto non fa parte di questo pacchetto");
 
         pacchetto.rimuoviElemento(prodotto);
-        this.pacchettoRepository.salva(pacchetto);
+        this.pacchettoRepository.save(pacchetto);
 
     }
 
@@ -107,7 +105,7 @@ public class PacchettoService implements IPacchettoService {
             throw new IllegalArgumentException("quantità errata");
 
         pacchetto.setQuantitaDisponibile(pacchetto.getQuantitaDisponibile() + quantitaAggiunta);
-        this.pacchettoRepository.salva(pacchetto);
+        this.pacchettoRepository.save(pacchetto);
 
     }
 
@@ -123,7 +121,7 @@ public class PacchettoService implements IPacchettoService {
             throw new IllegalArgumentException("Impossibile rimuovere " + quantitaRimossa);
 
         pacchetto.setQuantitaDisponibile(pacchetto.getQuantitaDisponibile() - quantitaRimossa);
-        this.pacchettoRepository.salva(pacchetto);
+        this.pacchettoRepository.save(pacchetto);
 
     }
 
@@ -135,10 +133,8 @@ public class PacchettoService implements IPacchettoService {
         }
 
         // Ricerca del pacchetto tramite repository
-        Pacchetto pacchetto = this.pacchettoRepository.findById(idPacchetto);
-        if (pacchetto == null) {
-            throw new IllegalArgumentException("Pacchetto con ID " + idPacchetto + " non trovato");
-        }
+        Pacchetto pacchetto = this.pacchettoRepository.findById(idPacchetto)
+                .orElseThrow(() -> new IllegalArgumentException("Pacchetto con ID " + idPacchetto + " non trovato"));
 
         // Verifica che ci sia abbastanza quantità disponibile
         int quantitaDisponibile = pacchetto.getQuantitaDisponibile();
@@ -152,7 +148,7 @@ public class PacchettoService implements IPacchettoService {
 
         // Decrementa la quantità e salva nel repository
         pacchetto.setQuantitaDisponibile(quantitaDisponibile - quantitaDaDecrementare);
-        this.pacchettoRepository.salva(pacchetto);
+        this.pacchettoRepository.save(pacchetto);
     }
 
     public IPacchettoRepository getRepository() {

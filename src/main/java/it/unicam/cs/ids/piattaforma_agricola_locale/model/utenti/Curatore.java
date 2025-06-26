@@ -4,8 +4,17 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
+import jakarta.persistence.*;
+
+@Entity
+@DiscriminatorValue("CURATORE")
 public class Curatore extends Utente {
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "stato_accreditamento")
     private StatoAccreditamento statoAccreditamento;
+
+    public Curatore() {}
 
     public Curatore(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
             TipoRuolo tipoRuolo) {

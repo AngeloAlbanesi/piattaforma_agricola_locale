@@ -1,5 +1,8 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.ICuratoreObserver;
 
@@ -11,6 +14,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.ICuratoreOb
  * quando vengono creati nuovi prodotti che necessitano di revisione,
  * e li aggiunge automaticamente alla coda del CuratoreService.
  */
+@Service
 public class CuratoreObserverService implements ICuratoreObserver {
 
     private final CuratoreService curatoreService;
@@ -22,19 +26,12 @@ public class CuratoreObserverService implements ICuratoreObserver {
      *                        revisione
      * @throws IllegalArgumentException se curatoreService è null
      */
+    @Autowired
     public CuratoreObserverService(CuratoreService curatoreService) {
         if (curatoreService == null) {
             throw new IllegalArgumentException("CuratoreService non può essere null");
         }
         this.curatoreService = curatoreService;
-    }
-
-    /**
-     * Costruttore di default che crea una nuova istanza di CuratoreService.
-     * Utile per test e per utilizzi semplificati.
-     */
-    public CuratoreObserverService() {
-        this.curatoreService = new CuratoreService();
     }
 
     @Override

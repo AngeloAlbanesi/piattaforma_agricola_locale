@@ -4,8 +4,17 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
+import jakarta.persistence.*;
+
+@Entity
+@DiscriminatorValue("ANIMATORE_FILIERA")
 public class AnimatoreDellaFiliera extends Utente {
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "stato_accreditamento")
     private StatoAccreditamento statoAccreditamento;
+
+    public AnimatoreDellaFiliera() {}
 
     public AnimatoreDellaFiliera(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
             TipoRuolo tipoRuolo) {

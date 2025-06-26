@@ -1,7 +1,9 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
 import java.util.List;
-import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.ProcessoTrasformazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Trasformatore;
@@ -11,30 +13,8 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Trasformatore;
  * Definisce le operazioni CRUD e le query specifiche per i processi di
  * trasformazione.
  */
-public interface IProcessoTrasformazioneRepository {
-
-    /**
-     * Salva un processo di trasformazione nel repository.
-     *
-     * @param processo Il processo da salvare
-     * @return Il processo salvato con ID assegnato
-     */
-    ProcessoTrasformazione save(ProcessoTrasformazione processo);
-
-    /**
-     * Trova un processo di trasformazione per ID.
-     *
-     * @param id L'ID del processo da cercare
-     * @return Optional contenente il processo se trovato
-     */
-    Optional<ProcessoTrasformazione> findById(Long id);
-
-    /**
-     * Trova tutti i processi di trasformazione.
-     *
-     * @return Lista di tutti i processi
-     */
-    List<ProcessoTrasformazione> findAll();
+@Repository
+public interface IProcessoTrasformazioneRepository extends JpaRepository<ProcessoTrasformazione, Long> {
 
     /**
      * Trova tutti i processi di trasformazione di un trasformatore specifico.
@@ -45,21 +25,12 @@ public interface IProcessoTrasformazioneRepository {
     List<ProcessoTrasformazione> findByTrasformatore(Trasformatore trasformatore);
 
     /**
-     * Trova tutti i processi di trasformazione attivi di un trasformatore.
-     *
-     * @param trasformatore Il trasformatore di cui cercare i processi attivi
-     * @return Lista dei processi attivi del trasformatore
-     */
-    List<ProcessoTrasformazione> findActiveByTrasformatore(Trasformatore trasformatore);
-
-    /**
      * Trova tutti i processi di trasformazione per nome (ricerca parziale).
      *
      * @param nome Il nome o parte del nome da cercare
      * @return Lista dei processi che corrispondono al criterio di ricerca
      */
-    List<ProcessoTrasformazione> findByNome(String nome);
-
+    List<ProcessoTrasformazione> findByNomeContainingIgnoreCase(String nome);
 
     /**
      * Trova processi per metodo di produzione.
@@ -85,14 +56,6 @@ public interface IProcessoTrasformazioneRepository {
      * @return true se esiste un processo con quel nome, false altrimenti
      */
     boolean existsByNomeAndTrasformatore(String nome, Trasformatore trasformatore);
-
-    /**
-     * Elimina un processo di trasformazione.
-     *
-     * @param id L'ID del processo da eliminare
-     * @return true se il processo è stato eliminato, false se non esisteva
-     */
-    boolean deleteById(Long id);
 
     /**
      * Elimina tutti i processi di un trasformatore.

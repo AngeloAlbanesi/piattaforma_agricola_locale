@@ -1,6 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine;
 
-
+import jakarta.persistence.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.IStatoOrdine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.StatoOrdineNuovoInAttesaDiPagamento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
@@ -9,20 +9,44 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Entity
+@Table(name = "ordini")
 public class Ordine {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_ordine")
     private Long idOrdine;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "data_ordine", nullable = false)
     private Date dataOrdine;
+    
+    @Column(name = "importo_totale", nullable = false)
     private double importoTotale;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_acquirente", nullable = false)
     private Acquirente acquirente;
+    
+    @OneToMany(mappedBy = "ordine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RigaOrdine> righeOrdine;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "stato_corrente", nullable = false)
+    private StatoCorrente statoCorrente;
+    
+    @Transient
     private IStatoOrdine stato;
 
-    public Ordine( Date dataOrdine, Acquirente acquirente) {
+    public Ordine() {}
 
+    public Ordine(Date dataOrdine, Acquirente acquirente) {
         this.dataOrdine = dataOrdine;
         this.importoTotale = 0.0;
         this.acquirente = acquirente;
         this.righeOrdine = new ArrayList<>();
+        this.statoCorrente = StatoCorrente.ATTESA_PAGAMENTO;
         this.stato = new StatoOrdineNuovoInAttesaDiPagamento();
     }
 
@@ -63,7 +87,11 @@ public class Ordine {
      * @return l'enum StatoCorrente corrispondente allo stato attuale
      */
     public StatoCorrente getStatoOrdine() {
-        return stato.getStatoCorrente();
+        return statoCorrente;
+    }
+
+    public void setStatoCorrente(StatoCorrente statoCorrente) {
+        this.statoCorrente = statoCorrente;
     }
 
     /**

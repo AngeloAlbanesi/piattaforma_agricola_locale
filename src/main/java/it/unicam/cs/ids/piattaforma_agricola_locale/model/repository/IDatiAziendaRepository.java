@@ -1,22 +1,16 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
-import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 
-public interface IDatiAziendaRepository {
-
-    Optional<DatiAzienda> findById(Long id);
+@Repository
+public interface IDatiAziendaRepository extends JpaRepository<DatiAzienda, Long> {
 
     Optional<DatiAzienda> findByPartitaIva(String partitaIva);
 
-
-    Optional<DatiAzienda> findById(String partitaIva);
-
-    void save(DatiAzienda datiAzienda);
-
-    List<DatiAzienda> findAll();
-
-    void deleteById(String partitaIva);
+    void deleteByPartitaIva(String partitaIva);
 }

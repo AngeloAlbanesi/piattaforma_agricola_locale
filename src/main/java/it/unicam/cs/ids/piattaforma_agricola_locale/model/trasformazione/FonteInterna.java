@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
+import jakarta.persistence.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Produttore;
 import java.util.Objects;
 
@@ -7,14 +8,24 @@ import java.util.Objects;
  * Rappresenta una fonte di materia prima interna alla piattaforma,
  * ovvero un Produttore registrato.
  */
-public class FonteInterna implements FonteMateriaPrima {
+@Entity
+@DiscriminatorValue("INTERNA")
+public class FonteInterna extends FonteMateriaPrima {
 
-    private final Produttore produttore;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_produttore", nullable = false)
+    private Produttore produttore;
+
+    public FonteInterna() {}
 
     public FonteInterna(Produttore produttore) {
         if (produttore == null) {
             throw new IllegalArgumentException("Il produttore non può essere nullo");
         }
+        this.produttore = produttore;
+    }
+
+    public void setProduttore(Produttore produttore) {
         this.produttore = produttore;
     }
 

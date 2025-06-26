@@ -5,35 +5,31 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.*;
-
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICuratoreService;
 
+@Service
 public class CuratoreService implements ICuratoreService {
    
-
-    private final IVenditoreRepository venditoreRepository ;
-    private final IProdottoRepository prodottoRepository ;
-    private final IDatiAziendaRepository datiAziendaRepository ;
+    private final IVenditoreRepository venditoreRepository;
+    private final IProdottoRepository prodottoRepository;
+    private final IDatiAziendaRepository datiAziendaRepository;
     
     // Coda interna per gestire i prodotti in attesa di revisione
     private final Queue<Prodotto> codaRevisioneProdotti;
 
+    @Autowired
     public CuratoreService(IVenditoreRepository venditoreRepository, IProdottoRepository prodottoRepository, IDatiAziendaRepository datiAziendaRepository) {
-        this.venditoreRepository = venditoreRepository ;
-        this.prodottoRepository = prodottoRepository ;
-        this.datiAziendaRepository = datiAziendaRepository ;
-        this.codaRevisioneProdotti = new LinkedList<>();
-    }
-
-    public CuratoreService() {
-        venditoreRepository = new VenditoreRepository();
-        prodottoRepository = new ProdottoRepository();
-        datiAziendaRepository = new DatiAziendaRepository();
+        this.venditoreRepository = venditoreRepository;
+        this.prodottoRepository = prodottoRepository;
+        this.datiAziendaRepository = datiAziendaRepository;
         this.codaRevisioneProdotti = new LinkedList<>();
     }
 
@@ -145,7 +141,7 @@ public class CuratoreService implements ICuratoreService {
         
         // Controlla se ci sono prodotti IN_REVISIONE nel repository che non sono nella coda
         // (per compatibilità con prodotti creati prima dell'implementazione del pattern Observer)
-        for (Prodotto p : prodottoRepository.mostraTuttiIProdotti()) {
+        for (Prodotto p : prodottoRepository.findAll()) {
             if (p.getStatoVerifica() == StatoVerificaValori.IN_REVISIONE 
                 && !codaRevisioneProdotti.contains(p)) {
                 codaRevisioneProdotti.offer(p);

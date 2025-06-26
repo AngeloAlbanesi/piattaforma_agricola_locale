@@ -1,25 +1,21 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
-import java.util.List;
+@Repository
+public interface IEventoRepository extends JpaRepository<Evento, Long> {
 
-public interface IEventoRepository {
-    void save(Evento evento);
+    List<Evento> findByOrganizzatore(AnimatoreDellaFiliera organizzatore);
 
-    Evento findById(Long id);
+    List<Evento> findByNomeEventoContainingIgnoreCase(String nome);
 
-    List<Evento> mostraTuttiEventi();
-
-    void deleteById(Long id);
-
-    List<Evento> findByAnimatoreId(AnimatoreDellaFiliera organizzatore);
-
-    List<Evento> findByNome(String nome);
-
-    List<Evento> findByAziendaPartecipante(Venditore venditore);
-
+    List<Evento> findByAziendePartecipanti(Venditore venditore);
 
 }

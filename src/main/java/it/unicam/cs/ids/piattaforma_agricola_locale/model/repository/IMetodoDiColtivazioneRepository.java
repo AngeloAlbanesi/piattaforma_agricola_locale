@@ -1,18 +1,11 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.coltivazione.MetodoDiColtivazione;
 
-public interface IMetodoDiColtivazioneRepository {
+@Repository
+public interface IMetodoDiColtivazioneRepository extends JpaRepository<MetodoDiColtivazione, Long> {
 
-    void save(MetodoDiColtivazione metodoDiColtivazione);
-
-    MetodoDiColtivazione findById(Long id);
-
-    List<MetodoDiColtivazione> findAll();
-
-    void deleteById(Long id);
-
-    void update(MetodoDiColtivazione metodoDiColtivazione);
 }

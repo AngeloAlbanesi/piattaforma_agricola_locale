@@ -1,18 +1,22 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteBaseRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.factory.UtenteFactory;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IUtenteService;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 /**
  * Implementazione del servizio di gestione degli utenti.
  * Utilizza il pattern Factory per la creazione degli utenti e il repository per la persistenza.
  */
+@Service
 public class UtenteService implements IUtenteService {
     
     private final UtenteFactory utenteFactory;
@@ -24,6 +28,7 @@ public class UtenteService implements IUtenteService {
      * @param utenteFactory Factory per la creazione degli utenti
      * @param utenteRepository Repository per la persistenza degli utenti
      */
+    @Autowired
     public UtenteService(UtenteFactory utenteFactory, IUtenteBaseRepository utenteRepository) {
         this.utenteFactory = utenteFactory;
         this.utenteRepository = utenteRepository;

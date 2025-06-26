@@ -4,21 +4,18 @@ import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-public interface IProdottoRepository {
+@Repository
+public interface IProdottoRepository extends JpaRepository<Prodotto, Long> {
 
-    // Metodi per gestire i prodotti
-    void save(Prodotto prodotto);
+    // Metodi ereditati da JpaRepository: save, findById, findAll, deleteById
 
-    Prodotto findById(Long id);
-
-    List<Prodotto> mostraTuttiIProdotti();
-
-    void deleteById(Long id);
-
+    // Metodi personalizzati usando Spring Data JPA naming conventions
     List<Prodotto> findByVenditore(Venditore venditore);
-
-    List<Prodotto> findByNome(String nome);
 
     /**
      * Verifica se esistono prodotti associati a un processo di trasformazione
@@ -28,6 +25,12 @@ public interface IProdottoRepository {
      * @return true se esistono prodotti che fanno riferimento al processo, false
      *         altrimenti
      */
-    boolean existsByProcessoId(Long processoId);
+    @Query("SELECT COUNT(p) > 0 FROM Prodotto p WHERE p.idProcessoTrasformazioneOriginario = :processoId")
+    boolean existsByProcessoId(@Param("processoId") Long processoId);
+
+    // Questo metodo è stato sostituito da findAll() di JpaRepository
+
+    // Metodo standard di Spring Data JPA
+    List<Prodotto> findByNomeContainingIgnoreCase(String nome);
 
 }

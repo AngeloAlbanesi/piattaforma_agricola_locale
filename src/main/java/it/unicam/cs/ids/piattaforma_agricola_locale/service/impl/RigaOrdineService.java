@@ -3,20 +3,29 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.RigaOrdineRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IRigaOrdineRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IRigaOrdineService;
 
+@Service
 public class RigaOrdineService implements IRigaOrdineService {
 
-    private RigaOrdineRepository rigaOrdineRepository = new RigaOrdineRepository();
+    private final IRigaOrdineRepository rigaOrdineRepository;
+
+    @Autowired
+    public RigaOrdineService(IRigaOrdineRepository rigaOrdineRepository) {
+        this.rigaOrdineRepository = rigaOrdineRepository;
+    }
 
     @Override
     public void creaRigaOrdine(Ordine ordine, Acquistabile acquistabile, int quantita) {
 
-        RigaOrdine nuovaRiga = new RigaOrdine( acquistabile, quantita, acquistabile.getPrezzo());
+        RigaOrdine nuovaRiga = new RigaOrdine(ordine, acquistabile, quantita, acquistabile.getPrezzo());
         ordine.getRigheOrdine().add(nuovaRiga);
         rigaOrdineRepository.save(nuovaRiga);
     }
@@ -57,7 +66,7 @@ public class RigaOrdineService implements IRigaOrdineService {
      * @return lista delle righe ordine che contengono l'acquistabile
      */
     public List<RigaOrdine> getRigheOrdineByAcquistabile(Acquistabile acquistabile) {
-        return rigaOrdineRepository.findByAcquistabile(acquistabile);
+        return rigaOrdineRepository.findByAcquistabile(acquistabile.getId());
     }
 
     /**
@@ -66,7 +75,7 @@ public class RigaOrdineService implements IRigaOrdineService {
      * @param rigaOrdine la riga ordine da aggiornare
      */
     public void aggiornaRigaOrdine(RigaOrdine rigaOrdine) {
-        rigaOrdineRepository.update(rigaOrdine);
+        rigaOrdineRepository.save(rigaOrdine);
     }
 
     /**
@@ -95,7 +104,7 @@ public class RigaOrdineService implements IRigaOrdineService {
      */
     public void modificaQuantitaRigaOrdine(RigaOrdine rigaOrdine, int nuovaQuantita) {
         rigaOrdine.setQuantitaOrdinata(nuovaQuantita);
-        rigaOrdineRepository.update(rigaOrdine);
+        rigaOrdineRepository.save(rigaOrdine);
     }
 
 }

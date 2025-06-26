@@ -14,8 +14,11 @@ public abstract class Utente {
     private TipoRuolo tipoRuolo;
     private boolean isAttivo;
 
+    private static Long contatoreId = 1L;
+
     public Utente(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
             TipoRuolo tipoRuolo) {
+
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
@@ -23,6 +26,9 @@ public abstract class Utente {
         this.numeroTelefono = numeroTelefono;
         this.tipoRuolo = tipoRuolo;
         this.isAttivo = true;
+        this.idUtente = contatoreId; //solo per prova, da togliere in futuro col database
+
+        contatoreId++;
     }
 
     public String getNome() {

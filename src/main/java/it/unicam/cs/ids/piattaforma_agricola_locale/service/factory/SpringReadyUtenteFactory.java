@@ -1,10 +1,10 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.factory;
 
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
-
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteBaseRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
+import org.springframework.context.annotation.Primary;
+import org.springframework.security.crypto.password.PasswordEncoder; // <-- Importa PasswordEncoder
+import org.springframework.stereotype.Component;
 
 /**
  * Implementazione del factory pattern per la creazione di utenti, integrata con
@@ -17,37 +17,32 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
 public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
 
     private final IUtenteBaseRepository utenteRepository;
+    private final PasswordEncoder passwordEncoder; // <-- MODIFICA 1: Aggiungi il campo
 
     /**
-     * Costruttore che accetta un repository per la persistenza degli utenti.
+     * Costruttore che accetta un repository e un password encoder.
      * Utilizza l'iniezione delle dipendenze di Spring.
-     * 
+     *
      * @param utenteRepository Repository per la persistenza degli utenti
+     * @param passwordEncoder  Encoder per le password
      */
-    public SpringReadyUtenteFactory(IUtenteBaseRepository utenteRepository) {
+    public SpringReadyUtenteFactory(IUtenteBaseRepository utenteRepository, PasswordEncoder passwordEncoder) { // <-- MODIFICA 2: Aggiungi al costruttore
         this.utenteRepository = utenteRepository;
+        this.passwordEncoder = passwordEncoder;
     }
+
+    // NOTA: Il corpo di tutti i metodi "crea..." rimane identico,
+    // perché la logica di hashing è centralizzata nel metodo "creaUtente" generale.
 
     @Override
     public Acquirente creaAcquirente(
             String nome,
             String cognome,
             String email,
-            String passwordHash,
+            String password, // <-- Ora riceviamo la password in chiaro
             String numeroTelefono) {
 
-        validateUserData(nome, cognome, email, passwordHash);
-        checkEmailNotInUse(email);
-
-        Acquirente acquirente = new Acquirente(
-                nome,
-                cognome,
-                email,
-                passwordHash,
-                numeroTelefono,
-                TipoRuolo.ACQUIRENTE);
-
-        return (Acquirente) utenteRepository.save(acquirente);
+        return (Acquirente) creaUtente(TipoRuolo.ACQUIRENTE, nome, cognome, email, password, numeroTelefono, null);
     }
 
     @Override
@@ -55,24 +50,11 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
             String nome,
             String cognome,
             String email,
-            String passwordHash,
+            String password, // <-- Ora riceviamo la password in chiaro
             String numeroTelefono,
             DatiAzienda datiAzienda) {
 
-        validateUserData(nome, cognome, email, passwordHash);
-        validateDatiAzienda(datiAzienda);
-        checkEmailNotInUse(email);
-
-        Produttore produttore = new Produttore(
-                nome,
-                cognome,
-                email,
-                passwordHash,
-                numeroTelefono,
-                datiAzienda,
-                TipoRuolo.PRODUTTORE);
-
-        return (Produttore) utenteRepository.save(produttore);
+        return (Produttore) creaUtente(TipoRuolo.PRODUTTORE, nome, cognome, email, password, numeroTelefono, datiAzienda);
     }
 
     @Override
@@ -80,24 +62,11 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
             String nome,
             String cognome,
             String email,
-            String passwordHash,
+            String password, // <-- Ora riceviamo la password in chiaro
             String numeroTelefono,
             DatiAzienda datiAzienda) {
 
-        validateUserData(nome, cognome, email, passwordHash);
-        validateDatiAzienda(datiAzienda);
-        checkEmailNotInUse(email);
-
-        Trasformatore trasformatore = new Trasformatore(
-                nome,
-                cognome,
-                email,
-                passwordHash,
-                numeroTelefono,
-                datiAzienda,
-                TipoRuolo.TRASFORMATORE);
-
-        return (Trasformatore) utenteRepository.save(trasformatore);
+        return (Trasformatore) creaUtente(TipoRuolo.TRASFORMATORE, nome, cognome, email, password, numeroTelefono, datiAzienda);
     }
 
     @Override
@@ -105,24 +74,11 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
             String nome,
             String cognome,
             String email,
-            String passwordHash,
+            String password, // <-- Ora riceviamo la password in chiaro
             String numeroTelefono,
             DatiAzienda datiAzienda) {
 
-        validateUserData(nome, cognome, email, passwordHash);
-        validateDatiAzienda(datiAzienda);
-        checkEmailNotInUse(email);
-
-        DistributoreDiTipicita distributore = new DistributoreDiTipicita(
-                nome,
-                cognome,
-                email,
-                passwordHash,
-                numeroTelefono,
-                datiAzienda,
-                TipoRuolo.DISTRIBUTORE_DI_TIPICITA);
-
-        return (DistributoreDiTipicita) utenteRepository.save(distributore);
+        return (DistributoreDiTipicita) creaUtente(TipoRuolo.DISTRIBUTORE_DI_TIPICITA, nome, cognome, email, password, numeroTelefono, datiAzienda);
     }
 
     @Override
@@ -130,21 +86,10 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
             String nome,
             String cognome,
             String email,
-            String passwordHash,
+            String password, // <-- Ora riceviamo la password in chiaro
             String numeroTelefono) {
 
-        validateUserData(nome, cognome, email, passwordHash);
-        checkEmailNotInUse(email);
-
-        Curatore curatore = new Curatore(
-                nome,
-                cognome,
-                email,
-                passwordHash,
-                numeroTelefono,
-                TipoRuolo.CURATORE);
-
-        return (Curatore) utenteRepository.save(curatore);
+        return (Curatore) creaUtente(TipoRuolo.CURATORE, nome, cognome, email, password, numeroTelefono, null);
     }
 
     @Override
@@ -152,21 +97,10 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
             String nome,
             String cognome,
             String email,
-            String passwordHash,
+            String password, // <-- Ora riceviamo la password in chiaro
             String numeroTelefono) {
 
-        validateUserData(nome, cognome, email, passwordHash);
-        checkEmailNotInUse(email);
-
-        AnimatoreDellaFiliera animatore = new AnimatoreDellaFiliera(
-                nome,
-                cognome,
-                email,
-                passwordHash,
-                numeroTelefono,
-                TipoRuolo.ANIMATORE_DELLA_FILIERA);
-
-        return (AnimatoreDellaFiliera) utenteRepository.save(animatore);
+        return (AnimatoreDellaFiliera) creaUtente(TipoRuolo.ANIMATORE_DELLA_FILIERA, nome, cognome, email, password, numeroTelefono, null);
     }
 
     @Override
@@ -174,21 +108,10 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
             String nome,
             String cognome,
             String email,
-            String passwordHash,
+            String password, // <-- Ora riceviamo la password in chiaro
             String numeroTelefono) {
 
-        validateUserData(nome, cognome, email, passwordHash);
-        checkEmailNotInUse(email);
-
-        GestorePiattaforma gestore = new GestorePiattaforma(
-                nome,
-                cognome,
-                email,
-                passwordHash,
-                numeroTelefono,
-                TipoRuolo.GESTORE_PIATTAFORMA);
-
-        return (GestorePiattaforma) utenteRepository.save(gestore);
+        return (GestorePiattaforma) creaUtente(TipoRuolo.GESTORE_PIATTAFORMA, nome, cognome, email, password, numeroTelefono, null);
     }
 
     @Override
@@ -197,20 +120,21 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
             String nome,
             String cognome,
             String email,
-            String passwordHash,
+            String password, // <-- Riceviamo la password in chiaro
             String numeroTelefono,
             DatiAzienda datiAzienda) {
 
-        validateUserData(nome, cognome, email, passwordHash);
+        validateUserData(nome, cognome, email, password); // La validazione ora riceve la password in chiaro
         checkEmailNotInUse(email);
 
-        // Verifica che i dati azienda siano forniti per i ruoli che li richiedono
         if (requiresDatiAzienda(tipoRuolo) && datiAzienda == null) {
             throw new IllegalArgumentException("I dati azienda sono richiesti per il ruolo " + tipoRuolo);
         }
 
-        Utente utente;
+        // <-- MODIFICA 3: Codifica la password prima di passarla al costruttore dell'entità
+        String passwordHash = passwordEncoder.encode(password);
 
+        Utente utente;
         switch (tipoRuolo) {
             case ACQUIRENTE:
                 utente = new Acquirente(nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
@@ -225,8 +149,7 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
                 break;
             case DISTRIBUTORE_DI_TIPICITA:
                 validateDatiAzienda(datiAzienda);
-                utente = new DistributoreDiTipicita(nome, cognome, email, passwordHash, numeroTelefono, datiAzienda,
-                        tipoRuolo);
+                utente = new DistributoreDiTipicita(nome, cognome, email, passwordHash, numeroTelefono, datiAzienda, tipoRuolo);
                 break;
             case CURATORE:
                 utente = new Curatore(nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
@@ -244,12 +167,6 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
         return utenteRepository.save(utente);
     }
 
-    /**
-     * Verifica che l'email non sia già in uso.
-     * 
-     * @param email Email da verificare
-     * @throws IllegalArgumentException se l'email è già in uso
-     */
     private void checkEmailNotInUse(String email) {
         if (utenteRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("L'email è già in uso");

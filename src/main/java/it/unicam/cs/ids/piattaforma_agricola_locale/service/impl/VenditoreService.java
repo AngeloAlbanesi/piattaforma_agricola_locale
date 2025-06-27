@@ -54,7 +54,7 @@ public class VenditoreService implements IVenditoreService {
         if(datiAziendaRepository.findByPartitaIva(partitaIva).isEmpty()) {
             // Genera un ID per DatiAzienda se non fornito o gestito diversamente
             Long idVenditore = venditore.getId();
-            DatiAzienda datiAzienda = new DatiAzienda(idVenditore, nomeAzienda, partitaIva, indirizzoAzienda, descrizioneAzienda,
+            DatiAzienda datiAzienda = new DatiAzienda( nomeAzienda, partitaIva, indirizzoAzienda, descrizioneAzienda,
                     logoUrl, sitoWebUrl);
             venditore.setDatiAzienda(datiAzienda);
             // Se il venditore deve essere salvato dopo questa modifica:
@@ -93,7 +93,7 @@ public class VenditoreService implements IVenditoreService {
         if (venditore == null || venditore.getDatiAzienda() == null || certificazioneService == null) {
             return List.of(); // Ritorna lista vuota
         }
-        return certificazioneService.getCertificazioniAzienda(venditore.getDatiAzienda().getIdAzienda());
+        return certificazioneService.getCertificazioniAzienda(venditore.getDatiAzienda().getId());
     }
 
 

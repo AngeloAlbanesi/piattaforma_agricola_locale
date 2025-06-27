@@ -33,16 +33,10 @@ public abstract class Venditore extends Utente {
         super(nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
         this.datiAzienda = datiAzienda;
         this.prodottiOfferti = new ArrayList<>();
+        this.statoAccreditamento = StatoAccreditamento.PENDING;
     }
 
-    public void stampaDatiAzienda() {
-        System.out.println(datiAzienda.getNomeAzienda() + " " + datiAzienda.getDescrizioneAzienda() + " "
-                + datiAzienda.getIndirizzoAzienda());
-        List<Certificazione> certificazioniAzienda = datiAzienda.getCertificazioniAzienda();
-        for (Certificazione c : certificazioniAzienda) {
-            c.stampaCertificazione();
-        }
-    }
+
 
     public DatiAzienda getDatiAzienda() {
         return datiAzienda;

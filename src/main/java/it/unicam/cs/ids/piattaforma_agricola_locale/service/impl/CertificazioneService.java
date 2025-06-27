@@ -51,7 +51,7 @@ public class CertificazioneService implements ICertificazioneService {
             return null;
         }
         // Assumendo che DatiAzienda abbia un getIdAzienda()
-        Certificazione cert = new Certificazione( nome, ente, rilascio, scadenza, azienda.getIdAzienda(), true);
+        Certificazione cert = new Certificazione( nome, ente, rilascio, scadenza, azienda.getId(), true);
         certificazioneRepository.save(cert);
         azienda.aggiungiCertificazione(cert);
         datiAziendaRepository.save(azienda);
@@ -88,7 +88,7 @@ public class CertificazioneService implements ICertificazioneService {
     @Override
     public boolean rimuoviCertificazione(Long idCertificazione, DatiAzienda azienda) {
         Certificazione cert = certificazioneRepository.findById(idCertificazione).orElse(null);
-        if (cert != null && cert.getIdAziendaAssociata() != null && cert.getIdAziendaAssociata().equals(azienda.getIdAzienda())) {
+        if (cert != null && cert.getIdAziendaAssociata() != null && cert.getIdAziendaAssociata().equals(azienda.getId())) {
             azienda.getCertificazioniAzienda().remove(cert);
             datiAziendaRepository.save(azienda); // Se necessario
             certificazioneRepository.deleteById(idCertificazione);

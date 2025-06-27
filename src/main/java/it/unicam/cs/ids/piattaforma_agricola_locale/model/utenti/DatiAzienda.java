@@ -20,8 +20,7 @@ public class DatiAzienda implements ElementoVerificabile {
     @Column(name = "id_dati_azienda")
     private Long id;
 
-    @Column(name = "id_venditore")
-    private Long idVenditore; // ID del venditore
+
     @Column(name = "nome_azienda", nullable = false, length = 255)
     private String nomeAzienda;
     @Column(name = "partita_iva", unique = true, length = 20)
@@ -35,7 +34,7 @@ public class DatiAzienda implements ElementoVerificabile {
     @Column(name = "sito_web_url", length = 500)
     private String sitoWebUrl;
     @Enumerated(EnumType.STRING)
-    @Column(name = "stato_verifica", nullable = false)
+    @Column(name = "stato_verifica")
     private StatoVerificaValori statoVerifica;
     @Column(name = "feedback_verifica_contenuto", columnDefinition = "TEXT")
     private String feedbackVerificaContenuto;
@@ -48,9 +47,9 @@ public class DatiAzienda implements ElementoVerificabile {
         this.certificazioniAzienda = new ArrayList<>();
     }
 
-    public DatiAzienda(Long idVenditore,String nomeAzienda, String partitaIva, String indirizzoAzienda, String descrizioneAzienda,
+    public DatiAzienda(String nomeAzienda, String partitaIva, String indirizzoAzienda, String descrizioneAzienda,
             String logoUrl, String sitoWebUrl) {
-        this.idVenditore = idVenditore;
+
         this.nomeAzienda = nomeAzienda;
         this.partitaIva = partitaIva;
         this.indirizzoAzienda = indirizzoAzienda;
@@ -62,13 +61,7 @@ public class DatiAzienda implements ElementoVerificabile {
 
     }
 
-    public Long getIdAzienda() {
-        return idVenditore;
-    }
 
-    public void setIdVenditore(Long idVenditore) {
-        this.idVenditore = idVenditore;
-    }
 
     public String getNomeAzienda() {
         return nomeAzienda;
@@ -123,7 +116,7 @@ public class DatiAzienda implements ElementoVerificabile {
     }
 
     public void aggiungiCertificazione(Certificazione certificazione) {
-        if (certificazione != null && certificazione.getIdAziendaAssociata() != null && certificazione.getIdAziendaAssociata().equals(this.idVenditore)) {
+        if (certificazione != null && certificazione.getIdAziendaAssociata() != null && certificazione.getIdAziendaAssociata().equals(this.id)) {
             this.certificazioniAzienda.add(certificazione);
         } else {
             // Gestire l'errore: la certificazione non appartiene a questa azienda

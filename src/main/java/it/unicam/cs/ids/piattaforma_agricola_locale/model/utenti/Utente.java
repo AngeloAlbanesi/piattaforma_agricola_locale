@@ -5,12 +5,18 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "utenti")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "tipo_utente")
-public abstract class Utente {
+public abstract class Utente implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_utente")
@@ -134,6 +140,48 @@ public abstract class Utente {
 
     public void setId(Long id) {
         this.idUtente = id;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Restituisce il ruolo dell'utente come un'autorità di Spring Security
+        return List.of(new SimpleGrantedAuthority(tipoRuolo.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        // Spring Security chiamerà questo metodo per ottenere la password codificata
+        return passwordHash;
+    }
+
+    @Override
+    public String getUsername() {
+        // Usiamo l'email come username univoco per l'autenticazione
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        // Per semplicità, l'account non scade mai
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        // Per semplicità, l'account non viene mai bloccato
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        // Per semplicità, le credenziali non scadono mai
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        // Lo stato "abilitato" dell'utente corrisponde al nostro campo "isAttivo"
+        return this.isAttivo;
     }
 
 }

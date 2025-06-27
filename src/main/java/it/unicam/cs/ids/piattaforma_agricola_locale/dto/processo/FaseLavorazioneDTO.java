@@ -2,6 +2,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.dto.processo;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.FonteMateriaPrima;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.FonteInterna;
+import lombok.Value;
 
 /**
  * DTO che rappresenta una fase di lavorazione all'interno di un processo.
@@ -9,59 +10,15 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.FonteIn
  * tutte le informazioni sulla provenienza della materia prima, distinguendo
  * tra fonti interne (produttori della piattaforma) ed esterne.
  */
+@Value
 public class FaseLavorazioneDTO {
 
-    private final long id;
-    private final String nome;
-    private final String descrizione;
-    private final int ordineEsecuzione;
-    private final String materiaPrimaUtilizzata;
-    private final FonteMateriaPrima fonteMateriaPrima; // Oggetto fonte completo
-
-    /**
-     * Costruttore per FaseLavorazioneDTO.
-     *
-     * @param id                     ID della fase di lavorazione
-     * @param nome                   Nome della fase
-     * @param descrizione            Descrizione dettagliata della fase
-     * @param ordineEsecuzione       Ordine di esecuzione nel processo
-     * @param materiaPrimaUtilizzata Descrizione della materia prima utilizzata
-     * @param fonteMateriaPrima      Oggetto fonte (FonteInterna o FonteEsterna)
-     */
-    public FaseLavorazioneDTO(long id, String nome, String descrizione, int ordineEsecuzione,
-                              String materiaPrimaUtilizzata, FonteMateriaPrima fonteMateriaPrima) {
-        this.id = id;
-        this.nome = nome;
-        this.descrizione = descrizione;
-        this.ordineEsecuzione = ordineEsecuzione;
-        this.materiaPrimaUtilizzata = materiaPrimaUtilizzata;
-        this.fonteMateriaPrima = fonteMateriaPrima;
-    }
-
-    // Getters
-    public long getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getDescrizione() {
-        return descrizione;
-    }
-
-    public int getOrdineEsecuzione() {
-        return ordineEsecuzione;
-    }
-
-    public String getMateriaPrimaUtilizzata() {
-        return materiaPrimaUtilizzata;
-    }
-
-    public FonteMateriaPrima getFonteMateriaPrima() {
-        return fonteMateriaPrima;
-    }
+    long id;
+    String nome;
+    String descrizione;
+    int ordineEsecuzione;
+    String materiaPrimaUtilizzata;
+    FonteMateriaPrima fonteMateriaPrima; // Oggetto fonte completo
 
     /**
      * Restituisce la descrizione testuale della fonte per compatibilità.

@@ -81,7 +81,7 @@ public interface PacchettoMapper {
     @Mapping(target = "nome", source = "nome")
     @Mapping(target = "cognome", source = "cognome")
     @Mapping(target = "tipoRuolo", source = "tipoRuolo")
-    @Mapping(target = "attivo", source = "attivo")
+    @Mapping(target = "isAttivo", source = "attivo")
     UserPublicDTO distributoreToUserPublicDTO(DistributoreDiTipicita distributore);
 
     /**

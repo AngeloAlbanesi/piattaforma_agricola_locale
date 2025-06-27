@@ -33,7 +33,7 @@ public interface UtenteMapper {
     @Mapping(target = "email", source = "email")
     @Mapping(target = "numeroTelefono", source = "numeroTelefono")
     @Mapping(target = "tipoRuolo", source = "tipoRuolo")
-    @Mapping(target = "attivo", source = "attivo")
+    @Mapping(target = "isAttivo", source = "attivo")
     UserDetailDTO toDetailDTO(Utente utente);
 
     /**
@@ -44,7 +44,7 @@ public interface UtenteMapper {
     @Mapping(target = "nome", source = "nome")
     @Mapping(target = "cognome", source = "cognome")
     @Mapping(target = "tipoRuolo", source = "tipoRuolo")
-    @Mapping(target = "attivo", source = "attivo")
+    @Mapping(target = "isAttivo", source = "attivo")
     UserPublicDTO toPublicDTO(Utente utente);
 
     /**
@@ -52,6 +52,7 @@ public interface UtenteMapper {
      * Does not modify ID, password, role, or status - only basic profile info.
      */
     @Mapping(target = "idUtente", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "nome", source = "nome")
     @Mapping(target = "cognome", source = "cognome")
     @Mapping(target = "email", source = "email")
@@ -59,6 +60,7 @@ public interface UtenteMapper {
     @Mapping(target = "passwordHash", ignore = true)
     @Mapping(target = "tipoRuolo", ignore = true)
     @Mapping(target = "attivo", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     void updateFromDTO(UserUpdateDTO updateDTO, @MappingTarget Utente utente);
 
 }

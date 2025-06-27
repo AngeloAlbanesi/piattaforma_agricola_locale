@@ -7,11 +7,19 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * DTO for user profile update requests.
  * Contains only the fields that can be modified by the user.
  */
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserUpdateDTO {
     
     @NotBlank(message = "Il nome è obbligatorio")
@@ -29,46 +37,4 @@ public class UserUpdateDTO {
     
     @Size(max = 20, message = "Il numero di telefono non può superare i 20 caratteri")
     private String numeroTelefono;
-
-    public UserUpdateDTO() {
-    }
-
-    public UserUpdateDTO(String nome, String cognome, String email, String numeroTelefono) {
-        this.nome = nome;
-        this.cognome = cognome;
-        this.email = email;
-        this.numeroTelefono = numeroTelefono;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCognome() {
-        return cognome;
-    }
-
-    public void setCognome(String cognome) {
-        this.cognome = cognome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getNumeroTelefono() {
-        return numeroTelefono;
-    }
-
-    public void setNumeroTelefono(String numeroTelefono) {
-        this.numeroTelefono = numeroTelefono;
-    }
 }

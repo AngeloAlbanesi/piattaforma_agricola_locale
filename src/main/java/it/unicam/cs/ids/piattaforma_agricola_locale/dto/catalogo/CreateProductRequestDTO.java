@@ -6,11 +6,19 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * DTO for product creation requests.
  * Contains validation annotations for input validation.
  */
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateProductRequestDTO {
     
     @NotBlank(message = "Il nome del prodotto è obbligatorio")
@@ -33,75 +41,4 @@ public class CreateProductRequestDTO {
     
     private Long idProcessoTrasformazioneOriginario;
     private Long idMetodoDiColtivazione;
-
-    public CreateProductRequestDTO() {
-    }
-
-    public CreateProductRequestDTO(String nome, String descrizione, Double prezzo, 
-                                 Integer quantitaDisponibile, TipoOrigineProdotto tipoOrigine, 
-                                 Long idProcessoTrasformazioneOriginario, Long idMetodoDiColtivazione) {
-        this.nome = nome;
-        this.descrizione = descrizione;
-        this.prezzo = prezzo;
-        this.quantitaDisponibile = quantitaDisponibile;
-        this.tipoOrigine = tipoOrigine;
-        this.idProcessoTrasformazioneOriginario = idProcessoTrasformazioneOriginario;
-        this.idMetodoDiColtivazione = idMetodoDiColtivazione;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getDescrizione() {
-        return descrizione;
-    }
-
-    public void setDescrizione(String descrizione) {
-        this.descrizione = descrizione;
-    }
-
-    public Double getPrezzo() {
-        return prezzo;
-    }
-
-    public void setPrezzo(Double prezzo) {
-        this.prezzo = prezzo;
-    }
-
-    public Integer getQuantitaDisponibile() {
-        return quantitaDisponibile;
-    }
-
-    public void setQuantitaDisponibile(Integer quantitaDisponibile) {
-        this.quantitaDisponibile = quantitaDisponibile;
-    }
-
-    public TipoOrigineProdotto getTipoOrigine() {
-        return tipoOrigine;
-    }
-
-    public void setTipoOrigine(TipoOrigineProdotto tipoOrigine) {
-        this.tipoOrigine = tipoOrigine;
-    }
-
-    public Long getIdProcessoTrasformazioneOriginario() {
-        return idProcessoTrasformazioneOriginario;
-    }
-
-    public void setIdProcessoTrasformazioneOriginario(Long idProcessoTrasformazioneOriginario) {
-        this.idProcessoTrasformazioneOriginario = idProcessoTrasformazioneOriginario;
-    }
-
-    public Long getIdMetodoDiColtivazione() {
-        return idMetodoDiColtivazione;
-    }
-
-    public void setIdMetodoDiColtivazione(Long idMetodoDiColtivazione) {
-        this.idMetodoDiColtivazione = idMetodoDiColtivazione;
-    }
 }

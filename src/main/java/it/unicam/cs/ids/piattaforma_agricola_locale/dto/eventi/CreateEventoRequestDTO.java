@@ -6,6 +6,11 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.validation.ValidDateRange;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +20,10 @@ import java.util.List;
  * business rules.
  */
 @ValidDateRange(start = "dataOraInizio", end = "dataOraFine")
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateEventoRequestDTO {
 
     @NotBlank(message = "Il nome dell'evento è obbligatorio")
@@ -42,77 +51,6 @@ public class CreateEventoRequestDTO {
     private Integer capienzaMassima;
 
     private List<Long> idAziendePartecipanti;
-
-    public CreateEventoRequestDTO() {
-    }
-
-    public CreateEventoRequestDTO(String nomeEvento, String descrizione, Date dataOraInizio,
-            Date dataOraFine, String luogoEvento, Integer capienzaMassima,
-            List<Long> idAziendePartecipanti) {
-        this.nomeEvento = nomeEvento;
-        this.descrizione = descrizione;
-        this.dataOraInizio = dataOraInizio;
-        this.dataOraFine = dataOraFine;
-        this.luogoEvento = luogoEvento;
-        this.capienzaMassima = capienzaMassima;
-        this.idAziendePartecipanti = idAziendePartecipanti;
-    }
-
-    public String getNomeEvento() {
-        return nomeEvento;
-    }
-
-    public void setNomeEvento(String nomeEvento) {
-        this.nomeEvento = nomeEvento;
-    }
-
-    public String getDescrizione() {
-        return descrizione;
-    }
-
-    public void setDescrizione(String descrizione) {
-        this.descrizione = descrizione;
-    }
-
-    public Date getDataOraInizio() {
-        return dataOraInizio;
-    }
-
-    public void setDataOraInizio(Date dataOraInizio) {
-        this.dataOraInizio = dataOraInizio;
-    }
-
-    public Date getDataOraFine() {
-        return dataOraFine;
-    }
-
-    public void setDataOraFine(Date dataOraFine) {
-        this.dataOraFine = dataOraFine;
-    }
-
-    public String getLuogoEvento() {
-        return luogoEvento;
-    }
-
-    public void setLuogoEvento(String luogoEvento) {
-        this.luogoEvento = luogoEvento;
-    }
-
-    public Integer getCapienzaMassima() {
-        return capienzaMassima;
-    }
-
-    public void setCapienzaMassima(Integer capienzaMassima) {
-        this.capienzaMassima = capienzaMassima;
-    }
-
-    public List<Long> getIdAziendePartecipanti() {
-        return idAziendePartecipanti;
-    }
-
-    public void setIdAziendePartecipanti(List<Long> idAziendePartecipanti) {
-        this.idAziendePartecipanti = idAziendePartecipanti;
-    }
 
     /**
      * Custom validation to ensure end date is after start date.

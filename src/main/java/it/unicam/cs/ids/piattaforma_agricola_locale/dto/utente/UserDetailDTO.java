@@ -9,11 +9,19 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * DTO for detailed user information, typically used when a user views their own profile.
  * Includes all user data except sensitive information like password hash.
  */
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDetailDTO {
     
     private Long idUtente;
@@ -38,74 +46,4 @@ public class UserDetailDTO {
     private TipoRuolo tipoRuolo;
     
     private boolean isAttivo;
-
-    public UserDetailDTO() {
-    }
-
-    public UserDetailDTO(Long idUtente, String nome, String cognome, String email, 
-                        String numeroTelefono, TipoRuolo tipoRuolo, boolean isAttivo) {
-        this.idUtente = idUtente;
-        this.nome = nome;
-        this.cognome = cognome;
-        this.email = email;
-        this.numeroTelefono = numeroTelefono;
-        this.tipoRuolo = tipoRuolo;
-        this.isAttivo = isAttivo;
-    }
-
-    public Long getIdUtente() {
-        return idUtente;
-    }
-
-    public void setIdUtente(Long idUtente) {
-        this.idUtente = idUtente;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCognome() {
-        return cognome;
-    }
-
-    public void setCognome(String cognome) {
-        this.cognome = cognome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getNumeroTelefono() {
-        return numeroTelefono;
-    }
-
-    public void setNumeroTelefono(String numeroTelefono) {
-        this.numeroTelefono = numeroTelefono;
-    }
-
-    public TipoRuolo getTipoRuolo() {
-        return tipoRuolo;
-    }
-
-    public void setTipoRuolo(TipoRuolo tipoRuolo) {
-        this.tipoRuolo = tipoRuolo;
-    }
-
-    public boolean isAttivo() {
-        return isAttivo;
-    }
-
-    public void setAttivo(boolean attivo) {
-        isAttivo = attivo;
-    }
 }

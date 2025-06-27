@@ -51,7 +51,7 @@ public interface CarrelloMapper {
     @Mapping(target = "nome", source = "nome")
     @Mapping(target = "cognome", source = "cognome")
     @Mapping(target = "tipoRuolo", source = "tipoRuolo")
-    @Mapping(target = "attivo", source = "attivo")
+    @Mapping(target = "isAttivo", source = "attivo")
     UserPublicDTO acquirenteToUserPublicDTO(Acquirente acquirente);
 
     /**

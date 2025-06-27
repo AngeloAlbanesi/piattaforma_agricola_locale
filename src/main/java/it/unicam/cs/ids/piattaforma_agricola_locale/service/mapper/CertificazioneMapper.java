@@ -6,57 +6,70 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo.CertificazioneDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
+import org.mapstruct.*;
+import org.springframework.stereotype.Component;
 
 /**
- * Mapper utility class for converting between Certificazione entities and CertificazioneDTO.
- * Provides static methods for mapping between entity and DTO representations.
+ * MapStruct mapper for converting between Certificazione entities and CertificazioneDTO.
+ * Provides simple entity-to-DTO conversion for certification information.
  */
-public class CertificazioneMapper {
-
-    private CertificazioneMapper() {
-        // Utility class, prevent instantiation
-    }
+@Mapper(
+    componentModel = "spring",
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS
+)
+@Component
+public interface CertificazioneMapper {
 
     /**
      * Converts a Certificazione entity to CertificazioneDTO.
-     * 
-     * @param certificazione the entity to convert
-     * @return the CertificazioneDTO representation
+     * Simple one-to-one mapping with date field handling.
      */
-    public static CertificazioneDTO toDTO(Certificazione certificazione) {
-        if (certificazione == null) {
-            return null;
-        }
-
-        return new CertificazioneDTO(
-            certificazione.getIdCertificazione(),
-            certificazione.getNomeCertificazione(),
-            certificazione.getEnteRilascio(),
-            certificazione.getDataRilascio(),
-            certificazione.getDataScadenza(),
-            certificazione.getIdProdottoAssociato(),
-            certificazione.getIdAziendaAssociata()
-        );
-    }
+    @Mapping(target = "idCertificazione", source = "idCertificazione")
+    @Mapping(target = "nomeCertificazione", source = "nomeCertificazione")
+    @Mapping(target = "enteRilascio", source = "enteRilascio")
+    @Mapping(target = "dataRilascio", source = "dataRilascio")
+    @Mapping(target = "dataScadenza", source = "dataScadenza")
+    @Mapping(target = "idProdottoAssociato", source = "idProdottoAssociato")
+    @Mapping(target = "idAziendaAssociata", source = "idAziendaAssociata")
+    CertificazioneDTO toDTO(Certificazione certificazione);
 
     /**
      * Creates a new Certificazione entity from CertificazioneDTO.
-     * 
-     * @param dto the DTO containing certification data
-     * @return a new Certificazione entity
+     * Note: associations must be handled by the service layer.
      */
-    public static Certificazione fromDTO(CertificazioneDTO dto) {
-        if (dto == null) {
-            return null;
-        }
+    @Mapping(target = "idCertificazione", ignore = true)
+    @Mapping(target = "nomeCertificazione", source = "nomeCertificazione")
+    @Mapping(target = "enteRilascio", source = "enteRilascio")
+    @Mapping(target = "dataRilascio", source = "dataRilascio")
+    @Mapping(target = "dataScadenza", source = "dataScadenza")
+    @Mapping(target = "idProdottoAssociato", ignore = true)
+    @Mapping(target = "idAziendaAssociata", ignore = true)
+    Certificazione fromDTO(CertificazioneDTO dto);
 
-        Certificazione certificazione = new Certificazione();
-        certificazione.SetIdCertificazione(dto.getIdCertificazione());
-        certificazione.setNomeCertificazione(dto.getNomeCertificazione());
-        certificazione.setEnteRilascio(dto.getEnteRilascio());
-        certificazione.setDataRilascio(dto.getDataRilascio());
-        certificazione.setDataScadenza(dto.getDataScadenza());
+    /**
+     * Updates an existing Certificazione entity with data from DTO.
+     * Preserves the ID and associations.
+     */
+    @Mapping(target = "idCertificazione", ignore = true)
+    @Mapping(target = "nomeCertificazione", source = "nomeCertificazione")
+    @Mapping(target = "enteRilascio", source = "enteRilascio")
+    @Mapping(target = "dataRilascio", source = "dataRilascio")
+    @Mapping(target = "dataScadenza", source = "dataScadenza")
+    @Mapping(target = "idProdottoAssociato", ignore = true)
+    @Mapping(target = "idAziendaAssociata", ignore = true)
+    void updateFromDTO(CertificazioneDTO dto, @MappingTarget Certificazione certificazione);
 
-        return certificazione;
-    }
+    /**
+     * Creates a new Certificazione entity from DTO, ignoring the ID.
+     * Used for creation operations where ID should be auto-generated.
+     */
+    @Mapping(target = "idCertificazione", ignore = true)
+    @Mapping(target = "nomeCertificazione", source = "nomeCertificazione")
+    @Mapping(target = "enteRilascio", source = "enteRilascio")
+    @Mapping(target = "dataRilascio", source = "dataRilascio")
+    @Mapping(target = "dataScadenza", source = "dataScadenza")
+    @Mapping(target = "idProdottoAssociato", ignore = true)
+    @Mapping(target = "idAziendaAssociata", ignore = true)
+    Certificazione fromDTOIgnoreId(CertificazioneDTO dto);
 }

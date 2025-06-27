@@ -4,14 +4,17 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.validation.ValidDateRange;
+import it.unicam.cs.ids.piattaforma_agricola_locale.validation.ValidBusinessHours;
 import jakarta.validation.constraints.*;
 import java.util.Date;
 import java.util.List;
 
 /**
  * DTO for event creation requests.
- * Contains validation annotations for input validation.
+ * Contains validation annotations for input validation including custom business rules.
  */
+@ValidDateRange(start = "dataOraInizio", end = "dataOraFine")
 public class CreateEventoRequestDTO {
     
     @NotBlank(message = "Il nome dell'evento è obbligatorio")
@@ -23,10 +26,12 @@ public class CreateEventoRequestDTO {
     
     @NotNull(message = "La data e ora di inizio sono obbligatorie")
     @Future(message = "La data e ora di inizio devono essere nel futuro")
+    @ValidBusinessHours
     private Date dataOraInizio;
     
     @NotNull(message = "La data e ora di fine sono obbligatorie")
     @Future(message = "La data e ora di fine devono essere nel futuro")
+    @ValidBusinessHours
     private Date dataOraFine;
     
     @NotBlank(message = "Il luogo dell'evento è obbligatorio")
@@ -35,6 +40,7 @@ public class CreateEventoRequestDTO {
     
     @NotNull(message = "La capienza massima è obbligatoria")
     @Min(value = 1, message = "La capienza massima deve essere almeno 1")
+    @Max(value = 1000, message = "La capienza non può superare 1000 persone")
     private Integer capienzaMassima;
     
     private List<Long> idAziendePartecipanti;

@@ -8,75 +8,57 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserDetailDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserPublicDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserUpdateDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
+import org.mapstruct.*;
+import org.springframework.stereotype.Component;
 
 /**
- * Mapper utility class for converting between Utente entities and User DTOs.
- * Provides static methods for mapping between different user representations.
+ * MapStruct mapper for converting between Utente entities and User DTOs.
+ * Provides mapping between different user representations with security exclusions.
  */
-public class UtenteMapper {
-
-    private UtenteMapper() {
-        // Utility class, prevent instantiation
-    }
+@Mapper(
+    componentModel = "spring",
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS
+)
+@Component
+public interface UtenteMapper {
 
     /**
      * Converts a Utente entity to UserDetailDTO.
-     * 
-     * @param utente the entity to convert
-     * @return the UserDetailDTO representation
+     * Includes all user information except password for detailed views.
      */
-    public static UserDetailDTO toDetailDTO(Utente utente) {
-        if (utente == null) {
-            return null;
-        }
-
-        return new UserDetailDTO(
-            utente.getIdUtente(),
-            utente.getNome(),
-            utente.getCognome(),
-            utente.getEmail(),
-            utente.getNumeroTelefono(),
-            utente.getTipoRuolo(),
-            utente.isAttivo()
-        );
-    }
+    @Mapping(target = "idUtente", source = "idUtente")
+    @Mapping(target = "nome", source = "nome")
+    @Mapping(target = "cognome", source = "cognome")
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "numeroTelefono", source = "numeroTelefono")
+    @Mapping(target = "tipoRuolo", source = "tipoRuolo")
+    @Mapping(target = "attivo", source = "attivo")
+    UserDetailDTO toDetailDTO(Utente utente);
 
     /**
      * Converts a Utente entity to UserPublicDTO.
-     * Excludes sensitive information like email and phone number.
-     * 
-     * @param utente the entity to convert
-     * @return the UserPublicDTO representation
+     * Excludes sensitive information like email and phone number for public views.
      */
-    public static UserPublicDTO toPublicDTO(Utente utente) {
-        if (utente == null) {
-            return null;
-        }
-
-        return new UserPublicDTO(
-            utente.getIdUtente(),
-            utente.getNome(),
-            utente.getCognome(),
-            utente.getTipoRuolo(),
-            utente.isAttivo()
-        );
-    }
+    @Mapping(target = "idUtente", source = "idUtente")
+    @Mapping(target = "nome", source = "nome")
+    @Mapping(target = "cognome", source = "cognome")
+    @Mapping(target = "tipoRuolo", source = "tipoRuolo")
+    @Mapping(target = "attivo", source = "attivo")
+    UserPublicDTO toPublicDTO(Utente utente);
 
     /**
      * Updates a Utente entity with data from UserUpdateDTO.
      * Does not modify ID, password, role, or status - only basic profile info.
-     * 
-     * @param utente the entity to update
-     * @param updateDTO the DTO containing new data
      */
-    public static void updateFromDTO(Utente utente, UserUpdateDTO updateDTO) {
-        if (utente == null || updateDTO == null) {
-            return;
-        }
+    @Mapping(target = "idUtente", ignore = true)
+    @Mapping(target = "nome", source = "nome")
+    @Mapping(target = "cognome", source = "cognome")
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "numeroTelefono", source = "numeroTelefono")
+    @Mapping(target = "passwordHash", ignore = true)
+    @Mapping(target = "tipoRuolo", ignore = true)
+    @Mapping(target = "attivo", ignore = true)
+    void updateFromDTO(UserUpdateDTO updateDTO, @MappingTarget Utente utente);
 
-        utente.setNome(updateDTO.getNome());
-        utente.setCognome(updateDTO.getCognome());
-        utente.setEmail(updateDTO.getEmail());
-        utente.setNumeroTelefono(updateDTO.getNumeroTelefono());
-    }
 }

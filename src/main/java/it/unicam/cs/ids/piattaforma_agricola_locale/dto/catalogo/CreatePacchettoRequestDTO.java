@@ -21,7 +21,8 @@ public class CreatePacchettoRequestDTO {
     private String descrizione;
     
     @NotNull(message = "Il prezzo del pacchetto è obbligatorio")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Il prezzo deve essere maggiore di 0")
+    @DecimalMin(value = "0.01", message = "Il prezzo deve essere maggiore di zero")
+    @Digits(integer = 8, fraction = 2, message = "Formato prezzo non valido")
     private Double prezzoPacchetto;
     
     @NotNull(message = "La quantità disponibile è obbligatoria")
@@ -29,6 +30,7 @@ public class CreatePacchettoRequestDTO {
     private Integer quantitaDisponibile;
     
     @NotEmpty(message = "Il pacchetto deve contenere almeno un elemento")
+    @Size(max = 20, message = "Un pacchetto non può contenere più di 20 elementi")
     private List<ElementoPacchettoRequestDTO> elementiInclusi;
 
     public CreatePacchettoRequestDTO() {
@@ -84,38 +86,3 @@ public class CreatePacchettoRequestDTO {
     }
 }
 
-/**
- * DTO for specifying elements to include in a package.
- */
-class ElementoPacchettoRequestDTO {
-    
-    @NotBlank(message = "Il tipo di elemento è obbligatorio")
-    private String tipoElemento; // "PRODOTTO", "EVENTO"
-    
-    @NotNull(message = "L'ID dell'elemento è obbligatorio")
-    private Long idElemento;
-
-    public ElementoPacchettoRequestDTO() {
-    }
-
-    public ElementoPacchettoRequestDTO(String tipoElemento, Long idElemento) {
-        this.tipoElemento = tipoElemento;
-        this.idElemento = idElemento;
-    }
-
-    public String getTipoElemento() {
-        return tipoElemento;
-    }
-
-    public void setTipoElemento(String tipoElemento) {
-        this.tipoElemento = tipoElemento;
-    }
-
-    public Long getIdElemento() {
-        return idElemento;
-    }
-
-    public void setIdElemento(Long idElemento) {
-        this.idElemento = idElemento;
-    }
-}

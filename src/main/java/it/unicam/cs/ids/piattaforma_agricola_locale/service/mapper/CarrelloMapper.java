@@ -6,93 +6,133 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.carrello.CarrelloDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.carrello.ElementoCarrelloDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserPublicDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.Carrello;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.ElementoCarrello;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
+import org.mapstruct.*;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Mapper utility class for converting between Carrello entities and Cart DTOs.
- * Provides static methods for mapping between different cart representations.
+ * MapStruct mapper for converting between Carrello entities and Cart DTOs.
+ * Handles complex polymorphic relationships for cart items.
  */
-public class CarrelloMapper {
-
-    private CarrelloMapper() {
-        // Utility class, prevent instantiation
-    }
+@Mapper(
+    componentModel = "spring",
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+    uses = {UtenteMapper.class}
+)
+@Component
+public interface CarrelloMapper {
 
     /**
      * Converts a Carrello entity to CarrelloDTO.
-     * 
-     * @param carrello the entity to convert
-     * @return the CarrelloDTO representation
+     * Includes buyer information and all cart items.
      */
-    public static CarrelloDTO toDTO(Carrello carrello) {
-        if (carrello == null) {
+    @Mapping(target = "idCarrello", source = "idCarrello")
+    @Mapping(target = "acquirente", source = "acquirente", qualifiedByName = "acquirenteToUserPublicDTO")
+    @Mapping(target = "elementiCarrello", source = "elementiCarrello", qualifiedByName = "elementiCarrelloToDTO")
+    @Mapping(target = "ultimaModifica", source = "ultimaModifica")
+    CarrelloDTO toDTO(Carrello carrello);
+
+    /**
+     * Converts Acquirente to UserPublicDTO.
+     */
+    @Named("acquirenteToUserPublicDTO")
+    @Mapping(target = "idUtente", source = "idUtente")
+    @Mapping(target = "nome", source = "nome")
+    @Mapping(target = "cognome", source = "cognome")
+    @Mapping(target = "tipoRuolo", source = "tipoRuolo")
+    @Mapping(target = "attivo", source = "attivo")
+    UserPublicDTO acquirenteToUserPublicDTO(Acquirente acquirente);
+
+    /**
+     * Converts List of ElementoCarrello to List of ElementoCarrelloDTO.
+     * Handles polymorphic conversion for different Acquistabile implementations.
+     */
+    @Named("elementiCarrelloToDTO")
+    default List<ElementoCarrelloDTO> elementiCarrelloToDTO(List<ElementoCarrello> elementiCarrello) {
+        if (elementiCarrello == null) {
             return null;
         }
-
-        List<ElementoCarrelloDTO> elementiDTO = carrello.getElementiCarrello()
-            .stream()
-            .map(CarrelloMapper::toElementoDTO)
-            .collect(Collectors.toList());
-
-        return new CarrelloDTO(
-            carrello.getIdCarrello(),
-            UtenteMapper.toPublicDTO(carrello.getAcquirente()),
-            elementiDTO,
-            carrello.getUltimaModifica()
-        );
+        
+        return elementiCarrello.stream()
+                .map(this::elementoCarrelloToDTO)
+                .collect(Collectors.toList());
     }
 
     /**
-     * Converts an ElementoCarrello entity to ElementoCarrelloDTO.
-     * 
-     * @param elemento the entity to convert
-     * @return the ElementoCarrelloDTO representation
+     * Converts single ElementoCarrello to ElementoCarrelloDTO.
+     * Uses instanceof to determine the type and map accordingly.
      */
-    public static ElementoCarrelloDTO toElementoDTO(ElementoCarrello elemento) {
+    default ElementoCarrelloDTO elementoCarrelloToDTO(ElementoCarrello elemento) {
         if (elemento == null) {
             return null;
         }
 
-        Acquistabile acquistabile = elemento.getAcquistabile();
-        String tipoAcquistabile = determineTipoAcquistabile(acquistabile);
+        ElementoCarrelloDTO dto = new ElementoCarrelloDTO();
+        dto.setIdElemento(elemento.getIdElemento());
+        dto.setQuantita(elemento.getQuantita());
+        dto.setPrezzoUnitario(elemento.getPrezzoUnitario());
 
-        return new ElementoCarrelloDTO(
-            elemento.getIdElemento(),
-            elemento.getQuantita(),
-            elemento.getPrezzoUnitario(),
-            tipoAcquistabile,
-            acquistabile != null ? acquistabile.getId() : null,
-            acquistabile != null ? acquistabile.getNome() : null,
-            acquistabile != null ? acquistabile.getDescrizione() : null
-        );
+        // Get the Acquistabile and determine its type
+        Acquistabile acquistabile = elemento.getAcquistabile();
+        if (acquistabile != null) {
+            dto.setIdAcquistabile(acquistabile.getId());
+            dto.setNomeAcquistabile(acquistabile.getNome());
+            dto.setDescrizioneAcquistabile(acquistabile.getDescrizione());
+
+            // Determine type based on instanceof
+            if (acquistabile instanceof Prodotto) {
+                dto.setTipoAcquistabile("PRODOTTO");
+            } else if (acquistabile instanceof Pacchetto) {
+                dto.setTipoAcquistabile("PACCHETTO");
+            } else if (acquistabile instanceof Evento) {
+                dto.setTipoAcquistabile("EVENTO");
+            } else {
+                dto.setTipoAcquistabile("UNKNOWN");
+            }
+        }
+
+        return dto;
     }
 
     /**
-     * Determines the type of Acquistabile for DTO representation.
-     * 
-     * @param acquistabile the Acquistabile object
-     * @return string representation of the type
+     * Creates a new ElementoCarrello entity from ElementoCarrelloDTO.
+     * Note: the Acquistabile object must be set separately by the service.
      */
-    private static String determineTipoAcquistabile(Acquistabile acquistabile) {
-        if (acquistabile == null) {
-            return null;
-        }
+    @Mapping(target = "idElemento", source = "idElemento")
+    @Mapping(target = "quantita", source = "quantita")
+    @Mapping(target = "prezzoUnitario", source = "prezzoUnitario")
+    @Mapping(target = "carrello", ignore = true)
+    @Mapping(target = "acquistabile", ignore = true)
+    ElementoCarrello elementoCarrelloDTOToEntity(ElementoCarrelloDTO elementoCarrelloDTO);
 
-        String className = acquistabile.getClass().getSimpleName();
-        switch (className) {
-            case "Prodotto":
-                return "PRODOTTO";
-            case "Pacchetto":
-                return "PACCHETTO";
-            case "Evento":
-                return "EVENTO";
-            default:
-                return "UNKNOWN";
-        }
-    }
+    /**
+     * Updates an existing ElementoCarrello entity with data from DTO.
+     */
+    @Mapping(target = "idElemento", ignore = true)
+    @Mapping(target = "quantita", source = "quantita")
+    @Mapping(target = "prezzoUnitario", source = "prezzoUnitario")
+    @Mapping(target = "carrello", ignore = true)
+    @Mapping(target = "acquistabile", ignore = true)
+    void updateElementoCarrelloFromDTO(ElementoCarrelloDTO elementoCarrelloDTO, @MappingTarget ElementoCarrello elementoCarrello);
+
+    /**
+     * Converts CarrelloDTO back to Carrello entity.
+     * Note: acquirente and elementiCarrello must be handled separately by the service.
+     */
+    @Mapping(target = "idCarrello", source = "idCarrello")
+    @Mapping(target = "ultimaModifica", source = "ultimaModifica")
+    @Mapping(target = "acquirente", ignore = true)
+    @Mapping(target = "elementiCarrello", ignore = true)
+    Carrello fromDTO(CarrelloDTO carrelloDTO);
 }

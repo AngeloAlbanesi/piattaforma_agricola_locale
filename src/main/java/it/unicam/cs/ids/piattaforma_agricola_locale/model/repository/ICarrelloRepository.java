@@ -1,27 +1,15 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
-import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.Carrello;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 
-public interface ICarrelloRepository {
-
-    /**
-     * Salva un carrello nel repository
-     * 
-     * @param carrello il carrello da salvare
-     */
-    void save(Carrello carrello);
-
-    /**
-     * Trova un carrello per ID
-     * 
-     * @param idCarrello l'ID del carrello
-     * @return Optional contenente il carrello se trovato
-     */
-    Optional<Carrello> findById(Long idCarrello);
+@Repository
+public interface ICarrelloRepository extends JpaRepository<Carrello, Long> {
 
     /**
      * Trova il carrello di un acquirente
@@ -30,20 +18,6 @@ public interface ICarrelloRepository {
      * @return Optional contenente il carrello se trovato
      */
     Optional<Carrello> findByAcquirente(Acquirente acquirente);
-
-    /**
-     * Restituisce tutti i carrelli
-     * 
-     * @return lista di tutti i carrelli
-     */
-    List<Carrello> findAll();
-
-    /**
-     * Elimina un carrello per ID
-     * 
-     * @param idCarrello l'ID del carrello da eliminare
-     */
-    void deleteById(Long idCarrello);
 
     /**
      * Elimina il carrello di un acquirente

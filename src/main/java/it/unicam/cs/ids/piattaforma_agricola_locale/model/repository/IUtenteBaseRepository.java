@@ -1,17 +1,17 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
-
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface IUtenteBaseRepository {
+@Repository
+public interface IUtenteBaseRepository extends JpaRepository<Utente, Long> {
 
-     Utente save(Utente utente);
+    // Metodi ereditati da JpaRepository: save, findById, findAll
 
-     Optional<Utente> findById(Long id);
-
-     Optional<Utente> findByEmail(String email);
-     List<Utente> findAll();
+    // Metodo personalizzato per trovare utente per email
+    Optional<Utente> findByEmail(String email);
 }

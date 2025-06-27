@@ -4,7 +4,13 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
+import jakarta.persistence.*;
+
+@Entity
+@DiscriminatorValue("GESTORE_PIATTAFORMA")
 public class GestorePiattaforma extends Utente {
+
+    public GestorePiattaforma() {}
 
     public GestorePiattaforma(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
             TipoRuolo tipoRuolo) {

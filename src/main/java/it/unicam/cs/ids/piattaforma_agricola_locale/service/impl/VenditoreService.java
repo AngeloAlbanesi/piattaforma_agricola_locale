@@ -1,32 +1,32 @@
-package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl; // o service.classes
+package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IDatiAziendaRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
-
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
-// Assumendo che IVenditoreRepository e ICertificazioneService siano in service.interfaces
-// import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IVenditoreService;
 
-import java.util.Date;
-import java.util.List;
-
+@Service
 public class VenditoreService implements IVenditoreService {
 
-    private IVenditoreRepository venditoreRepository; // Se necessario per salvare il venditore
-    private ICertificazioneService certificazioneService;
-    private IDatiAziendaRepository datiAziendaRepository;
+    private final IVenditoreRepository venditoreRepository;
+    private final ICertificazioneService certificazioneService;
+    private final IDatiAziendaRepository datiAziendaRepository;
 
-    // Costruttore per l'iniezione delle dipendenze
-    public VenditoreService(ICertificazioneService certificazioneService , IVenditoreRepository venditoreRepository, IDatiAziendaRepository datiAziendaRepository) {
+    @Autowired
+    public VenditoreService(ICertificazioneService certificazioneService, IVenditoreRepository venditoreRepository, IDatiAziendaRepository datiAziendaRepository) {
         this.certificazioneService = certificazioneService;
         this.venditoreRepository = venditoreRepository;
         this.datiAziendaRepository = datiAziendaRepository;
-
     }
 
     @Override

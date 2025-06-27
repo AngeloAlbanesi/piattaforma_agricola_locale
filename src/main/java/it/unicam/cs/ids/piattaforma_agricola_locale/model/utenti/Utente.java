@@ -4,17 +4,36 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "utenti")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "tipo_utente")
 public abstract class Utente {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_utente")
     private Long idUtente;
+    @Column(name = "nome", nullable = false, length = 100)
     private String nome;
+    @Column(name = "cognome", nullable = false, length = 100)
     private String cognome;
+    @Column(name = "email", nullable = false, unique = true, length = 255)
     private String email;
+    @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
+    @Column(name = "numero_telefono", length = 20)
     private String numeroTelefono;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_ruolo", nullable = false)
     private TipoRuolo tipoRuolo;
+    @Column(name = "is_attivo", nullable = false)
     private boolean isAttivo;
 
-    private static Long contatoreId = 1L;
+    protected Utente() {
+        // Default constructor for JPA
+    }
 
     public Utente(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
             TipoRuolo tipoRuolo) {
@@ -26,9 +45,6 @@ public abstract class Utente {
         this.numeroTelefono = numeroTelefono;
         this.tipoRuolo = tipoRuolo;
         this.isAttivo = true;
-        this.idUtente = contatoreId; //solo per prova, da togliere in futuro col database
-
-        contatoreId++;
     }
 
     public String getNome() {

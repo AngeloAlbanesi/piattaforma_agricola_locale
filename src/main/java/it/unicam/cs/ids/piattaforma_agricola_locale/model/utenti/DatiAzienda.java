@@ -10,18 +10,43 @@ import java.util.List;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.ElementoVerificabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "dati_azienda")
 public class DatiAzienda implements ElementoVerificabile {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_dati_azienda")
+    private Long id;
+
+    @Column(name = "id_venditore")
     private Long idVenditore; // ID del venditore
+    @Column(name = "nome_azienda", nullable = false, length = 255)
     private String nomeAzienda;
+    @Column(name = "partita_iva", unique = true, length = 20)
     private String partitaIva;
+    @Column(name = "indirizzo_azienda", length = 500)
     private String indirizzoAzienda;
+    @Column(name = "descrizione_azienda", columnDefinition = "TEXT")
     private String descrizioneAzienda;
+    @Column(name = "logo_url", length = 500)
     private String logoUrl;
+    @Column(name = "sito_web_url", length = 500)
     private String sitoWebUrl;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "stato_verifica", nullable = false)
     private StatoVerificaValori statoVerifica;
+    @Column(name = "feedback_verifica_contenuto", columnDefinition = "TEXT")
     private String feedbackVerificaContenuto;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_azienda_associata")
     private List<Certificazione> certificazioniAzienda;
+
+    public DatiAzienda() {
+        // Default constructor for JPA
+        this.certificazioniAzienda = new ArrayList<>();
+    }
 
     public DatiAzienda(Long idVenditore,String nomeAzienda, String partitaIva, String indirizzoAzienda, String descrizioneAzienda,
             String logoUrl, String sitoWebUrl) {
@@ -34,10 +59,6 @@ public class DatiAzienda implements ElementoVerificabile {
         this.sitoWebUrl = sitoWebUrl;
         this.statoVerifica = StatoVerificaValori.IN_REVISIONE;
         this.certificazioniAzienda = new ArrayList<>();
-
-    }
-
-    public DatiAzienda(){
 
     }
 
@@ -112,7 +133,7 @@ public class DatiAzienda implements ElementoVerificabile {
 
     @Override
     public Long getId() {
-        return idVenditore;
+        return id;
     }
 
     @Override

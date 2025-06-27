@@ -3,33 +3,26 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 import java.util.List;
 import java.util.Optional;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.ElementoCarrello;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.Carrello;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.ElementoCarrello;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.CarrelloRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ICarrelloRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICarrelloService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 
+@Service
 public class CarrelloService implements ICarrelloService {
 
-    private CarrelloRepository carrelloRepository = new CarrelloRepository();
+    private final ICarrelloRepository carrelloRepository;
 
-    /**
-     * Costruttore di default
-     */
-    public CarrelloService() {
-        this.carrelloRepository = new CarrelloRepository();
-    }
-
-    /**
-     * Costruttore con repository esterno per testing e dependency injection
-     * 
-     * @param carrelloRepository repository esterno da utilizzare
-     */
-    public CarrelloService(CarrelloRepository carrelloRepository) {
+    @Autowired
+    public CarrelloService(ICarrelloRepository carrelloRepository) {
         this.carrelloRepository = carrelloRepository;
     }
 
@@ -113,7 +106,7 @@ public class CarrelloService implements ICarrelloService {
             elemento.setQuantita(elemento.getQuantita() + quantita);
         } else {
             // Se l'elemento non esiste, creane uno nuovo e aggiungilo
-            ElementoCarrello nuovoElemento = new ElementoCarrello(acquistabile, quantita);
+            ElementoCarrello nuovoElemento = new ElementoCarrello(carrelloAcquirente, acquistabile, quantita);
             carrelloAcquirente.aggiungiElemento(nuovoElemento);
         }
 
@@ -244,7 +237,7 @@ public class CarrelloService implements ICarrelloService {
      * 
      * @return il repository dei carrelli
      */
-    public CarrelloRepository getRepository() {
+    public ICarrelloRepository getRepository() {
         return carrelloRepository;
     }
 

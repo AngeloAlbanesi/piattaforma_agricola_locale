@@ -1,35 +1,28 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.factory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteBaseRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.UtenteBaseRepository;
 
 /**
  * Provider per le factory di utenti.
- * Questa classe implementa il pattern Singleton e fornisce un punto di accesso centralizzato
+ * Questa classe fornisce un punto di accesso centralizzato
  * per ottenere istanze di UtenteFactory.
  */
+@Component
 public class UtenteFactoryProvider {
     
-    private static UtenteFactoryProvider instance;
     private final IUtenteBaseRepository utenteRepository;
     
     /**
-     * Costruttore privato per il pattern Singleton.
-     */
-    private UtenteFactoryProvider() {
-        this.utenteRepository = new UtenteBaseRepository();
-    }
-    
-    /**
-     * Ottiene l'istanza singleton del provider.
+     * Costruttore per l'iniezione delle dipendenze.
      * 
-     * @return L'istanza singleton del provider
+     * @param utenteRepository Repository degli utenti
      */
-    public static synchronized UtenteFactoryProvider getInstance() {
-        if (instance == null) {
-            instance = new UtenteFactoryProvider();
-        }
-        return instance;
+    @Autowired
+    public UtenteFactoryProvider(IUtenteBaseRepository utenteRepository) {
+        this.utenteRepository = utenteRepository;
     }
     
     /**

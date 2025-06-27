@@ -4,6 +4,7 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,11 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
  * gestire processi di trasformazione per convertire materie prime in prodotti
  * finiti.
  */
+@Entity
+@DiscriminatorValue("TRASFORMATORE")
 public class Trasformatore extends Venditore {
+
+    public Trasformatore() {}
 
     /**
      * Costruttore overload per factory (solo parametri base Venditore).

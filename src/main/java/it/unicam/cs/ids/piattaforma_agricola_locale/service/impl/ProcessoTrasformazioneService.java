@@ -3,10 +3,12 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProcessoTrasformazioneRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.FaseLavorazione;
-
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.ProcessoTrasformazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Trasformatore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProcessoTrasformazioneService;
@@ -16,12 +18,13 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProcesso
  * Gestisce la logica business per la creazione, modifica e gestione dei
  * processi.
  */
-
+@Service
 public class ProcessoTrasformazioneService implements IProcessoTrasformazioneService {
 
     private final IProcessoTrasformazioneRepository processoRepository;
     private final IProdottoRepository prodottoRepository;
 
+    @Autowired
     public ProcessoTrasformazioneService(IProcessoTrasformazioneRepository processoRepository,
             IProdottoRepository prodottoRepository) {
         this.processoRepository = Objects.requireNonNull(processoRepository,
@@ -168,7 +171,8 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
                     "Impossibile eliminare il processo: esistono prodotti che fanno riferimento a questo processo di trasformazione");
         }
 
-        return processoRepository.deleteById(processoId);
+        processoRepository.deleteById(processoId);
+        return true;
     }
 
     /**

@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -14,17 +15,39 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Trasformatore;
  * Un processo è caratterizzato da più fasi di lavorazione sequenziali
  * che trasformano materie prime in prodotti finiti.
  */
+@Entity
+@Table(name = "processi_trasformazione")
 public class ProcessoTrasformazione {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+    
+    @Column(name = "nome", nullable = false)
     private String nome;
+    
+    @Column(name = "descrizione", columnDefinition = "TEXT")
     private String descrizione;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_trasformatore", nullable = false)
     private Trasformatore trasformatore;
+    
+    @OneToMany(mappedBy = "processoTrasformazione", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FaseLavorazione> fasiLavorazione;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_prodotto_finale")
     private Prodotto prodottoFinale;
 
+    @Column(name = "metodo_produzione")
     private String metodoProduzione;
+    
+    @Column(name = "note", columnDefinition = "TEXT")
     private String note;
+
+    public ProcessoTrasformazione() {}
 
     /**
      * Costruttore con parametri principali.

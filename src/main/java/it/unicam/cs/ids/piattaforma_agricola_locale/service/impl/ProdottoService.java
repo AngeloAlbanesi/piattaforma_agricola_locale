@@ -4,36 +4,35 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IProdottoObservable;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.ICuratoreObserver;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IProdottoObservable;
 
+@Service
 public class ProdottoService implements IProdottoService, IProdottoObservable {
 
     private final IProdottoRepository prodottoRepository;
-    private ICertificazioneService certificazioneService;
-    private IVenditoreRepository venditoreRepository;
+    private final ICertificazioneService certificazioneService;
+    private final IVenditoreRepository venditoreRepository;
     private final List<ICuratoreObserver> observers;
 
-    // Costruttore per l'iniezione delle dipendenze complete
+    @Autowired
     public ProdottoService(IProdottoRepository prodottoRepository, ICertificazioneService certificazioneService,
             IVenditoreRepository venditoreRepository) {
         this.prodottoRepository = prodottoRepository;
         this.certificazioneService = certificazioneService;
         this.venditoreRepository = venditoreRepository;
-        this.observers = new ArrayList<>();
-    }
-
-    public ProdottoService(IProdottoRepository prodottoRepository) {
-        this.prodottoRepository = prodottoRepository;
         this.observers = new ArrayList<>();
     }
 
@@ -173,10 +172,8 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
         }
 
         // Ricerca del prodotto tramite repository
-        Prodotto prodotto = this.prodottoRepository.findById(idProdotto);
-        if (prodotto == null) {
-            throw new IllegalArgumentException("Prodotto con ID " + idProdotto + " non trovato");
-        }
+        Prodotto prodotto = this.prodottoRepository.findById(idProdotto)
+                .orElseThrow(() -> new IllegalArgumentException("Prodotto con ID " + idProdotto + " non trovato"));
 
         // Verifica che ci sia abbastanza quantità disponibile
         int quantitaDisponibile = prodotto.getQuantitaDisponibile();

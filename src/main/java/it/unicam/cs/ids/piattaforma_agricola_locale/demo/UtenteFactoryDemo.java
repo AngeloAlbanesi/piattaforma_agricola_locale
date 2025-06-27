@@ -12,7 +12,13 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IUtenteSe
 public class UtenteFactoryDemo {
     
     public static void main(String[] args) {
-        // Ottieni il provider delle factory
+        // NOTA: Questo demo è disabilitato durante la migrazione a Spring Boot
+        // La gestione delle factory ora usa l'iniezione delle dipendenze di Spring
+        System.out.println("Demo temporaneamente disabilitato - usare Spring Boot context per l'iniezione delle dipendenze");
+        
+        /* 
+        
+        // Ottieni il provider delle factory (DISABILITATO - ora gestito da Spring)
         UtenteFactoryProvider provider = UtenteFactoryProvider.getInstance();
         
         // Ottieni una factory standard
@@ -84,5 +90,6 @@ public class UtenteFactoryDemo {
         System.out.println("\nLista dei produttori:");
         utenteService.trovaUtentiPerTipo(TipoRuolo.PRODUTTORE).forEach(utente -> 
             System.out.println("- " + utente.getNome() + " " + utente.getCognome()));
+        */
     }
 }

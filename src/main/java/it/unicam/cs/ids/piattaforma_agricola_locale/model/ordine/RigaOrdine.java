@@ -1,17 +1,54 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine;
 
+import jakarta.persistence.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 
+@Entity
+@Table(name = "righe_ordine")
 public class RigaOrdine {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_riga")
     private Long idRiga;
-    private Acquistabile acquistabile;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_ordine", nullable = false)
+    private Ordine ordine;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_prodotto")
+    private it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto prodotto;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_pacchetto")
+    private it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto pacchetto;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_evento")
+    private it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento evento;
+    
+    @Column(name = "quantita_ordinata", nullable = false)
     private int quantitaOrdinata;
+    
+    @Column(name = "prezzo_unitario", nullable = false)
     private double prezzoUnitario;
 
+    public RigaOrdine() {}
 
-    public RigaOrdine(Acquistabile acquistabile, int quantitaOrdinata, double prezzoUnitario) {
-
-        this.acquistabile = acquistabile;
+    public RigaOrdine(Ordine ordine, Acquistabile acquistabile, int quantitaOrdinata, double prezzoUnitario) {
+        this.ordine = ordine;
+        
+        if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto) {
+            this.prodotto = (it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto) acquistabile;
+        } else if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto) {
+            this.pacchetto = (it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto) acquistabile;
+        } else if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento) {
+            this.evento = (it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento) acquistabile;
+        } else {
+            throw new IllegalArgumentException("Unknown Acquistabile type");
+        }
+        
         this.quantitaOrdinata = quantitaOrdinata;
         this.prezzoUnitario = prezzoUnitario;
     }
@@ -24,12 +61,38 @@ public class RigaOrdine {
         this.idRiga = idRiga;
     }
 
+    public Ordine getOrdine() {
+        return ordine;
+    }
+
+    public void setOrdine(Ordine ordine) {
+        this.ordine = ordine;
+    }
+
     public Acquistabile getAcquistabile() {
-        return acquistabile;
+        if (prodotto != null) {
+            return prodotto;
+        } else if (pacchetto != null) {
+            return pacchetto;
+        } else if (evento != null) {
+            return evento;
+        }
+        return null;
     }
 
     public void setAcquistabile(Acquistabile acquistabile) {
-        this.acquistabile = acquistabile;
+        // Reset all references
+        this.prodotto = null;
+        this.pacchetto = null;
+        this.evento = null;
+        
+        if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto) {
+            this.prodotto = (it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto) acquistabile;
+        } else if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto) {
+            this.pacchetto = (it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto) acquistabile;
+        } else if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento) {
+            this.evento = (it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento) acquistabile;
+        }
     }
 
     public int getQuantitaOrdinata() {
@@ -50,9 +113,10 @@ public class RigaOrdine {
 
     @Override
     public String toString() {
+        Acquistabile acq = getAcquistabile();
         return "RigaOrdine{" +
                 "idRiga=" + idRiga +
-                ", acquistabile=" + acquistabile.getNome() +
+                ", acquistabile=" + (acq != null ? acq.getNome() : "null") +
                 ", quantitaOrdinata=" + quantitaOrdinata +
                 ", prezzoUnitario=" + prezzoUnitario +
                 '}';

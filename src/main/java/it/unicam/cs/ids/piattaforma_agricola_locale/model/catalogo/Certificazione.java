@@ -1,19 +1,39 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo;
 
+import jakarta.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@Entity
+@Table(name = "certificazioni")
 public class Certificazione {
 
-    private Long idCertificazione; // Deve essere univoco globalmente
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_certificazione")
+    private Long idCertificazione;
+
+    @Column(name = "nome_certificazione", nullable = false)
     private String nomeCertificazione;
+
+    @Column(name = "ente_rilascio", nullable = false)
     private String enteRilascio;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "data_rilascio", nullable = false)
     private Date dataRilascio;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "data_scadenza")
     private Date dataScadenza;
 
-    // Chiavi esterne: solo una sarà valorizzata
-    private Long idProdottoAssociato; // ID del prodotto a cui è associata
-    private Long idAziendaAssociata;  // ID dell'azienda a cui è associata
+    @Column(name = "id_prodotto_associato")
+    private Long idProdottoAssociato;
+
+    @Column(name = "id_azienda_associata")
+    private Long idAziendaAssociata;
+
+    public Certificazione() {}
 
     // Costruttore per certificazione di prodotto
     public Certificazione(String nomeCertificazione, String enteRilascio, Date dataRilascio,

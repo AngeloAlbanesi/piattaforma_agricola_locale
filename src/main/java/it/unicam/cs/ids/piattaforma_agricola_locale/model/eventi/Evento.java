@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,18 +9,55 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
+@Entity
+@Table(name = "eventi")
 public class Evento implements Acquistabile {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_evento")
     private Long idEvento;
+    
+    @Column(name = "nome_evento", nullable = false)
     private String nomeEvento;
+    
+    @Column(name = "descrizione", columnDefinition = "TEXT")
     private String descrizione;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "data_ora_inizio", nullable = false)
     private Date DataOraInizio;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "data_ora_fine", nullable = false)
     private Date DataOraFine;
+    
+    @Column(name = "luogo_evento", nullable = false)
     private String luogoEvento;
+    
+    @Column(name = "capienza_massima", nullable = false)
     private int capienzaMassima;
+    
+    @Column(name = "posti_prenotati", nullable = false)
     private int postiAttualmentePrenotati;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "stato_evento", nullable = false)
     private StatoEventoValori statoEvento;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_organizzatore", nullable = false)
     private AnimatoreDellaFiliera organizzatore;
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "eventi_aziende_partecipanti",
+        joinColumns = @JoinColumn(name = "id_evento"),
+        inverseJoinColumns = @JoinColumn(name = "id_venditore")
+    )
     private List<Venditore> aziendePartecipanti;
+
+    public Evento() {}
 
     public Evento(String nomeEvento, String descrizione, Date DataOraInizio, Date DataOraFine,
             String luogoEvento, int capienzaMassima, AnimatoreDellaFiliera organizzatore) {

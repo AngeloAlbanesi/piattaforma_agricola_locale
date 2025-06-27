@@ -1,13 +1,16 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IVenditoreObserver;
-
-import java.util.List;
 
 /**
  * Implementazione concreta di {@link IVenditoreObserver} che gestisce la logica
@@ -17,18 +20,19 @@ import java.util.List;
  * di reagire automaticamente alle notifiche d'ordine, decrementando
  * le quantità disponibili dei prodotti e pacchetti ordinati.
  */
+@Service
 public class VenditoreObserverService implements IVenditoreObserver {
 
     private final ProdottoService prodottoService;
     private final PacchettoService pacchettoService;
 
-
     /**
-     * Costruttore per il testing che permette di iniettare mock dependencies.
+     * Costruttore per l'iniezione delle dipendenze.
      * 
      * @param prodottoService  il service per gestire i prodotti
      * @param pacchettoService il service per gestire i pacchetti
      */
+    @Autowired
     public VenditoreObserverService(ProdottoService prodottoService, PacchettoService pacchettoService) {
         this.prodottoService = prodottoService;
         this.pacchettoService = pacchettoService;

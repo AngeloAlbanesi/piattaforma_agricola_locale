@@ -1,25 +1,25 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.StatoEventoValori;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.EventoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IEventoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IEventoService;
 
-import java.util.Date;
-
+@Service
 public class EventoService implements IEventoService {
 
     private final IEventoRepository eventoRepository;
 
+    @Autowired
     public EventoService(IEventoRepository eventoRepository) {
         this.eventoRepository = eventoRepository;
-    }
-
-    public EventoService() {
-        this.eventoRepository = new EventoRepository();
     }
 
     @Override
@@ -59,10 +59,8 @@ public class EventoService implements IEventoService {
                               int nuovaCapienzaMassima,AnimatoreDellaFiliera organizzatore) {
 
 
-        Evento evento = eventoRepository.findById(idEvento);
-        if (evento == null) {
-            throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
-        }
+        Evento evento = eventoRepository.findById(idEvento)
+                .orElseThrow(() -> new IllegalArgumentException("Evento con ID " + idEvento + " non trovato."));
         if (!evento.getOrganizzatore().equals(organizzatore)) {
             throw new IllegalArgumentException("Questo animatore non ha i permessi per modificare l'evento");
         }
@@ -94,11 +92,8 @@ public class EventoService implements IEventoService {
     @Override
 
     public void eliminaEvento(Long idEvento,AnimatoreDellaFiliera organizzatore  ) {
-    Evento evento = eventoRepository.findById(idEvento);
-
-        if (evento == null) {
-            throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
-        }
+        Evento evento = eventoRepository.findById(idEvento)
+                .orElseThrow(() -> new IllegalArgumentException("Evento con ID " + idEvento + " non trovato."));
         if (!evento.getOrganizzatore().equals(organizzatore)) {
             throw new IllegalArgumentException("Questo animatore non ha i permessi per modificare l'evento");
         }
@@ -107,10 +102,8 @@ public class EventoService implements IEventoService {
 
     @Override
     public void aggiungiAziendaPartecipante(Long idEvento, Venditore venditore) {
-        Evento evento = eventoRepository.findById(idEvento);
-        if (evento == null) {
-            throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
-        }
+        Evento evento = eventoRepository.findById(idEvento)
+                .orElseThrow(() -> new IllegalArgumentException("Evento con ID " + idEvento + " non trovato."));
         if (venditore == null) {
             throw new IllegalArgumentException("Il venditore non può essere nullo.");
         }
@@ -124,10 +117,8 @@ public class EventoService implements IEventoService {
     @Override
     public void rimuoviAziendaPartecipante(Long idEvento, Venditore venditore) {
         // Implementazione della rimozione di un'azienda partecipante da un evento
-        Evento evento = eventoRepository.findById(idEvento);
-        if (evento == null) {
-            throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
-        }
+        Evento evento = eventoRepository.findById(idEvento)
+                .orElseThrow(() -> new IllegalArgumentException("Evento con ID " + idEvento + " non trovato."));
         if (venditore == null) {
             throw new IllegalArgumentException("Il venditore non può essere nullo.");
         }
@@ -175,10 +166,8 @@ public class EventoService implements IEventoService {
 
     @Override
     public void iniziaEvento(Long idEvento, AnimatoreDellaFiliera organizzatore) {
-        Evento evento = eventoRepository.findById(idEvento);
-        if (evento == null) {
-            throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
-        }
+        Evento evento = eventoRepository.findById(idEvento)
+                .orElseThrow(() -> new IllegalArgumentException("Evento con ID " + idEvento + " non trovato."));
         if (!evento.getOrganizzatore().equals(organizzatore)) {
             throw new IllegalArgumentException("Questo animatore non ha i permessi per modificare l'evento");
         }
@@ -191,10 +180,8 @@ public class EventoService implements IEventoService {
 
     @Override
     public void terminaEvento(Long idEvento, AnimatoreDellaFiliera organizzatore) {
-        Evento evento = eventoRepository.findById(idEvento);
-        if (evento == null) {
-            throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
-        }
+        Evento evento = eventoRepository.findById(idEvento)
+                .orElseThrow(() -> new IllegalArgumentException("Evento con ID " + idEvento + " non trovato."));
         if (!evento.getOrganizzatore().equals(organizzatore)) {
             throw new IllegalArgumentException("Questo animatore non ha i permessi per modificare l'evento");
         }
@@ -209,10 +196,8 @@ public class EventoService implements IEventoService {
 
     public void annullaEvento(Long idEvento,AnimatoreDellaFiliera organizzatore) {
 
-        Evento evento = eventoRepository.findById(idEvento);
-        if (evento == null) {
-            throw new IllegalArgumentException("Evento con ID " + idEvento + " non trovato.");
-        }
+        Evento evento = eventoRepository.findById(idEvento)
+                .orElseThrow(() -> new IllegalArgumentException("Evento con ID " + idEvento + " non trovato."));
         if (!evento.getOrganizzatore().equals(organizzatore)) {
             throw new IllegalArgumentException("Questo animatore non ha i permessi per modificare l'evento");
         }

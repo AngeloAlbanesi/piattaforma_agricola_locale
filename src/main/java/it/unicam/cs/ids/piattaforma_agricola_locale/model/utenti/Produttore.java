@@ -4,7 +4,17 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "produttori")
+@DiscriminatorValue("PRODUTTORE")
 public class Produttore extends Venditore {
+
+    public Produttore() {
+        super();
+        // Default constructor for JPA
+    }
 
     public Produttore(String nome, String cognome, String email, String passwordHash,
             String numeroTelefono, DatiAzienda datiAzienda,

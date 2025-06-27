@@ -7,21 +7,47 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.ElementoVerificabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "prodotti")
 public class Prodotto implements Acquistabile, ElementoVerificabile {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_prodotto")
     private Long idProdotto;
+    @Column(name = "nome", nullable = false, length = 200)
     private String nome;
+    @Column(name = "descrizione", columnDefinition = "TEXT")
     private String descrizione;
+    @Column(name = "prezzo", nullable = false)
     private double prezzo;
+    @Column(name = "quantita_disponibile", nullable = false)
     private int quantitaDisponibile;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "stato_verifica", nullable = false)
     private StatoVerificaValori statoVerifica;
+    @Column(name = "feedback_verifica", columnDefinition = "TEXT")
     private String feedbackVerifica;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_venditore", nullable = false)
     private Venditore venditore;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_prodotto_associato")
     private List<Certificazione> certificazioniProdotto;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_origine", nullable = false)
     private TipoOrigineProdotto tipoOrigine;
+    @Column(name = "id_processo_trasformazione_originario")
     private Long idProcessoTrasformazioneOriginario;
+    @Column(name = "id_metodo_di_coltivazione")
     private Long idMetodoDiColtivazione;
+
+    public Prodotto() {
+        // Default constructor for JPA
+        this.certificazioniProdotto = new ArrayList<>();
+    }
 
     public Prodotto( String nome, String descrizione, double prezzo, int quantitaDisponibile,
                     Venditore venditore) {

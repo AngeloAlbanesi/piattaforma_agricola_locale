@@ -1,13 +1,17 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.factory;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteBaseRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
 
 /**
  * Implementazione concreta del factory pattern per la creazione di utenti.
  * Questa classe fornisce metodi type-safe per creare diversi tipi di utenti
  * e si integra con il repository per la persistenza.
  */
+@Component
 public class SimpleUtenteFactory extends AbstractUtenteFactory {
     
     private final IUtenteBaseRepository utenteRepository;
@@ -17,6 +21,7 @@ public class SimpleUtenteFactory extends AbstractUtenteFactory {
      * 
      * @param utenteRepository Repository per la persistenza degli utenti
      */
+    @Autowired
     public SimpleUtenteFactory(IUtenteBaseRepository utenteRepository) {
         this.utenteRepository = utenteRepository;
     }

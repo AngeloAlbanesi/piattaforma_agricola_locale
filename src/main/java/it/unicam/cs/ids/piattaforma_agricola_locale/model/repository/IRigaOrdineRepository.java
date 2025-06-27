@@ -1,35 +1,17 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 
 import java.util.List;
-import java.util.Optional;
 
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
 
-public interface IRigaOrdineRepository {
-
-    /**
-     * Salva una riga ordine nel repository
-     * 
-     * @param rigaOrdine la riga ordine da salvare
-     */
-    void save(RigaOrdine rigaOrdine);
-
-    /**
-     * Trova una riga ordine per ID
-     * 
-     * @param idRiga l'ID della riga ordine
-     * @return Optional contenente la riga ordine se trovata
-     */
-    Optional<RigaOrdine> findById(Long idRiga);
-
-    /**
-     * Restituisce tutte le righe ordine
-     * 
-     * @return lista di tutte le righe ordine
-     */
-    List<RigaOrdine> findAll();
+@Repository
+public interface IRigaOrdineRepository extends JpaRepository<RigaOrdine, Long> {
 
     /**
      * Trova tutte le righe ordine di un ordine specifico
@@ -41,18 +23,17 @@ public interface IRigaOrdineRepository {
 
     /**
      * Trova tutte le righe ordine che contengono un acquistabile specifico
+     * Nota: Poiché il campo acquistabile non è direttamente persistito,
+     * questa query utilizza JPQL per cercare nei tre possibili campi
      * 
      * @param acquistabile l'acquistabile
      * @return lista delle righe ordine che contengono l'acquistabile
      */
-    List<RigaOrdine> findByAcquistabile(Acquistabile acquistabile);
-
-    /**
-     * Elimina una riga ordine per ID
-     * 
-     * @param idRiga l'ID della riga ordine da eliminare
-     */
-    void deleteById(Long idRiga);
+    @Query("SELECT r FROM RigaOrdine r WHERE " +
+            "(r.prodotto IS NOT NULL AND r.prodotto.id = :id) OR " +
+            "(r.pacchetto IS NOT NULL AND r.pacchetto.id = :id) OR " +
+            "(r.evento IS NOT NULL AND r.evento.id = :id)")
+    List<RigaOrdine> findByAcquistabile(@Param("id") Long acquistabileId);
 
     /**
      * Elimina tutte le righe ordine di un ordine specifico
@@ -60,12 +41,5 @@ public interface IRigaOrdineRepository {
      * @param ordine l'ordine
      */
     void deleteByOrdine(Ordine ordine);
-
-    /**
-     * Aggiorna una riga ordine esistente
-     * 
-     * @param rigaOrdine la riga ordine da aggiornare
-     */
-    void update(RigaOrdine rigaOrdine);
 
 }

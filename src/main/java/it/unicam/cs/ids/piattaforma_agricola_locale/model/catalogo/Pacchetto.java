@@ -10,37 +10,40 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 @Entity
 @Table(name = "pacchetti")
 public class Pacchetto implements Acquistabile {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_pacchetto")
     private Long idPacchetto;
-    
+
     @Column(name = "nome", nullable = false)
     private String nome;
-    
+
     @Column(name = "descrizione", columnDefinition = "TEXT")
     private String descrizione;
-    
+
     @Column(name = "quantita_disponibile", nullable = false)
     private int quantitaDisponibile;
-    
+
     @Column(name = "prezzo_pacchetto", nullable = false)
     private double prezzoPacchetto;
-    
-    
-    // Note: This needs to be handled differently since we can't map directly to interface
-    // We'll need to create a separate entity for PacchettoElemento or use repository methods
+
+    // Note: This needs to be handled differently since we can't map directly to
+    // interface
+    // We'll need to create a separate entity for PacchettoElemento or use
+    // repository methods
     @Transient
     private List<Acquistabile> elementiInclusi;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_distributore", nullable = false)
     private DistributoreDiTipicita distributore;
 
-    public Pacchetto() {}
+    public Pacchetto() {
+    }
 
-    public Pacchetto(DistributoreDiTipicita distributore, String nome, String descrizione,int quantita, double prezzoPacchetto) {
+    public Pacchetto(DistributoreDiTipicita distributore, String nome, String descrizione, int quantita,
+            double prezzoPacchetto) {
 
         this.nome = nome;
         this.descrizione = descrizione;
@@ -53,15 +56,19 @@ public class Pacchetto implements Acquistabile {
     public Long getId() {
         return idPacchetto;
     }
+
     public void SetId(Long idPacchetto) {
         this.idPacchetto = idPacchetto;
     }
+
     public String getNome() {
         return nome;
     }
+
     public String getDescrizione() {
         return descrizione;
     }
+
     public double getPrezzo() {
         return prezzoPacchetto;
     }
@@ -71,8 +78,7 @@ public class Pacchetto implements Acquistabile {
         return distributore;
     }
 
-
-    public  void aggiungiElemento(Acquistabile elemento) {
+    public void aggiungiElemento(Acquistabile elemento) {
         this.elementiInclusi.add(elemento);
     }
 
@@ -94,6 +100,41 @@ public class Pacchetto implements Acquistabile {
 
     public void setQuantitaDisponibile(int quantitaDisponibile) {
         this.quantitaDisponibile = quantitaDisponibile;
+    }
+
+    /**
+     * Imposta il nome del pacchetto.
+     */
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    /**
+     * Imposta la descrizione del pacchetto.
+     */
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+    /**
+     * Imposta il prezzo totale del pacchetto.
+     */
+    public void setPrezzoTotale(double prezzoTotale) {
+        this.prezzoPacchetto = prezzoTotale;
+    }
+
+    /**
+     * Restituisce il prezzo totale del pacchetto.
+     */
+    public double getPrezzoTotale() {
+        return this.prezzoPacchetto;
+    }
+
+    /**
+     * Restituisce gli elementi inclusi nel pacchetto.
+     */
+    public List<Acquistabile> getElementi() {
+        return this.elementiInclusi;
     }
 
     @Override

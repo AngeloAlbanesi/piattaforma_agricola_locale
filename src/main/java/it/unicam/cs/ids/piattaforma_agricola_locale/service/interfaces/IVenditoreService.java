@@ -2,12 +2,24 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 
 public interface IVenditoreService {
+
+    /**
+     * Trova un venditore per ID.
+     * 
+     * @param id ID del venditore
+     * @return Il venditore trovato, se esiste
+     */
+    Optional<Venditore> getVenditoreById(Long id);
 
     void aggiornaDatiAzienda(Venditore venditore,  DatiAzienda datiAggiornati);
 
@@ -22,4 +34,21 @@ public interface IVenditoreService {
     List<Certificazione> getCertificazioniAzienda(Venditore venditore);
 
     boolean rimuoviCertificazioneDaAzienda(Venditore venditore, Long idCertificazione);
+    
+    /**
+     * Cerca aziende in base a una query di ricerca.
+     * 
+     * @param query La query di ricerca
+     * @param pageable Parametri di paginazione
+     * @return Una pagina di risultati
+     */
+    Page<DatiAzienda> searchAziende(String query, Pageable pageable);
+    
+    /**
+     * Aggiorna un venditore.
+     * 
+     * @param venditore Il venditore da aggiornare
+     * @return Il venditore aggiornato
+     */
+    Venditore updateVenditore(Venditore venditore);
 }

@@ -29,27 +29,32 @@ public class SecurityConfiguration {
 
                 // Definisce le regole di autorizzazione per le richieste HTTP
                 .authorizeHttpRequests(auth -> auth
-                        // Permetti a chiunque di accedere agli endpoint di autenticazione E ALLA CONSOLE H2
+                        // Permetti a chiunque di accedere agli endpoint di autenticazione, CONSOLE H2 e
+                        // SWAGGER
                         .requestMatchers(
                                 new AntPathRequestMatcher("/api/auth/**"),
-                                new AntPathRequestMatcher("/h2-console/**") // <-- NUOVA REGOLA
-                        ).permitAll()
+                                new AntPathRequestMatcher("/h2-console/**"),
+                                new AntPathRequestMatcher("/swagger-ui/**"),
+                                new AntPathRequestMatcher("/swagger-ui.html"),
+                                new AntPathRequestMatcher("/v3/api-docs/**"),
+                                new AntPathRequestMatcher("/swagger-resources/**"),
+                                new AntPathRequestMatcher("/webjars/**"))
+                        .permitAll()
                         // Qualsiasi altra richiesta deve essere autenticata
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
 
                 // Configura la gestione della sessione come STATELESS
                 // Spring non creerà né userà sessioni HTTP
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // Imposta il provider di autenticazione che abbiamo configurato in ApplicationConfig
+                // Imposta il provider di autenticazione che abbiamo configurato in
+                // ApplicationConfig
                 .authenticationProvider(authenticationProvider)
 
                 // Aggiunge il nostro filtro JWT prima del filtro standard di Spring
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-                );
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 
         return http.build();
     }

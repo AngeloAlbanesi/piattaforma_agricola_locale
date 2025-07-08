@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserDetailDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserUpdateDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
 import java.util.List;
 import java.util.Optional;
@@ -9,103 +11,108 @@ import java.util.Optional;
  * Definisce le operazioni di base per la gestione degli utenti.
  */
 public interface IUtenteService {
-    
+
     /**
      * Registra un nuovo utente acquirente.
      * 
-     * @param nome Nome dell'utente
-     * @param cognome Cognome dell'utente
-     * @param email Email dell'utente
-     * @param password Password in chiaro (verrà hashata)
+     * @param nome           Nome dell'utente
+     * @param cognome        Cognome dell'utente
+     * @param email          Email dell'utente
+     * @param password       Password in chiaro (verrà hashata)
      * @param numeroTelefono Numero di telefono
      * @return L'utente creato
      */
     Acquirente registraAcquirente(String nome, String cognome, String email, String password, String numeroTelefono);
-    
+
     /**
      * Registra un nuovo utente produttore.
      * 
-     * @param nome Nome dell'utente
-     * @param cognome Cognome dell'utente
-     * @param email Email dell'utente
-     * @param password Password in chiaro (verrà hashata)
+     * @param nome           Nome dell'utente
+     * @param cognome        Cognome dell'utente
+     * @param email          Email dell'utente
+     * @param password       Password in chiaro (verrà hashata)
      * @param numeroTelefono Numero di telefono
-     * @param datiAzienda Dati dell'azienda
+     * @param datiAzienda    Dati dell'azienda
      * @return L'utente creato
      */
-    Produttore registraProduttore(String nome, String cognome, String email, String password, String numeroTelefono, DatiAzienda datiAzienda);
-    
+    Produttore registraProduttore(String nome, String cognome, String email, String password, String numeroTelefono,
+            DatiAzienda datiAzienda);
+
     /**
      * Registra un nuovo utente trasformatore.
      * 
-     * @param nome Nome dell'utente
-     * @param cognome Cognome dell'utente
-     * @param email Email dell'utente
-     * @param password Password in chiaro (verrà hashata)
+     * @param nome           Nome dell'utente
+     * @param cognome        Cognome dell'utente
+     * @param email          Email dell'utente
+     * @param password       Password in chiaro (verrà hashata)
      * @param numeroTelefono Numero di telefono
-     * @param datiAzienda Dati dell'azienda
+     * @param datiAzienda    Dati dell'azienda
      * @return L'utente creato
      */
-    Trasformatore registraTrasformatore(String nome, String cognome, String email, String password, String numeroTelefono, DatiAzienda datiAzienda);
-    
+    Trasformatore registraTrasformatore(String nome, String cognome, String email, String password,
+            String numeroTelefono, DatiAzienda datiAzienda);
+
     /**
      * Registra un nuovo utente distributore di tipicità.
      * 
-     * @param nome Nome dell'utente
-     * @param cognome Cognome dell'utente
-     * @param email Email dell'utente
-     * @param password Password in chiaro (verrà hashata)
+     * @param nome           Nome dell'utente
+     * @param cognome        Cognome dell'utente
+     * @param email          Email dell'utente
+     * @param password       Password in chiaro (verrà hashata)
      * @param numeroTelefono Numero di telefono
-     * @param datiAzienda Dati dell'azienda
+     * @param datiAzienda    Dati dell'azienda
      * @return L'utente creato
      */
-    DistributoreDiTipicita registraDistributoreDiTipicita(String nome, String cognome, String email, String password, String numeroTelefono, DatiAzienda datiAzienda);
-    
+    DistributoreDiTipicita registraDistributoreDiTipicita(String nome, String cognome, String email, String password,
+            String numeroTelefono, DatiAzienda datiAzienda);
+
     /**
      * Registra un nuovo utente curatore.
      * 
-     * @param nome Nome dell'utente
-     * @param cognome Cognome dell'utente
-     * @param email Email dell'utente
-     * @param password Password in chiaro (verrà hashata)
+     * @param nome           Nome dell'utente
+     * @param cognome        Cognome dell'utente
+     * @param email          Email dell'utente
+     * @param password       Password in chiaro (verrà hashata)
      * @param numeroTelefono Numero di telefono
      * @return L'utente creato
      */
     Curatore registraCuratore(String nome, String cognome, String email, String password, String numeroTelefono);
-    
+
     /**
      * Registra un nuovo utente animatore della filiera.
      * 
-     * @param nome Nome dell'utente
-     * @param cognome Cognome dell'utente
-     * @param email Email dell'utente
-     * @param password Password in chiaro (verrà hashata)
+     * @param nome           Nome dell'utente
+     * @param cognome        Cognome dell'utente
+     * @param email          Email dell'utente
+     * @param password       Password in chiaro (verrà hashata)
      * @param numeroTelefono Numero di telefono
      * @return L'utente creato
      */
-    AnimatoreDellaFiliera registraAnimatoreDellaFiliera(String nome, String cognome, String email, String password, String numeroTelefono);
-    
+    AnimatoreDellaFiliera registraAnimatoreDellaFiliera(String nome, String cognome, String email, String password,
+            String numeroTelefono);
+
     /**
      * Registra un nuovo utente gestore piattaforma.
      * 
-     * @param nome Nome dell'utente
-     * @param cognome Cognome dell'utente
-     * @param email Email dell'utente
-     * @param password Password in chiaro (verrà hashata)
+     * @param nome           Nome dell'utente
+     * @param cognome        Cognome dell'utente
+     * @param email          Email dell'utente
+     * @param password       Password in chiaro (verrà hashata)
      * @param numeroTelefono Numero di telefono
      * @return L'utente creato
      */
-    GestorePiattaforma registraGestorePiattaforma(String nome, String cognome, String email, String password, String numeroTelefono);
-    
+    GestorePiattaforma registraGestorePiattaforma(String nome, String cognome, String email, String password,
+            String numeroTelefono);
+
     /**
      * Autentica un utente con email e password.
      * 
-     * @param email Email dell'utente
+     * @param email    Email dell'utente
      * @param password Password in chiaro
      * @return L'utente autenticato, se le credenziali sono corrette
      */
     Optional<Utente> autenticaUtente(String email, String password);
-    
+
     /**
      * Trova un utente per ID.
      * 
@@ -113,7 +120,7 @@ public interface IUtenteService {
      * @return L'utente trovato, se esiste
      */
     Optional<Utente> trovaUtentePerID(Long id);
-    
+
     /**
      * Trova un utente per email.
      * 
@@ -121,14 +128,31 @@ public interface IUtenteService {
      * @return L'utente trovato, se esiste
      */
     Optional<Utente> trovaUtentePerEmail(String email);
-    
+
+    /**
+     * Trova un utente per username.
+     * 
+     * @param username Username dell'utente (tipicamente l'email)
+     * @return L'utente trovato, se esiste
+     */
+    Optional<Utente> findByUsername(String username);
+
+    /**
+     * Ottiene un utente per email.
+     * 
+     * @param email Email dell'utente
+     * @return L'utente trovato
+     * @throws RuntimeException se l'utente non esiste
+     */
+    Utente getUtenteByEmail(String email);
+
     /**
      * Trova tutti gli utenti.
      * 
      * @return Lista di tutti gli utenti
      */
     List<Utente> trovaTuttiGliUtenti();
-    
+
     /**
      * Trova tutti gli utenti di un determinato tipo.
      * 
@@ -136,16 +160,16 @@ public interface IUtenteService {
      * @return Lista degli utenti del tipo specificato
      */
     List<Utente> trovaUtentiPerTipo(TipoRuolo tipoRuolo);
-    
+
     /**
      * Aggiorna lo stato di accreditamento di un utente.
      * 
-     * @param idUtente ID dell'utente
+     * @param idUtente            ID dell'utente
      * @param statoAccreditamento Nuovo stato di accreditamento
      * @return L'utente aggiornato, se esiste
      */
     Optional<Utente> aggiornaStatoAccreditamento(Long idUtente, StatoAccreditamento statoAccreditamento);
-    
+
     /**
      * Disattiva un account utente.
      * 
@@ -153,7 +177,7 @@ public interface IUtenteService {
      * @return true se l'operazione è riuscita, false altrimenti
      */
     boolean disattivaAccount(Long idUtente);
-    
+
     /**
      * Riattiva un account utente.
      * 
@@ -161,14 +185,39 @@ public interface IUtenteService {
      * @return true se l'operazione è riuscita, false altrimenti
      */
     boolean riattivaAccount(Long idUtente);
-    
+
     /**
      * Modifica la password di un utente.
      * 
-     * @param idUtente ID dell'utente
+     * @param idUtente        ID dell'utente
      * @param vecchiaPassword Vecchia password in chiaro
-     * @param nuovaPassword Nuova password in chiaro
+     * @param nuovaPassword   Nuova password in chiaro
      * @return true se l'operazione è riuscita, false altrimenti
      */
     boolean modificaPassword(Long idUtente, String vecchiaPassword, String nuovaPassword);
+
+    /**
+     * Ottiene i dettagli completi di un utente per email.
+     * 
+     * @param email Email dell'utente
+     * @return DTO con i dettagli dell'utente
+     */
+    UserDetailDTO getUtenteDetailByEmail(String email);
+
+    /**
+     * Aggiorna i dati di un utente.
+     * 
+     * @param email         Email dell'utente
+     * @param updateRequest Dati da aggiornare
+     * @return DTO con i dati aggiornati
+     */
+    UserDetailDTO updateUtente(String email, UserUpdateDTO updateRequest);
+
+    /**
+     * Trova un venditore tramite l'ID dei suoi dati azienda.
+     * 
+     * @param datiAziendaId L'ID dei dati azienda
+     * @return Il venditore associato ai dati azienda, se esiste
+     */
+    Optional<Venditore> findVenditoreByDatiAziendaId(Long datiAziendaId);
 }

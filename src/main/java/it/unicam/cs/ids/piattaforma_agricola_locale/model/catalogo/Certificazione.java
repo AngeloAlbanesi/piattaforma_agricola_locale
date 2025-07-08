@@ -33,11 +33,12 @@ public class Certificazione {
     @Column(name = "id_azienda_associata")
     private Long idAziendaAssociata;
 
-    public Certificazione() {}
+    public Certificazione() {
+    }
 
     // Costruttore per certificazione di prodotto
     public Certificazione(String nomeCertificazione, String enteRilascio, Date dataRilascio,
-                          Date dataScadenza, long idProdottoAssociato) {
+            Date dataScadenza, long idProdottoAssociato) {
         this.nomeCertificazione = nomeCertificazione;
         this.enteRilascio = enteRilascio;
         this.dataRilascio = dataRilascio;
@@ -47,9 +48,11 @@ public class Certificazione {
     }
 
     // Costruttore per certificazione di azienda
-    public Certificazione( String nomeCertificazione, String enteRilascio, Date dataRilascio,
-                          Date dataScadenza, long idAziendaAssociata, boolean isAzienda) { // boolean isAzienda solo per distinguere il costruttore
-        if (!isAzienda) throw new IllegalArgumentException("Usare l'altro costruttore per prodotti");
+    public Certificazione(String nomeCertificazione, String enteRilascio, Date dataRilascio,
+            Date dataScadenza, long idAziendaAssociata, boolean isAzienda) { // boolean isAzienda solo per distinguere
+                                                                             // il costruttore
+        if (!isAzienda)
+            throw new IllegalArgumentException("Usare l'altro costruttore per prodotti");
         this.nomeCertificazione = nomeCertificazione;
         this.enteRilascio = enteRilascio;
         this.dataRilascio = dataRilascio;
@@ -57,7 +60,6 @@ public class Certificazione {
         this.idAziendaAssociata = idAziendaAssociata;
         this.idProdottoAssociato = null; // Assicura che l'altro sia null
     }
-
 
     // Getters e Setters (inclusi per idProdottoAssociato e idAziendaAssociata)
     public Long getIdCertificazione() {
@@ -88,7 +90,22 @@ public class Certificazione {
         return idAziendaAssociata;
     }
 
-    // Setter privati o protetti se vuoi che la modifica avvenga solo tramite service
+    /**
+     * Restituisce l'ID della certificazione.
+     */
+    public Long getId() {
+        return idCertificazione;
+    }
+
+    /**
+     * Restituisce il nome della certificazione.
+     */
+    public String getNome() {
+        return nomeCertificazione;
+    }
+
+    // Setter privati o protetti se vuoi che la modifica avvenga solo tramite
+    // service
     public void setNomeCertificazione(String nomeCertificazione) {
         this.nomeCertificazione = nomeCertificazione;
     }

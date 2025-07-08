@@ -19,10 +19,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ElementoPacchettoRequestDTO {
-    
+
     @NotBlank(message = "Il tipo di elemento è obbligatorio")
     private String tipoElemento; // "PRODOTTO", "EVENTO"
-    
+
     @NotNull(message = "L'ID dell'elemento è obbligatorio")
     private Long idElemento;
+
+    /**
+     * Restituisce l'ID del prodotto (alias per idElemento per compatibilità).
+     */
+    public Long getIdProdotto() {
+        return idElemento;
+    }
 }

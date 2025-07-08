@@ -49,8 +49,8 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
         this.certificazioniProdotto = new ArrayList<>();
     }
 
-    public Prodotto( String nome, String descrizione, double prezzo, int quantitaDisponibile,
-                    Venditore venditore) {
+    public Prodotto(String nome, String descrizione, double prezzo, int quantitaDisponibile,
+            Venditore venditore) {
 
         this.nome = nome;
         this.descrizione = descrizione;
@@ -73,8 +73,8 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
      * @param venditore                          Il venditore del prodotto
      * @param idProcessoTrasformazioneOriginario L'ID del processo di trasformazione
      */
-    public Prodotto( String nome, String descrizione, double prezzo, int quantitaDisponibile,
-                    Venditore venditore, Long idProcessoTrasformazioneOriginario) {
+    public Prodotto(String nome, String descrizione, double prezzo, int quantitaDisponibile,
+            Venditore venditore, Long idProcessoTrasformazioneOriginario) {
         this(nome, descrizione, prezzo, quantitaDisponibile, venditore);
         this.tipoOrigine = TipoOrigineProdotto.TRASFORMATO;
         this.idProcessoTrasformazioneOriginario = idProcessoTrasformazioneOriginario;
@@ -83,6 +83,7 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
     public Long getId() {
         return idProdotto;
     }
+
     public void setIdProdotto(Long idProdotto) {
         this.idProdotto = idProdotto;
     }
@@ -127,6 +128,33 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
 
     public void setQuantitaDisponibile(int quantita) {
         this.quantitaDisponibile = quantita;
+    }
+
+    /**
+     * Imposta il nome del prodotto.
+     *
+     * @param nome Il nome del prodotto
+     */
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    /**
+     * Imposta la descrizione del prodotto.
+     *
+     * @param descrizione La descrizione del prodotto
+     */
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+    /**
+     * Imposta il prezzo del prodotto.
+     *
+     * @param prezzo Il prezzo del prodotto
+     */
+    public void setPrezzo(double prezzo) {
+        this.prezzo = prezzo;
     }
 
     /**
@@ -266,5 +294,4 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
         }
     }
     //
-
 }

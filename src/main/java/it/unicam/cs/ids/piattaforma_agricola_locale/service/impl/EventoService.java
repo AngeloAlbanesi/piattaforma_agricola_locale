@@ -1,11 +1,14 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.PromoteRequestDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareResponseDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.BusinessRuleViolationException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.ResourceOwnershipException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.EventoRegistrazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IEventoRegistrazioneRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -352,5 +355,41 @@ public class EventoService implements IEventoService {
         }
         
         return eventoRegistrazioneRepository.findByUtente(utente);
+    }
+
+    public Optional<ShareResponseDTO> promuoviEvento(Long idEvento, PromoteRequestDTO request) {
+        // 1. Trova l'evento nel database
+        Optional<Evento> eventoOpt = eventoRepository.findById(idEvento);
+        if (eventoOpt.isEmpty()) {
+            return Optional.empty(); // Evento non trovato
+        }
+        Evento evento = eventoOpt.get();
+
+        // 2. Estrai le informazioni necessarie dall'evento
+        String nomeEvento = evento.getNome();
+        Date dataInizio = evento.getDataOraInizio();
+        String luogoEvento = evento.getLuogoEvento();
+
+        // 3. Formatta la data per renderla più leggibile
+        // Puoi personalizzare il formato come preferisci
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'alle ore' HH:mm");
+        String dataFormattata = formatter.format(dataInizio);
+
+        // 4. Prepara il nickname
+        String nickname = request.getNickname();
+        String nicknameFormattato = "@" + nickname.replaceAll("\\s", "");
+
+        // 5. Costruisci la stringa finale come da richiesta
+        String messaggioFinale = String.format(
+                "%s ha postato: Ricordo a tutti di non perdere l'evento \"%s\" che si terrà il %s a %s",
+                nicknameFormattato,
+                nomeEvento,
+                dataFormattata,
+                luogoEvento
+        );
+
+        // 6. Crea e restituisci il DTO di risposta (riutilizzando quello esistente)
+        ShareResponseDTO responseDTO = new ShareResponseDTO(messaggioFinale);
+        return Optional.of(responseDTO);
     }
 }

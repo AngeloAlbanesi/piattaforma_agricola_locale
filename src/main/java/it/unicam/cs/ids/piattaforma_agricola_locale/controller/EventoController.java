@@ -5,6 +5,8 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoDetailDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoPartecipanteDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoRegistrazioneRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoSummaryDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.PromoteRequestDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareResponseDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.BusinessRuleViolationException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.ResourceOwnershipException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -132,8 +135,8 @@ public class EventoController {
      * Create a new event.
      * Only users with ANIMATORE_DELLA_FILIERA role can create events.
      */
-    @PostMapping
-    @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA')")
+    @PostMapping("/creaEvento")
+   @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA')")
     public ResponseEntity<EventoDetailDTO> createEvent(
             @Valid @RequestBody CreateEventoRequestDTO createEventoRequest,
             Authentication authentication) {
@@ -303,5 +306,21 @@ public class EventoController {
         log.info("Retrieved {} participants for event ID: {}", partecipanti.size(), id);
 
         return ResponseEntity.ok(partecipanti);
+    }
+    @PostMapping("/{id}/promote")
+    @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA')") // Autorizzazione specifica
+    public ResponseEntity<?> promuoviEvento(
+            @PathVariable Long id,
+            @RequestBody PromoteRequestDTO request
+    ) {
+        Optional<ShareResponseDTO> responseOpt = eventoService.promuoviEvento(id, request);
+
+        if (responseOpt.isPresent()) {
+            return ResponseEntity.ok(responseOpt.get());
+        } else {
+            // Se l'evento con quell'ID non esiste
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Evento con ID " + id + " non trovato.");
+        }
     }
 }

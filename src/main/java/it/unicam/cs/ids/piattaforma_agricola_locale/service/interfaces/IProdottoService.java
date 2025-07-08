@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareRequestDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareResponseDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
@@ -39,4 +41,6 @@ public interface IProdottoService {
      * @return Una pagina di prodotti
      */
     Page<Prodotto> getProdottiByVenditore(Venditore venditore, Pageable pageable);
+
+    Optional<ShareResponseDTO> condividiProdotto(Long id, ShareRequestDTO request);
 }

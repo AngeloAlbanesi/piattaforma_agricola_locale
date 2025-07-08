@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareRequestDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -357,6 +359,45 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
             throw new IllegalArgumentException("Venditore non può essere null");
         }
         return prodottoRepository.findByVenditore(venditore, pageable);
+    }
+
+
+
+
+    //Metodo per condivisione sui social di un prodotto
+    public Optional<ShareResponseDTO> condividiProdotto(Long idProdotto, ShareRequestDTO request) {
+        // 1. Trova il prodotto nel database
+        Optional<Prodotto> prodottoOpt = prodottoRepository.findById(idProdotto);
+        if (prodottoOpt.isEmpty()) {
+            return Optional.empty(); // Prodotto non trovato
+        }
+        String nomeProdotto = prodottoOpt.get().getNome();
+
+        // 2. Prepara i componenti per il messaggio finale
+        String social = request.getSocialNetwork();
+        String nickname = request.getNickname();
+        String messaggioUtente = request.getMessaggio();
+
+        // 3. Formatta il nickname in base al social (un piccolo tocco di realismo)
+        String nicknameFormattato;
+        if ("Instagram".equalsIgnoreCase(social) || "Twitter".equalsIgnoreCase(social)) {
+            nicknameFormattato = "@" + nickname.replaceAll("\\s", ""); // Aggiunge @ e rimuove spazi
+        } else {
+            nicknameFormattato = nickname;
+        }
+
+        // 4. Costruisci la stringa finale
+        String messaggioFinale = String.format(
+                "%s: %s ha appena postato: %s - \"%s\"",
+                social,
+                nicknameFormattato,
+                nomeProdotto,
+                messaggioUtente
+        );
+
+        // 5. Crea e restituisci il DTO di risposta
+        ShareResponseDTO responseDTO = new ShareResponseDTO(messaggioFinale);
+        return Optional.of(responseDTO);
     }
 
 }

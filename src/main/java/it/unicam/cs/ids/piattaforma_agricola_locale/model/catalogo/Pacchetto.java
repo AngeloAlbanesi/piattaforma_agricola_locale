@@ -2,6 +2,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
@@ -28,10 +29,11 @@ public class Pacchetto implements Acquistabile {
     @Column(name = "prezzo_pacchetto", nullable = false)
     private double prezzoPacchetto;
 
-    // Note: This needs to be handled differently since we can't map directly to
-    // interface
-    // We'll need to create a separate entity for PacchettoElemento or use
-    // repository methods
+    // Relazione con gli elementi del pacchetto tramite entita di associazione
+    @OneToMany(mappedBy = "pacchetto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PacchettoElemento> pacchettoElementi = new java.util.ArrayList<>();
+
+    // Lista transient per compatibilita con il codice esistente
     @Transient
     private List<Acquistabile> elementiInclusi;
 
@@ -79,14 +81,40 @@ public class Pacchetto implements Acquistabile {
     }
 
     public void aggiungiElemento(Acquistabile elemento) {
-        this.elementiInclusi.add(elemento);
+        // Aggiungi alla lista transient per compatibilita
+        this.getElementiInclusi().add(elemento);
+        
+        // Se e un prodotto, aggiungi anche alla relazione persistente
+        if (elemento instanceof Prodotto) {
+            PacchettoElemento pacchettoElemento = new PacchettoElemento(this, (Prodotto) elemento);
+            this.pacchettoElementi.add(pacchettoElemento);
+        }
+        
+        this.ricalcolaPrezzo();
     }
 
     public void rimuoviElemento(Acquistabile elemento) {
-        this.elementiInclusi.remove(elemento);
+        this.getElementiInclusi().remove(elemento);
+        
+        // Se e un prodotto, rimuovi anche dalla relazione persistente
+        if (elemento instanceof Prodotto) {
+            this.pacchettoElementi.removeIf(pe -> pe.getProdotto().equals(elemento));
+        }
+        
+        this.ricalcolaPrezzo();
     }
 
     public List<Acquistabile> getElementiInclusi() {
+        if (elementiInclusi == null) {
+            // Carica gli elementi dalla relazione persistente se disponibile
+            if (pacchettoElementi != null && !pacchettoElementi.isEmpty()) {
+                elementiInclusi = pacchettoElementi.stream()
+                    .map(pe -> (Acquistabile) pe.getProdotto())
+                    .collect(Collectors.toList());
+            } else {
+                elementiInclusi = new java.util.ArrayList<>();
+            }
+        }
         return elementiInclusi;
     }
 
@@ -134,7 +162,20 @@ public class Pacchetto implements Acquistabile {
      * Restituisce gli elementi inclusi nel pacchetto.
      */
     public List<Acquistabile> getElementi() {
-        return this.elementiInclusi;
+        return this.getElementiInclusi();
+    }
+
+    /**
+     * Ricalcola automaticamente il prezzo del pacchetto sommando i prezzi di tutti gli elementi inclusi.
+     */
+    private void ricalcolaPrezzo() {
+        if (this.getElementiInclusi() != null && !this.getElementiInclusi().isEmpty()) {
+            this.prezzoPacchetto = this.getElementiInclusi().stream()
+                    .mapToDouble(Acquistabile::getPrezzo)
+                    .sum();
+        } else {
+            this.prezzoPacchetto = 0.0;
+        }
     }
 
     @Override

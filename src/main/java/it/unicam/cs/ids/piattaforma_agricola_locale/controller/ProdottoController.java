@@ -160,6 +160,23 @@ public class ProdottoController {
                 request.getQuantitaDisponibile(),
                 venditore);
 
+        // Imposta il tipo di origine dal DTO della richiesta
+        if (request.getTipoOrigine() != null) {
+            nuovoProdotto.setTipoOrigine(request.getTipoOrigine());
+        }
+        
+        // Imposta gli ID opzionali se forniti
+        if (request.getIdProcessoTrasformazioneOriginario() != null) {
+            nuovoProdotto.setIdProcessoTrasformazioneOriginario(request.getIdProcessoTrasformazioneOriginario());
+        }
+        
+        if (request.getIdMetodoDiColtivazione() != null) {
+            nuovoProdotto.setIdMetodoDiColtivazione(request.getIdMetodoDiColtivazione());
+        }
+        
+        // Salva le modifiche al prodotto
+        nuovoProdotto = prodottoService.salvaProdotto(nuovoProdotto);
+
         ProductDetailDTO responseDTO = prodottoMapper.toDetailDTO(nuovoProdotto);
         log.info("Created new product with ID: {} by vendor: {}", nuovoProdotto.getId(), email);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);

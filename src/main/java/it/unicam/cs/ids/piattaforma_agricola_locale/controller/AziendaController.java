@@ -2,6 +2,8 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo.CertificazioneDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo.ProductSummaryDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.osm.CoordinateDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.osm.DistanzaDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.ResourceOwnershipException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
@@ -335,4 +337,30 @@ public class AziendaController {
         log.info("Search for '{}' returned {} companies", query, aziende.getTotalElements());
         return ResponseEntity.ok(aziende);
     }
+
+
+
+    @GetMapping("/{id}/geocode")
+    public ResponseEntity<CoordinateDTO> geocodeAzienda(@PathVariable Long id) {
+        Optional<CoordinateDTO> coordinateOpt = venditoreService.getCoordinatePerAziendaId(id);
+
+        // Usa un'espressione lambda per una gestione più pulita
+        return coordinateOpt
+                .map(coordinate -> ResponseEntity.ok(coordinate)) // Se Optional contiene un valore, mappa a ResponseEntity 200 OK
+                .orElseGet(() -> ResponseEntity.notFound().build()); // Altrimenti, restituisci 404 Not Found
+    }
+    @GetMapping("/{id}/distanza")
+    public ResponseEntity<?> getDistanzaDaAzienda(
+            @PathVariable Long id,
+            @RequestParam String partenza) {
+
+        Optional<DistanzaDTO> distanzaOpt = venditoreService.calcolaDistanzaDaAzienda(id, partenza);
+
+        if (distanzaOpt.isPresent()) {
+            // Se l'Optional contiene il DTO, restituisci 200 OK con il DTO
+            return ResponseEntity.ok(distanzaOpt.get());
+        } else {
+            // Altrimenti, restituisci 400 Bad Request con il messaggio di errore
+            return ResponseEntity.badRequest().body("Impossibile calcolare la distanza. Verificare l'ID dell'azienda e l'indirizzo di partenza.");
+        }    }
 }

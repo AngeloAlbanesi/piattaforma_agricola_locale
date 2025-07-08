@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.osm.CoordinateDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.osm.DistanzaDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -59,4 +61,8 @@ public interface IVenditoreService {
      * @return Il venditore aggiornato
      */
     Venditore updateVenditore(Venditore venditore);
+
+    Optional<CoordinateDTO> getCoordinatePerAziendaId(Long id);
+
+    Optional<DistanzaDTO> calcolaDistanzaDaAzienda(Long id, String partenza);
 }

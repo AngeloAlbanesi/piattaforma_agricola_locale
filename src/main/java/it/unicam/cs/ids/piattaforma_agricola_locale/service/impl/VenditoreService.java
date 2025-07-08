@@ -4,6 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.osm.CoordinateDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.osm.DistanzaDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.osm.DistanceCalculationService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.osm.GeocodingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +28,11 @@ public class VenditoreService implements IVenditoreService {
     private final IVenditoreRepository venditoreRepository;
     private final ICertificazioneService certificazioneService;
     private final IDatiAziendaRepository datiAziendaRepository;
+
+    @Autowired
+    private GeocodingService geocodingService;
+    @Autowired
+    private DistanceCalculationService distanceCalculationService;
 
     @Autowired
     public VenditoreService(ICertificazioneService certificazioneService, IVenditoreRepository venditoreRepository, IDatiAziendaRepository datiAziendaRepository) {
@@ -145,5 +154,60 @@ public class VenditoreService implements IVenditoreService {
             throw new IllegalArgumentException("Venditore non pu� essere null");
         }
         return venditoreRepository.save(venditore);
+    }
+
+    @Override
+    public Optional<CoordinateDTO> getCoordinatePerAziendaId(Long id) {
+        // 1. Trova l'azienda nel database
+        Optional<DatiAzienda> aziendaOpt = datiAziendaRepository.findById(id);
+
+        if (aziendaOpt.isEmpty()) {
+            return Optional.empty(); // L'azienda non è stata trovata
+        }
+
+        // 2. Prendi l'indirizzo dall'azienda trovata
+        String indirizzo = aziendaOpt.get().getIndirizzo();
+        if (indirizzo == null || indirizzo.isBlank()) {
+            return Optional.empty(); // Nessun indirizzo da geocodificare
+        }
+
+        // 3. Chiama il GeocodingService e ritorna il risultato
+        CoordinateDTO coordinate = geocodingService.getCoordinates(indirizzo);
+        return Optional.ofNullable(coordinate);
+    }
+
+    public Optional<DistanzaDTO> calcolaDistanzaDaAzienda(Long aziendaId, String indirizzoPartenza) {
+        // 1. Trova l'azienda e il suo indirizzo
+        Optional<DatiAzienda> aziendaOpt = datiAziendaRepository.findById(aziendaId);
+        if (aziendaOpt.isEmpty() || aziendaOpt.get().getIndirizzoAzienda() == null) {
+            return Optional.empty(); // Azienda non trovata o senza indirizzo
+        }
+        String indirizzoAzienda = aziendaOpt.get().getIndirizzoAzienda();
+
+        // 2. Geocodifica l'indirizzo di partenza
+        CoordinateDTO coordPartenza = geocodingService.getCoordinates(indirizzoPartenza);
+        if (coordPartenza == null) {
+            System.err.println("Impossibile geocodificare l'indirizzo di partenza: " + indirizzoPartenza);
+            return Optional.empty(); // Indirizzo di partenza non valido
+        }
+
+        // 3. Geocodifica l'indirizzo dell'azienda (destinazione)
+        CoordinateDTO coordAzienda = geocodingService.getCoordinates(indirizzoAzienda);
+        if (coordAzienda == null) {
+            System.err.println("Impossibile geocodificare l'indirizzo dell'azienda: " + indirizzoAzienda);
+            return Optional.empty(); // Indirizzo dell'azienda non valido
+        }
+
+        // 4. Se abbiamo entrambe le coordinate, calcola la distanza
+        double distanza = distanceCalculationService.calcolaDistanza(
+                coordPartenza.getLatitudine(),
+                coordPartenza.getLongitudine(),
+                coordAzienda.getLatitudine(),
+                coordAzienda.getLongitudine()
+        );
+
+        // 5. Crea e restituisci il DTO con tutte le informazioni
+        DistanzaDTO risultato = new DistanzaDTO(indirizzoPartenza, indirizzoAzienda, distanza);
+        return Optional.of(risultato);
     }
 }

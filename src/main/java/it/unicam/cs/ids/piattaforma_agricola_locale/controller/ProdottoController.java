@@ -130,7 +130,7 @@ public class ProdottoController {
     // =================== VENDOR CRUD OPERATIONS ===================
 
     @GetMapping("/miei-prodotti")
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE')")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
     public ResponseEntity<List<ProductSummaryDTO>> getMyProducts(Authentication authentication) {
         String email = authentication.getName();
         Venditore venditore = (Venditore) utenteService.getUtenteByEmail(email);
@@ -145,7 +145,7 @@ public class ProdottoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE')")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
     public ResponseEntity<ProductDetailDTO> createProduct(
             @Valid @RequestBody CreateProductRequestDTO request,
             Authentication authentication) {
@@ -166,7 +166,7 @@ public class ProdottoController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE','DISTRIBUTORE_TIPICITA') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     @CacheEvict(value = "products", key = "#id + '_owner_' + #authentication.name")
     public ResponseEntity<ProductDetailDTO> updateProduct(
             @PathVariable Long id,
@@ -203,7 +203,7 @@ public class ProdottoController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     @CacheEvict(value = "products", key = "#id + '_owner_' + #authentication.name")
     public ResponseEntity<Void> deleteProduct(
             @PathVariable Long id,
@@ -222,7 +222,7 @@ public class ProdottoController {
     }
 
     @PutMapping("/{id}/quantita")
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE','DISTRIBUTORE_TIPICITA') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     @CacheEvict(value = "products", key = "#id + '_owner_' + #authentication.name")
     public ResponseEntity<ProductDetailDTO> updateProductQuantity(
             @PathVariable Long id,
@@ -247,7 +247,7 @@ public class ProdottoController {
     // =================== CERTIFICATION MANAGEMENT ===================
 
     @PostMapping("/{id}/certificazioni")
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE','DISTRIBUTORE_TIPICITA') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     public ResponseEntity<CertificazioneDTO> addCertificationToProduct(
             @PathVariable Long id,
             @Valid @RequestBody CertificazioneDTO request,
@@ -272,7 +272,7 @@ public class ProdottoController {
     }
 
     @DeleteMapping("/{id}/certificazioni/{certId}")
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE','DISTRIBUTORE_TIPICITA') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     public ResponseEntity<Void> removeCertificationFromProduct(
             @PathVariable Long id,
             @PathVariable Long certId,

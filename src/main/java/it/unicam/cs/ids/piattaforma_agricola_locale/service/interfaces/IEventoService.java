@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.PromoteRequestDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareResponseDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.EventoRegistrazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.StatoEventoValori;
@@ -48,4 +50,6 @@ public interface IEventoService {
     boolean isUtenteRegistrato(Long idEvento, Utente utente);
     List<EventoRegistrazione> getRegistrazioniEvento(Long idEvento);
     List<EventoRegistrazione> getRegistrazioniUtente(Utente utente);
+
+    Optional<ShareResponseDTO> promuoviEvento(Long id, PromoteRequestDTO request);
 }

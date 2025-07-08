@@ -2,6 +2,8 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.coltivazione.MetodoDiColtivazioneDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareRequestDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareResponseDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.coltivazione.MetodoDiColtivazione;
@@ -30,6 +32,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -490,5 +493,26 @@ public class ProdottoController {
                     }
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+    @PostMapping("/{id}/share")
+    @PreAuthorize("hasRole('ACQUIRENTE')") // Assicuriamoci che solo un acquirente possa condividere
+    public ResponseEntity<?> condividiSuSocial(
+            @PathVariable Long id,
+            @RequestBody ShareRequestDTO request,
+            Authentication authentication // Possiamo anche prendere il nickname dall'utente loggato
+    ) {
+        // Idea per un miglioramento: invece di passare il nickname, potremmo prenderlo dall'utente autenticato
+        // String nicknameAutenticato = authentication.getName();
+        // e passarlo al service. Ma per ora, seguiamo la tua idea iniziale.
+
+        Optional<ShareResponseDTO> responseOpt = prodottoService.condividiProdotto(id, request);
+
+        if (responseOpt.isPresent()) {
+            return ResponseEntity.ok(responseOpt.get());
+        } else {
+            // Se il prodotto con quell'ID non esiste
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Prodotto con ID " + id + " non trovato.");
+        }
     }
 }

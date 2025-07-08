@@ -38,6 +38,7 @@ public class SecurityConfiguration {
                                 new AntPathRequestMatcher("/api/azienda/{id}/geocode"),
                                 new AntPathRequestMatcher("/api/azienda/{id}/distanza"),
                                 new AntPathRequestMatcher("/api/azienda/tutte"),
+                                new AntPathRequestMatcher("/api/eventi/creaEvento"),
                                 new AntPathRequestMatcher("/api/azienda/cercaAzienda"),
                                 new AntPathRequestMatcher("/api/azienda/*/prodotti"),
                                 new AntPathRequestMatcher("/api/azienda/*/certificazioni"),

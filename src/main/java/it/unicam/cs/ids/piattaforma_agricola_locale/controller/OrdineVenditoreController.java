@@ -39,7 +39,7 @@ public class OrdineVenditoreController {
     private final OrdineMapper ordineMapper;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE')")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
     public ResponseEntity<Page<OrdineSummaryDTO>> getVendorOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -92,7 +92,7 @@ public class OrdineVenditoreController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE')")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
     public ResponseEntity<?> getVendorOrderById(
             @PathVariable Long id,
             Authentication authentication) {
@@ -137,7 +137,7 @@ public class OrdineVenditoreController {
     }
 
     @PutMapping("/{id}/completa")
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE')")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
     public ResponseEntity<?> fulfillOrder(
             @PathVariable Long id,
             Authentication authentication) {
@@ -197,7 +197,7 @@ public class OrdineVenditoreController {
     }
 
     @PutMapping("/{id}/spedisci")
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE')")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
     public ResponseEntity<?> shipOrder(
             @PathVariable Long id,
             @RequestBody(required = false) ShippingInfo shippingInfo,
@@ -261,7 +261,7 @@ public class OrdineVenditoreController {
     }
 
     @GetMapping("/statistiche")
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE')")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
     public ResponseEntity<?> getVendorOrderStats(Authentication authentication) {
         try {
             log.info("Getting vendor order statistics - User: {}", authentication.getName());

@@ -29,10 +29,15 @@ public class SecurityConfiguration {
 
                 // Definisce le regole di autorizzazione per le richieste HTTP
                 .authorizeHttpRequests(auth -> auth
-                        // Permetti a chiunque di accedere agli endpoint di autenticazione, CONSOLE H2 e
-                        // SWAGGER
+                        // Permetti a chiunque di accedere agli endpoint di autenticazione, CONSOLE H2,
+                        // SWAGGER e endpoint pubblici delle aziende
                         .requestMatchers(
                                 new AntPathRequestMatcher("/api/auth/**"),
+                                new AntPathRequestMatcher("/api/azienda/tutte"),
+                                new AntPathRequestMatcher("/api/azienda/cercaAzienda"),
+                                new AntPathRequestMatcher("/api/azienda/*/prodotti"),
+                                new AntPathRequestMatcher("/api/azienda/*/certificazioni"),
+                                new AntPathRequestMatcher("/api/azienda/*"),
                                 new AntPathRequestMatcher("/h2-console/**"),
                                 new AntPathRequestMatcher("/swagger-ui/**"),
                                 new AntPathRequestMatcher("/swagger-ui.html"),

@@ -74,6 +74,51 @@ public class AziendaController {
     }
 
     /**
+     * Create company data for a vendor.
+     * Only authenticated vendors can create company data.
+     *
+     * @param datiAzienda    The company data to create
+     * @param authentication The authenticated user
+     * @return The created company data
+     */
+    @PostMapping
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_DI_TIPICITA')")
+    public ResponseEntity<DatiAzienda> createCompanyData(
+            @Valid @RequestBody DatiAzienda datiAzienda,
+            Authentication authentication) {
+
+        // Get the authenticated user
+        String username = authentication.getName();
+        Venditore venditore = (Venditore) utenteService.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+
+        // Check if the vendor already has company data
+        if (venditore.getDatiAzienda() != null) {
+            log.warn("User {} attempted to create company data but already has one", username);
+            return ResponseEntity.badRequest().build();
+        }
+
+        // Create the company data
+        DatiAzienda createdDatiAzienda = venditoreService.aggiungiDatiAzienda(
+                venditore,
+                datiAzienda.getNomeAzienda(),
+                datiAzienda.getPartitaIva(),
+                datiAzienda.getIndirizzoAzienda(),
+                datiAzienda.getDescrizioneAzienda(),
+                datiAzienda.getLogoUrl(),
+                datiAzienda.getSitoWebUrl()
+        );
+
+        log.info("Created company data for user: {}", username);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .location(ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/{id}")
+                        .buildAndExpand(venditore.getIdUtente())
+                        .toUri())
+                .body(createdDatiAzienda);
+    }
+
+    /**
      * Update company data.
      * Only the company owner can update the data.
      *
@@ -244,6 +289,26 @@ public class AziendaController {
 
         log.info("Retrieved {} products for company ID: {}", prodottiDTO.getTotalElements(), id);
         return ResponseEntity.ok(prodottiDTO);
+    }
+
+    /**
+     * Get all companies (public endpoint).
+     * This endpoint can be accessed without authentication.
+     *
+     * @param page  The page number
+     * @param size  The page size
+     * @return The page of companies
+     */
+    @GetMapping("/tutteLeAziende")
+    public ResponseEntity<Page<DatiAzienda>> getAllCompanies(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<DatiAzienda> aziende = venditoreService.getAllAziende(pageable);
+
+        log.info("Retrieved {} companies", aziende.getTotalElements());
+        return ResponseEntity.ok(aziende);
     }
 
     /**

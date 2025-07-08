@@ -36,6 +36,14 @@ public interface IVenditoreService {
     boolean rimuoviCertificazioneDaAzienda(Venditore venditore, Long idCertificazione);
     
     /**
+     * Ottiene tutte le aziende.
+     * 
+     * @param pageable Parametri di paginazione
+     * @return Una pagina di tutte le aziende
+     */
+    Page<DatiAzienda> getAllAziende(Pageable pageable);
+    
+    /**
      * Cerca aziende in base a una query di ricerca.
      * 
      * @param query La query di ricerca

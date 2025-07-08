@@ -126,6 +126,12 @@ public class VenditoreService implements IVenditoreService {
     }
     
     @Override
+    public Page<DatiAzienda> getAllAziende(Pageable pageable) {
+        // Restituisce tutte le aziende approvate
+        return datiAziendaRepository.findByStatoVerifica(StatoVerificaValori.APPROVATO, pageable);
+    }
+    
+    @Override
     public Page<DatiAzienda> searchAziende(String query, Pageable pageable) {
         // Implementazione semplificata: cerca per nome azienda
         // In una implementazione reale, si userebbe un repository con query pi� complesse

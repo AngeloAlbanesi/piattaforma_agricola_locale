@@ -43,7 +43,9 @@ public class DatiAzienda implements ElementoVerificabile {
 
     public DatiAzienda() {
         // Default constructor for JPA
+        this.statoVerifica = StatoVerificaValori.IN_REVISIONE;
         this.certificazioniAzienda = new ArrayList<>();
+        
     }
 
     public DatiAzienda(String nomeAzienda, String partitaIva, String indirizzoAzienda, String descrizioneAzienda,

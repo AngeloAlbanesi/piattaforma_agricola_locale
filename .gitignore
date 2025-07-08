@@ -1,3 +1,12 @@
+# Database files
+data/
+*.db
+*.mv.db
+*.trace.db
+
+# H2 Database files
+*.h2.db
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -78,4 +87,7 @@ context-engineering-intro/
 
 # Task files
 # tasks.json
-# tasks/ 
+# tasks/
+data/piattaforma_agricola.mv.db
+data/piattaforma_agricola.trace.db
+data/piattaforma_agricola.mv.db

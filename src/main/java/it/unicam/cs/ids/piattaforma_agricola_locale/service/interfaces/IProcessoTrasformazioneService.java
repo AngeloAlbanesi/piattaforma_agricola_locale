@@ -3,6 +3,11 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.FaseLavorazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.ProcessoTrasformazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Trasformatore;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Interfaccia del servizio per la gestione dei processi di trasformazione.
@@ -125,5 +130,39 @@ public interface IProcessoTrasformazioneService {
      */
     // ProcessoTrasformazione aggiornaProcessoConDTO(Long processoId,
     // ProcessoAggiornamentoDTO aggiornamento, Trasformatore trasformatore);
+
+    // ===== PUBLIC CATALOG METHODS =====
+    
+    /**
+     * Recupera tutti i processi di trasformazione con paginazione.
+     * 
+     * @param pageable parametri di paginazione
+     * @return pagina di processi
+     */
+    Page<ProcessoTrasformazione> getAllProcessi(Pageable pageable);
+    
+    /**
+     * Recupera un processo di trasformazione per ID.
+     * 
+     * @param id l'ID del processo
+     * @return il processo se trovato
+     */
+    Optional<ProcessoTrasformazione> getProcessoById(Long id);
+    
+    /**
+     * Recupera tutti i processi di un trasformatore.
+     * 
+     * @param trasformatore il trasformatore
+     * @return lista dei processi
+     */
+    List<ProcessoTrasformazione> getProcessiByTrasformatore(Trasformatore trasformatore);
+    
+    /**
+     * Cerca processi per nome.
+     * 
+     * @param nome il nome da cercare
+     * @return lista dei processi trovati
+     */
+    List<ProcessoTrasformazione> searchProcessiByNome(String nome);
 
 }

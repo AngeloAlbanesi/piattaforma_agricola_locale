@@ -20,7 +20,6 @@ public class DatiAzienda implements ElementoVerificabile {
     @Column(name = "id_dati_azienda")
     private Long id;
 
-
     @Column(name = "nome_azienda", nullable = false, length = 255)
     private String nomeAzienda;
     @Column(name = "partita_iva", unique = true, length = 20)
@@ -61,10 +60,43 @@ public class DatiAzienda implements ElementoVerificabile {
 
     }
 
-
-
     public String getNomeAzienda() {
         return nomeAzienda;
+    }
+
+    /**
+     * Restituisce il nome dell'azienda (alias per compatibilità).
+     */
+    public String getNome() {
+        return nomeAzienda;
+    }
+
+    /**
+     * Restituisce l'indirizzo dell'azienda.
+     */
+    public String getIndirizzo() {
+        return indirizzoAzienda;
+    }
+
+    /**
+     * Restituisce il telefono dell'azienda (placeholder - campo non esistente).
+     */
+    public String getTelefono() {
+        return "N/A"; // Campo non presente nel modello
+    }
+
+    /**
+     * Restituisce l'email dell'azienda (placeholder - campo non esistente).
+     */
+    public String getEmail() {
+        return "N/A"; // Campo non presente nel modello
+    }
+
+    /**
+     * Restituisce il sito web dell'azienda.
+     */
+    public String getSitoWeb() {
+        return sitoWebUrl;
     }
 
     public void setNomeAzienda(String nomeAzienda) {
@@ -116,7 +148,8 @@ public class DatiAzienda implements ElementoVerificabile {
     }
 
     public void aggiungiCertificazione(Certificazione certificazione) {
-        if (certificazione != null && certificazione.getIdAziendaAssociata() != null && certificazione.getIdAziendaAssociata().equals(this.id)) {
+        if (certificazione != null && certificazione.getIdAziendaAssociata() != null
+                && certificazione.getIdAziendaAssociata().equals(this.id)) {
             this.certificazioniAzienda.add(certificazione);
         } else {
             // Gestire l'errore: la certificazione non appartiene a questa azienda

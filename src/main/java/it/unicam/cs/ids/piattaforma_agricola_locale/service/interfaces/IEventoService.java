@@ -1,11 +1,17 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.EventoRegistrazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.StatoEventoValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 public interface IEventoService {
     void creaEvento(String nomeEvento, String descrizione,
@@ -30,4 +36,16 @@ public interface IEventoService {
 
     void annullaEvento(Long idEvento,AnimatoreDellaFiliera organizzatore);
 
+    // Public catalog methods
+    Page<Evento> getAllEventi(Pageable pageable);
+    Optional<Evento> getEventoById(Long id);
+    List<Evento> searchEventiByNome(String nome);
+    List<Evento> getEventiByOrganizzatore(Long organizzatoreId);
+    
+    // Event registration methods
+    EventoRegistrazione registraUtenteEvento(Long idEvento, Utente utente, int numeroPosti, String note);
+    void cancellaRegistrazioneUtente(Long idEvento, Utente utente);
+    boolean isUtenteRegistrato(Long idEvento, Utente utente);
+    List<EventoRegistrazione> getRegistrazioniEvento(Long idEvento);
+    List<EventoRegistrazione> getRegistrazioniUtente(Utente utente);
 }

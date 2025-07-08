@@ -4,6 +4,8 @@ import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +18,15 @@ public interface IProdottoRepository extends JpaRepository<Prodotto, Long> {
 
     // Metodi personalizzati usando Spring Data JPA naming conventions
     List<Prodotto> findByVenditore(Venditore venditore);
+    
+    /**
+     * Trova prodotti di un venditore specifico con paginazione.
+     * 
+     * @param venditore Il venditore
+     * @param pageable Parametri di paginazione
+     * @return Una pagina di prodotti
+     */
+    Page<Prodotto> findByVenditore(Venditore venditore, Pageable pageable);
 
     /**
      * Verifica se esistono prodotti associati a un processo di trasformazione

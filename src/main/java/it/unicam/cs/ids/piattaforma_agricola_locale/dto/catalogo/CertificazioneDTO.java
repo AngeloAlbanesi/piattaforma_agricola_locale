@@ -23,22 +23,29 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CertificazioneDTO {
-    
+
     private Long idCertificazione;
-    
+
     @NotBlank(message = "Il nome della certificazione è obbligatorio")
     @Size(max = 255, message = "Il nome della certificazione non può superare i 255 caratteri")
     private String nomeCertificazione;
-    
+
     @NotBlank(message = "L'ente di rilascio è obbligatorio")
     @Size(max = 255, message = "L'ente di rilascio non può superare i 255 caratteri")
     private String enteRilascio;
-    
+
     @NotNull(message = "La data di rilascio è obbligatoria")
     private Date dataRilascio;
-    
+
     private Date dataScadenza;
-    
+
     private Long idProdottoAssociato;
     private Long idAziendaAssociata;
+
+    /**
+     * Restituisce il nome della certificazione.
+     */
+    public String getNome() {
+        return nomeCertificazione;
+    }
 }

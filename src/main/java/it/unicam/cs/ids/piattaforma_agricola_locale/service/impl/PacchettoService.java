@@ -14,6 +14,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoElementoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IPacchettoService;
@@ -28,11 +29,15 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IPacchett
 public class PacchettoService implements IPacchettoService {
 
     private final IPacchettoRepository pacchettoRepository;
+    private final IPacchettoElementoRepository pacchettoElementoRepository;
     private final IVenditoreRepository venditoreRepository;
 
     @Autowired
-    public PacchettoService(IPacchettoRepository pacchettoRepository, IVenditoreRepository venditoreRepository) {
+    public PacchettoService(IPacchettoRepository pacchettoRepository, 
+                           IPacchettoElementoRepository pacchettoElementoRepository,
+                           IVenditoreRepository venditoreRepository) {
         this.pacchettoRepository = pacchettoRepository;
+        this.pacchettoElementoRepository = pacchettoElementoRepository;
         this.venditoreRepository = venditoreRepository;
     }
 
@@ -41,7 +46,8 @@ public class PacchettoService implements IPacchettoService {
             double prezzoPacchetto) {
         int idPacchetto = UUID.randomUUID().hashCode();
 
-        Pacchetto pacchetto = new Pacchetto(distributore,  nome, descrizione, quantita, prezzoPacchetto);
+        // Il prezzo iniziale del pacchetto è sempre 0.0, verrà calcolato automaticamente quando si aggiungono prodotti
+        Pacchetto pacchetto = new Pacchetto(distributore,  nome, descrizione, quantita, 0.0);
 
         distributore.getPacchettiOfferti().add(pacchetto);
         this.pacchettoRepository.save(pacchetto);
@@ -65,7 +71,7 @@ public class PacchettoService implements IPacchettoService {
     @Override
     public void aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
             Prodotto prodotto) {
-        if (pacchetto == null || prodotto == null || pacchetto.getElementiInclusi() == null) {
+        if (pacchetto == null || prodotto == null ) {
             throw new IllegalArgumentException("Errore nei parametri");
         }
         if (prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO) {

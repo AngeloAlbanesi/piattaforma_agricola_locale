@@ -360,6 +360,14 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
         }
         return prodottoRepository.findByVenditore(venditore, pageable);
     }
+    
+    @Override
+    public Prodotto salvaProdotto(Prodotto prodotto) {
+        if (prodotto == null) {
+            throw new IllegalArgumentException("Prodotto non può essere null");
+        }
+        return prodottoRepository.save(prodotto);
+    }
 
 
 

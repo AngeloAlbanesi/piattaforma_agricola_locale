@@ -42,5 +42,16 @@ public interface IProdottoService {
      */
     Page<Prodotto> getProdottiByVenditore(Venditore venditore, Pageable pageable);
 
+
     Optional<ShareResponseDTO> condividiProdotto(Long id, ShareRequestDTO request);
+
+    
+    /**
+     * Salva o aggiorna un prodotto nel repository.
+     * 
+     * @param prodotto Il prodotto da salvare
+     * @return Il prodotto salvato
+     */
+    Prodotto salvaProdotto(Prodotto prodotto);
+
 }

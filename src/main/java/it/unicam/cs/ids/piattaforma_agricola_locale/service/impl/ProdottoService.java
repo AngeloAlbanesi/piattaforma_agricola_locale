@@ -3,8 +3,11 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
@@ -313,6 +316,47 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
                 }
             }
         }
+    }
+
+    // ===== PUBLIC CATALOG METHODS =====
+    
+    @Override
+    public Page<Prodotto> getAllProdotti(Pageable pageable) {
+        return prodottoRepository.findAll(pageable);
+    }
+
+    @Override
+    public Optional<Prodotto> getProdottoById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID prodotto non può essere null");
+        }
+        return prodottoRepository.findById(id);
+    }
+
+    @Override
+    public List<Prodotto> searchProdottiByNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome di ricerca non può essere vuoto");
+        }
+        return prodottoRepository.findByNomeContainingIgnoreCase(nome.trim());
+    }
+
+    @Override
+    public List<Prodotto> getProdottiByVenditore(Long venditorId) {
+        if (venditorId == null) {
+            throw new IllegalArgumentException("ID venditore non può essere null");
+        }
+        Venditore venditore = venditoreRepository.findById(venditorId)
+                .orElseThrow(() -> new IllegalArgumentException("Venditore con ID " + venditorId + " non trovato"));
+        return prodottoRepository.findByVenditore(venditore);
+    }
+    
+    @Override
+    public Page<Prodotto> getProdottiByVenditore(Venditore venditore, Pageable pageable) {
+        if (venditore == null) {
+            throw new IllegalArgumentException("Venditore non può essere null");
+        }
+        return prodottoRepository.findByVenditore(venditore, pageable);
     }
 
 }

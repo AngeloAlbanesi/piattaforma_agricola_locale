@@ -1,8 +1,12 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
@@ -153,6 +157,39 @@ public class PacchettoService implements IPacchettoService {
 
     public IPacchettoRepository getRepository() {
         return pacchettoRepository;
+    }
+
+    // ===== PUBLIC CATALOG METHODS =====
+    
+    @Override
+    public Page<Pacchetto> getAllPacchetti(Pageable pageable) {
+        return pacchettoRepository.findAll(pageable);
+    }
+
+    @Override
+    public Optional<Pacchetto> getPacchettoById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID pacchetto non può essere null");
+        }
+        return pacchettoRepository.findById(id);
+    }
+
+    @Override
+    public List<Pacchetto> searchPacchettiByNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome di ricerca non può essere vuoto");
+        }
+        return pacchettoRepository.findByNomeContainingIgnoreCase(nome.trim());
+    }
+
+    @Override
+    public List<Pacchetto> getPacchettiByDistributore(Long distributoreId) {
+        if (distributoreId == null) {
+            throw new IllegalArgumentException("ID distributore non può essere null");
+        }
+        DistributoreDiTipicita distributore = (DistributoreDiTipicita) venditoreRepository.findById(distributoreId)
+                .orElseThrow(() -> new IllegalArgumentException("Distributore con ID " + distributoreId + " non trovato"));
+        return pacchettoRepository.findByDistributore(distributore);
     }
 
 }

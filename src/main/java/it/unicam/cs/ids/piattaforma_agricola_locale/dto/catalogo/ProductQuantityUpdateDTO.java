@@ -19,7 +19,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductQuantityUpdateDTO {
-
     @NotNull(message = "La quantità è obbligatoria")
     @Min(value = 0, message = "La quantità deve essere non negativa")
     private Integer quantitaDisponibile;

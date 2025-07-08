@@ -2,8 +2,11 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
@@ -27,6 +30,14 @@ public class VenditoreService implements IVenditoreService {
         this.certificazioneService = certificazioneService;
         this.venditoreRepository = venditoreRepository;
         this.datiAziendaRepository = datiAziendaRepository;
+    }
+    
+    @Override
+    public Optional<Venditore> getVenditoreById(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return venditoreRepository.findById(id);
     }
 
     @Override
@@ -112,5 +123,21 @@ public class VenditoreService implements IVenditoreService {
                 c.stampaCertificazione();
             }
         }
+    }
+    
+    @Override
+    public Page<DatiAzienda> searchAziende(String query, Pageable pageable) {
+        // Implementazione semplificata: cerca per nome azienda
+        // In una implementazione reale, si userebbe un repository con query pi� complesse
+        // o un motore di ricerca come Elasticsearch
+        return datiAziendaRepository.findByNomeAziendaContainingIgnoreCase(query, pageable);
+    }
+    
+    @Override
+    public Venditore updateVenditore(Venditore venditore) {
+        if (venditore == null) {
+            throw new IllegalArgumentException("Venditore non pu� essere null");
+        }
+        return venditoreRepository.save(venditore);
     }
 }

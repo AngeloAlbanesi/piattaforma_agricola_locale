@@ -1,11 +1,14 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 
 import java.util.List;
+import java.util.Optional;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Interfaccia che definisce i metodi per la gestione dei pacchetti di prodotti
@@ -108,4 +111,10 @@ public interface IPacchettoService {
      *                                                                                                disponibile
      */
     void decrementaQuantita(Long idPacchetto, int quantitaDaDecrementare);
+    
+    // Public catalog methods
+    Page<Pacchetto> getAllPacchetti(Pageable pageable);
+    Optional<Pacchetto> getPacchettoById(Long id);
+    List<Pacchetto> searchPacchettiByNome(String nome);
+    List<Pacchetto> getPacchettiByDistributore(Long distributoreId);
 }

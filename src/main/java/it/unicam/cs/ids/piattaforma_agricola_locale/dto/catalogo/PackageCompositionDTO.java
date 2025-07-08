@@ -19,7 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PackageCompositionDTO {
-
     private Long id;
     private String nome;
     private String descrizione;

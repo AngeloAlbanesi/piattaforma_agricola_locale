@@ -1,9 +1,12 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProcessoTrasformazioneRepository;
@@ -256,6 +259,37 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
 
         processo.setMetodoProduzione(nuovoMetodo != null ? nuovoMetodo.trim() : null);
         return processoRepository.save(processo);
+    }
+
+    // ===== PUBLIC CATALOG METHODS =====
+    
+    @Override
+    public Page<ProcessoTrasformazione> getAllProcessi(Pageable pageable) {
+        return processoRepository.findAll(pageable);
+    }
+    
+    @Override
+    public Optional<ProcessoTrasformazione> getProcessoById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID processo non può essere null");
+        }
+        return processoRepository.findById(id);
+    }
+    
+    @Override
+    public List<ProcessoTrasformazione> getProcessiByTrasformatore(Trasformatore trasformatore) {
+        if (trasformatore == null) {
+            throw new IllegalArgumentException("Trasformatore non può essere null");
+        }
+        return processoRepository.findByTrasformatore(trasformatore);
+    }
+    
+    @Override
+    public List<ProcessoTrasformazione> searchProcessiByNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome di ricerca non può essere vuoto");
+        }
+        return processoRepository.findByNomeContainingIgnoreCase(nome.trim());
     }
 
 }

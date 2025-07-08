@@ -6,9 +6,13 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.CreateEventoRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoDetailDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoPartecipanteDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoRegistrazioneDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoRegistrazioneRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoSummaryDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserPublicDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.EventoRegistrazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import org.mapstruct.*;
@@ -131,4 +135,32 @@ public interface EventoMapper {
     default UserPublicDTO mapVenditoreToUserPublicDTO(Venditore venditore) {
         return venditoreToUserPublicDTO(venditore);
     }
+    
+    /**
+     * Maps EventoRegistrazione to EventoRegistrazioneDTO.
+     */
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "eventoId", source = "evento.id")
+    @Mapping(target = "nomeEvento", source = "evento.nome")
+    @Mapping(target = "utente", source = "utente")
+    @Mapping(target = "dataRegistrazione", source = "dataRegistrazione")
+    @Mapping(target = "numeroPosti", source = "numeroPosti")
+    @Mapping(target = "note", source = "note")
+    EventoRegistrazioneDTO toEventoRegistrazioneDTO(EventoRegistrazione registrazione);
+    
+    /**
+     * Maps EventoRegistrazione to EventoPartecipanteDTO.
+     */
+    @Mapping(target = "utenteId", source = "utente.idUtente")
+    @Mapping(target = "nome", source = "utente.nome")
+    @Mapping(target = "cognome", source = "utente.cognome")
+    @Mapping(target = "email", source = "utente.email")
+    @Mapping(target = "dataRegistrazione", source = "dataRegistrazione")
+    @Mapping(target = "numeroPosti", source = "numeroPosti")
+    EventoPartecipanteDTO toEventoPartecipanteDTO(EventoRegistrazione registrazione);
+    
+    /**
+     * Maps List of EventoRegistrazione to List of EventoPartecipanteDTO.
+     */
+    List<EventoPartecipanteDTO> toEventoPartecipanteDTOList(List<EventoRegistrazione> registrazioni);
 }

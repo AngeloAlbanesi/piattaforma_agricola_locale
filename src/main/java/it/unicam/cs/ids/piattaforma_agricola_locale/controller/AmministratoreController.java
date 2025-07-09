@@ -9,6 +9,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.StatoAccreditamento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Curatore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.TipoRuolo;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICuratoreService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IGestoreService;
@@ -425,6 +426,27 @@ public class AmministratoreController {
 
         String email = authentication.getName();
         log.info("Retrieved {} users by manager: {}", userDTOs.size(), email);
+        return ResponseEntity.ok(userDTOs);
+    }
+
+    /**
+     * Get all users of a specific type.
+     * Only platform managers can access this endpoint.
+     */
+    @GetMapping("/gestore/utenti/tipo")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
+    public ResponseEntity<List<UserPublicDTO>> getUsersByType(
+            @RequestParam TipoRuolo tipoUtente,
+            Authentication authentication) {
+
+        List<Utente> utenti = utenteService.trovaUtentiPerTipo(tipoUtente);
+
+        List<UserPublicDTO> userDTOs = utenti.stream()
+                .map(utenteMapper::toPublicDTO)
+                .collect(Collectors.toList());
+
+        String email = authentication.getName();
+        log.info("Retrieved {} users of type {} by manager: {}", userDTOs.size(), tipoUtente, email);
         return ResponseEntity.ok(userDTOs);
     }
 

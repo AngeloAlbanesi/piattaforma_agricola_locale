@@ -6,8 +6,11 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.StatoAccreditamento;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Curatore;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICuratoreService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IGestoreService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.admin.UserStatusUpdateDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserPublicDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
@@ -33,13 +36,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Slf4j
-public class GestorePiattaformaController {
+public class AmministratoreController {
 
     private final ICuratoreService curatoreService;
     private final IProdottoService prodottoService;
     private final ProdottoMapper prodottoMapper;
     private final IUtenteService utenteService;
     private final UtenteMapper utenteMapper;
+    private final IGestoreService gestoreService;
 
     // =================== PRODUCT MODERATION ===================
 
@@ -283,6 +287,210 @@ public class GestorePiattaformaController {
                     return ResponseEntity.ok("Venditore approvato con successo");
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // =================== PLATFORM MANAGER OPERATIONS ===================
+
+    /**
+     * Get all vendors pending accreditation.
+     * Only platform managers can access this endpoint.
+     */
+    @GetMapping("/gestore/venditori/pending")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
+    public ResponseEntity<List<UserPublicDTO>> getPendingVendors(Authentication authentication) {
+        List<Venditore> venditori = gestoreService.getVenditoriInAttesaDiAccreditamento();
+        List<UserPublicDTO> dtos = venditori.stream()
+                .map(utenteMapper::toPublicDTO)
+                .collect(Collectors.toList());
+
+        String email = authentication.getName();
+        log.info("Retrieved {} vendors pending accreditation by manager: {}", dtos.size(), email);
+        return ResponseEntity.ok(dtos);
+    }
+
+    /**
+     * Update vendor accreditation status.
+     * Only platform managers can access this endpoint.
+     */
+    @PutMapping("/gestore/venditori/{id}/accreditamento")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
+    public ResponseEntity<String> updateVendorAccreditation(
+            @PathVariable Long id,
+            @RequestParam StatoAccreditamento stato,
+            Authentication authentication) {
+
+        boolean success = gestoreService.aggiornaStatoAccreditamentoVenditore(id, stato);
+        
+        if (success) {
+            String email = authentication.getName();
+            log.info("Vendor ID: {} accreditation updated to {} by manager: {}", id, stato, email);
+            return ResponseEntity.ok("Stato accreditamento venditore aggiornato: " + stato);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * Get all curators pending accreditation.
+     * Only platform managers can access this endpoint.
+     */
+    @GetMapping("/gestore/curatori/pending")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
+    public ResponseEntity<List<UserPublicDTO>> getPendingCurators(Authentication authentication) {
+        List<Curatore> curatori = gestoreService.getCuratoriInAttesaDiAccreditamento();
+        List<UserPublicDTO> dtos = curatori.stream()
+                .map(utenteMapper::toPublicDTO)
+                .collect(Collectors.toList());
+
+        String email = authentication.getName();
+        log.info("Retrieved {} curators pending accreditation by manager: {}", dtos.size(), email);
+        return ResponseEntity.ok(dtos);
+    }
+
+    /**
+     * Update curator accreditation status.
+     * Only platform managers can access this endpoint.
+     */
+    @PutMapping("/gestore/curatori/{id}/accreditamento")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
+    public ResponseEntity<String> updateCuratorAccreditation(
+            @PathVariable Long id,
+            @RequestParam StatoAccreditamento stato,
+            Authentication authentication) {
+
+        boolean success = gestoreService.aggiornaStatoAccreditamentoCuratore(id, stato);
+        
+        if (success) {
+            String email = authentication.getName();
+            log.info("Curator ID: {} accreditation updated to {} by manager: {}", id, stato, email);
+            return ResponseEntity.ok("Stato accreditamento curatore aggiornato: " + stato);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * Get all animators pending accreditation.
+     * Only platform managers can access this endpoint.
+     */
+    @GetMapping("/gestore/animatori/pending")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
+    public ResponseEntity<List<UserPublicDTO>> getPendingAnimators(Authentication authentication) {
+        List<AnimatoreDellaFiliera> animatori = gestoreService.getAnimatoriInAttesaDiAccreditamento();
+        List<UserPublicDTO> dtos = animatori.stream()
+                .map(utenteMapper::toPublicDTO)
+                .collect(Collectors.toList());
+
+        String email = authentication.getName();
+        log.info("Retrieved {} animators pending accreditation by manager: {}", dtos.size(), email);
+        return ResponseEntity.ok(dtos);
+    }
+
+    /**
+     * Update animator accreditation status.
+     * Only platform managers can access this endpoint.
+     */
+    @PutMapping("/gestore/animatori/{id}/accreditamento")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
+    public ResponseEntity<String> updateAnimatorAccreditation(
+            @PathVariable Long id,
+            @RequestParam StatoAccreditamento stato,
+            Authentication authentication) {
+
+        boolean success = gestoreService.aggiornaStatoAccreditamentoAnimatore(id, stato);
+        
+        if (success) {
+            String email = authentication.getName();
+            log.info("Animator ID: {} accreditation updated to {} by manager: {}", id, stato, email);
+            return ResponseEntity.ok("Stato accreditamento animatore aggiornato: " + stato);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * Toggle user activation by type.
+     * Only platform managers can access this endpoint.
+     */
+    @PutMapping("/gestore/utenti/{id}/attivazione")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
+    public ResponseEntity<String> toggleUserActivation(
+            @PathVariable Long id,
+            @RequestParam String tipo,
+            @RequestParam boolean attivo,
+            Authentication authentication) {
+
+        boolean success = false;
+        String tipoUtente = tipo.toUpperCase();
+        
+        switch (tipoUtente) {
+            case "ACQUIRENTE":
+                success = gestoreService.attivaDisattivaAcquirente(id, attivo);
+                break;
+            case "VENDITORE":
+                success = gestoreService.attivaDisattivaVenditore(id, attivo);
+                break;
+            case "CURATORE":
+                success = gestoreService.attivaDisattivaCuratore(id, attivo);
+                break;
+            case "ANIMATORE":
+                success = gestoreService.attivaDisattivaAnimatore(id, attivo);
+                break;
+            default:
+                return ResponseEntity.badRequest().body("Tipo utente non valido: " + tipo);
+        }
+        
+        if (success) {
+            String statusText = attivo ? "attivato" : "disattivato";
+            String email = authentication.getName();
+            log.info("User ID: {} ({}) {} by manager: {}", id, tipoUtente, statusText, email);
+            return ResponseEntity.ok(String.format("Utente %s %s con successo", tipoUtente, statusText));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * Get company data for a specific vendor.
+     * Only platform managers can access this endpoint.
+     */
+    @GetMapping("/gestore/venditori/{id}/azienda")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
+    public ResponseEntity<CompanyModerationDTO> getVendorCompanyData(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        return gestoreService.getDatiAziendaPerVenditore(id)
+                .map(this::mapDatiAziendaToModerationDTO)
+                .map(dto -> {
+                    String email = authentication.getName();
+                    log.info("Retrieved company data for vendor ID: {} by manager: {}", id, email);
+                    return ResponseEntity.ok(dto);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Get all users in the platform.
+     * Only platform managers can access this endpoint.
+     */
+    @GetMapping("/gestore/utenti")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
+    public ResponseEntity<List<UserPublicDTO>> getAllUsersForManager(
+            @RequestParam(required = false) boolean soloAttivi,
+            Authentication authentication) {
+
+        List<Utente> utenti = soloAttivi ? 
+                gestoreService.getTuttiGliUtentiAttivi() : 
+                gestoreService.getTuttiGliUtenti();
+
+        List<UserPublicDTO> userDTOs = utenti.stream()
+                .map(utenteMapper::toPublicDTO)
+                .collect(Collectors.toList());
+
+        String email = authentication.getName();
+        log.info("Retrieved {} users by manager: {}", userDTOs.size(), email);
+        return ResponseEntity.ok(userDTOs);
     }
 
     // =================== HELPER METHODS ===================

@@ -1,5 +1,6 @@
 
 package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.admin.ModerationDecisionDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo.ProductSummaryDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
@@ -11,7 +12,6 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaF
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICuratoreService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IGestoreService;
-import it.unicam.cs.ids.piattaforma_agricola_locale.dto.admin.UserStatusUpdateDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserPublicDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IUtenteService;
@@ -165,15 +165,15 @@ public class AmministratoreController {
         return ResponseEntity.ok("Azienda respinta");
     }
 
-    // =================== USER MANAGEMENT ===================
+    // =================== PLATFORM MANAGER OPERATIONS ===================
 
     /**
      * Get all users (simplified version without pagination due to service
      * limitations).
      * Only curators can access this endpoint.
      */
-    @GetMapping("/utenti")
-    @PreAuthorize("hasRole('CURATORE')")
+    @GetMapping("/gestore/utenti")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
     public ResponseEntity<List<UserPublicDTO>> getAllUsers(
             @RequestParam(required = false) String search,
             Authentication authentication) {
@@ -200,54 +200,24 @@ public class AmministratoreController {
     }
 
     /**
-     * Update user status (enable/disable account).
-     * Only curators can update user status.
+     * Ban a user by ID.
      */
-    @PutMapping("/utenti/{id}/stato")
-    @PreAuthorize("hasRole('CURATORE')")
-    public ResponseEntity<String> updateUserStatus(
+    @PutMapping("/utenti/{id}/ban")
+    @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
+    public ResponseEntity<String> banUserById(
             @PathVariable Long id,
-            @Valid @RequestBody UserStatusUpdateDTO statusUpdate,
-            Authentication authentication) {
-
-        boolean success;
-        if (statusUpdate.getAttivo()) {
-            success = utenteService.riattivaAccount(id);
-        } else {
-            success = utenteService.disattivaAccount(id);
-        }
-
-        if (success) {
-            String statusText = statusUpdate.getAttivo() ? "abilitato" : "disabilitato";
-            String email = authentication.getName();
-            log.info("User ID: {} {} by curator: {}", id, statusText, email);
-
-            return ResponseEntity.ok("Stato utente aggiornato: " + statusText);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    /**
-     * Ban a user by email.
-     * Only curators can ban users.
-     */
-    @PutMapping("/utenti/{email}/ban")
-    @PreAuthorize("hasRole('CURATORE')")
-    public ResponseEntity<String> banUserByEmail(
-            @PathVariable String email,
             @Valid @RequestBody ModerationDecisionDTO banRequest,
             Authentication authentication) {
 
-        return utenteService.trovaUtentePerEmail(email)
+        return utenteService.trovaUtentePerID(id)
                 .map(utente -> {
                     // Ban the user (disable account)
                     boolean success = utenteService.disattivaAccount(utente.getIdUtente());
 
                     if (success) {
-                        String curatorEmail = authentication.getName();
-                        log.warn("User with email: {} banned by curator: {} - Reason: {}",
-                                email, curatorEmail, banRequest.getMotivazione());
+                        String gestoreEmail = authentication.getName();
+                        log.warn("User ID: {} (email: {}) banned by platform manager: {} - Reason: {}",
+                                id, utente.getEmail(), gestoreEmail, banRequest.getMotivazione());
 
                         return ResponseEntity.ok("Utente bannato con successo");
                     } else {
@@ -256,40 +226,6 @@ public class AmministratoreController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
-
-    /**
-     * Approve a vendor application.
-     * Only curators can approve vendors.
-     */
-    @PutMapping("/venditori/{email}/approva")
-    @PreAuthorize("hasRole('CURATORE')")
-    public ResponseEntity<String> approveVendor(
-            @PathVariable String email,
-            @Valid @RequestBody ModerationDecisionDTO decision,
-            Authentication authentication) {
-
-        return utenteService.trovaUtentePerEmail(email)
-                .filter(utente -> utente instanceof Venditore)
-                .map(utente -> {
-                    Venditore venditore = (Venditore) utente;
-
-                    // Approve the vendor
-                    String feedbackVerifica = decision.getMotivazione() != null ? decision.getMotivazione()
-                            : "Venditore approvato";
-
-                    // Update accreditation status to approved
-                    utenteService.aggiornaStatoAccreditamento(venditore.getIdUtente(), StatoAccreditamento.ACCREDITATO);
-
-                    String curatorEmail = authentication.getName();
-                    log.info("Vendor email: {} approved by curator: {} with feedback: {}",
-                            email, curatorEmail, feedbackVerifica);
-
-                    return ResponseEntity.ok("Venditore approvato con successo");
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    // =================== PLATFORM MANAGER OPERATIONS ===================
 
     /**
      * Get all vendors pending accreditation.
@@ -320,7 +256,7 @@ public class AmministratoreController {
             Authentication authentication) {
 
         boolean success = gestoreService.aggiornaStatoAccreditamentoVenditore(id, stato);
-        
+
         if (success) {
             String email = authentication.getName();
             log.info("Vendor ID: {} accreditation updated to {} by manager: {}", id, stato, email);
@@ -359,7 +295,7 @@ public class AmministratoreController {
             Authentication authentication) {
 
         boolean success = gestoreService.aggiornaStatoAccreditamentoCuratore(id, stato);
-        
+
         if (success) {
             String email = authentication.getName();
             log.info("Curator ID: {} accreditation updated to {} by manager: {}", id, stato, email);
@@ -398,7 +334,7 @@ public class AmministratoreController {
             Authentication authentication) {
 
         boolean success = gestoreService.aggiornaStatoAccreditamentoAnimatore(id, stato);
-        
+
         if (success) {
             String email = authentication.getName();
             log.info("Animator ID: {} accreditation updated to {} by manager: {}", id, stato, email);
@@ -422,7 +358,7 @@ public class AmministratoreController {
 
         boolean success = false;
         String tipoUtente = tipo.toUpperCase();
-        
+
         switch (tipoUtente) {
             case "ACQUIRENTE":
                 success = gestoreService.attivaDisattivaAcquirente(id, attivo);
@@ -439,7 +375,7 @@ public class AmministratoreController {
             default:
                 return ResponseEntity.badRequest().body("Tipo utente non valido: " + tipo);
         }
-        
+
         if (success) {
             String statusText = attivo ? "attivato" : "disattivato";
             String email = authentication.getName();
@@ -480,9 +416,8 @@ public class AmministratoreController {
             @RequestParam(required = false) boolean soloAttivi,
             Authentication authentication) {
 
-        List<Utente> utenti = soloAttivi ? 
-                gestoreService.getTuttiGliUtentiAttivi() : 
-                gestoreService.getTuttiGliUtenti();
+        List<Utente> utenti = soloAttivi ? gestoreService.getTuttiGliUtentiAttivi()
+                : gestoreService.getTuttiGliUtenti();
 
         List<UserPublicDTO> userDTOs = utenti.stream()
                 .map(utenteMapper::toPublicDTO)

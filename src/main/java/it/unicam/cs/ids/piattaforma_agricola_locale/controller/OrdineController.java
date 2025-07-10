@@ -76,6 +76,10 @@ public class OrdineController {
                 } catch (PagamentoException pe) {
                     log.warn("Payment failed for order: {}, Error: {}", ordine.getIdOrdine(), pe.getMessage());
                     // L'ordine rimane in stato ATTESA_PAGAMENTO
+                } catch (OrdineException oe) {
+                    log.error("Order error during payment processing for order: {}, Error: {}", ordine.getIdOrdine(), oe.getMessage());
+                    // Rilancia l'eccezione per essere gestita dal blocco catch esterno
+                    throw oe;
                 }
             }
 

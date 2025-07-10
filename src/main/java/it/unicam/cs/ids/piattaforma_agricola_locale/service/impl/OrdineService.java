@@ -23,6 +23,13 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.StatoCorrente;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.IStatoOrdine;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.StatoOrdineAnnullato;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.StatoOrdineConsegnato;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.StatoOrdineInLavorazione;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.StatoOrdineNuovoInAttesaDiPagamento;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.StatoOrdinePagatoProntoPerLavorazione;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.StatoOrdineSpedito;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IOrdineRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoRepository;
@@ -356,28 +363,92 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
             throw new OrdineException("Impossibile confermare il pagamento: la strategia di pagamento non può essere null");
         }
 
+        // Assicurati che lo stato sia inizializzato correttamente
+        if (ordine.getStato() == null) {
+            // Inizializza lo stato in base allo statoCorrente
+            if (ordine.getStatoOrdine() == StatoCorrente.ATTESA_PAGAMENTO) {
+                ordine.setStato(new StatoOrdineNuovoInAttesaDiPagamento());
+            } else {
+                // Usa il metodo createStateFromEnum che abbiamo aggiunto a Ordine
+                // Questo viene fatto tramite reflection per evitare di duplicare la logica
+                try {
+                    java.lang.reflect.Method createStateMethod = Ordine.class.getDeclaredMethod("createStateFromEnum", StatoCorrente.class);
+                    createStateMethod.setAccessible(true);
+                    IStatoOrdine nuovoStato = (IStatoOrdine) createStateMethod.invoke(ordine, ordine.getStatoOrdine());
+                    ordine.setStato(nuovoStato);
+                } catch (Exception e) {
+                    // Fallback: imposta lo stato in base all'enum
+                    switch (ordine.getStatoOrdine()) {
+                        case PRONTO_PER_LAVORAZIONE:
+                            ordine.setStato(new StatoOrdinePagatoProntoPerLavorazione());
+                            break;
+                        case IN_LAVORAZIONE:
+                            ordine.setStato(new StatoOrdineInLavorazione());
+                            break;
+                        case SPEDITO:
+                            ordine.setStato(new StatoOrdineSpedito());
+                            break;
+                        case CONSEGNATO:
+                            ordine.setStato(new StatoOrdineConsegnato());
+                            break;
+                        case ANNULLATO:
+                            ordine.setStato(new StatoOrdineAnnullato());
+                            break;
+                        default:
+                            ordine.setStato(new StatoOrdineNuovoInAttesaDiPagamento());
+                    }
+                }
+            }
+        }
+        
         // Verifica che l'ordine sia nello stato corretto per il pagamento
         if (ordine.getStatoOrdine() != StatoCorrente.ATTESA_PAGAMENTO) {
             throw new OrdineException("L'ordine non è in attesa di pagamento e non può essere processato");
         }
 
         try {
+            // Aggiungi log per debug
+            System.out.println("DEBUG - Prima del pagamento - Stato ordine: " + ordine.getStatoOrdine());
+            System.out.println("DEBUG - Prima del pagamento - Stato object: " + (ordine.getStato() != null ? ordine.getStato().getClass().getSimpleName() : "null"));
+            
             // Elabora il pagamento utilizzando la strategia fornita
             boolean successo = strategiaPagamento.elaboraPagamento(ordine);
             
             if (successo) {
                 // Se il pagamento è andato a buon fine:
-                // 1. Effettua la transizione di stato tramite il pattern State
-                // Questo cambierà lo stato da ATTESA_PAGAMENTO a PRONTO_PER_LAVORAZIONE
-                ordine.paga();
+                try {
+                    System.out.println("DEBUG - Pagamento riuscito, eseguo transizione di stato");
+                    
+                    // 1. Effettua la transizione di stato tramite il pattern State
+                    // Questo cambierà lo stato da ATTESA_PAGAMENTO a PRONTO_PER_LAVORAZIONE
+                    ordine.paga();
+                    
+                    System.out.println("DEBUG - Dopo paga() - Stato ordine: " + ordine.getStatoOrdine());
+                    System.out.println("DEBUG - Dopo paga() - Stato object: " + (ordine.getStato() != null ? ordine.getStato().getClass().getSimpleName() : "null"));
 
-                // 2. Aggiorna l'ordine nel repository con il nuovo stato
-                ordineRepository.save(ordine);
+                    // 2. Aggiorna l'ordine nel repository con il nuovo stato
+                    ordineRepository.save(ordine);
+                    System.out.println("DEBUG - Ordine salvato nel repository");
 
-                // 3. Notifica gli observer dopo la conferma del pagamento e l'update
-                notificaObservers(ordine, null);
+                    // 3. Notifica gli observer dopo la conferma del pagamento e l'update
+                    try {
+                        System.out.println("DEBUG - Notifica observer - Numero observer: " + observers.size());
+                        notificaObservers(ordine, null);
+                        System.out.println("DEBUG - Observer notificati con successo");
+                    } catch (Exception e) {
+                        System.err.println("DEBUG - Errore durante la notifica degli observer: " + e.getMessage());
+                        e.printStackTrace();
+                        // Non rilanciare l'eccezione, considera il pagamento comunque riuscito
+                        // anche se la notifica degli observer fallisce
+                    }
+                } catch (Exception e) {
+                    System.err.println("DEBUG - Errore durante la transizione di stato: " + e.getMessage());
+                    e.printStackTrace();
+                    throw e; // Rilancia l'eccezione per essere gestita dal blocco catch esterno
+                }
             } else {
                 // Se il pagamento non è andato a buon fine, lancia PagamentoException
+                System.out.println("DEBUG - Pagamento non riuscito");
                 throw new PagamentoException("Il pagamento dell'ordine ID " + ordine.getIdOrdine() + " non è andato a buon fine");
             }
 
@@ -422,12 +493,26 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
             throw new IllegalArgumentException("L'ordine non può essere null");
         }
 
-        if (venditoreSpecifico != null) {
-            // Notifica solo il venditore specifico
-            notificaVenditoreSpecifico(ordine, venditoreSpecifico);
-        } else {
-            // Identifica e notifica tutti i venditori coinvolti nell'ordine
-            notificaTuttiIVenditoriCoinvolti(ordine);
+        try {
+            System.out.println("DEBUG - notificaObservers - Inizio notifica");
+            
+            if (venditoreSpecifico != null) {
+                // Notifica solo il venditore specifico
+                System.out.println("DEBUG - notificaObservers - Notifica venditore specifico: " + 
+                    (venditoreSpecifico.getDatiAzienda() != null ? venditoreSpecifico.getDatiAzienda().getNomeAzienda() : "senza nome"));
+                notificaVenditoreSpecifico(ordine, venditoreSpecifico);
+            } else {
+                // Identifica e notifica tutti i venditori coinvolti nell'ordine
+                System.out.println("DEBUG - notificaObservers - Notifica tutti i venditori coinvolti");
+                notificaTuttiIVenditoriCoinvolti(ordine);
+            }
+            
+            System.out.println("DEBUG - notificaObservers - Notifica completata");
+        } catch (Exception e) {
+            System.err.println("DEBUG - Errore in notificaObservers: " + e.getMessage());
+            e.printStackTrace();
+            // Non rilanciare l'eccezione per evitare che un errore nella notifica
+            // comprometta il processo di pagamento
         }
     }
 
@@ -473,44 +558,119 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
      * Identifica tutti i venditori coinvolti nell'ordine e li notifica.
      */
     private void notificaTuttiIVenditoriCoinvolti(Ordine ordine) {
-        // Mappa per raggruppare le righe d'ordine per venditore
-        Map<Venditore, List<RigaOrdine>> righePeerVenditore = new HashMap<>();
+        try {
+            System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Inizio");
+            
+            // Mappa per raggruppare le righe d'ordine per venditore
+            Map<Venditore, List<RigaOrdine>> righePeerVenditore = new HashMap<>();
 
-        // Raggruppa le righe d'ordine per venditore
-        for (RigaOrdine riga : ordine.getRigheOrdine()) {
-            Acquistabile acquistabile = riga.getAcquistabile();
-            Venditore venditore = acquistabile.getVenditore();
-
-            if (venditore != null) {
-                righePeerVenditore.computeIfAbsent(venditore, k -> new ArrayList<>()).add(riga);
+            // Verifica che l'ordine e le righe ordine non siano null
+            if (ordine.getRigheOrdine() == null) {
+                System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Righe ordine null, nessuna notifica necessaria");
+                return;
             }
-        }
+            
+            System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Numero righe ordine: " + ordine.getRigheOrdine().size());
 
-        // Notifica ogni venditore con le sue righe di competenza
-        for (Map.Entry<Venditore, List<RigaOrdine>> entry : righePeerVenditore.entrySet()) {
-            Venditore venditore = entry.getKey();
-            List<RigaOrdine> righeDiCompetenza = entry.getValue();
+            // Raggruppa le righe d'ordine per venditore
+            for (RigaOrdine riga : ordine.getRigheOrdine()) {
+                try {
+                    if (riga == null) {
+                        System.out.println("DEBUG - Riga ordine null, salto");
+                        continue;
+                    }
+                    
+                    Acquistabile acquistabile = riga.getAcquistabile();
+                    if (acquistabile == null) {
+                        System.out.println("DEBUG - Acquistabile null per riga " + riga.getIdRiga() + ", salto");
+                        continue;
+                    }
+                    
+                    Venditore venditore = acquistabile.getVenditore();
+                    if (venditore == null) {
+                        System.out.println("DEBUG - Venditore null per acquistabile " + acquistabile.getNome() + ", salto");
+                        continue;
+                    }
 
-            observers.forEach(obs -> {
-                if (obs instanceof VenditoreObserverService) {
-                    try {
-                        obs.update(ordine, righeDiCompetenza);
-                    } catch (Exception e) {
-                        System.err.println(
-                                "Errore durante la notifica dell'observer (VenditoreOrderHandlerService) per il venditore "
-                                        +
-                                        venditore.getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
-                    }
-                } else if (obs instanceof Venditore && obs instanceof IVenditoreObserver &&
-                        ((Venditore) obs).getId() == venditore.getId()) {
-                    try {
-                        ((IVenditoreObserver) obs).update(ordine, righeDiCompetenza);
-                    } catch (Exception e) {
-                        System.err.println("Errore durante la notifica dell'observer (Venditore) " +
-                                ((Venditore) obs).getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
-                    }
+                    righePeerVenditore.computeIfAbsent(venditore, k -> new ArrayList<>()).add(riga);
+                    System.out.println("DEBUG - Aggiunta riga per venditore: " + 
+                        (venditore.getDatiAzienda() != null ? venditore.getDatiAzienda().getNomeAzienda() : "senza nome"));
+                } catch (Exception e) {
+                    System.err.println("DEBUG - Errore durante l'elaborazione della riga: " + e.getMessage());
+                    e.printStackTrace();
+                    // Continua con la prossima riga
                 }
-            });
+            }
+
+            System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Numero venditori trovati: " + righePeerVenditore.size());
+            
+            // Notifica ogni venditore con le sue righe di competenza
+            for (Map.Entry<Venditore, List<RigaOrdine>> entry : righePeerVenditore.entrySet()) {
+                try {
+                    Venditore venditore = entry.getKey();
+                    List<RigaOrdine> righeDiCompetenza = entry.getValue();
+                    
+                    System.out.println("DEBUG - Notifica venditore: " + 
+                        (venditore.getDatiAzienda() != null ? venditore.getDatiAzienda().getNomeAzienda() : "senza nome") + 
+                        " con " + righeDiCompetenza.size() + " righe");
+
+                    // Verifica che ci siano observer registrati
+                    if (observers.isEmpty()) {
+                        System.out.println("DEBUG - Nessun observer registrato");
+                        continue;
+                    }
+
+                    observers.forEach(obs -> {
+                        try {
+                            if (obs == null) {
+                                System.out.println("DEBUG - Observer null, salto");
+                                return;
+                            }
+                            
+                            if (obs instanceof VenditoreObserverService) {
+                                System.out.println("DEBUG - Notifica VenditoreObserverService");
+                                try {
+                                    obs.update(ordine, righeDiCompetenza);
+                                    System.out.println("DEBUG - VenditoreObserverService notificato con successo");
+                                } catch (Exception e) {
+                                    System.err.println(
+                                            "DEBUG - Errore durante la notifica dell'observer (VenditoreOrderHandlerService) per il venditore "
+                                                    +
+                                                    venditore.getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            } else if (obs instanceof Venditore && obs instanceof IVenditoreObserver &&
+                                    ((Venditore) obs).getId() == venditore.getId()) {
+                                System.out.println("DEBUG - Notifica Venditore observer");
+                                try {
+                                    ((IVenditoreObserver) obs).update(ordine, righeDiCompetenza);
+                                    System.out.println("DEBUG - Venditore observer notificato con successo");
+                                } catch (Exception e) {
+                                    System.err.println("DEBUG - Errore durante la notifica dell'observer (Venditore) " +
+                                            ((Venditore) obs).getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                System.out.println("DEBUG - Observer non compatibile: " + obs.getClass().getSimpleName());
+                            }
+                        } catch (Exception e) {
+                            System.err.println("DEBUG - Errore durante la gestione dell'observer: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    });
+                } catch (Exception e) {
+                    System.err.println("DEBUG - Errore durante la notifica del venditore: " + e.getMessage());
+                    e.printStackTrace();
+                    // Continua con il prossimo venditore
+                }
+            }
+            
+            System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Completato");
+        } catch (Exception e) {
+            System.err.println("DEBUG - Errore generale in notificaTuttiIVenditoriCoinvolti: " + e.getMessage());
+            e.printStackTrace();
+            // Non rilanciare l'eccezione per evitare che un errore nella notifica
+            // comprometta il processo di pagamento
         }
     }
 

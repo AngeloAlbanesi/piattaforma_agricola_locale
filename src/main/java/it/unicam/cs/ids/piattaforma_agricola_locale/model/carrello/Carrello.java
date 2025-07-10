@@ -20,7 +20,7 @@ public class Carrello {
     @JoinColumn(name = "id_acquirente", nullable = false, unique = true)
     private Acquirente acquirente;
     
-    @OneToMany(mappedBy = "carrello", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "carrello", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ElementoCarrello> elementiCarrello;
     
     @Temporal(TemporalType.TIMESTAMP)

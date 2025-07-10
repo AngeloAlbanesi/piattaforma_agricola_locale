@@ -118,12 +118,45 @@ public class ElementoCarrello {
     }
 
     /**
-     * Calcola il prezzo totale per questo elemento (quantit√† * prezzo unitario)
+     * Calcola il prezzo totale per questo elemento (quantità * prezzo unitario)
      * 
      * @return il prezzo totale dell'elemento
      */
     public double calcolaPrezzoTotale() {
         return quantita * prezzoUnitario;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        
+        ElementoCarrello that = (ElementoCarrello) obj;
+        
+        // Due elementi sono uguali se hanno lo stesso ID (se entrambi sono persistiti)
+        if (idElemento != null && that.idElemento != null) {
+            return idElemento.equals(that.idElemento);
+        }
+        
+        // Se non hanno ID (elementi non ancora persistiti), confronta per contenuto
+        return tipoAcquistabile == that.tipoAcquistabile &&
+               idAcquistabile != null && idAcquistabile.equals(that.idAcquistabile) &&
+               carrello != null && that.carrello != null &&
+               carrello.getIdCarrello() != null && carrello.getIdCarrello().equals(that.carrello.getIdCarrello());
+    }
+
+    @Override
+    public int hashCode() {
+        // Se l'elemento è persistito, usa l'ID
+        if (idElemento != null) {
+            return idElemento.hashCode();
+        }
+        
+        // Altrimenti usa una combinazione di campi significativi
+        int result = tipoAcquistabile != null ? tipoAcquistabile.hashCode() : 0;
+        result = 31 * result + (idAcquistabile != null ? idAcquistabile.hashCode() : 0);
+        result = 31 * result + (carrello != null && carrello.getIdCarrello() != null ? carrello.getIdCarrello().hashCode() : 0);
+        return result;
     }
 
 }

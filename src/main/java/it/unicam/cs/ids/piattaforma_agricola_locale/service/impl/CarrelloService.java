@@ -1,10 +1,12 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.Carrello;
@@ -177,6 +179,7 @@ public class CarrelloService implements ICarrelloService {
      * @param elemento   l'elemento da rimuovere dal carrello
      * @throws IllegalArgumentException se l'acquirente o l'elemento sono null
      */
+    @Transactional
     public void rimuoviElementoDalCarrello(Acquirente acquirente, ElementoCarrello elemento) {
         // Validazione input
         if (acquirente == null) {
@@ -190,10 +193,18 @@ public class CarrelloService implements ICarrelloService {
         if (carrelloOpt.isPresent()) {
             Carrello carrelloAcquirente = carrelloOpt.get();
 
-            // Verifica che l'elemento esista nel carrello prima di rimuoverlo
-            boolean elementoEsistente = carrelloAcquirente.getElementiCarrello().contains(elemento);
-            if (elementoEsistente) {
-                carrelloAcquirente.rimuoviElemento(elemento);
+            // Trova l'elemento per ID invece di usare contains()
+            ElementoCarrello elementoDaRimuovere = null;
+            for (ElementoCarrello elem : carrelloAcquirente.getElementiCarrello()) {
+                if (elem.getIdElemento() != null && elem.getIdElemento().equals(elemento.getIdElemento())) {
+                    elementoDaRimuovere = elem;
+                    break;
+                }
+            }
+
+            if (elementoDaRimuovere != null) {
+                carrelloAcquirente.getElementiCarrello().remove(elementoDaRimuovere);
+                carrelloAcquirente.setUltimaModifica(new Date());
                 carrelloRepository.save(carrelloAcquirente);
             }
             // Se l'elemento non esiste, non è necessario lanciare un'eccezione
@@ -208,6 +219,7 @@ public class CarrelloService implements ICarrelloService {
      * @param acquirente l'acquirente proprietario del carrello da svuotare
      * @throws IllegalArgumentException se l'acquirente è null
      */
+    @Transactional
     public void svuotaCarrello(Acquirente acquirente) {
         // Validazione input
         if (acquirente == null) {
@@ -217,7 +229,12 @@ public class CarrelloService implements ICarrelloService {
         Optional<Carrello> carrelloOpt = carrelloRepository.findByAcquirente(acquirente);
         if (carrelloOpt.isPresent()) {
             Carrello carrelloAcquirente = carrelloOpt.get();
-            carrelloAcquirente.svuota();
+            
+            // Svuota la lista degli elementi e aggiorna la data di modifica
+            carrelloAcquirente.getElementiCarrello().clear();
+            carrelloAcquirente.setUltimaModifica(new Date());
+            
+            // Salva le modifiche
             carrelloRepository.save(carrelloAcquirente);
         }
         // Se il carrello non esiste, non c'è nulla da svuotare

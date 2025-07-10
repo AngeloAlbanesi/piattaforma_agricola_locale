@@ -15,15 +15,19 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.ICarrelloRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICarrelloService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.AcquistabileService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.TipoAcquistabile;
 
 @Service
 public class CarrelloService implements ICarrelloService {
 
     private final ICarrelloRepository carrelloRepository;
+    private final AcquistabileService acquistabileService;
 
     @Autowired
-    public CarrelloService(ICarrelloRepository carrelloRepository) {
+    public CarrelloService(ICarrelloRepository carrelloRepository, AcquistabileService acquistabileService) {
         this.carrelloRepository = carrelloRepository;
+        this.acquistabileService = acquistabileService;
     }
 
     /**
@@ -86,8 +90,15 @@ public class CarrelloService implements ICarrelloService {
         }
 
         // Verifica se l'elemento esiste già nel carrello
+        // Prima inietta il service in tutti gli elementi esistenti per permettere il confronto
+        carrelloAcquirente.getElementiCarrello().forEach(elemento -> elemento.setAcquistabileService(acquistabileService));
+        
         Optional<ElementoCarrello> elementoEsistente = carrelloAcquirente.getElementiCarrello().stream()
-                .filter(elemento -> elemento.getAcquistabile().getId() == acquistabile.getId())
+                .filter(elemento -> {
+                    // Verifica sia il tipo che l'ID per evitare conflitti tra tabelle diverse
+                    return elemento.getTipoAcquistabile().equals(TipoAcquistabile.fromAcquistabile(acquistabile))
+                            && elemento.getIdAcquistabile().equals(acquistabile.getId());
+                })
                 .findFirst();
 
         // Calcola la quantità totale che si vuole avere nel carrello
@@ -104,9 +115,12 @@ public class CarrelloService implements ICarrelloService {
             // Se l'elemento esiste già, aggiorna la quantità
             ElementoCarrello elemento = elementoEsistente.get();
             elemento.setQuantita(elemento.getQuantita() + quantita);
+            // Assicurati che l'elemento abbia accesso al service
+            elemento.setAcquistabileService(acquistabileService);
         } else {
             // Se l'elemento non esiste, creane uno nuovo e aggiungilo
             ElementoCarrello nuovoElemento = new ElementoCarrello(carrelloAcquirente, acquistabile, quantita);
+            nuovoElemento.setAcquistabileService(acquistabileService);
             carrelloAcquirente.aggiungiElemento(nuovoElemento);
         }
 

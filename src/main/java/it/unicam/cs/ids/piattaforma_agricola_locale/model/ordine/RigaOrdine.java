@@ -2,6 +2,8 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine;
 
 import jakarta.persistence.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.TipoAcquistabile;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.AcquistabileService;
 
 @Entity
 @Table(name = "righe_ordine")
@@ -16,17 +18,15 @@ public class RigaOrdine {
     @JoinColumn(name = "id_ordine", nullable = false)
     private Ordine ordine;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_prodotto")
-    private it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto prodotto;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_acquistabile", nullable = false)
+    private TipoAcquistabile tipoAcquistabile;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_pacchetto")
-    private it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto pacchetto;
+    @Column(name = "id_acquistabile", nullable = false)
+    private Long idAcquistabile;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_evento")
-    private it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento evento;
+    @Transient
+    private AcquistabileService acquistabileService;
     
     @Column(name = "quantita_ordinata", nullable = false)
     private int quantitaOrdinata;
@@ -38,17 +38,8 @@ public class RigaOrdine {
 
     public RigaOrdine(Ordine ordine, Acquistabile acquistabile, int quantitaOrdinata, double prezzoUnitario) {
         this.ordine = ordine;
-        
-        if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto) {
-            this.prodotto = (it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto) acquistabile;
-        } else if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto) {
-            this.pacchetto = (it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto) acquistabile;
-        } else if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento) {
-            this.evento = (it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento) acquistabile;
-        } else {
-            throw new IllegalArgumentException("Unknown Acquistabile type");
-        }
-        
+        this.tipoAcquistabile = TipoAcquistabile.fromAcquistabile(acquistabile);
+        this.idAcquistabile = acquistabile.getId();
         this.quantitaOrdinata = quantitaOrdinata;
         this.prezzoUnitario = prezzoUnitario;
     }
@@ -70,28 +61,19 @@ public class RigaOrdine {
     }
 
     public Acquistabile getAcquistabile() {
-        if (prodotto != null) {
-            return prodotto;
-        } else if (pacchetto != null) {
-            return pacchetto;
-        } else if (evento != null) {
-            return evento;
+        if (acquistabileService != null && tipoAcquistabile != null && idAcquistabile != null) {
+            return acquistabileService.findByTipoAndId(tipoAcquistabile, idAcquistabile);
         }
         return null;
     }
 
     public void setAcquistabile(Acquistabile acquistabile) {
-        // Reset all references
-        this.prodotto = null;
-        this.pacchetto = null;
-        this.evento = null;
-        
-        if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto) {
-            this.prodotto = (it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto) acquistabile;
-        } else if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto) {
-            this.pacchetto = (it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto) acquistabile;
-        } else if (acquistabile instanceof it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento) {
-            this.evento = (it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento) acquistabile;
+        if (acquistabile != null) {
+            this.tipoAcquistabile = TipoAcquistabile.fromAcquistabile(acquistabile);
+            this.idAcquistabile = acquistabile.getId();
+        } else {
+            this.tipoAcquistabile = null;
+            this.idAcquistabile = null;
         }
     }
 
@@ -109,6 +91,27 @@ public class RigaOrdine {
 
     public void setPrezzoUnitario(double prezzoUnitario) {
         this.prezzoUnitario = prezzoUnitario;
+    }
+
+    // Getters e setters per i nuovi campi
+    public TipoAcquistabile getTipoAcquistabile() {
+        return tipoAcquistabile;
+    }
+
+    public void setTipoAcquistabile(TipoAcquistabile tipoAcquistabile) {
+        this.tipoAcquistabile = tipoAcquistabile;
+    }
+
+    public Long getIdAcquistabile() {
+        return idAcquistabile;
+    }
+
+    public void setIdAcquistabile(Long idAcquistabile) {
+        this.idAcquistabile = idAcquistabile;
+    }
+
+    public void setAcquistabileService(AcquistabileService acquistabileService) {
+        this.acquistabileService = acquistabileService;
     }
 
     @Override

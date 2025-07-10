@@ -21,7 +21,7 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
     private final IMetodoDiColtivazioneRepository metodiRepository;
     private final IProdottoRepository prodottoRepository;
     private final IVenditoreRepository venditoreRepository;
-    private Long nextId = 1L;
+
 
     @Autowired
     public ProduttoreService(ICertificazioneService certificazioneService,
@@ -49,13 +49,13 @@ public class ProduttoreService extends VenditoreService implements IProduttoreSe
             return aggiornaMetodoDiColtivazione(idProduttore, idProdotto, metodoDiColtivazione);
         }
 
-        metodoDiColtivazione.setId(nextId++);
-        metodiRepository.save(metodoDiColtivazione);
+        metodoDiColtivazione.setId(null);
+        MetodoDiColtivazione nuovoMetodo = metodiRepository.save(metodoDiColtivazione);
 
-        prodotto.setIdMetodoDiColtivazione(metodoDiColtivazione.getId());
+        prodotto.setIdMetodoDiColtivazione(nuovoMetodo.getId());
         prodottoRepository.save(prodotto);
 
-        return metodoDiColtivazione;
+        return nuovoMetodo;
     }
 
     @Override

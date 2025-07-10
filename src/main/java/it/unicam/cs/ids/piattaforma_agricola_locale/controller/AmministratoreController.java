@@ -173,7 +173,7 @@ public class AmministratoreController {
      * limitations).
      * Only curators can access this endpoint.
      */
-    @GetMapping("/gestore/utenti")
+    @GetMapping("/gestore/utenti/search")
     @PreAuthorize("hasRole('GESTORE_PIATTAFORMA')")
     public ResponseEntity<List<UserPublicDTO>> getAllUsers(
             @RequestParam(required = false) String search,

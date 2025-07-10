@@ -16,6 +16,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponi
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
@@ -327,6 +328,16 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
         return prodottoRepository.findAll(pageable);
     }
 
+    /**
+     * Recupera tutti i prodotti approvati (solo per uso pubblico).
+     * 
+     * @param pageable Parametri di paginazione
+     * @return Una pagina di prodotti approvati
+     */
+    public Page<Prodotto> getApprovedProdotti(Pageable pageable) {
+        return prodottoRepository.findByStatoVerifica(StatoVerificaValori.APPROVATO, pageable);
+    }
+
     @Override
     public Optional<Prodotto> getProdottoById(Long id) {
         if (id == null) {
@@ -359,6 +370,22 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
             throw new IllegalArgumentException("Venditore non può essere null");
         }
         return prodottoRepository.findByVenditore(venditore, pageable);
+    }
+
+    /**
+     * Recupera i prodotti approvati di un venditore specifico (solo per uso pubblico).
+     * 
+     * @param venditorId ID del venditore
+     * @param pageable Parametri di paginazione
+     * @return Una pagina di prodotti approvati del venditore
+     */
+    public Page<Prodotto> getApprovedProdottiByVenditore(Long venditorId, Pageable pageable) {
+        if (venditorId == null) {
+            throw new IllegalArgumentException("ID venditore non può essere null");
+        }
+        Venditore venditore = venditoreRepository.findById(venditorId)
+                .orElseThrow(() -> new IllegalArgumentException("Venditore con ID " + venditorId + " non trovato"));
+        return prodottoRepository.findByVenditoreAndStatoVerifica(venditore, StatoVerificaValori.APPROVATO, pageable);
     }
     
     @Override

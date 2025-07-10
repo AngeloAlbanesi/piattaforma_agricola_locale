@@ -42,6 +42,23 @@ public interface IProdottoService {
      */
     Page<Prodotto> getProdottiByVenditore(Venditore venditore, Pageable pageable);
 
+    /**
+     * Recupera tutti i prodotti approvati (solo per uso pubblico).
+     * 
+     * @param pageable Parametri di paginazione
+     * @return Una pagina di prodotti approvati
+     */
+    Page<Prodotto> getApprovedProdotti(Pageable pageable);
+
+    /**
+     * Recupera i prodotti approvati di un venditore specifico (solo per uso pubblico).
+     * 
+     * @param venditorId ID del venditore
+     * @param pageable Parametri di paginazione
+     * @return Una pagina di prodotti approvati del venditore
+     */
+    Page<Prodotto> getApprovedProdottiByVenditore(Long venditorId, Pageable pageable);
+
 
     Optional<ShareResponseDTO> condividiProdotto(Long id, ShareRequestDTO request);
 

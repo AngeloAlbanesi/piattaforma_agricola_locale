@@ -3,6 +3,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.model.repository;
 import java.util.List;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,5 +44,24 @@ public interface IProdottoRepository extends JpaRepository<Prodotto, Long> {
 
     // Metodo standard di Spring Data JPA
     List<Prodotto> findByNomeContainingIgnoreCase(String nome);
+
+    /**
+     * Trova prodotti per stato di verifica con paginazione.
+     * 
+     * @param statoVerifica Lo stato di verifica (IN_REVISIONE, APPROVATO, RESPINTO)
+     * @param pageable Parametri di paginazione
+     * @return Una pagina di prodotti filtrati per stato
+     */
+    Page<Prodotto> findByStatoVerifica(StatoVerificaValori statoVerifica, Pageable pageable);
+
+    /**
+     * Trova prodotti di un venditore specifico con stato di verifica specifico.
+     * 
+     * @param venditore Il venditore
+     * @param statoVerifica Lo stato di verifica
+     * @param pageable Parametri di paginazione
+     * @return Una pagina di prodotti filtrati per venditore e stato
+     */
+    Page<Prodotto> findByVenditoreAndStatoVerifica(Venditore venditore, StatoVerificaValori statoVerifica, Pageable pageable);
 
 }

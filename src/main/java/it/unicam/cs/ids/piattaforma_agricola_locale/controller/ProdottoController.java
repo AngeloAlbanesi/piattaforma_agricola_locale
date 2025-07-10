@@ -7,6 +7,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareResponseDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.coltivazione.MetodoDiColtivazione;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.OwnershipValidationService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
@@ -66,21 +67,20 @@ public class ProdottoController {
 
         if (search != null && !search.trim().isEmpty()) {
             List<Prodotto> searchResults = prodottoService.searchProdottiByNome(search);
-            prodotti = Page.empty();
-            List<ProductSummaryDTO> summaryDTOs = searchResults.stream()
+            // Filter only approved products from search results
+            List<Prodotto> approvedSearchResults = searchResults.stream()
+                    .filter(prodotto -> prodotto.getStatoVerifica() == StatoVerificaValori.APPROVATO)
+                    .collect(Collectors.toList());
+            
+            List<ProductSummaryDTO> summaryDTOs = approvedSearchResults.stream()
                     .map(prodottoMapper::toSummaryDTO)
                     .collect(Collectors.toList());
 
-            return ResponseEntity.ok(new PageImpl<>(summaryDTOs, pageable, searchResults.size()));
+            return ResponseEntity.ok(new PageImpl<>(summaryDTOs, pageable, approvedSearchResults.size()));
         } else if (vendorId != null) {
-            List<Prodotto> vendorProducts = prodottoService.getProdottiByVenditore(vendorId);
-            List<ProductSummaryDTO> summaryDTOs = vendorProducts.stream()
-                    .map(prodottoMapper::toSummaryDTO)
-                    .collect(Collectors.toList());
-
-            return ResponseEntity.ok(new PageImpl<>(summaryDTOs, pageable, vendorProducts.size()));
+            prodotti = prodottoService.getApprovedProdottiByVenditore(vendorId, pageable);
         } else {
-            prodotti = prodottoService.getAllProdotti(pageable);
+            prodotti = prodottoService.getApprovedProdotti(pageable);
         }
 
         Page<ProductSummaryDTO> productSummaries = prodotti.map(prodottoMapper::toSummaryDTO);
@@ -121,12 +121,15 @@ public class ProdottoController {
     public ResponseEntity<List<ProductSummaryDTO>> getProductsByVendor(
             @PathVariable Long vendorId) {
 
-        List<Prodotto> vendorProducts = prodottoService.getProdottiByVenditore(vendorId);
-        List<ProductSummaryDTO> summaryDTOs = vendorProducts.stream()
+        // Use pageable with default values to get approved products only
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE);
+        Page<Prodotto> approvedVendorProducts = prodottoService.getApprovedProdottiByVenditore(vendorId, pageable);
+        
+        List<ProductSummaryDTO> summaryDTOs = approvedVendorProducts.getContent().stream()
                 .map(prodottoMapper::toSummaryDTO)
                 .collect(Collectors.toList());
 
-        log.info("Retrieved {} products for vendor ID: {}", summaryDTOs.size(), vendorId);
+        log.info("Retrieved {} approved products for vendor ID: {}", summaryDTOs.size(), vendorId);
         return ResponseEntity.ok(summaryDTOs);
     }
 

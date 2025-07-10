@@ -95,16 +95,11 @@ public class CuratoreService implements ICuratoreService {
 
     @Override
     public List<Prodotto> getProdottiInAttesaRevisione() {
-        
-        List<Prodotto> prodottiInAttesa = new ArrayList<>();
-        
-        // Sincronizza la coda interna con lo stato attuale dei prodotti
-        sincronizzaCodeDiRevisione();
-        
-        // Restituisce una copia della coda per evitare modifiche esterne
-        prodottiInAttesa.addAll(codaRevisioneProdotti);
-        
-        return prodottiInAttesa;
+        // Usa query diretta al repository per evitare duplicazioni
+        return prodottoRepository.findByStatoVerifica(
+            StatoVerificaValori.IN_REVISIONE, 
+            org.springframework.data.domain.Pageable.unpaged()
+        ).getContent();
     }
     
     /**

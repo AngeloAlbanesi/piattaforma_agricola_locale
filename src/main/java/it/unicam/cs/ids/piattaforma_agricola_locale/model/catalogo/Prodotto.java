@@ -293,5 +293,16 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
             System.err.println("Errore: tentativo di aggiungere certificazione non pertinente al prodotto.");
         }
     }
-    //
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Prodotto prodotto = (Prodotto) o;
+        return idProdotto != null && idProdotto.equals(prodotto.idProdotto);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

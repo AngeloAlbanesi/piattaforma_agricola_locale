@@ -260,9 +260,15 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
 
             double importoTotale = 0.0;
 
-            // 4. Per ogni elemento del carrello, verifica disponibilità e crea riga ordine
+            // 4. Inietta il service negli elementi del carrello per permettere il recupero degli acquistabili
+            elementi.forEach(elemento -> elemento.setAcquistabileService(carrelloService.getAcquistabileService()));
+
+            // 5. Per ogni elemento del carrello, verifica disponibilità e crea riga ordine
             for (ElementoCarrello elemento : elementi) {
                 Acquistabile acquistabile = elemento.getAcquistabile();
+                if (acquistabile == null) {
+                    throw new OrdineException("Impossibile recuperare l'acquistabile per l'elemento con ID: " + elemento.getIdElemento());
+                }
                 int quantitaRichiesta = elemento.getQuantita();
 
                 // Verifica disponibilità finale
@@ -301,19 +307,19 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                 // quando l'ordine transita allo stato PRONTO_PER_LAVORAZIONE dopo il pagamento
             }
 
-            // 5. Imposta l'importo totale
+            // 6. Imposta l'importo totale
             ordine.setImportoTotale(importoTotale);
 
-            // 6. L'ordine è già inizializzato con stato "in attesa di pagamento" dal
+            // 7. L'ordine è già inizializzato con stato "in attesa di pagamento" dal
             // costruttore
 
-            // 7. Salva l'ordine e le righe nei repository
+            // 8. Salva l'ordine e le righe nei repository
             ordineRepository.save(ordine);
             for (RigaOrdine riga : ordine.getRigheOrdine()) {
                 rigaOrdineRepository.save(riga);
             }
 
-            // 8. Svuota il carrello dopo aver creato l'ordine
+            // 9. Svuota il carrello dopo aver creato l'ordine
             carrelloService.svuotaCarrello(acquirente);
 
             // NOTA: La notifica agli observer avverrà automaticamente quando

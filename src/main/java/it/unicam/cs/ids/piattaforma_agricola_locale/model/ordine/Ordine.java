@@ -1,8 +1,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine;
 
 import jakarta.persistence.*;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.IStatoOrdine;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.StatoOrdineNuovoInAttesaDiPagamento;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.stateOrdine.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
 
 import java.util.ArrayList;
@@ -40,6 +39,15 @@ public class Ordine {
     private IStatoOrdine stato;
 
     public Ordine() {}
+
+    /**
+     * Metodo chiamato dopo il caricamento dell'entità dal database
+     * per inizializzare lo stato transient basato sullo stato persistente
+     */
+    @PostLoad
+    private void initializeState() {
+        this.stato = createStateFromEnum(this.statoCorrente);
+    }
 
     public Ordine(Date dataOrdine, Acquirente acquirente) {
         this.dataOrdine = dataOrdine;
@@ -120,18 +128,30 @@ public class Ordine {
 
     // Metodi per gestire lo stato dell'ordine (delegano al pattern State)
     public void processa() {
+        if (stato == null) {
+            stato = createStateFromEnum(statoCorrente);
+        }
         stato.processaOrdine(this);
     }
 
     public void spedisci() {
+        if (stato == null) {
+            stato = createStateFromEnum(statoCorrente);
+        }
         stato.spedisciOrdine(this);
     }
 
     public void annulla() {
+        if (stato == null) {
+            stato = createStateFromEnum(statoCorrente);
+        }
         stato.annullaOrdine(this);
     }
 
     public void consegna() {
+        if (stato == null) {
+            stato = createStateFromEnum(statoCorrente);
+        }
         stato.consegnaOrdine(this);
     }
 
@@ -139,11 +159,41 @@ public class Ordine {
      * Metodo per effettuare il pagamento dell'ordine
      */
     public void paga() {
+        // Assicurati che lo stato sia inizializzato
+        if (stato == null) {
+            stato = createStateFromEnum(statoCorrente);
+        }
         // Questo metodo potrebbe essere aggiunto per gestire il pagamento
         // In questo caso, la transizione da "in attesa di pagamento" a "pagato"
-        // sar√† gestita tramite il metodo processa() che nel caso dello stato
+        // sarà gestita tramite il metodo processa() che nel caso dello stato
         // "in attesa di pagamento" dovrebbe gestire il pagamento
         processa();
+    }
+
+    /**
+     * Crea un'istanza dello stato appropriato basato sull'enum StatoCorrente
+     */
+    private IStatoOrdine createStateFromEnum(StatoCorrente statoCorrente) {
+        if (statoCorrente == null) {
+            return new StatoOrdineNuovoInAttesaDiPagamento();
+        }
+        
+        switch (statoCorrente) {
+            case ATTESA_PAGAMENTO:
+                return new StatoOrdineNuovoInAttesaDiPagamento();
+            case PRONTO_PER_LAVORAZIONE:
+                return new StatoOrdinePagatoProntoPerLavorazione();
+            case IN_LAVORAZIONE:
+                return new StatoOrdineInLavorazione();
+            case SPEDITO:
+                return new StatoOrdineSpedito();
+            case CONSEGNATO:
+                return new StatoOrdineConsegnato();
+            case ANNULLATO:
+                return new StatoOrdineAnnullato();
+            default:
+                return new StatoOrdineNuovoInAttesaDiPagamento();
+        }
     }
 
 }

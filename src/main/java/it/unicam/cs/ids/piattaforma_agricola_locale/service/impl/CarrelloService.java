@@ -272,4 +272,13 @@ public class CarrelloService implements ICarrelloService {
         return carrelloRepository;
     }
 
+    /**
+     * Ottiene il service per gli acquistabili
+     * 
+     * @return il service per gli acquistabili
+     */
+    public AcquistabileService getAcquistabileService() {
+        return acquistabileService;
+    }
+
 }

@@ -19,11 +19,13 @@ public interface IStatoOrdine {
     StatoCorrente getStatoCorrente();
     
     /**
-     * Metodo di utilit√† per effettuare la transizione di stato
+     * Metodo di utilità per effettuare la transizione di stato
      * @param ordine l'ordine su cui effettuare la transizione
      * @param nuovoStato il nuovo stato da impostare
      */
     default void cambiaStato(Ordine ordine, IStatoOrdine nuovoStato) {
         ordine.setStato(nuovoStato);
+        // Aggiorna anche il campo persistente statoCorrente
+        ordine.setStatoCorrente(nuovoStato.getStatoCorrente());
     }
 }

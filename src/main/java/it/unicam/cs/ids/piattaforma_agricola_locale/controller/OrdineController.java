@@ -64,6 +64,21 @@ public class OrdineController {
             // Create order from cart
             Ordine ordine = ordineService.creaOrdineDaCarrello(acquirente);
 
+            // Process payment if specified
+            if (request.getMetodoPagamento() != null && !request.getMetodoPagamento().trim().isEmpty()) {
+                try {
+                    IMetodoPagamentoStrategy strategiaPagamento = getPaymentStrategy(request.getMetodoPagamento());
+                    ordineService.confermaPagamento(ordine, strategiaPagamento);
+                    log.info("Payment processed successfully for order: {}", ordine.getIdOrdine());
+                } catch (IllegalArgumentException iae) {
+                    log.warn("Invalid payment method for order: {}, Method: {}", ordine.getIdOrdine(), request.getMetodoPagamento());
+                    // L'ordine rimane in stato ATTESA_PAGAMENTO
+                } catch (PagamentoException pe) {
+                    log.warn("Payment failed for order: {}, Error: {}", ordine.getIdOrdine(), pe.getMessage());
+                    // L'ordine rimane in stato ATTESA_PAGAMENTO
+                }
+            }
+
             log.info("Order created successfully - OrderId: {}, User: {}", ordine.getIdOrdine(), email);
 
             OrdineDetailDTO ordineDTO = ordineMapper.toDetailDTO(ordine);
@@ -206,20 +221,18 @@ public class OrdineController {
                                 "message", "L'ordine non è nello stato corretto per confermare il pagamento"));
             }
 
-            // Get payment strategy
+            // Get payment strategy and confirm payment
             IMetodoPagamentoStrategy strategiaPagamento = getPaymentStrategy(request.getMetodoPagamento());
-            if (strategiaPagamento == null) {
-                return ResponseEntity.badRequest()
-                        .body(Map.of("error", "Metodo di pagamento non valido",
-                                "message", "Il metodo di pagamento specificato non è supportato"));
-            }
-
-            // Confirm payment
             ordineService.confermaPagamento(ordine, strategiaPagamento);
 
             log.info("Payment confirmed successfully - OrderId: {}, User: {}", id, email);
             return ResponseEntity.ok(Map.of("message", "Pagamento confermato con successo"));
 
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid payment method - OrderId: {}, User: {}, Method: {}",
+                    id, authentication.getName(), request.getMetodoPagamento());
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Metodo di pagamento non valido", "message", e.getMessage()));
         } catch (PagamentoException e) {
             log.error("Payment processing error - OrderId: {}, User: {}, Error: {}",
                     id, authentication.getName(), e.getMessage());
@@ -341,7 +354,7 @@ public class OrdineController {
             case "SIMULATO":
                 return new PagamentoSimulatoStrategy();
             default:
-                return null;
+                throw new IllegalArgumentException("Metodo di pagamento non supportato: " + metodoPagamento);
         }
     }
 

@@ -36,6 +36,7 @@ public class RigaOrdineDTO {
     private Long idAcquistabile;
     private String nomeAcquistabile;
     private String descrizioneAcquistabile;
+    private String nomeVenditore;
 
     /**
      * Calculates the total price for this order line.

@@ -16,6 +16,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.AcquistabileService;
 import org.mapstruct.*;
 import org.springframework.stereotype.Component;
 
@@ -45,6 +46,16 @@ public interface OrdineMapper {
     @Mapping(target = "acquirente", source = "acquirente", qualifiedByName = "acquirenteToUserPublicDTO")
     @Mapping(target = "righeOrdine", source = "righeOrdine", qualifiedByName = "righeOrdineToDTO")
     OrdineDetailDTO toDetailDTO(Ordine ordine);
+    
+    /**
+     * Inietta l'AcquistabileService nelle righe ordine prima di convertirle in DTO.
+     * Questo metodo deve essere chiamato dal controller prima di chiamare toDetailDTO.
+     */
+    default void injectAcquistabileService(Ordine ordine, AcquistabileService acquistabileService) {
+        if (ordine != null && ordine.getRigheOrdine() != null && acquistabileService != null) {
+            ordine.getRigheOrdine().forEach(riga -> riga.setAcquistabileService(acquistabileService));
+        }
+    }
 
     /**
      * Converts Ordine entity to OrdineSummaryDTO.
@@ -122,6 +133,11 @@ public interface OrdineMapper {
             dto.setIdAcquistabile(acquistabile.getId());
             dto.setNomeAcquistabile(acquistabile.getNome());
             dto.setDescrizioneAcquistabile(acquistabile.getDescrizione());
+            
+            // Aggiungi il nome del venditore
+            if (acquistabile.getVenditore() != null && acquistabile.getVenditore().getDatiAzienda() != null) {
+                dto.setNomeVenditore(acquistabile.getVenditore().getDatiAzienda().getNomeAzienda());
+            }
 
             // Determine type based on instanceof
             if (acquistabile instanceof Prodotto) {

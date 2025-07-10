@@ -85,6 +85,9 @@ public class OrdineController {
 
             log.info("Order created successfully - OrderId: {}, User: {}", ordine.getIdOrdine(), email);
 
+            // Inietta l'AcquistabileService nelle righe ordine prima di convertirle in DTO
+            ordineMapper.injectAcquistabileService(ordine, ((it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.OrdineService) ordineService).getCarrelloService().getAcquistabileService());
+            
             OrdineDetailDTO ordineDTO = ordineMapper.toDetailDTO(ordine);
             return ResponseEntity.status(HttpStatus.CREATED).body(ordineDTO);
 
@@ -180,6 +183,9 @@ public class OrdineController {
                         .body(Map.of("error", "Accesso negato", "message", "Non hai i permessi per visualizzare questo ordine"));
             }
 
+            // Inietta l'AcquistabileService nelle righe ordine prima di convertirle in DTO
+            ordineMapper.injectAcquistabileService(ordine, ((it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.OrdineService) ordineService).getCarrelloService().getAcquistabileService());
+            
             OrdineDetailDTO ordineDTO = ordineMapper.toDetailDTO(ordine);
             return ResponseEntity.ok(ordineDTO);
 

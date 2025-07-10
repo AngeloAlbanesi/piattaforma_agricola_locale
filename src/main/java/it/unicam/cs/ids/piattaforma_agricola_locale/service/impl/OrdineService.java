@@ -323,6 +323,8 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
             // 8. Salva l'ordine e le righe nei repository
             ordineRepository.save(ordine);
             for (RigaOrdine riga : ordine.getRigheOrdine()) {
+                // Inietta l'AcquistabileService nelle righe ordine
+                riga.setAcquistabileService(carrelloService.getAcquistabileService());
                 rigaOrdineRepository.save(riga);
             }
 
@@ -676,5 +678,14 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
 
     public IOrdineRepository getOrdineRepository() {
         return ordineRepository;
+    }
+    
+    /**
+     * Ottiene il servizio per i carrelli
+     * 
+     * @return il servizio per i carrelli
+     */
+    public CarrelloService getCarrelloService() {
+        return carrelloService;
     }
 }

@@ -89,6 +89,12 @@ public interface CarrelloMapper {
             dto.setIdAcquistabile(acquistabile.getId());
             dto.setNomeAcquistabile(acquistabile.getNome());
             dto.setDescrizioneAcquistabile(acquistabile.getDescrizione());
+            
+            // Set seller name
+            if (acquistabile.getVenditore() != null && 
+                acquistabile.getVenditore().getDatiAzienda() != null) {
+                dto.setNomeVenditore(acquistabile.getVenditore().getDatiAzienda().getNomeAzienda());
+            }
 
             // Determine type based on instanceof
             if (acquistabile instanceof Prodotto) {

@@ -52,7 +52,16 @@ public class CarrelloService implements ICarrelloService {
      * @return il carrello se esiste
      */
     public Optional<Carrello> getCarrelloAcquirente(Acquirente acquirente) {
-        return carrelloRepository.findByAcquirente(acquirente);
+        Optional<Carrello> carrelloOpt = carrelloRepository.findByAcquirente(acquirente);
+        
+        // Inietta l'AcquistabileService negli elementi del carrello per permettere il recupero dei dettagli
+        if (carrelloOpt.isPresent()) {
+            Carrello carrello = carrelloOpt.get();
+            carrello.getElementiCarrello().forEach(elemento -> 
+                elemento.setAcquistabileService(acquistabileService));
+        }
+        
+        return carrelloOpt;
     }
 
     /**

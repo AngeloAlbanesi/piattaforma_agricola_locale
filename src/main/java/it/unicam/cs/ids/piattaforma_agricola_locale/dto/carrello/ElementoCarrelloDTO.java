@@ -36,6 +36,7 @@ public class ElementoCarrelloDTO {
     private Long idAcquistabile;
     private String nomeAcquistabile;
     private String descrizioneAcquistabile;
+    private String nomeVenditore;
 
     /**
      * Calculates the total price for this cart item.

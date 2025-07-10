@@ -38,9 +38,10 @@ public interface IOrdineRepository extends JpaRepository<Ordine, Long> {
      * @param venditore il venditore
      * @return lista degli ordini che contengono prodotti del venditore
      */
-    @Query("SELECT DISTINCT o FROM Ordine o JOIN o.righeOrdine r WHERE " +
-            "(r.prodotto IS NOT NULL AND r.prodotto.venditore = :venditore) OR " +
-            "(r.pacchetto IS NOT NULL AND r.pacchetto.distributore = :venditore)")
-    List<Ordine> findByVenditore(@Param("venditore") Venditore venditore);
+    @Query("SELECT o FROM Ordine o JOIN o.righeOrdine r WHERE r.idAcquistabile IN :ids AND r.tipoAcquistabile = 'PRODOTTO'")
+    List<Ordine> findByProdottoIds(@Param("ids") List<Long> ids);
+
+    @Query("SELECT o FROM Ordine o JOIN o.righeOrdine r WHERE r.idAcquistabile IN :ids AND r.tipoAcquistabile = 'PACCHETTO'")
+    List<Ordine> findByPacchettoIds(@Param("ids") List<Long> ids);
 
 }

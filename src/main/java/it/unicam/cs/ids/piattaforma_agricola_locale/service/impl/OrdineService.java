@@ -24,8 +24,11 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.StatoCorrente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IOrdineRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IRigaOrdineRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IOrdineService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IOrdineObservable;
@@ -43,11 +46,16 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
     // Gestione Observer Pattern
     private final List<IVenditoreObserver> observers;
 
+    private final IProdottoRepository prodottoRepository;
+    private final IPacchettoRepository pacchettoRepository;
+
     @Autowired
-    public OrdineService(IOrdineRepository ordineRepository, IRigaOrdineRepository rigaOrdineRepository, CarrelloService carrelloService) {
+    public OrdineService(IOrdineRepository ordineRepository, IRigaOrdineRepository rigaOrdineRepository, CarrelloService carrelloService, IProdottoRepository prodottoRepository, IPacchettoRepository pacchettoRepository) {
         this.ordineRepository = ordineRepository;
         this.rigaOrdineRepository = rigaOrdineRepository;
         this.carrelloService = carrelloService;
+        this.prodottoRepository = prodottoRepository;
+        this.pacchettoRepository = pacchettoRepository;
         this.observers = new ArrayList<>();
     }
 
@@ -145,7 +153,18 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
      * @return lista degli ordini che contengono prodotti del venditore
      */
     public List<Ordine> getOrdiniVenditore(Venditore venditore) {
-        return ordineRepository.findByVenditore(venditore);
+        List<Long> prodottoIds = prodottoRepository.findByVenditore(venditore).stream().map(Prodotto::getId).collect(Collectors.toList());
+        List<Ordine> ordini = new ArrayList<>();
+        if(!prodottoIds.isEmpty()){
+            ordini.addAll(ordineRepository.findByProdottoIds(prodottoIds));
+        }
+        if(venditore instanceof DistributoreDiTipicita){
+            List<Long> pacchettoIds = pacchettoRepository.findByDistributore((DistributoreDiTipicita) venditore).stream().map(Pacchetto::getId).collect(Collectors.toList());
+            if(!pacchettoIds.isEmpty()){
+                ordini.addAll(ordineRepository.findByPacchettoIds(pacchettoIds));
+            }
+        }
+        return ordini.stream().distinct().collect(Collectors.toList());
     }
 
     /**

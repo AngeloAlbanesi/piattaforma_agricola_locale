@@ -29,11 +29,8 @@ public interface IRigaOrdineRepository extends JpaRepository<RigaOrdine, Long> {
      * @param acquistabile l'acquistabile
      * @return lista delle righe ordine che contengono l'acquistabile
      */
-    @Query("SELECT r FROM RigaOrdine r WHERE " +
-            "(r.prodotto IS NOT NULL AND r.prodotto.id = :id) OR " +
-            "(r.pacchetto IS NOT NULL AND r.pacchetto.id = :id) OR " +
-            "(r.evento IS NOT NULL AND r.evento.id = :id)")
-    List<RigaOrdine> findByAcquistabile(@Param("id") Long acquistabileId);
+    @Query("SELECT r FROM RigaOrdine r WHERE r.idAcquistabile = :id")
+    List<RigaOrdine> findByIdAcquistabile(@Param("id") Long acquistabileId);
 
     /**
      * Elimina tutte le righe ordine di un ordine specifico

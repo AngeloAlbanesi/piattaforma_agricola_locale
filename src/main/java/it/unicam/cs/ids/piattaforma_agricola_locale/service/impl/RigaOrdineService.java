@@ -66,7 +66,7 @@ public class RigaOrdineService implements IRigaOrdineService {
      * @return lista delle righe ordine che contengono l'acquistabile
      */
     public List<RigaOrdine> getRigheOrdineByAcquistabile(Acquistabile acquistabile) {
-        return rigaOrdineRepository.findByAcquistabile(acquistabile.getId());
+        return rigaOrdineRepository.findByIdAcquistabile(acquistabile.getId());
     }
 
     /**

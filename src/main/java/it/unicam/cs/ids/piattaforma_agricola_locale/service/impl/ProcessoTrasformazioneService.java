@@ -385,7 +385,7 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
         
         // 2. Rimuovi l'ID del processo dal prodotto
         prodotto.setIdProcessoTrasformazioneOriginario(null);
-        prodotto.setTipoOrigine(TipoOrigineProdotto.COLTIVATO_ALLEVATO); // Reset al tipo base
+        // NON cambiamo il tipoOrigine - un prodotto trasformato rimane trasformato
         
         // Salva entrambe le entità
         ProcessoTrasformazione processoSalvato = processoRepository.save(processo);

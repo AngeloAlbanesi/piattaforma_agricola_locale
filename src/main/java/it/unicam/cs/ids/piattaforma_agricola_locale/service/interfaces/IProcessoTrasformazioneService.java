@@ -164,5 +164,31 @@ public interface IProcessoTrasformazioneService {
      * @return lista dei processi trovati
      */
     List<ProcessoTrasformazione> searchProcessiByNome(String nome);
+    
+    /**
+     * Ottiene le informazioni di tracciabilità per un processo di trasformazione.
+     * 
+     * @param processoId l'ID del processo
+     * @return le informazioni di tracciabilità se il processo esiste
+     */
+    Optional<ProcessoTrasformazione> getProcessoTracciabilita(Long processoId);
+    
+    /**
+     * Collega un processo di trasformazione a un prodotto finale in modo bidirezionale.
+     * 
+     * @param processoId l'ID del processo di trasformazione
+     * @param prodottoId l'ID del prodotto finale
+     * @return il processo aggiornato
+     */
+    ProcessoTrasformazione collegaProcessoAProdotto(Long processoId, Long prodottoId);
+    
+    /**
+     * Rimuove il collegamento tra un processo di trasformazione e un prodotto.
+     * 
+     * @param processoId l'ID del processo di trasformazione
+     * @param prodottoId l'ID del prodotto finale
+     * @return il processo aggiornato
+     */
+    ProcessoTrasformazione scollegaProcessoDaProdotto(Long processoId, Long prodottoId);
 
 }

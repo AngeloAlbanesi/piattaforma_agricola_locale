@@ -9,5 +9,6 @@ public class CreateProcessoRequestDTO {
     private String nome;
     private String descrizione;
     private String metodoProduzione;
+    private Long prodottoFinaleId; // ID del prodotto finale (opzionale)
 }
 

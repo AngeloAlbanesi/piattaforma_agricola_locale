@@ -13,6 +13,9 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProcessoTr
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.FaseLavorazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.ProcessoTrasformazione;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto;
+import org.springframework.transaction.annotation.Transactional;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Trasformatore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProcessoTrasformazioneService;
 
@@ -290,6 +293,105 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
             throw new IllegalArgumentException("Nome di ricerca non può essere vuoto");
         }
         return processoRepository.findByNomeContainingIgnoreCase(nome.trim());
+    }
+    
+    @Override
+    public Optional<ProcessoTrasformazione> getProcessoTracciabilita(Long processoId) {
+        if (processoId == null) {
+            throw new IllegalArgumentException("ID processo non può essere null");
+        }
+        
+        // Recupera il processo con tutte le fasi di lavorazione caricate
+        Optional<ProcessoTrasformazione> processoOpt = processoRepository.findById(processoId);
+        
+        if (processoOpt.isPresent()) {
+            ProcessoTrasformazione processo = processoOpt.get();
+            // Assicuriamoci che le fasi siano caricate (lazy loading)
+            processo.getFasiLavorazione().size(); // Trigger lazy loading
+            
+            // Carica anche le informazioni delle fonti per ogni fase
+            processo.getFasiLavorazione().forEach(fase -> {
+                if (fase.getFonte() != null) {
+                    // Trigger lazy loading della fonte
+                    fase.getFonte().getDescrizione();
+                }
+            });
+        }
+        
+        return processoOpt;
+    }
+    
+    @Override
+    @Transactional
+    public ProcessoTrasformazione collegaProcessoAProdotto(Long processoId, Long prodottoId) {
+        if (processoId == null || prodottoId == null) {
+            throw new IllegalArgumentException("ID processo e prodotto non possono essere null");
+        }
+        
+        // Verifica che il processo esista
+        ProcessoTrasformazione processo = processoRepository.findById(processoId)
+                .orElseThrow(() -> new IllegalArgumentException("Processo di trasformazione non trovato con ID: " + processoId));
+        
+        // Verifica che il prodotto esista
+        Prodotto prodotto = prodottoRepository.findById(prodottoId)
+                .orElseThrow(() -> new IllegalArgumentException("Prodotto non trovato con ID: " + prodottoId));
+        
+        // Verifica che il prodotto sia di tipo trasformato
+        if (prodotto.getTipoOrigine() != TipoOrigineProdotto.TRASFORMATO) {
+            throw new IllegalArgumentException("Il prodotto deve essere di tipo TRASFORMATO per essere collegato a un processo");
+        }
+        
+        // Collegamento bidirezionale
+        // 1. Imposta il prodotto finale nel processo
+        processo.setProdottoFinale(prodotto);
+        
+        // 2. Imposta l'ID del processo nel prodotto
+        prodotto.setIdProcessoTrasformazioneOriginario(processoId);
+        
+        // Salva entrambe le entità
+        ProcessoTrasformazione processoSalvato = processoRepository.save(processo);
+        prodottoRepository.save(prodotto);
+        
+        return processoSalvato;
+    }
+    
+    @Override
+    @Transactional
+    public ProcessoTrasformazione scollegaProcessoDaProdotto(Long processoId, Long prodottoId) {
+        if (processoId == null || prodottoId == null) {
+            throw new IllegalArgumentException("ID processo e prodotto non possono essere null");
+        }
+        
+        // Verifica che il processo esista
+        ProcessoTrasformazione processo = processoRepository.findById(processoId)
+                .orElseThrow(() -> new IllegalArgumentException("Processo di trasformazione non trovato con ID: " + processoId));
+        
+        // Verifica che il prodotto esista
+        Prodotto prodotto = prodottoRepository.findById(prodottoId)
+                .orElseThrow(() -> new IllegalArgumentException("Prodotto non trovato con ID: " + prodottoId));
+        
+        // Verifica che il collegamento esista
+        if (processo.getProdottoFinale() == null || !processo.getProdottoFinale().getId().equals(prodottoId)) {
+            throw new IllegalArgumentException("Il processo non è collegato al prodotto specificato");
+        }
+        
+        if (!prodottoId.equals(prodotto.getIdProcessoTrasformazioneOriginario())) {
+            throw new IllegalArgumentException("Il prodotto non è collegato al processo specificato");
+        }
+        
+        // Rimuovi collegamento bidirezionale
+        // 1. Rimuovi il prodotto finale dal processo
+        processo.setProdottoFinale(null);
+        
+        // 2. Rimuovi l'ID del processo dal prodotto
+        prodotto.setIdProcessoTrasformazioneOriginario(null);
+        prodotto.setTipoOrigine(TipoOrigineProdotto.COLTIVATO_ALLEVATO); // Reset al tipo base
+        
+        // Salva entrambe le entità
+        ProcessoTrasformazione processoSalvato = processoRepository.save(processo);
+        prodottoRepository.save(prodotto);
+        
+        return processoSalvato;
     }
 
 }

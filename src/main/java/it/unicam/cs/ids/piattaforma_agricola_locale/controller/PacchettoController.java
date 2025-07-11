@@ -10,6 +10,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdotto
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IUtenteService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.PacchettoMapper;
 import jakarta.validation.Valid;
+import org.hibernate.Hibernate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -320,7 +321,7 @@ public class PacchettoController {
                             .quantitaDisponibile(pacchetto.getQuantitaDisponibile())
                             .elementi(pacchetto.getElementi().stream()
                                     .map(elemento -> ElementoPacchettoDTO.builder()
-                                            .tipoElemento(elemento.getClass().getSimpleName().toUpperCase())
+                                            .tipoElemento(getActualClassName(elemento))
                                             .idElemento(elemento.getId())
                                             .nomeElemento(elemento.getNome())
                                             .descrizioneElemento(elemento.getDescrizione())
@@ -343,6 +344,13 @@ public class PacchettoController {
         return pacchetto.getElementi().stream()
                 .mapToDouble(elemento -> elemento.getPrezzo())
                 .sum();
+    }
+
+    /**
+     * Ottiene il nome della classe reale, gestendo i proxy di Hibernate
+     */
+    private String getActualClassName(Acquistabile elemento) {
+        return Hibernate.getClass(elemento).getSimpleName().toUpperCase();
     }
 
     /**

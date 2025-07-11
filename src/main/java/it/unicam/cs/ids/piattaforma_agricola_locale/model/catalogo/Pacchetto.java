@@ -83,24 +83,25 @@ public class Pacchetto implements Acquistabile {
     public void aggiungiElemento(Acquistabile elemento) {
         // Aggiungi alla lista transient per compatibilita
         this.getElementiInclusi().add(elemento);
-        
+
         // Se e un prodotto, aggiungi anche alla relazione persistente
         if (elemento instanceof Prodotto) {
             PacchettoElemento pacchettoElemento = new PacchettoElemento(this, (Prodotto) elemento);
             this.pacchettoElementi.add(pacchettoElemento);
         }
-        
+
         this.ricalcolaPrezzo();
     }
 
     public void rimuoviElemento(Acquistabile elemento) {
-        this.getElementiInclusi().remove(elemento);
-        
+        // Rimuovi dalla lista transient
+        this.getElementiInclusi().removeIf(e -> e.getId().equals(elemento.getId()));
+
         // Se e un prodotto, rimuovi anche dalla relazione persistente
         if (elemento instanceof Prodotto) {
-            this.pacchettoElementi.removeIf(pe -> pe.getProdotto().equals(elemento));
+            this.pacchettoElementi.removeIf(pe -> pe.getProdotto().getId().equals(elemento.getId()));
         }
-        
+
         this.ricalcolaPrezzo();
     }
 
@@ -109,8 +110,8 @@ public class Pacchetto implements Acquistabile {
             // Carica gli elementi dalla relazione persistente se disponibile
             if (pacchettoElementi != null && !pacchettoElementi.isEmpty()) {
                 elementiInclusi = pacchettoElementi.stream()
-                    .map(pe -> (Acquistabile) pe.getProdotto())
-                    .collect(Collectors.toList());
+                        .map(pe -> (Acquistabile) pe.getProdotto())
+                        .collect(Collectors.toList());
             } else {
                 elementiInclusi = new java.util.ArrayList<>();
             }
@@ -166,7 +167,8 @@ public class Pacchetto implements Acquistabile {
     }
 
     /**
-     * Ricalcola automaticamente il prezzo del pacchetto sommando i prezzi di tutti gli elementi inclusi.
+     * Ricalcola automaticamente il prezzo del pacchetto sommando i prezzi di tutti
+     * gli elementi inclusi.
      */
     private void ricalcolaPrezzo() {
         if (this.getElementiInclusi() != null && !this.getElementiInclusi().isEmpty()) {

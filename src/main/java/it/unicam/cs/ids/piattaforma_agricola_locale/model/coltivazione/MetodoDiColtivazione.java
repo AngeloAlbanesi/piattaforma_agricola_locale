@@ -14,23 +14,23 @@ public class MetodoDiColtivazione {
     @Column(name = "nome", nullable = false)
     private String nome;
     
-    @Column(name = "descrizione_dettagliata", columnDefinition = "TEXT")
-    private String descrizioneDettagliata;
+    @Column(name = "descrizione", columnDefinition = "TEXT")
+    private String descrizione;
     
-    @Column(name = "tecnica_principale")
-    private String tecnicaPrincipale;
+    @Column(name = "data_inizio")
+    private java.time.LocalDate dataInizio;
     
-    @Column(name = "ambiente_coltivazione")
-    private String ambienteColtivazione;
+    @Column(name = "data_fine")
+    private java.time.LocalDate dataFine;
 
     public MetodoDiColtivazione() {}
 
-    public MetodoDiColtivazione(Long id, String nome, String descrizioneDettagliata, String tecnicaPrincipale, String ambienteColtivazione) {
+    public MetodoDiColtivazione(Long id, String nome, String descrizione, java.time.LocalDate dataInizio, java.time.LocalDate dataFine) {
         this.id = id;
         this.nome = nome;
-        this.descrizioneDettagliata = descrizioneDettagliata;
-        this.tecnicaPrincipale = tecnicaPrincipale;
-        this.ambienteColtivazione = ambienteColtivazione;
+        this.descrizione = descrizione;
+        this.dataInizio = dataInizio;
+        this.dataFine = dataFine;
     }
 
     public Long getId() {
@@ -49,28 +49,29 @@ public class MetodoDiColtivazione {
         this.nome = nome;
     }
 
-    public String getDescrizioneDettagliata() {
-        return descrizioneDettagliata;
+
+    public String getDescrizione() {
+        return descrizione;
     }
 
-    public void setDescrizioneDettagliata(String descrizioneDettagliata) {
-        this.descrizioneDettagliata = descrizioneDettagliata;
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
     }
 
-    public String getTecnicaPrincipale() {
-        return tecnicaPrincipale;
+    public java.time.LocalDate getDataInizio() {
+        return dataInizio;
     }
 
-    public void setTecnicaPrincipale(String tecnicaPrincipale) {
-        this.tecnicaPrincipale = tecnicaPrincipale;
+    public void setDataInizio(java.time.LocalDate dataInizio) {
+        this.dataInizio = dataInizio;
     }
 
-    public String getAmbienteColtivazione() {
-        return ambienteColtivazione;
+    public java.time.LocalDate getDataFine() {
+        return dataFine;
     }
 
-    public void setAmbienteColtivazione(String ambienteColtivazione) {
-        this.ambienteColtivazione = ambienteColtivazione;
+    public void setDataFine(java.time.LocalDate dataFine) {
+        this.dataFine = dataFine;
     }
 
     @Override
@@ -78,9 +79,9 @@ public class MetodoDiColtivazione {
         return "MetodoDiColtivazione{" +
                 "id=" + id +
                 ", nome='" + nome + '\'' +
-                ", descrizioneDettagliata='" + descrizioneDettagliata + '\'' +
-                ", tecnicaPrincipale='" + tecnicaPrincipale + '\'' +
-                ", ambienteColtivazione='" + ambienteColtivazione + '\'' +
+                ", descrizione='" + descrizione + '\'' +
+                ", dataInizio=" + dataInizio +
+                ", dataFine=" + dataFine +
                 '}';
     }
 }

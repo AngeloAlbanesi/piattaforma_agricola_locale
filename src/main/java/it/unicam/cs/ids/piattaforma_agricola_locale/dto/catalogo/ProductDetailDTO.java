@@ -4,6 +4,7 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.coltivazione.MetodoDiColtivazioneDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserPublicDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
@@ -34,6 +35,7 @@ public class ProductDetailDTO {
     private TipoOrigineProdotto tipoOrigine;
     private Long idProcessoTrasformazioneOriginario;
     private Long idMetodoDiColtivazione;
+    private MetodoDiColtivazioneDTO metodoDiColtivazione;
     private UserPublicDTO venditore;
     private List<CertificazioneDTO> certificazioni;
 }

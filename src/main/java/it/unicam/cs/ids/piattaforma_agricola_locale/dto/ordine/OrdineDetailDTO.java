@@ -29,6 +29,7 @@ public class OrdineDetailDTO {
     private double importoTotale;
     private StatoCorrente statoCorrente;
     private UserPublicDTO acquirente;
+    private Long idVenditore;
     private List<RigaOrdineDTO> righeOrdine;
 
     /**

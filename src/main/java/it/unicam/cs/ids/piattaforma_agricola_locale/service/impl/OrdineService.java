@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.CarrelloVuotoException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.OrdineException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileAlCheckoutException;
@@ -43,6 +45,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.IMetodoPag
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.PagamentoException;
 
 @Service
+@Slf4j
 public class OrdineService implements IOrdineService, IOrdineObservable {
 
     private final IOrdineRepository ordineRepository;
@@ -168,7 +171,22 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
         }
 
         // NUOVA LOGICA: Cerca direttamente gli ordini per venditore
-        return ordineRepository.findByVenditore(venditore);
+        List<Ordine> ordini = ordineRepository.findByVenditore(venditore);
+
+        // DEBUG: Log detailed information about returned orders
+        log.info("DEBUG getOrdiniVenditore - Vendor: {}, Found {} orders",
+                venditore.getIdUtente(), ordini.size());
+
+        ordini.forEach(ordine -> {
+            Long ordineVendorId = ordine.getVenditore() != null ? ordine.getVenditore().getIdUtente() : null;
+            log.info("DEBUG Order: {} - DirectVendor: {}, RequestedVendor: {}, Match: {}",
+                    ordine.getIdOrdine(),
+                    ordineVendorId,
+                    venditore.getIdUtente(),
+                    ordineVendorId != null && ordineVendorId.equals(venditore.getIdUtente()));
+        });
+
+        return ordini;
     }
 
     /**

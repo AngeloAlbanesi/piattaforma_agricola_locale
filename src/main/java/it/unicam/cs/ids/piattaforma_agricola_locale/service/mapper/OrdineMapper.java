@@ -42,6 +42,7 @@ public interface OrdineMapper {
     @Mapping(target = "importoTotale", source = "importoTotale")
     @Mapping(target = "statoCorrente", source = "statoOrdine")
     @Mapping(target = "acquirente", source = "acquirente", qualifiedByName = "acquirenteToUserPublicDTO")
+    @Mapping(target = "idVenditore", source = "venditore.idUtente")
     @Mapping(target = "righeOrdine", source = "righeOrdine", qualifiedByName = "righeOrdineToDTO")
     OrdineDetailDTO toDetailDTO(Ordine ordine);
 
@@ -66,6 +67,7 @@ public interface OrdineMapper {
     @Mapping(target = "statoCorrente", source = "statoOrdine")
     @Mapping(target = "nomeAcquirente", expression = "java(ordine.getAcquirente().getNome() + \" \" + ordine.getAcquirente().getCognome())")
     @Mapping(target = "idAcquirente", source = "acquirente.idUtente")
+    @Mapping(target = "idVenditore", source = "venditore.idUtente")
     @Mapping(target = "numeroArticoli", expression = "java(ordine.getRigheOrdine() != null ? ordine.getRigheOrdine().size() : 0)")
     OrdineSummaryDTO toSummaryDTO(Ordine ordine);
 
@@ -194,6 +196,7 @@ public interface OrdineMapper {
 
         // Informazioni venditore principale
         if (ordine.getVenditore() != null) {
+            dto.setIdVenditore(ordine.getVenditore().getIdUtente());
             dto.setNomeVenditore(ordine.getVenditore().getNome() + " " + ordine.getVenditore().getCognome());
             dto.setEmailVenditore(ordine.getVenditore().getEmail());
             if (ordine.getVenditore().getDatiAzienda() != null) {
@@ -228,6 +231,11 @@ public interface OrdineMapper {
         dto.setDataOrdine(ordine.getDataOrdine());
         dto.setImportoTotale(ordine.getImportoTotale());
         dto.setStatoCorrente(ordine.getStatoOrdine());
+        
+        // Informazioni venditore
+        if (ordine.getVenditore() != null) {
+            dto.setIdVenditore(ordine.getVenditore().getIdUtente());
+        }
 
         // Informazioni acquirente
         if (ordine.getAcquirente() != null) {

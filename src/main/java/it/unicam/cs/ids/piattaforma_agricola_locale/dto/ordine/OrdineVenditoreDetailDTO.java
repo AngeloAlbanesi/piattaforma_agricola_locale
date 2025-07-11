@@ -27,6 +27,7 @@ public class OrdineVenditoreDetailDTO {
     private Date dataOrdine;
     private double importoTotale;
     private StatoCorrente statoCorrente;
+    private Long idVenditore;
 
     // Informazioni dell'acquirente
     private String nomeAcquirente;

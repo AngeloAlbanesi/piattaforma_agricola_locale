@@ -32,6 +32,7 @@ public class OrdineExtendedSummaryDTO {
     private int numeroArticoli;
 
     // Informazioni del venditore
+    private Long idVenditore;
     private String nomeVenditore;
     private String emailVenditore;
     private String nomeAziendaVenditore;

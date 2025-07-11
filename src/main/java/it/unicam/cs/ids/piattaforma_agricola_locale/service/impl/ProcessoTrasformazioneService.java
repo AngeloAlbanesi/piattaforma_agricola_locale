@@ -375,7 +375,7 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
             throw new IllegalArgumentException("Il processo non è collegato al prodotto specificato");
         }
         
-        if (!prodottoId.equals(prodotto.getIdProcessoTrasformazioneOriginario())) {
+        if (!processoId.equals(prodotto.getIdProcessoTrasformazioneOriginario())) {
             throw new IllegalArgumentException("Il prodotto non è collegato al processo specificato");
         }
         

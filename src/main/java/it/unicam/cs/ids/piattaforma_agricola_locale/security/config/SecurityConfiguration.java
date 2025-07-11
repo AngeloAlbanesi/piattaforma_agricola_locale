@@ -34,6 +34,7 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 new AntPathRequestMatcher("/api/auth/**"),
                                 new AntPathRequestMatcher("/api/prodotti"),
+                                new AntPathRequestMatcher("/api/prodotti/*/metodi-coltivazione"),
                                 new AntPathRequestMatcher("/api/pacchetti"),
                                 new AntPathRequestMatcher("/api/azienda/{id}/geocode"),
                                 new AntPathRequestMatcher("/api/azienda/{id}/distanza"),

@@ -390,11 +390,18 @@ public class ProdottoController {
 
     /**
      * Recupera il metodo di coltivazione associato a un prodotto.
+     * Endpoint pubblico accessibile a tutti gli utenti.
      */
     @GetMapping("/{id}/metodi-coltivazione")
     public ResponseEntity<MetodoDiColtivazioneDTO> getCultivationMethod(@PathVariable Long id) {
         return prodottoService.getProdottoById(id)
                 .map(prodotto -> {
+                    // Verifica che il prodotto sia approvato prima di mostrare i metodi di coltivazione
+                    if (prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO) {
+                        log.warn("Attempt to access cultivation method for non-approved product ID: {}", id);
+                        return ResponseEntity.notFound().<MetodoDiColtivazioneDTO>build();
+                    }
+                    
                     MetodoDiColtivazione metodo = produttoreService.getMetodoDiColtivazioneByProdotto(id);
                     if (metodo != null) {
                         MetodoDiColtivazioneDTO dto = metodiColtivazioneMapper.toDTO(metodo);

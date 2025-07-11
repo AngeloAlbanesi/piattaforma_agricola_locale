@@ -33,10 +33,16 @@ public interface IOrdineRepository extends JpaRepository<Ordine, Long> {
     List<Ordine> findByStato(@Param("stato") StatoCorrente stato);
 
     /**
-     * Trova tutti gli ordini relativi a un venditore
+     * Trova tutti gli ordini di un venditore specifico
      * 
      * @param venditore il venditore
-     * @return lista degli ordini che contengono prodotti del venditore
+     * @return lista degli ordini del venditore
+     */
+    List<Ordine> findByVenditore(Venditore venditore);
+
+    /**
+     * DEPRECATO: Trova tutti gli ordini relativi a un venditore (vecchia logica)
+     * Mantenuto per compatibilità durante la transizione
      */
     @Query("SELECT o FROM Ordine o JOIN o.righeOrdine r WHERE r.idAcquistabile IN :ids AND r.tipoAcquistabile = 'PRODOTTO'")
     List<Ordine> findByProdottoIds(@Param("ids") List<Long> ids);

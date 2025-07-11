@@ -2,7 +2,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.ordine.CreateOrdineRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.ordine.OrdineDetailDTO;
-import it.unicam.cs.ids.piattaforma_agricola_locale.dto.ordine.OrdineSummaryDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.ordine.OrdineExtendedSummaryDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.CarrelloVuotoException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.OrdineException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileAlCheckoutException;
@@ -32,6 +32,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,42 +62,56 @@ public class OrdineController {
             Acquirente acquirente = (Acquirente) utenteService.trovaUtentePerEmail(email)
                     .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-            // Create order from cart
-            Ordine ordine = ordineService.creaOrdineDaCarrello(acquirente);
+            // NUOVO: Create multiple orders from cart (one per vendor)
+            List<Ordine> ordini = ordineService.creaOrdiniDaCarrello(acquirente);
 
-            // Process payment if specified
+            // Process payment for each order if specified
             if (request.getMetodoPagamento() != null && !request.getMetodoPagamento().trim().isEmpty()) {
-                try {
-                    IMetodoPagamentoStrategy strategiaPagamento = getPaymentStrategy(request.getMetodoPagamento());
-                    ordineService.confermaPagamento(ordine, strategiaPagamento);
-                    log.info("Payment processed successfully for order: {}", ordine.getIdOrdine());
-                } catch (IllegalArgumentException iae) {
-                    log.warn("Invalid payment method for order: {}, Method: {}", ordine.getIdOrdine(), request.getMetodoPagamento());
-                    // L'ordine rimane in stato ATTESA_PAGAMENTO
-                } catch (PagamentoException pe) {
-                    log.warn("Payment failed for order: {}, Error: {}", ordine.getIdOrdine(), pe.getMessage());
-                    // L'ordine rimane in stato ATTESA_PAGAMENTO
-                } catch (OrdineException oe) {
-                    log.error("Order error during payment processing for order: {}, Error: {}", ordine.getIdOrdine(), oe.getMessage());
-                    // Rilancia l'eccezione per essere gestita dal blocco catch esterno
-                    throw oe;
+                for (Ordine ordine : ordini) {
+                    try {
+                        IMetodoPagamentoStrategy strategiaPagamento = getPaymentStrategy(request.getMetodoPagamento());
+                        ordineService.confermaPagamento(ordine, strategiaPagamento);
+                        log.info("Payment processed successfully for order: {}", ordine.getIdOrdine());
+                    } catch (IllegalArgumentException iae) {
+                        log.warn("Invalid payment method for order: {}, Method: {}", ordine.getIdOrdine(),
+                                request.getMetodoPagamento());
+                        // L'ordine rimane in stato ATTESA_PAGAMENTO
+                    } catch (PagamentoException pe) {
+                        log.warn("Payment failed for order: {}, Error: {}", ordine.getIdOrdine(), pe.getMessage());
+                        // L'ordine rimane in stato ATTESA_PAGAMENTO
+                    } catch (OrdineException oe) {
+                        log.error("Order error during payment processing for order: {}, Error: {}",
+                                ordine.getIdOrdine(), oe.getMessage());
+                        // Continua con gli altri ordini invece di fallire tutto
+                    }
                 }
             }
 
-            log.info("Order created successfully - OrderId: {}, User: {}", ordine.getIdOrdine(), email);
+            log.info("Orders created successfully - OrderCount: {}, User: {}", ordini.size(), email);
 
-            // Inietta l'AcquistabileService nelle righe ordine prima di convertirle in DTO
-            ordineMapper.injectAcquistabileService(ordine, ((it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.OrdineService) ordineService).getCarrelloService().getAcquistabileService());
-            
-            OrdineDetailDTO ordineDTO = ordineMapper.toDetailDTO(ordine);
-            return ResponseEntity.status(HttpStatus.CREATED).body(ordineDTO);
+            // Convert all orders to DTOs
+            List<OrdineDetailDTO> ordiniDTO = new ArrayList<>();
+            for (Ordine ordine : ordini) {
+                // Inietta l'AcquistabileService nelle righe ordine prima di convertirle in DTO
+                ordineMapper.injectAcquistabileService(ordine,
+                        ((it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.OrdineService) ordineService)
+                                .getCarrelloService().getAcquistabileService());
+                ordiniDTO.add(ordineMapper.toDetailDTO(ordine));
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "ordini", ordiniDTO,
+                    "count", ordini.size(),
+                    "message", "Ordini creati con successo per " + ordini.size() + " venditori"));
 
         } catch (CarrelloVuotoException e) {
             log.warn("Cannot create order with empty cart - User: {}", authentication.getName());
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Carrello vuoto", "message", "Non è possibile creare un ordine con il carrello vuoto"));
+                    .body(Map.of("error", "Carrello vuoto", "message",
+                            "Non è possibile creare un ordine con il carrello vuoto"));
         } catch (QuantitaNonDisponibileAlCheckoutException e) {
-            log.warn("Insufficient quantity at checkout - User: {}, Error: {}", authentication.getName(), e.getMessage());
+            log.warn("Insufficient quantity at checkout - User: {}, Error: {}", authentication.getName(),
+                    e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "Quantità non disponibile", "message", e.getMessage()));
         } catch (OrdineException e) {
@@ -106,13 +121,14 @@ public class OrdineController {
         } catch (Exception e) {
             log.error("Unexpected error creating order - User: {}", authentication.getName(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Errore interno", "message", "Si è verificato un errore durante la creazione dell'ordine"));
+                    .body(Map.of("error", "Errore interno", "message",
+                            "Si è verificato un errore durante la creazione dell'ordine"));
         }
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ACQUIRENTE')")
-    public ResponseEntity<Page<OrdineSummaryDTO>> getUserOrders(
+    public ResponseEntity<Page<OrdineExtendedSummaryDTO>> getUserOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "dataOrdine") String sortBy,
@@ -130,22 +146,29 @@ public class OrdineController {
             // Get user orders
             List<Ordine> ordini = ordineService.getOrdiniAcquirente(acquirente);
 
-            // Convert to DTOs
-            List<OrdineSummaryDTO> ordiniDTO = ordini.stream()
-                    .map(ordineMapper::toSummaryDTO)
+            // Inietta l'AcquistabileService nelle righe ordine prima di convertirle in DTO
+            for (Ordine ordine : ordini) {
+                ordineMapper.injectAcquistabileService(ordine,
+                        ((it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.OrdineService) ordineService)
+                                .getCarrelloService().getAcquistabileService());
+            }
+
+            // Convert to extended DTOs with detailed information
+            List<OrdineExtendedSummaryDTO> ordiniDTO = ordini.stream()
+                    .map(ordineMapper::toExtendedSummaryDTO)
                     .collect(Collectors.toList());
 
             // Apply sorting
-            Sort sort = sortDirection.equalsIgnoreCase("desc") ?
-                    Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+            Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
+                    : Sort.by(sortBy).ascending();
 
             // Manual pagination since we already have the data
             Pageable pageable = PageRequest.of(page, size, sort);
             int start = (int) pageable.getOffset();
             int end = Math.min((start + pageable.getPageSize()), ordiniDTO.size());
 
-            List<OrdineSummaryDTO> pageContent = ordiniDTO.subList(start, end);
-            Page<OrdineSummaryDTO> ordiniPage = new PageImpl<>(pageContent, pageable, ordiniDTO.size());
+            List<OrdineExtendedSummaryDTO> pageContent = ordiniDTO.subList(start, end);
+            Page<OrdineExtendedSummaryDTO> ordiniPage = new PageImpl<>(pageContent, pageable, ordiniDTO.size());
 
             return ResponseEntity.ok(ordiniPage);
 
@@ -180,19 +203,23 @@ public class OrdineController {
                 log.warn("Unauthorized access to order - OrderId: {}, User: {}, Owner: {}",
                         id, email, ordine.getAcquirente().getEmail());
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body(Map.of("error", "Accesso negato", "message", "Non hai i permessi per visualizzare questo ordine"));
+                        .body(Map.of("error", "Accesso negato", "message",
+                                "Non hai i permessi per visualizzare questo ordine"));
             }
 
             // Inietta l'AcquistabileService nelle righe ordine prima di convertirle in DTO
-            ordineMapper.injectAcquistabileService(ordine, ((it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.OrdineService) ordineService).getCarrelloService().getAcquistabileService());
-            
+            ordineMapper.injectAcquistabileService(ordine,
+                    ((it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.OrdineService) ordineService)
+                            .getCarrelloService().getAcquistabileService());
+
             OrdineDetailDTO ordineDTO = ordineMapper.toDetailDTO(ordine);
             return ResponseEntity.ok(ordineDTO);
 
         } catch (Exception e) {
             log.error("Error getting order details - OrderId: {}, User: {}", id, authentication.getName(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Errore interno", "message", "Si è verificato un errore durante il recupero dell'ordine"));
+                    .body(Map.of("error", "Errore interno", "message",
+                            "Si è verificato un errore durante il recupero dell'ordine"));
         }
     }
 
@@ -256,7 +283,8 @@ public class OrdineController {
         } catch (Exception e) {
             log.error("Error confirming payment - OrderId: {}, User: {}", id, authentication.getName(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Errore interno", "message", "Si è verificato un errore durante la conferma del pagamento"));
+                    .body(Map.of("error", "Errore interno", "message",
+                            "Si è verificato un errore durante la conferma del pagamento"));
         }
     }
 
@@ -290,8 +318,7 @@ public class OrdineController {
                     "ordineId", ordine.getIdOrdine(),
                     "stato", ordine.getStatoOrdine(),
                     "dataOrdine", ordine.getDataOrdine(),
-                    "importoTotale", ordine.getImportoTotale()
-            );
+                    "importoTotale", ordine.getImportoTotale());
 
             return ResponseEntity.ok(status);
 
@@ -351,7 +378,8 @@ public class OrdineController {
         } catch (Exception e) {
             log.error("Error cancelling order - OrderId: {}, User: {}", id, authentication.getName(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Errore interno", "message", "Si è verificato un errore durante la cancellazione"));
+                    .body(Map.of("error", "Errore interno", "message",
+                            "Si è verificato un errore durante la cancellazione"));
         }
     }
 

@@ -1,7 +1,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.ordine.OrdineDetailDTO;
-import it.unicam.cs.ids.piattaforma_agricola_locale.dto.ordine.OrdineSummaryDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.ordine.OrdineVenditoreDetailDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.OrdineException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.RigaOrdine;
@@ -40,7 +40,7 @@ public class OrdineVenditoreController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
-    public ResponseEntity<Page<OrdineSummaryDTO>> getVendorOrders(
+    public ResponseEntity<Page<OrdineVenditoreDetailDTO>> getVendorOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "dataOrdine") String sortBy,
@@ -66,22 +66,29 @@ public class OrdineVenditoreController {
                         .collect(Collectors.toList());
             }
 
-            // Convert to DTOs
-            List<OrdineSummaryDTO> ordiniDTO = ordiniVenditore.stream()
-                    .map(ordineMapper::toSummaryDTO)
+            // Inietta l'AcquistabileService nelle righe ordine prima di convertirle in DTO
+            for (Ordine ordine : ordiniVenditore) {
+                ordineMapper.injectAcquistabileService(ordine,
+                        ((it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.OrdineService) ordineService)
+                                .getCarrelloService().getAcquistabileService());
+            }
+
+            // Convert to detailed DTOs with vendor-specific information
+            List<OrdineVenditoreDetailDTO> ordiniDTO = ordiniVenditore.stream()
+                    .map(ordineMapper::toVenditoreDetailDTO)
                     .collect(Collectors.toList());
 
             // Apply sorting
-            Sort sort = sortDirection.equalsIgnoreCase("desc") ?
-                    Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+            Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
+                    : Sort.by(sortBy).ascending();
 
             // Manual pagination
             Pageable pageable = PageRequest.of(page, size, sort);
             int start = (int) pageable.getOffset();
             int end = Math.min((start + pageable.getPageSize()), ordiniDTO.size());
 
-            List<OrdineSummaryDTO> pageContent = ordiniDTO.subList(start, end);
-            Page<OrdineSummaryDTO> ordiniPage = new PageImpl<>(pageContent, pageable, ordiniDTO.size());
+            List<OrdineVenditoreDetailDTO> pageContent = ordiniDTO.subList(start, end);
+            Page<OrdineVenditoreDetailDTO> ordiniPage = new PageImpl<>(pageContent, pageable, ordiniDTO.size());
 
             return ResponseEntity.ok(ordiniPage);
 
@@ -210,6 +217,9 @@ public class OrdineVenditoreController {
             Venditore venditore = (Venditore) utenteService.trovaUtentePerEmail(email)
                     .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
+            log.info("Vendor details - Email: {}, VendorId: {}, OrderId: {}",
+                    email, venditore.getIdUtente(), id);
+
             Optional<Ordine> ordineOpt = ordineService.findOrdineById(id);
             if (ordineOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
@@ -242,8 +252,7 @@ public class OrdineVenditoreController {
 
             Map<String, Object> response = Map.of(
                     "message", "Ordine marcato come spedito",
-                    "trackingNumber", shippingInfo != null ? shippingInfo.getTrackingNumber() : "N/A"
-            );
+                    "trackingNumber", shippingInfo != null ? shippingInfo.getTrackingNumber() : "N/A");
 
             return ResponseEntity.ok(response);
 
@@ -257,6 +266,66 @@ public class OrdineVenditoreController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Errore interno",
                             "message", "Si è verificato un errore durante la spedizione"));
+        }
+    }
+
+    @PutMapping("/{id}/avanza")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
+    public ResponseEntity<?> advanceOrder(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        try {
+            log.info("Advancing order state - OrderId: {}, Vendor: {}", id, authentication.getName());
+
+            String email = authentication.getName();
+            Venditore venditore = (Venditore) utenteService.trovaUtentePerEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+            Optional<Ordine> ordineOpt = ordineService.findOrdineById(id);
+            if (ordineOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Ordine ordine = ordineOpt.get();
+
+            // Check if the vendor has products in this order
+            boolean hasProductsInOrder = ordine.getRigheOrdine().stream()
+                    .anyMatch(riga -> isVendorProduct(riga, venditore));
+
+            if (!hasProductsInOrder) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", "Accesso negato",
+                                "message", "Non hai prodotti in questo ordine"));
+            }
+
+            // Store previous state for response
+            StatoCorrente statoVecchio = ordine.getStatoOrdine();
+
+            // Use the service to advance order state
+            Ordine ordineAggiornato = ordineService.avanzaStatoOrdine(ordine, venditore);
+
+            log.info("Order state advanced successfully - OrderId: {}, NewState: {}, Vendor: {}",
+                    id, ordineAggiornato.getStatoOrdine(), email);
+
+            Map<String, Object> response = Map.of(
+                    "message", "Stato ordine avanzato con successo",
+                    "statoVecchio", statoVecchio.toString(),
+                    "statoNuovo", ordineAggiornato.getStatoOrdine().toString(),
+                    "ordineId", id);
+
+            return ResponseEntity.ok(response);
+
+        } catch (OrdineException e) {
+            log.error("Error advancing order state - OrderId: {}, Vendor: {}, Error: {}",
+                    id, authentication.getName(), e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Errore nell'avanzamento", "message", e.getMessage()));
+        } catch (Exception e) {
+            log.error("Error advancing order state - OrderId: {}, Vendor: {}", id, authentication.getName(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Errore interno",
+                            "message", "Si è verificato un errore durante l'avanzamento dell'ordine"));
         }
     }
 
@@ -297,8 +366,7 @@ public class OrdineVenditoreController {
                     "inProgressOrders", inProgressOrders,
                     "shippedOrders", shippedOrders,
                     "deliveredOrders", deliveredOrders,
-                    "totalRevenue", totalRevenue
-            );
+                    "totalRevenue", totalRevenue);
 
             return ResponseEntity.ok(stats);
 
@@ -312,20 +380,130 @@ public class OrdineVenditoreController {
 
     private boolean isVendorProduct(RigaOrdine riga, Venditore venditore) {
         // Check if the product/package in this order line belongs to the vendor
-        // This would depend on the specific implementation of your Acquistabile hierarchy
-        // For now, we'll assume products have a reference to their vendor
         try {
-            return riga.getAcquistabile() != null &&
-                    riga.getAcquistabile().toString().contains(venditore.getIdUtente().toString());
+            log.debug("Checking vendor ownership - RigaId: {}, VendorId: {}",
+                    riga.getIdRiga(), venditore != null ? venditore.getIdUtente() : "null");
+
+            if (venditore == null) {
+                log.warn("Venditore is null");
+                return false;
+            }
+
+            if (riga.getAcquistabile() == null) {
+                log.warn("Acquistabile is null for RigaOrdine {} - trying to reload", riga.getIdRiga());
+
+                // Force reload of the RigaOrdine with its Acquistabile relationship
+                try {
+                    Long ordineId = riga.getOrdine().getIdOrdine();
+                    log.info("Reloading Ordine {} for RigaOrdine {}", ordineId, riga.getIdRiga());
+
+                    // Get fresh copy from database with all relationships loaded
+                    Optional<Ordine> ordineReloaded = ordineService.findOrdineById(ordineId);
+                    if (ordineReloaded.isPresent()) {
+                        log.info("Successfully reloaded Ordine {}, checking {} righe ordine",
+                                ordineId, ordineReloaded.get().getRigheOrdine().size());
+
+                        Long rigaId = riga.getIdRiga(); // Store the ID before lambda
+
+                        // Log all RigaOrdine IDs in the reloaded order
+                        log.info("Available RigaOrdine IDs in reloaded order: {}",
+                                ordineReloaded.get().getRigheOrdine().stream()
+                                        .map(r -> r.getIdRiga())
+                                        .collect(Collectors.toList()));
+
+                        // Find the corresponding RigaOrdine in the reloaded order
+                        Optional<RigaOrdine> rigaReloaded = ordineReloaded.get().getRigheOrdine().stream()
+                                .filter(r -> r.getIdRiga().equals(rigaId))
+                                .findFirst();
+
+                        if (rigaReloaded.isPresent()) {
+                            RigaOrdine reloadedRiga = rigaReloaded.get();
+                            log.info("Found reloaded RigaOrdine {} - Acquistabile is {}",
+                                    rigaId, reloadedRiga.getAcquistabile() != null ? "NOT NULL" : "NULL");
+
+                            // Check if AcquistabileService is injected
+                            log.info(
+                                    "RigaOrdine {} - TipoAcquistabile: {}, IdAcquistabile: {}, AcquistabileService: {}",
+                                    rigaId,
+                                    reloadedRiga.getTipoAcquistabile(),
+                                    reloadedRiga.getIdAcquistabile(),
+                                    "service is "
+                                            + (reloadedRiga.toString().contains("acquistabileService") ? "available"
+                                                    : "NOT available"));
+
+                            // Force inject AcquistabileService if missing
+                            try {
+                                reloadedRiga.setAcquistabileService(
+                                        ((it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.OrdineService) ordineService)
+                                                .getCarrelloService().getAcquistabileService());
+                                log.info("Injected AcquistabileService into reloaded RigaOrdine {}", rigaId);
+
+                                // Try again to get Acquistabile
+                                if (reloadedRiga.getAcquistabile() != null) {
+                                    log.info(
+                                            "Successfully retrieved Acquistabile after service injection for RigaOrdine {}",
+                                            rigaId);
+                                    // Recursively call with the reloaded riga
+                                    return isVendorProduct(reloadedRiga, venditore);
+                                } else {
+                                    log.error("Still null Acquistabile after service injection for RigaOrdine {}",
+                                            rigaId);
+                                    return false;
+                                }
+                            } catch (Exception serviceException) {
+                                log.error("Failed to inject AcquistabileService: {}", serviceException.getMessage());
+                                return false;
+                            }
+                        } else {
+                            log.error("Could not find RigaOrdine {} in reloaded order", rigaId);
+                            return false;
+                        }
+                    } else {
+                        log.error("Failed to reload Ordine {} for RigaOrdine {}", ordineId, riga.getIdRiga());
+                        return false;
+                    }
+                } catch (Exception reloadException) {
+                    log.error("Exception during reload of RigaOrdine {}: {}", riga.getIdRiga(),
+                            reloadException.getMessage(), reloadException);
+                    return false;
+                }
+            }
+
+            Venditore venditoreProdotto = riga.getAcquistabile().getVenditore();
+
+            // Force lazy loading if needed
+            if (venditoreProdotto != null) {
+                venditoreProdotto.getIdUtente(); // This will trigger lazy loading
+            }
+
+            log.debug("Product details - AcquistabileId: {}, AcquistabileType: {}, VenditoreProdotto: {}",
+                    riga.getAcquistabile().getId(),
+                    riga.getAcquistabile().getClass().getSimpleName(),
+                    venditoreProdotto != null ? venditoreProdotto.getIdUtente() : "null");
+
+            if (venditoreProdotto == null) {
+                log.warn("VenditoreProdotto is null for Acquistabile {} of type {}",
+                        riga.getAcquistabile().getId(),
+                        riga.getAcquistabile().getClass().getSimpleName());
+                return false;
+            }
+
+            boolean isOwner = venditoreProdotto.getIdUtente().equals(venditore.getIdUtente());
+            log.debug("Ownership check result: {} (ProductVendorId: {} vs RequestVendorId: {})",
+                    isOwner, venditoreProdotto.getIdUtente(), venditore.getIdUtente());
+
+            return isOwner;
         } catch (Exception e) {
-            log.warn("Error checking vendor ownership for order line", e);
+            log.error("Error checking vendor ownership for order line - OrderLine: {}, Vendor: {}, Error: {}",
+                    riga.getIdRiga(), venditore != null ? venditore.getIdUtente() : "null", e.getMessage(), e);
             return false;
         }
     }
 
     private Ordine createFilteredOrderForVendor(Ordine originalOrder, Venditore venditore) {
         // Create a copy of the order with only the vendor's products
-        // This is a simplified implementation - in a real scenario you might want to create
+        // This is a simplified implementation - in a real scenario you might want to
+        // create
         // a proper deep copy or use a builder pattern
         Ordine filteredOrder = new Ordine();
         filteredOrder.setIdOrdine(originalOrder.getIdOrdine());

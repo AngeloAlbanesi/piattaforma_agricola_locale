@@ -17,6 +17,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdutto
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IUtenteService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.MetodoDiColtivazioneMapper;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.ProdottoMapper;
+import it.unicam.cs.ids.piattaforma_agricola_locale.security.RequiresAccreditation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -152,6 +153,7 @@ public class ProdottoController {
     }
 
     @PostMapping
+    @RequiresAccreditation
     @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
     public ResponseEntity<ProductDetailDTO> createProduct(
             @Valid @RequestBody CreateProductRequestDTO request,
@@ -195,6 +197,7 @@ public class ProdottoController {
     }
 
     @PutMapping("/{id}")
+    @RequiresAccreditation
     @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE','DISTRIBUTORE_TIPICITA') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     @CacheEvict(value = "products", key = "#id + '_owner_' + #authentication.name")
     public ResponseEntity<ProductDetailDTO> updateProduct(
@@ -239,6 +242,7 @@ public class ProdottoController {
     }
 
     @DeleteMapping("/{id}")
+    @RequiresAccreditation
     @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     @CacheEvict(value = "products", key = "#id + '_owner_' + #authentication.name")
     public ResponseEntity<Void> deleteProduct(
@@ -258,6 +262,7 @@ public class ProdottoController {
     }
 
     @PutMapping("/{id}/quantita")
+    @RequiresAccreditation
     @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE','DISTRIBUTORE_TIPICITA') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     @CacheEvict(value = "products", key = "#id + '_owner_' + #authentication.name")
     public ResponseEntity<ProductDetailDTO> updateProductQuantity(
@@ -286,6 +291,7 @@ public class ProdottoController {
      * 
      */
     @PostMapping("/{id}/certificazioni")
+    @RequiresAccreditation
     @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE','DISTRIBUTORE_TIPICITA')")
     public ResponseEntity<CertificazioneDTO> addCertificationToProduct(
             @PathVariable Long id,
@@ -341,6 +347,7 @@ public class ProdottoController {
     }
 
     @DeleteMapping("/{id}/certificazioni/{certId}")
+    @RequiresAccreditation
     @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE','DISTRIBUTORE_TIPICITA') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     public ResponseEntity<Void> removeCertificationFromProduct(
             @PathVariable Long id,
@@ -394,6 +401,7 @@ public class ProdottoController {
      * coltivati.
      */
     @PostMapping("/{id}/metodi-coltivazione")
+    @RequiresAccreditation
     @PreAuthorize("hasRole('PRODUTTORE') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     public ResponseEntity<MetodoDiColtivazioneDTO> createCultivationMethod(
             @PathVariable Long id,
@@ -469,6 +477,7 @@ public class ProdottoController {
      * Solo il produttore proprietario può aggiornare i metodi di coltivazione.
      */
     @PutMapping("/{id}/metodi-coltivazione")
+    @RequiresAccreditation
     @PreAuthorize("hasRole('PRODUTTORE') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     public ResponseEntity<MetodoDiColtivazioneDTO> updateCultivationMethod(
             @PathVariable Long id,
@@ -522,6 +531,7 @@ public class ProdottoController {
      * Solo il produttore proprietario può eliminare i metodi di coltivazione.
      */
     @DeleteMapping("/{id}/metodi-coltivazione")
+    @RequiresAccreditation
     @PreAuthorize("hasRole('PRODUTTORE') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
     public ResponseEntity<Void> deleteCultivationMethod(
             @PathVariable Long id,

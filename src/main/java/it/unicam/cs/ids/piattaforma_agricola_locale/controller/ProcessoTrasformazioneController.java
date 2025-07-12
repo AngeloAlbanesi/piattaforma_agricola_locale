@@ -10,6 +10,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IUtenteSe
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.ProcessoMapper;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.TraceabilityMapper;
+import it.unicam.cs.ids.piattaforma_agricola_locale.security.RequiresAccreditation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,7 @@ public class ProcessoTrasformazioneController {
      * Only users with TRASFORMATORE role can create processes.
      */
     @PostMapping
+    @RequiresAccreditation
     @PreAuthorize("hasRole('TRASFORMATORE')")
     public ResponseEntity<ProcessoTrasformazioneDTO> createTransformationProcess(
             @Valid @RequestBody CreateProcessoRequestDTO createProcessoRequest,
@@ -66,15 +68,14 @@ public class ProcessoTrasformazioneController {
                 createProcessoRequest.getDescrizione(),
                 trasformatore,
                 createProcessoRequest.getMetodoProduzione());
-        
+
         // Se e specificato un prodotto finale, collegalo al processo
         if (createProcessoRequest.getProdottoFinaleId() != null) {
             try {
                 processo = processoTrasformazioneService.collegaProcessoAProdotto(
-                        processo.getId(), 
-                        createProcessoRequest.getProdottoFinaleId()
-                );
-                log.info("Connected process ID: {} to product ID: {} during creation", 
+                        processo.getId(),
+                        createProcessoRequest.getProdottoFinaleId());
+                log.info("Connected process ID: {} to product ID: {} during creation",
                         processo.getId(), createProcessoRequest.getProdottoFinaleId());
             } catch (Exception e) {
                 log.warn("Failed to connect process to product during creation: {}", e.getMessage());
@@ -184,6 +185,7 @@ public class ProcessoTrasformazioneController {
      * Only the owner can delete their processes.
      */
     @DeleteMapping("/{id}")
+    @RequiresAccreditation
     @PreAuthorize("hasRole('TRASFORMATORE') and @ownershipValidationService.isProcessOwner(#id, authentication.name)")
     @CacheEvict(value = "users", key = "#id + '_process_owner_' + #authentication.name")
     public ResponseEntity<Void> deleteTransformationProcess(
@@ -212,6 +214,7 @@ public class ProcessoTrasformazioneController {
      * Only the owner can add phases to their processes.
      */
     @PostMapping("/{id}/fasi")
+    @RequiresAccreditation
     @PreAuthorize("hasRole('TRASFORMATORE') and @ownershipValidationService.isProcessOwner(#id, authentication.name)")
     public ResponseEntity<ProcessoTrasformazioneResponseDTO> addPhaseToProcess(
             @PathVariable Long id,
@@ -244,25 +247,26 @@ public class ProcessoTrasformazioneController {
 
     /**
      * Get traceability information for a transformation process.
-     * This endpoint provides complete traceability data including all processing phases,
+     * This endpoint provides complete traceability data including all processing
+     * phases,
      * raw materials sources, and transformation details.
      */
     @GetMapping("/{id}/tracciabilita")
     public ResponseEntity<TraceabilityDTO> getProcessTraceability(@PathVariable Long id) {
         try {
             Optional<ProcessoTrasformazione> processoOpt = processoTrasformazioneService.getProcessoTracciabilita(id);
-            
+
             if (processoOpt.isEmpty()) {
                 log.warn("Transformation process with ID {} not found for traceability", id);
                 return ResponseEntity.notFound().build();
             }
-            
+
             ProcessoTrasformazione processo = processoOpt.get();
             TraceabilityDTO traceabilityDTO = traceabilityMapper.toTraceabilityDTO(processo);
-            
+
             log.info("Retrieved traceability information for transformation process ID: {}", id);
             return ResponseEntity.ok(traceabilityDTO);
-            
+
         } catch (IllegalArgumentException e) {
             log.error("Invalid request for traceability of process ID {}: {}", id, e.getMessage());
             return ResponseEntity.badRequest().build();
@@ -273,11 +277,13 @@ public class ProcessoTrasformazioneController {
     }
 
     /**
-     * Crea o rimuove un collegamento bidirezionale tra processo di trasformazione e prodotto.
+     * Crea o rimuove un collegamento bidirezionale tra processo di trasformazione e
+     * prodotto.
      * Solo i trasformatori possono gestire i collegamenti dei loro processi.
      * /api/processi-trasformazione/{id}/collega-prodotto?prodottoId={prodottoId}&rimuovi={true/false}
      */
     @PostMapping("/{id}/collega-prodotto")
+    @RequiresAccreditation
     @PreAuthorize("hasRole('TRASFORMATORE') and @ownershipValidationService.isProcessOwner(#id, authentication.name)")
     public ResponseEntity<?> gestisciCollegamentoProcessoProdotto(
             @PathVariable Long id,
@@ -287,28 +293,28 @@ public class ProcessoTrasformazioneController {
 
         try {
             String username = authentication.getName();
-            
+
             if (rimuovi) {
                 // Rimuovi collegamento
                 ProcessoTrasformazione processo = processoTrasformazioneService
                         .scollegaProcessoDaProdotto(id, prodottoId);
-                
-                log.info("Removed connection between process ID: {} and product ID: {} by user: {}", 
+
+                log.info("Removed connection between process ID: {} and product ID: {} by user: {}",
                         id, prodottoId, username);
-                
+
                 return ResponseEntity.ok().body("Collegamento rimosso con successo");
-                
+
             } else {
                 // Crea collegamento
                 ProcessoTrasformazione processo = processoTrasformazioneService
                         .collegaProcessoAProdotto(id, prodottoId);
-                
-                log.info("Created connection between process ID: {} and product ID: {} by user: {}", 
+
+                log.info("Created connection between process ID: {} and product ID: {} by user: {}",
                         id, prodottoId, username);
-                
+
                 return ResponseEntity.ok().body("Processo e prodotto collegati con successo");
             }
-            
+
         } catch (IllegalArgumentException e) {
             log.error("Invalid request for process-product connection: {}", e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -330,23 +336,23 @@ public class ProcessoTrasformazioneController {
         try {
             // Verifica se esiste il collegamento
             var processoOpt = processoTrasformazioneService.getProcessoById(id);
-            
+
             if (processoOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
-            
+
             ProcessoTrasformazione processo = processoOpt.get();
-            
+
             // Verifica se sono collegati
-            boolean collegati = processo.getProdottoFinale() != null && 
-                              processo.getProdottoFinale().getId().equals(prodottoId);
-            
+            boolean collegati = processo.getProdottoFinale() != null &&
+                    processo.getProdottoFinale().getId().equals(prodottoId);
+
             if (collegati) {
                 return ResponseEntity.ok().body("Processo e prodotto sono collegati");
             } else {
                 return ResponseEntity.ok().body("Processo e prodotto non sono collegati");
             }
-            
+
         } catch (Exception e) {
             log.error("Error checking process-product connection: {}", e.getMessage());
             return ResponseEntity.internalServerError().build();

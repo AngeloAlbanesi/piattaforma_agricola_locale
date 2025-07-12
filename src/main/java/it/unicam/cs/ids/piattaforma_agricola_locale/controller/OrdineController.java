@@ -3,6 +3,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.ordine.CreateOrdineRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.ordine.OrdineDetailDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.ordine.OrdineExtendedSummaryDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.pagamento.PagamentoRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.CarrelloVuotoException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.OrdineException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileAlCheckoutException;
@@ -62,30 +63,15 @@ public class OrdineController {
             Acquirente acquirente = (Acquirente) utenteService.trovaUtentePerEmail(email)
                     .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-            // NUOVO: Create multiple orders from cart (one per vendor)
+            // Create multiple orders from cart (one per vendor)
+            // Gli ordini vengono creati in stato ATTESA_PAGAMENTO
             List<Ordine> ordini = ordineService.creaOrdiniDaCarrello(acquirente);
-
-            // Process payment for each order if specified
-            if (request.getMetodoPagamento() != null && !request.getMetodoPagamento().trim().isEmpty()) {
-                for (Ordine ordine : ordini) {
-                    try {
-                        IMetodoPagamentoStrategy strategiaPagamento = getPaymentStrategy(request.getMetodoPagamento());
-                        ordineService.confermaPagamento(ordine, strategiaPagamento);
-                        log.info("Payment processed successfully for order: {}", ordine.getIdOrdine());
-                    } catch (IllegalArgumentException iae) {
-                        log.warn("Invalid payment method for order: {}, Method: {}", ordine.getIdOrdine(),
-                                request.getMetodoPagamento());
-                        // L'ordine rimane in stato ATTESA_PAGAMENTO
-                    } catch (PagamentoException pe) {
-                        log.warn("Payment failed for order: {}, Error: {}", ordine.getIdOrdine(), pe.getMessage());
-                        // L'ordine rimane in stato ATTESA_PAGAMENTO
-                    } catch (OrdineException oe) {
-                        log.error("Order error during payment processing for order: {}, Error: {}",
-                                ordine.getIdOrdine(), oe.getMessage());
-                        // Continua con gli altri ordini invece di fallire tutto
-                    }
-                }
-            }
+            
+            // NOTA: Il pagamento NON viene più elaborato automaticamente qui.
+            // L'acquirente deve usare l'endpoint PUT /api/ordini/{id}/pagamento 
+            // per confermare il pagamento con i dati specifici del metodo scelto.
+            log.info("Orders created in ATTESA_PAGAMENTO state. Payment method preference: {}", 
+                    request.getMetodoPagamento());
 
             log.info("Orders created successfully - OrderCount: {}, User: {}", ordini.size(), email);
 
@@ -227,7 +213,7 @@ public class OrdineController {
     @PreAuthorize("hasRole('ACQUIRENTE')")
     public ResponseEntity<?> confirmPayment(
             @PathVariable Long id,
-            @Valid @RequestBody PaymentConfirmationRequest request,
+            @Valid @RequestBody PagamentoRequestDTO request,
             Authentication authentication) {
 
         try {
@@ -258,12 +244,30 @@ public class OrdineController {
                                 "message", "L'ordine non è nello stato corretto per confermare il pagamento"));
             }
 
-            // Get payment strategy and confirm payment
+            // Get payment strategy and confirm payment with payment data
             IMetodoPagamentoStrategy strategiaPagamento = getPaymentStrategy(request.getMetodoPagamento());
-            ordineService.confermaPagamento(ordine, strategiaPagamento);
-
-            log.info("Payment confirmed successfully - OrderId: {}, User: {}", id, email);
-            return ResponseEntity.ok(Map.of("message", "Pagamento confermato con successo"));
+            
+            // Use the new method with payment data if available, otherwise use the simple one
+            boolean pagamentoRiuscito;
+            if (hasPaymentData(request)) {
+                pagamentoRiuscito = strategiaPagamento.elaboraPagamento(ordine, request);
+            } else {
+                pagamentoRiuscito = strategiaPagamento.elaboraPagamento(ordine);
+            }
+            
+            if (pagamentoRiuscito) {
+                // Update order status manually since we're calling the strategy directly
+                ordine.setStatoCorrente(StatoCorrente.PRONTO_PER_LAVORAZIONE);
+                ordineService.aggiornaOrdine(ordine);
+                
+                log.info("Payment confirmed successfully - OrderId: {}, User: {}", id, email);
+                return ResponseEntity.ok(Map.of("message", "Pagamento confermato con successo",
+                        "ordineId", ordine.getIdOrdine(), "stato", ordine.getStatoOrdine()));
+            } else {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "Pagamento fallito", 
+                                "message", "Il pagamento non è stato autorizzato. Verificare i dati inseriti."));
+            }
 
         } catch (IllegalArgumentException e) {
             log.warn("Invalid payment method - OrderId: {}, User: {}, Method: {}",
@@ -396,17 +400,10 @@ public class OrdineController {
         }
     }
 
-    // Inner class for payment confirmation request
-    public static class PaymentConfirmationRequest {
-        @NotBlank(message = "Il metodo di pagamento è obbligatorio")
-        private String metodoPagamento;
-
-        public String getMetodoPagamento() {
-            return metodoPagamento;
-        }
-
-        public void setMetodoPagamento(String metodoPagamento) {
-            this.metodoPagamento = metodoPagamento;
-        }
+    /**
+     * Verifica se la richiesta di pagamento contiene dati specifici per il metodo
+     */
+    private boolean hasPaymentData(PagamentoRequestDTO request) {
+        return (request.getDatiCartaCredito() != null) || (request.getDatiPayPal() != null);
     }
 }

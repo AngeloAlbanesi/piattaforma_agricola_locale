@@ -33,8 +33,7 @@ public class JacksonConfig {
         
         mapper.registerModule(hibernateModule);
         
-        // CONFIGURAZIONE DATE - Risolve il problema del formato timestamp
-        // Disabilita la serializzazione delle date come timestamp
+
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         
         // Configura il formato delle date

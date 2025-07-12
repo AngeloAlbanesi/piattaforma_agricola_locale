@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.impl;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.pagamento.PagamentoRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.ordine.Ordine;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.IMetodoPagamentoStrategy;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.PagamentoException;
@@ -69,5 +70,20 @@ public class PagamentoSimulatoStrategy implements IMetodoPagamentoStrategy {
             // Gestisce eventuali errori imprevisti durante la simulazione
             throw new PagamentoException("Errore durante la simulazione del pagamento: " + e.getMessage());
         }
+    }
+
+    /**
+     * Elabora il pagamento di un ordine in modalità simulata con dati di pagamento.
+     * Ignora i dati specifici e usa la logica di simulazione configurata.
+     * 
+     * @param ordine l'ordine da elaborare per il pagamento
+     * @param datiPagamento i dati di pagamento (ignorati in modalità simulata)
+     * @return true se il pagamento è stato elaborato con successo
+     * @throws PagamentoException se si verifica un errore durante l'elaborazione del pagamento
+     */
+    @Override
+    public boolean elaboraPagamento(Ordine ordine, PagamentoRequestDTO datiPagamento) throws PagamentoException {
+        // In modalità simulata, ignoriamo i dati specifici e usiamo la logica base
+        return elaboraPagamento(ordine);
     }
 }

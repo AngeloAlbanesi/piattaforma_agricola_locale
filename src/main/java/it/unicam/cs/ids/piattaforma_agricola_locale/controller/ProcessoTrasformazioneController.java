@@ -213,7 +213,7 @@ public class ProcessoTrasformazioneController {
      */
     @PostMapping("/{id}/fasi")
     @PreAuthorize("hasRole('TRASFORMATORE') and @ownershipValidationService.isProcessOwner(#id, authentication.name)")
-    public ResponseEntity<ProcessoTrasformazioneDTO> addPhaseToProcess(
+    public ResponseEntity<ProcessoTrasformazioneResponseDTO> addPhaseToProcess(
             @PathVariable Long id,
             @Valid @RequestBody CreateFaseRequestDTO createFaseRequest,
             Authentication authentication) {
@@ -234,8 +234,8 @@ public class ProcessoTrasformazioneController {
         // Add the phase to the process
         ProcessoTrasformazione processo = processoTrasformazioneService.aggiungiFaseAlProcesso(id, fase);
 
-        // Map to DTO and return
-        ProcessoTrasformazioneDTO processoDTO = processoMapper.toDto(processo);
+        // Map to response DTO (without fasi field)
+        ProcessoTrasformazioneResponseDTO processoDTO = processoMapper.toResponseDto(processo);
 
         log.info("Added phase to transformation process ID: {} by trasformatore: {}", id, trasformatore.getNome());
 

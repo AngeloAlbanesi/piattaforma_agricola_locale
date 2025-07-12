@@ -192,6 +192,8 @@ public class ProcessoTrasformazione {
     public void aggiungiFase(FaseLavorazione fase) {
         Objects.requireNonNull(fase, "La fase non può essere nulla");
 
+        // Imposta la relazione bidirezionale
+        fase.setProcessoTrasformazione(this);
         fasiLavorazione.add(fase);
     }
 
@@ -203,6 +205,11 @@ public class ProcessoTrasformazione {
      */
     public boolean rimuoviFase(FaseLavorazione fase) {
         boolean rimossa = fasiLavorazione.remove(fase);
+        
+        // Rimuovi la relazione bidirezionale se la fase è stata rimossa
+        if (rimossa && fase != null) {
+            fase.setProcessoTrasformazione(null);
+        }
 
         return rimossa;
     }

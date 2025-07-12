@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProcessoTrasformazioneRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRepository;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IFonteMateriaPrimaRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.FaseLavorazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.ProcessoTrasformazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
@@ -29,14 +30,18 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
 
     private final IProcessoTrasformazioneRepository processoRepository;
     private final IProdottoRepository prodottoRepository;
+    private final IFonteMateriaPrimaRepository fonteMateriaPrimaRepository;
 
     @Autowired
     public ProcessoTrasformazioneService(IProcessoTrasformazioneRepository processoRepository,
-            IProdottoRepository prodottoRepository) {
+            IProdottoRepository prodottoRepository,
+            IFonteMateriaPrimaRepository fonteMateriaPrimaRepository) {
         this.processoRepository = Objects.requireNonNull(processoRepository,
                 "Il repository dei processi non può essere nullo");
         this.prodottoRepository = Objects.requireNonNull(prodottoRepository,
                 "Il repository dei prodotti non può essere nullo");
+        this.fonteMateriaPrimaRepository = Objects.requireNonNull(fonteMateriaPrimaRepository,
+                "Il repository delle fonti materia prima non può essere nullo");
     }
 
     @Override
@@ -120,6 +125,7 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
     }
 
     @Override
+    @Transactional
     public ProcessoTrasformazione aggiungiFaseAlProcesso(Long processoId, FaseLavorazione fase) {
         if (processoId == null) {
             throw new IllegalArgumentException("L'ID del processo non può essere nullo");
@@ -130,6 +136,11 @@ public class ProcessoTrasformazioneService implements IProcessoTrasformazioneSer
 
         if (fase == null) {
             throw new IllegalArgumentException("La fase non può essere nulla");
+        }
+
+        // Salva la fonte materia prima se non è già persistita
+        if (fase.getFonte() != null && fase.getFonte().getId() == null) {
+            fase.setFonte(fonteMateriaPrimaRepository.save(fase.getFonte()));
         }
 
         processo.aggiungiFase(fase);

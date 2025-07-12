@@ -136,6 +136,14 @@ public class FaseLavorazione {
         this.note = note;
     }
 
+    public ProcessoTrasformazione getProcessoTrasformazione() {
+        return processoTrasformazione;
+    }
+
+    public void setProcessoTrasformazione(ProcessoTrasformazione processoTrasformazione) {
+        this.processoTrasformazione = processoTrasformazione;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import jakarta.persistence.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Produttore;
 import java.util.Objects;
@@ -10,10 +11,11 @@ import java.util.Objects;
  */
 @Entity
 @DiscriminatorValue("INTERNA")
+@JsonTypeName("INTERNA")
 public class FonteInterna extends FonteMateriaPrima {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_produttore", nullable = false)
+    @JoinColumn(name = "id_produttore", nullable = true)
     private Produttore produttore;
 
     public FonteInterna() {}
@@ -35,6 +37,9 @@ public class FonteInterna extends FonteMateriaPrima {
 
     @Override
     public String getDescrizione() {
+        if (produttore == null) {
+            throw new IllegalStateException("FonteInterna deve avere un produttore associato");
+        }
         String nomeCompleto = produttore.getNome() + " " + produttore.getCognome();
         String nomeAzienda = (produttore.getDatiAzienda() != null
                 && produttore.getDatiAzienda().getNomeAzienda() != null)

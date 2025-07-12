@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 
 /**
@@ -11,6 +13,15 @@ import jakarta.persistence.*;
 @Table(name = "fonti_materia_prima")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_fonte", discriminatorType = DiscriminatorType.STRING)
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "tipo"
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = FonteEsterna.class, name = "ESTERNA"),
+    @JsonSubTypes.Type(value = FonteInterna.class, name = "INTERNA")
+})
 public abstract class FonteMateriaPrima {
     
     @Id

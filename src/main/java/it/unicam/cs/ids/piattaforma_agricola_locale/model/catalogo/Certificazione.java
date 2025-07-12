@@ -126,6 +126,10 @@ public class Certificazione {
         this.idCertificazione = idCertificazione;
     }
 
+    public void setIdAziendaAssociata(Long idAziendaAssociata) {
+        this.idAziendaAssociata = idAziendaAssociata;
+    }
+
     // Non dovresti cambiare l'associazione dopo la creazione,
     // altrimenti la logica di "solo uno" si complica.
     // Se necessario, si cancella e si ricrea.

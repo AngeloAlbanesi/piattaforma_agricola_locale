@@ -1,6 +1,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo.*;
+import it.unicam.cs.ids.piattaforma_agricola_locale.exception.ResourceOwnershipException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.coltivazione.MetodoDiColtivazioneDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareResponseDTO;
@@ -269,29 +270,61 @@ public class ProdottoController {
 
     // =================== CERTIFICATION MANAGEMENT ===================
 
+    /**
+     * 
+     */
     @PostMapping("/{id}/certificazioni")
-    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE','DISTRIBUTORE_TIPICITA') and @ownershipValidationService.isProductOwner(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE','DISTRIBUTORE_TIPICITA')")
     public ResponseEntity<CertificazioneDTO> addCertificationToProduct(
             @PathVariable Long id,
-            @Valid @RequestBody CertificazioneDTO request,
+            @Valid @RequestBody CreateCertificazioneRequestDTO request,
             Authentication authentication) {
 
         String email = authentication.getName();
+        log.info("Vendor {} requesting to add certification to product ID: {}", email, id);
 
-        return prodottoService.getProdottoById(id)
-                .map(prodotto -> {
-                    Certificazione certificazione = certificazioneService.creaCertificazionePerProdotto(
-                            request.getNome(),
-                            request.getEnteRilascio(),
-                            request.getDataRilascio(),
-                            request.getDataScadenza(),
-                            prodotto);
+        try {
+            // Precondizione 1: Venditore autenticato (già verificata da @PreAuthorize)
+            // Precondizione 2: Verifica che il prodotto esista nel catalogo del venditore
+            ownershipValidationService.validateProductOwnership(id, email);
+            
+            return prodottoService.getProdottoById(id)
+                    .map(prodotto -> {
+                        log.debug("Creating certification for product: {} by vendor: {}", prodotto.getNome(), email);
+                        
+                        // Step 4: Il sistema valida i dati ricevuti e registra la nuova certificazione
+                        Certificazione certificazione = certificazioneService.creaCertificazionePerProdotto(
+                                request.getNomeCertificazione(),
+                                request.getEnteRilascio(),
+                                request.getDataRilascio(),
+                                request.getDataScadenza(),
+                                prodotto);
 
-                    CertificazioneDTO responseDTO = mapCertificazioneToDTO(certificazione);
-                    log.info("Added certification {} to product ID: {} by vendor: {}", request.getNome(), id, email);
-                    return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
-                })
-                .orElse(ResponseEntity.notFound().build());
+                        if (certificazione == null) {
+                            log.error("Failed to create certification for product ID: {} by vendor: {}", id, email);
+                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).<CertificazioneDTO>build();
+                        }
+
+                        // Post-condizione 1: Certificazione creata e salvata permanentemente ✅
+                        // Post-condizione 2: Certificazione correttamente associata al prodotto ✅
+                        CertificazioneDTO responseDTO = mapCertificazioneToDTO(certificazione);
+                        log.info("Successfully added certification '{}' (ID: {}) to product '{}' (ID: {}) by vendor: {}", 
+                                request.getNomeCertificazione(), certificazione.getId(), prodotto.getNome(), id, email);
+                        
+                        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+                    })
+                    .orElse(ResponseEntity.notFound().build());
+                    
+        } catch (ResourceOwnershipException e) {
+            // Precondizione 2 non soddisfatta: il prodotto non appartiene al venditore
+            log.warn("Product ownership validation failed - Product ID: {}, Vendor: {}, Error: {}", 
+                    id, email, e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (Exception e) {
+            log.error("Unexpected error adding certification to product ID: {} by vendor: {} - {}", 
+                    id, email, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @DeleteMapping("/{id}/certificazioni/{certId}")
@@ -335,6 +368,8 @@ public class ProdottoController {
                 .enteRilascio(certificazione.getEnteRilascio())
                 .dataRilascio(certificazione.getDataRilascio())
                 .dataScadenza(certificazione.getDataScadenza())
+                .idProdottoAssociato(certificazione.getIdProdottoAssociato())
+                .idAziendaAssociata(certificazione.getIdAziendaAssociata())
                 .build();
     }
 

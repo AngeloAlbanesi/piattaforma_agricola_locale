@@ -37,7 +37,14 @@ public class CertificazioneService implements ICertificazioneService {
             return null;
         }
 
-        Certificazione cert = new Certificazione( nome, ente, rilascio, scadenza, prodotto.getId());
+        // Crea la certificazione associata al prodotto
+        Certificazione cert = new Certificazione(nome, ente, rilascio, scadenza, prodotto.getId());
+        
+        // ✅ CORREZIONE: Associa l'azienda usando l'ID dei DatiAzienda, non del Venditore
+        if (prodotto.getVenditore() != null && prodotto.getVenditore().getDatiAzienda() != null) {
+            cert.setIdAziendaAssociata(prodotto.getVenditore().getDatiAzienda().getId());
+        }
+        
         certificazioneRepository.save(cert);
         prodotto.aggiungiCertificazione(cert); // Aggiunge alla lista interna del prodotto
         // Se ProdottoRepository gestisce la persistenza di Prodotto, potresti dover salvare Prodotto qui

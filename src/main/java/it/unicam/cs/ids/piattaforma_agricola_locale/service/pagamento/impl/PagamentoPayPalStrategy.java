@@ -100,28 +100,35 @@ public class PagamentoPayPalStrategy implements IMetodoPagamentoStrategy {
     }
 
     /**
-     * Valida le credenziali PayPal
+     * Valida le credenziali PayPal (versione permissiva per progetto universitario)
      */
     private boolean validaCredenzialiPayPal(DatiPayPalDTO datiPayPal) {
         try {
-            // Validazione formato email
-            if (!datiPayPal.getEmailPayPal().contains("@") || !datiPayPal.getEmailPayPal().contains(".")) {
-                logger.warning("Formato email PayPal non valido");
+            // Validazione formato email molto semplificata
+            if (!datiPayPal.getEmailPayPal().contains("@")) {
+                logger.warning("Email PayPal deve contenere almeno il simbolo @");
                 return false;
             }
 
-            // Validazione password (lunghezza minima)
-            if (datiPayPal.getPasswordPayPal().length() < 6) {
-                logger.warning("Password PayPal troppo corta");
+            // Validazione password molto permissiva (lunghezza minima 1)
+            if (datiPayPal.getPasswordPayPal() == null || datiPayPal.getPasswordPayPal().trim().isEmpty()) {
+                logger.warning("Password PayPal non può essere vuota");
                 return false;
             }
 
-            // Simulazione: alcune email di test falliscono sempre
+            // Simulazione: solo email specifiche falliscono per test
             if (datiPayPal.getEmailPayPal().equals("test.fail@paypal.com")) {
-                logger.warning("Email PayPal di test per simulare fallimento");
+                logger.warning("Email PayPal specifica per test fallimento");
                 return false;
             }
 
+            // Simulazione: email che iniziano con "fail" falliscono
+            if (datiPayPal.getEmailPayPal().startsWith("fail")) {
+                logger.warning("Email PayPal di test per simulare fallimento (inizia con 'fail')");
+                return false;
+            }
+
+            logger.info("Credenziali PayPal validate con successo");
             return true;
         } catch (Exception e) {
             logger.warning("Errore durante la validazione credenziali PayPal: " + e.getMessage());
@@ -130,18 +137,24 @@ public class PagamentoPayPalStrategy implements IMetodoPagamentoStrategy {
     }
 
     /**
-     * Simula l'autenticazione con le API PayPal
+     * Simula l'autenticazione con le API PayPal (versione permissiva)
      */
     private boolean simulaAutenticazionePayPal(DatiPayPalDTO datiPayPal) {
-        // Simulazione: account sospeso
-        if (datiPayPal.getEmailPayPal().contains("suspended")) {
-            logger.warning("Simulazione: account PayPal sospeso");
+        // Simulazione: solo account specifici sono sospesi per test
+        if (datiPayPal.getEmailPayPal().equals("suspended@paypal.com")) {
+            logger.warning("Simulazione: account PayPal specifico sospeso per test");
             return false;
         }
 
-        // Simulazione: credenziali errate
-        if (datiPayPal.getPasswordPayPal().equals("wrongpassword")) {
-            logger.warning("Simulazione: credenziali PayPal errate");
+        // Simulazione: solo password specifica fallisce per test
+        if (datiPayPal.getPasswordPayPal().equals("FAIL_TEST")) {
+            logger.warning("Simulazione: password specifica per test fallimento");
+            return false;
+        }
+
+        // Simulazione: email che contengono "blocked" sono bloccate
+        if (datiPayPal.getEmailPayPal().toLowerCase().contains("blocked")) {
+            logger.warning("Simulazione: account PayPal bloccato per test");
             return false;
         }
 
@@ -150,22 +163,19 @@ public class PagamentoPayPalStrategy implements IMetodoPagamentoStrategy {
     }
 
     /**
-     * Simula l'elaborazione del pagamento PayPal
+     * Simula l'elaborazione del pagamento PayPal (versione permissiva)
      */
     private boolean simulaElaborazionePagamentoPayPal(double importo) {
-        // Simulazione: limite di spesa giornaliero superato
-        if (importo > 500.0) {
-            logger.warning("Simulazione: limite di spesa PayPal superato");
+        // Simulazione: limite di spesa molto alto per progetto universitario
+        if (importo > 10000.0) {
+            logger.warning("Simulazione: limite di spesa PayPal superato (>€10000)");
             return false;
         }
 
-        // Simulazione: problemi temporanei del servizio PayPal
-        if (Math.random() < 0.05) { // 5% di probabilità di fallimento casuale
-            logger.warning("Simulazione: servizio PayPal temporaneamente non disponibile");
-            return false;
-        }
-
-        logger.info("Elaborazione pagamento PayPal simulata con successo");
+        // Rimuoviamo il fallimento casuale per rendere i test più prevedibili
+        // Per progetto universitario: quasi tutti i pagamenti vanno a buon fine
+        
+        logger.info(String.format("Elaborazione pagamento PayPal simulata con successo per importo €%.2f", importo));
         return true;
     }
 }

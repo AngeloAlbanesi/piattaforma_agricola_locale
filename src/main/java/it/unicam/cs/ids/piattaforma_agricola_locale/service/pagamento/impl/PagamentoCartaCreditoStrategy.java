@@ -100,7 +100,7 @@ public class PagamentoCartaCreditoStrategy implements IMetodoPagamentoStrategy {
     }
 
     /**
-     * Valida i dati della carta di credito
+     * Valida i dati della carta di credito (versione semplificata per progetto universitario)
      */
     private boolean validaDatiCarta(DatiCartaCreditoDTO datiCarta) {
         try {
@@ -110,18 +110,25 @@ public class PagamentoCartaCreditoStrategy implements IMetodoPagamentoStrategy {
                 return false;
             }
 
-            // Validazione numero carta (algoritmo di Luhn semplificato)
-            if (!validaNumeroCartaLuhn(datiCarta.getNumeroCartaCredito())) {
-                logger.warning("Numero carta di credito non valido");
+            // Validazione numero carta semplificata (solo lunghezza e cifre)
+            if (!validaNumeroCartaSemplificato(datiCarta.getNumeroCartaCredito())) {
+                logger.warning("Numero carta di credito non valido (deve essere 13-19 cifre)");
                 return false;
             }
 
-            // Simulazione: alcune carte di test falliscono sempre
-            if (datiCarta.getNumeroCartaCredito().startsWith("4000000000000002")) {
-                logger.warning("Carta di test per simulare fallimento");
+            // Simulazione: solo alcune carte specifiche falliscono per test
+            if (datiCarta.getNumeroCartaCredito().equals("4000000000000002")) {
+                logger.warning("Carta di test specifica per simulare fallimento");
                 return false;
             }
 
+            // Simulazione: carte che iniziano con "1111" falliscono
+            if (datiCarta.getNumeroCartaCredito().startsWith("1111")) {
+                logger.warning("Carta di test per simulare fallimento (inizia con 1111)");
+                return false;
+            }
+
+            logger.info("Validazione carta completata con successo");
             return true;
         } catch (Exception e) {
             logger.warning("Errore durante la validazione dei dati carta: " + e.getMessage());
@@ -149,47 +156,56 @@ public class PagamentoCartaCreditoStrategy implements IMetodoPagamentoStrategy {
     }
 
     /**
-     * Validazione semplificata del numero carta con algoritmo di Luhn
+     * Validazione semplificata del numero carta (solo lunghezza e formato)
+     * Versione permissiva per progetto universitario
      */
-    private boolean validaNumeroCartaLuhn(String numeroCartaCredito) {
+    private boolean validaNumeroCartaSemplificato(String numeroCartaCredito) {
         try {
-            int sum = 0;
-            boolean alternate = false;
-            for (int i = numeroCartaCredito.length() - 1; i >= 0; i--) {
-                int n = Integer.parseInt(numeroCartaCredito.substring(i, i + 1));
-                if (alternate) {
-                    n *= 2;
-                    if (n > 9) {
-                        n = (n % 10) + 1;
-                    }
-                }
-                sum += n;
-                alternate = !alternate;
+            // Verifica che sia composto solo da cifre
+            if (!numeroCartaCredito.matches("^[0-9]+$")) {
+                return false;
             }
-            return (sum % 10 == 0);
-        } catch (NumberFormatException e) {
+            
+            // Verifica lunghezza (13-19 cifre come le carte reali)
+            int lunghezza = numeroCartaCredito.length();
+            if (lunghezza < 13 || lunghezza > 19) {
+                return false;
+            }
+            
+            // Per un progetto universitario, accettiamo qualsiasi numero che rispetti il formato
+            logger.info(String.format("Numero carta validato: lunghezza %d cifre", lunghezza));
+            return true;
+            
+        } catch (Exception e) {
+            logger.warning("Errore nella validazione del numero carta: " + e.getMessage());
             return false;
         }
     }
 
     /**
-     * Simula l'autorizzazione del pagamento con il gateway
+     * Simula l'autorizzazione del pagamento con il gateway (versione permissiva)
      */
     private boolean simulaAutorizzazionePagamento(DatiCartaCreditoDTO datiCarta, double importo) {
-        // Simulazione: fondi insufficienti per importi > 1000
-        if (importo > 1000.0) {
-            logger.warning("Simulazione: fondi insufficienti per importo elevato");
+        // Simulazione: fondi insufficienti solo per importi molto elevati (>10000 per test estremi)
+        if (importo > 10000.0) {
+            logger.warning("Simulazione: fondi insufficienti per importo estremamente elevato (>€10000)");
             return false;
         }
 
-        // Simulazione: alcune carte di test per fondi insufficienti
-        if (datiCarta.getNumeroCartaCredito().startsWith("4000000000000119")) {
-            logger.warning("Simulazione: carta con fondi insufficienti");
+        // Simulazione: solo carte specifiche per test di fondi insufficienti
+        if (datiCarta.getNumeroCartaCredito().equals("4000000000000119")) {
+            logger.warning("Simulazione: carta specifica per test fondi insufficienti");
             return false;
         }
 
-        // Simulazione successo
-        logger.info("Autorizzazione pagamento simulata con successo");
+        // Simulazione: carte che iniziano con "9999" hanno fondi insufficienti
+        if (datiCarta.getNumeroCartaCredito().startsWith("9999")) {
+            logger.warning("Simulazione: carta di test per fondi insufficienti (inizia con 9999)");
+            return false;
+        }
+
+        // Per progetto universitario: quasi tutti i pagamenti vanno a buon fine
+        logger.info(String.format("Autorizzazione pagamento simulata con successo per importo €%.2f", importo));
         return true;
     }
 }

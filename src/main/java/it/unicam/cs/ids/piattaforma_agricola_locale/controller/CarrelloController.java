@@ -7,6 +7,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.Carrello;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.carrello.ElementoCarrello;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICarrelloService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IEventoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IPacchettoService;
@@ -54,8 +55,18 @@ public class CarrelloController {
 
             // Get the authenticated user
             String email = authentication.getName();
-            Acquirente acquirente = (Acquirente) utenteService.trovaUtentePerEmail(email)
+            Utente utente = utenteService.trovaUtentePerEmail(email)
                     .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+            
+            // Ensure the user is an Acquirente (should be guaranteed by @PreAuthorize, but defense in depth)
+            if (!(utente instanceof Acquirente)) {
+                log.warn("Non-Acquirente user {} attempted to access cart functionality", email);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", "Accesso negato", 
+                                   "message", "Solo gli acquirenti possono utilizzare il carrello"));
+            }
+            
+            Acquirente acquirente = (Acquirente) utente;
 
             // Find the purchasable item based on type
             Acquistabile acquistabile = getAcquistabileByTypeAndId(

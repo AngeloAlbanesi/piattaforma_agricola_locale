@@ -145,7 +145,8 @@ public abstract class Utente implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Restituisce il ruolo dell'utente come un'autorità di Spring Security
-        return List.of(new SimpleGrantedAuthority(tipoRuolo.name()));
+        // Spring Security expects roles to be prefixed with "ROLE_"
+        return List.of(new SimpleGrantedAuthority("ROLE_" + tipoRuolo.name()));
     }
 
     @Override

@@ -198,9 +198,17 @@ public class ProdottoController {
             Authentication authentication) {
 
         String email = authentication.getName();
+        log.info("Attempting to update product ID: {} by vendor: {}", id, email);
 
         return prodottoService.getProdottoById(id)
                 .map(prodotto -> {
+                    // Verify ownership again (defense in depth)
+                    if (!prodotto.getVenditore().getEmail().equals(email)) {
+                        log.warn("Ownership validation failed - Product ID: {}, Owner: {}, Requesting User: {}", 
+                                id, prodotto.getVenditore().getEmail(), email);
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).<ProductDetailDTO>build();
+                    }
+
                     // Update non-null fields
                     if (request.getNome() != null) {
                         prodotto.setNome(request.getNome());
@@ -214,13 +222,12 @@ public class ProdottoController {
                     if (request.getQuantitaDisponibile() != null) {
                         prodotto.setQuantitaDisponibile(request.getQuantitaDisponibile());
                     }
-                    // Note: 'attivo' field is not available in Prodotto model
 
-                    // Note: In a real implementation, you'd save the product here
-                    // For now, assuming the service handles persistence
+                    // Save the updated product to persist changes
+                    Prodotto prodottoSalvato = prodottoService.salvaProdotto(prodotto);
 
-                    ProductDetailDTO responseDTO = prodottoMapper.toDetailDTO(prodotto);
-                    log.info("Updated product ID: {} by vendor: {}", id, email);
+                    ProductDetailDTO responseDTO = prodottoMapper.toDetailDTO(prodottoSalvato);
+                    log.info("Successfully updated and saved product ID: {} by vendor: {}", id, email);
                     return ResponseEntity.ok(responseDTO);
                 })
                 .orElse(ResponseEntity.notFound().build());

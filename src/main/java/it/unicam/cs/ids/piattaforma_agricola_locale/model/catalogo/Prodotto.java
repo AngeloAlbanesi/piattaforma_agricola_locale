@@ -59,7 +59,7 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
         this.venditore = venditore;
         this.statoVerifica = StatoVerificaValori.IN_REVISIONE;
         this.certificazioniProdotto = new ArrayList<>();
-        this.tipoOrigine = TipoOrigineProdotto.COLTIVATO_ALLEVATO; // Default per prodotti non trasformati
+        this.tipoOrigine = TipoOrigineProdotto.COLTIVATO; // Default aggiornato da COLTIVATO_ALLEVATO a COLTIVATO
         this.idProcessoTrasformazioneOriginario = null;
     }
 
@@ -210,7 +210,7 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
             this.tipoOrigine = it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto.TRASFORMATO;
         } else {
             this.idProcessoTrasformazioneOriginario = null;
-            this.tipoOrigine = it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto.COLTIVATO_ALLEVATO;
+            this.tipoOrigine = it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto.COLTIVATO;
         }
     }
 
@@ -293,10 +293,13 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
             System.err.println("Errore: tentativo di aggiungere certificazione non pertinente al prodotto.");
         }
     }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Prodotto prodotto = (Prodotto) o;
         return idProdotto != null && idProdotto.equals(prodotto.idProdotto);
     }

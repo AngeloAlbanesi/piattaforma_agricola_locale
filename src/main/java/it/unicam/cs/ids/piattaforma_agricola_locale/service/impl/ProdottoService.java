@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareResponseDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,6 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
     private final IVenditoreRepository venditoreRepository;
     private final List<ICuratoreObserver> observers;
 
-    @Autowired
     public ProdottoService(IProdottoRepository prodottoRepository, ICertificazioneService certificazioneService,
             IVenditoreRepository venditoreRepository) {
         this.prodottoRepository = prodottoRepository;
@@ -49,7 +47,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
             throw new IllegalArgumentException("Errore nella creazione del prodotto");
         }
 
-        Prodotto prodotto = new Prodotto( nome, descrizione, prezzo, quantitaDisponibile, venditore);
+        Prodotto prodotto = new Prodotto(nome, descrizione, prezzo, quantitaDisponibile, venditore);
 
         venditore.getProdottiOfferti().add(prodotto); // Aggiunge alla lista del venditore
         prodottoRepository.save(prodotto); // Salva nel repository dei prodotti
@@ -59,6 +57,45 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
         notificaObservers(prodotto);
 
         return prodotto;
+    }
+
+    /**
+     * Valida che il tipo di origine del prodotto sia compatibile con il tipo di
+     * venditore.
+     * 
+     * @param tipoOrigine Il tipo di origine del prodotto da validare
+     * @param venditore   Il venditore che sta creando il prodotto
+     * @throws IllegalArgumentException se il tipo di origine non è compatibile con
+     *                                  il venditore
+     */
+    public void validaTipoOrigineProdotto(TipoOrigineProdotto tipoOrigine, Venditore venditore) {
+        if (tipoOrigine == null || venditore == null) {
+            throw new IllegalArgumentException("Tipo origine e venditore non possono essere null");
+        }
+
+        String tipoVenditore = venditore.getClass().getSimpleName();
+
+        switch (tipoVenditore) {
+            case "Produttore":
+                if (tipoOrigine != TipoOrigineProdotto.COLTIVATO) {
+                    throw new IllegalArgumentException("Un produttore può impostare solo il tipo origine COLTIVATO");
+                }
+                break;
+            case "Trasformatore":
+                if (tipoOrigine != TipoOrigineProdotto.TRASFORMATO) {
+                    throw new IllegalArgumentException(
+                            "Un trasformatore può impostare solo il tipo origine TRASFORMATO");
+                }
+                break;
+            case "DistributoreDiTipicita":
+                if (tipoOrigine != TipoOrigineProdotto.COLTIVATO && tipoOrigine != TipoOrigineProdotto.TRASFORMATO) {
+                    throw new IllegalArgumentException(
+                            "Un distributore può impostare solo i tipi origine COLTIVATO o TRASFORMATO");
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Tipo di venditore non riconosciuto: " + tipoVenditore);
+        }
     }
 
     @Override
@@ -322,7 +359,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
     }
 
     // ===== PUBLIC CATALOG METHODS =====
-    
+
     @Override
     public Page<Prodotto> getAllProdotti(Pageable pageable) {
         return prodottoRepository.findAll(pageable);
@@ -363,7 +400,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
                 .orElseThrow(() -> new IllegalArgumentException("Venditore con ID " + venditorId + " non trovato"));
         return prodottoRepository.findByVenditore(venditore);
     }
-    
+
     @Override
     public Page<Prodotto> getProdottiByVenditore(Venditore venditore, Pageable pageable) {
         if (venditore == null) {
@@ -373,10 +410,11 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
     }
 
     /**
-     * Recupera i prodotti approvati di un venditore specifico (solo per uso pubblico).
+     * Recupera i prodotti approvati di un venditore specifico (solo per uso
+     * pubblico).
      * 
      * @param venditorId ID del venditore
-     * @param pageable Parametri di paginazione
+     * @param pageable   Parametri di paginazione
      * @return Una pagina di prodotti approvati del venditore
      */
     public Page<Prodotto> getApprovedProdottiByVenditore(Long venditorId, Pageable pageable) {
@@ -387,7 +425,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
                 .orElseThrow(() -> new IllegalArgumentException("Venditore con ID " + venditorId + " non trovato"));
         return prodottoRepository.findByVenditoreAndStatoVerifica(venditore, StatoVerificaValori.APPROVATO, pageable);
     }
-    
+
     @Override
     public Prodotto salvaProdotto(Prodotto prodotto) {
         if (prodotto == null) {
@@ -396,10 +434,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
         return prodottoRepository.save(prodotto);
     }
 
-
-
-
-    //Metodo per condivisione sui social di un prodotto
+    // Metodo per condivisione sui social di un prodotto
     public Optional<ShareResponseDTO> condividiProdotto(Long idProdotto, ShareRequestDTO request) {
         // 1. Trova il prodotto nel database
         Optional<Prodotto> prodottoOpt = prodottoRepository.findById(idProdotto);
@@ -427,8 +462,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
                 social,
                 nicknameFormattato,
                 nomeProdotto,
-                messaggioUtente
-        );
+                messaggioUtente);
 
         // 5. Crea e restituisci il DTO di risposta
         ShareResponseDTO responseDTO = new ShareResponseDTO(messaggioFinale);

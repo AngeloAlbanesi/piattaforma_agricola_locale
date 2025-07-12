@@ -20,11 +20,6 @@ public enum TipoOrigineProdotto {
     COLTIVATO("Coltivato"),
 
     /**
-     * Prodotto derivante da allevamento.
-     */
-    ALLEVATO("Allevato"),
-
-    /**
      * Prodotto risultante da un processo di trasformazione
      * di materie prime o semilavorati.
      */
@@ -62,10 +57,10 @@ public enum TipoOrigineProdotto {
     /**
      * Verifica se il prodotto è di origine coltivata/allevata.
      *
-     * @return true se il prodotto è di tipo coltivato o allevato (qualsiasi)
+     * @return true se il prodotto è di tipo coltivato (qualsiasi)
      */
     public boolean isMateriaPrima() {
-        return this == COLTIVATO_ALLEVATO || this == COLTIVATO || this == ALLEVATO;
+        return this == COLTIVATO_ALLEVATO || this == COLTIVATO;
     }
 
     /**
@@ -75,14 +70,5 @@ public enum TipoOrigineProdotto {
      */
     public boolean isColtivato() {
         return this == COLTIVATO || this == COLTIVATO_ALLEVATO;
-    }
-
-    /**
-     * Verifica se il prodotto è specificamente allevato.
-     *
-     * @return true se il prodotto è di tipo ALLEVATO
-     */
-    public boolean isAllevato() {
-        return this == ALLEVATO || this == COLTIVATO_ALLEVATO;
     }
 }

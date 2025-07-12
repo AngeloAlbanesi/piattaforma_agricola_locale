@@ -72,7 +72,7 @@ public class ProdottoController {
             List<Prodotto> approvedSearchResults = searchResults.stream()
                     .filter(prodotto -> prodotto.getStatoVerifica() == StatoVerificaValori.APPROVATO)
                     .collect(Collectors.toList());
-            
+
             List<ProductSummaryDTO> summaryDTOs = approvedSearchResults.stream()
                     .map(prodottoMapper::toSummaryDTO)
                     .collect(Collectors.toList());
@@ -125,7 +125,7 @@ public class ProdottoController {
         // Use pageable with default values to get approved products only
         Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE);
         Page<Prodotto> approvedVendorProducts = prodottoService.getApprovedProdottiByVenditore(vendorId, pageable);
-        
+
         List<ProductSummaryDTO> summaryDTOs = approvedVendorProducts.getContent().stream()
                 .map(prodottoMapper::toSummaryDTO)
                 .collect(Collectors.toList());
@@ -160,6 +160,11 @@ public class ProdottoController {
         String email = authentication.getName();
         Venditore venditore = (Venditore) utenteService.getUtenteByEmail(email);
 
+        // Valida il tipo di origine prima di creare il prodotto
+        if (request.getTipoOrigine() != null) {
+            prodottoService.validaTipoOrigineProdotto(request.getTipoOrigine(), venditore);
+        }
+
         Prodotto nuovoProdotto = prodottoService.creaProdotto(
                 request.getNome(),
                 request.getDescrizione(),
@@ -171,16 +176,16 @@ public class ProdottoController {
         if (request.getTipoOrigine() != null) {
             nuovoProdotto.setTipoOrigine(request.getTipoOrigine());
         }
-        
+
         // Imposta gli ID opzionali se forniti
         if (request.getIdProcessoTrasformazioneOriginario() != null) {
             nuovoProdotto.setIdProcessoTrasformazioneOriginario(request.getIdProcessoTrasformazioneOriginario());
         }
-        
+
         if (request.getIdMetodoDiColtivazione() != null) {
             nuovoProdotto.setIdMetodoDiColtivazione(request.getIdMetodoDiColtivazione());
         }
-        
+
         // Salva le modifiche al prodotto
         nuovoProdotto = prodottoService.salvaProdotto(nuovoProdotto);
 
@@ -204,7 +209,7 @@ public class ProdottoController {
                 .map(prodotto -> {
                     // Verify ownership again (defense in depth)
                     if (!prodotto.getVenditore().getEmail().equals(email)) {
-                        log.warn("Ownership validation failed - Product ID: {}, Owner: {}, Requesting User: {}", 
+                        log.warn("Ownership validation failed - Product ID: {}, Owner: {}, Requesting User: {}",
                                 id, prodotto.getVenditore().getEmail(), email);
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).<ProductDetailDTO>build();
                     }
@@ -294,11 +299,11 @@ public class ProdottoController {
             // Precondizione 1: Venditore autenticato (già verificata da @PreAuthorize)
             // Precondizione 2: Verifica che il prodotto esista nel catalogo del venditore
             ownershipValidationService.validateProductOwnership(id, email);
-            
+
             return prodottoService.getProdottoById(id)
                     .map(prodotto -> {
                         log.debug("Creating certification for product: {} by vendor: {}", prodotto.getNome(), email);
-                        
+
                         // Step 4: Il sistema valida i dati ricevuti e registra la nuova certificazione
                         Certificazione certificazione = certificazioneService.creaCertificazionePerProdotto(
                                 request.getNomeCertificazione(),
@@ -315,20 +320,21 @@ public class ProdottoController {
                         // Post-condizione 1: Certificazione creata e salvata permanentemente ✅
                         // Post-condizione 2: Certificazione correttamente associata al prodotto ✅
                         CertificazioneDTO responseDTO = mapCertificazioneToDTO(certificazione);
-                        log.info("Successfully added certification '{}' (ID: {}) to product '{}' (ID: {}) by vendor: {}", 
+                        log.info(
+                                "Successfully added certification '{}' (ID: {}) to product '{}' (ID: {}) by vendor: {}",
                                 request.getNomeCertificazione(), certificazione.getId(), prodotto.getNome(), id, email);
-                        
+
                         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
                     })
                     .orElse(ResponseEntity.notFound().build());
-                    
+
         } catch (ResourceOwnershipException e) {
             // Precondizione 2 non soddisfatta: il prodotto non appartiene al venditore
-            log.warn("Product ownership validation failed - Product ID: {}, Vendor: {}, Error: {}", 
+            log.warn("Product ownership validation failed - Product ID: {}, Vendor: {}, Error: {}",
                     id, email, e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (Exception e) {
-            log.error("Unexpected error adding certification to product ID: {} by vendor: {} - {}", 
+            log.error("Unexpected error adding certification to product ID: {} by vendor: {} - {}",
                     id, email, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -438,12 +444,13 @@ public class ProdottoController {
     public ResponseEntity<MetodoDiColtivazioneDTO> getCultivationMethod(@PathVariable Long id) {
         return prodottoService.getProdottoById(id)
                 .map(prodotto -> {
-                    // Verifica che il prodotto sia approvato prima di mostrare i metodi di coltivazione
+                    // Verifica che il prodotto sia approvato prima di mostrare i metodi di
+                    // coltivazione
                     if (prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO) {
                         log.warn("Attempt to access cultivation method for non-approved product ID: {}", id);
                         return ResponseEntity.notFound().<MetodoDiColtivazioneDTO>build();
                     }
-                    
+
                     MetodoDiColtivazione metodo = produttoreService.getMetodoDiColtivazioneByProdotto(id);
                     if (metodo != null) {
                         MetodoDiColtivazioneDTO dto = metodiColtivazioneMapper.toDTO(metodo);
@@ -546,6 +553,7 @@ public class ProdottoController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
     @PostMapping("/{id}/share")
     @PreAuthorize("hasRole('ACQUIRENTE')") // Assicuriamoci che solo un acquirente possa condividere
     public ResponseEntity<?> condividiSuSocial(
@@ -553,7 +561,8 @@ public class ProdottoController {
             @RequestBody ShareRequestDTO request,
             Authentication authentication // Possiamo anche prendere il nickname dall'utente loggato
     ) {
-        // Idea per un miglioramento: invece di passare il nickname, potremmo prenderlo dall'utente autenticato
+        // Idea per un miglioramento: invece di passare il nickname, potremmo prenderlo
+        // dall'utente autenticato
         // String nicknameAutenticato = authentication.getName();
         // e passarlo al service. Ma per ora, seguiamo la tua idea iniziale.
 

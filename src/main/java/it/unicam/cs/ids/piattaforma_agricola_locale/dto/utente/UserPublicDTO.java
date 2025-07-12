@@ -4,6 +4,7 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.StatoAccreditamento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.TipoRuolo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,4 +26,5 @@ public class UserPublicDTO {
     private String cognome;
     private TipoRuolo tipoRuolo;
     private boolean isAttivo;
+    private StatoAccreditamento statoAccreditamento;
 }

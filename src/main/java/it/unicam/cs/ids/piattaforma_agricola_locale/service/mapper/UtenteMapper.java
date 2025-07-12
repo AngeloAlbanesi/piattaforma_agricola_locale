@@ -7,7 +7,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserDetailDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserPublicDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserUpdateDTO;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
 import org.mapstruct.*;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +45,23 @@ public interface UtenteMapper {
     @Mapping(target = "cognome", source = "cognome")
     @Mapping(target = "tipoRuolo", source = "tipoRuolo")
     @Mapping(target = "isAttivo", source = "attivo")
+    @Mapping(target = "statoAccreditamento", expression = "java(getStatoAccreditamento(utente))")
     UserPublicDTO toPublicDTO(Utente utente);
+
+    /**
+     * Extracts the stato accreditamento from user entities that have this field.
+     * Returns null for user types that don't have accreditation status.
+     */
+    default StatoAccreditamento getStatoAccreditamento(Utente utente) {
+        if (utente instanceof Venditore) {
+            return ((Venditore) utente).getStatoAccreditamento();
+        } else if (utente instanceof Curatore) {
+            return ((Curatore) utente).getStatoAccreditamento();
+        } else if (utente instanceof AnimatoreDellaFiliera) {
+            return ((AnimatoreDellaFiliera) utente).getStatoAccreditamento();
+        }
+        return null; // For user types without accreditation status (e.g., Acquirente)
+    }
 
     /**
      * Updates a Utente entity with data from UserUpdateDTO.

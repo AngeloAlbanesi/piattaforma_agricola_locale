@@ -17,6 +17,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.OwnershipValidationS
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IEventoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IUtenteService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.EventoMapper;
+import it.unicam.cs.ids.piattaforma_agricola_locale.security.RequiresAccreditation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -136,7 +137,8 @@ public class EventoController {
      * Only users with ANIMATORE_DELLA_FILIERA role can create events.
      */
     @PostMapping("/creaEvento")
-   @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA')")
+    @RequiresAccreditation
+    @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA')")
     public ResponseEntity<EventoDetailDTO> createEvent(
             @Valid @RequestBody CreateEventoRequestDTO createEventoRequest,
             Authentication authentication) {
@@ -165,10 +167,10 @@ public class EventoController {
         log.info("Created new event: {} by organizer: {}", eventDetail.getNomeEvento(), animatore.getNome());
 
         return ResponseEntity.created(
-                        ServletUriComponentsBuilder.fromCurrentRequest()
-                                .path("/{id}")
-                                .buildAndExpand(eventDetail.getIdEvento())
-                                .toUri())
+                ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/{id}")
+                        .buildAndExpand(eventDetail.getIdEvento())
+                        .toUri())
                 .body(eventDetail);
     }
 
@@ -177,6 +179,7 @@ public class EventoController {
      * Only the organizer of the event can update it.
      */
     @PutMapping("/{id}")
+    @RequiresAccreditation
     @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA') and @ownershipValidationService.isEventOwner(#id, authentication.name)")
     @CacheEvict(value = "events", key = "#id + 'owner' + #authentication.name")
     public ResponseEntity<EventoDetailDTO> updateEvent(
@@ -216,6 +219,7 @@ public class EventoController {
      * Only the organizer of the event can delete it.
      */
     @DeleteMapping("/{id}")
+    @RequiresAccreditation
     @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA') and @ownershipValidationService.isEventOwner(#id, authentication.name)")
     @CacheEvict(value = "events", key = "#id + 'owner' + #authentication.name")
     public ResponseEntity<Void> deleteEvent(
@@ -294,6 +298,7 @@ public class EventoController {
      * Only the organizer of the event can see the participants.
      */
     @GetMapping("/{id}/partecipanti")
+    @RequiresAccreditation
     @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA') and @ownershipValidationService.isEventOwner(#id, authentication.name)")
     public ResponseEntity<List<EventoPartecipanteDTO>> getEventParticipants(
             @PathVariable Long id,
@@ -307,12 +312,13 @@ public class EventoController {
 
         return ResponseEntity.ok(partecipanti);
     }
+
     @PostMapping("/{id}/promote")
+    @RequiresAccreditation
     @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA')") // Autorizzazione specifica
     public ResponseEntity<?> promuoviEvento(
             @PathVariable Long id,
-            @RequestBody PromoteRequestDTO request
-    ) {
+            @RequestBody PromoteRequestDTO request) {
         Optional<ShareResponseDTO> responseOpt = eventoService.promuoviEvento(id, request);
 
         if (responseOpt.isPresent()) {

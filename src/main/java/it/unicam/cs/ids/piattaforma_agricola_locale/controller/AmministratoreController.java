@@ -10,6 +10,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.StatoAccreditam
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Curatore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.TipoRuolo;
+import it.unicam.cs.ids.piattaforma_agricola_locale.security.RequiresAccreditation;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICuratoreService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IGestoreService;
@@ -50,6 +51,7 @@ public class AmministratoreController {
 
     @GetMapping("/prodotti/pending")
     @PreAuthorize("hasRole('CURATORE')")
+    @RequiresAccreditation
     public ResponseEntity<List<ProductSummaryDTO>> getPendingProducts(Authentication authentication) {
         List<Prodotto> prodottiInAttesa = curatoreService.getProdottiInAttesaRevisione();
         List<ProductSummaryDTO> dtos = prodottiInAttesa.stream()
@@ -63,6 +65,7 @@ public class AmministratoreController {
 
     @PutMapping("/prodotti/{id}/approva")
     @PreAuthorize("hasRole('CURATORE')")
+    @RequiresAccreditation
     public ResponseEntity<String> approveProduct(
             @PathVariable Long id,
             @Valid @RequestBody ModerationDecisionDTO decision,
@@ -85,6 +88,7 @@ public class AmministratoreController {
 
     @PutMapping("/prodotti/{id}/rifiuta")
     @PreAuthorize("hasRole('CURATORE')")
+    @RequiresAccreditation
     public ResponseEntity<String> rejectProduct(
             @PathVariable Long id,
             @Valid @RequestBody ModerationDecisionDTO decision,
@@ -109,6 +113,7 @@ public class AmministratoreController {
 
     @GetMapping("/aziende/pending")
     @PreAuthorize("hasRole('CURATORE')")
+    @RequiresAccreditation
     public ResponseEntity<List<CompanyModerationDTO>> getPendingCompanies(Authentication authentication) {
         List<DatiAzienda> aziende = curatoreService.getDatiAziendaInAttesaRevisione();
         List<CompanyModerationDTO> dtos = aziende.stream()
@@ -122,6 +127,7 @@ public class AmministratoreController {
 
     @PutMapping("/aziende/{id}/approva")
     @PreAuthorize("hasRole('CURATORE')")
+    @RequiresAccreditation
     public ResponseEntity<String> approveCompany(
             @PathVariable Long id,
             @Valid @RequestBody ModerationDecisionDTO decision,
@@ -145,6 +151,7 @@ public class AmministratoreController {
 
     @PutMapping("/aziende/{id}/rifiuta")
     @PreAuthorize("hasRole('CURATORE')")
+    @RequiresAccreditation
     public ResponseEntity<String> rejectCompany(
             @PathVariable Long id,
             @Valid @RequestBody ModerationDecisionDTO decision,

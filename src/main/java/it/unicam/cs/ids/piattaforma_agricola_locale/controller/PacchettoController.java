@@ -9,6 +9,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IPacchett
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IUtenteService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.PacchettoMapper;
+import it.unicam.cs.ids.piattaforma_agricola_locale.security.RequiresAccreditation;
 import jakarta.validation.Valid;
 import org.hibernate.Hibernate;
 import lombok.RequiredArgsConstructor;
@@ -122,6 +123,7 @@ public class PacchettoController {
 
     @PostMapping
     @PreAuthorize("hasRole('DISTRIBUTORE_DI_TIPICITA')")
+    @RequiresAccreditation
     public ResponseEntity<PacchettoDetailDTO> createPackage(
             @Valid @RequestBody CreatePacchettoRequestDTO request,
             Authentication authentication) {
@@ -151,6 +153,7 @@ public class PacchettoController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('DISTRIBUTORE_DI_TIPICITA')")
+    @RequiresAccreditation
     public ResponseEntity<PacchettoDetailDTO> updatePackage(
             @PathVariable Long id,
             @Valid @RequestBody UpdatePacchettoRequestDTO request,
@@ -191,6 +194,7 @@ public class PacchettoController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('DISTRIBUTORE_DI_TIPICITA')")
+    @RequiresAccreditation
     public ResponseEntity<Void> deletePackage(
             @PathVariable Long id,
             Authentication authentication) {
@@ -217,6 +221,7 @@ public class PacchettoController {
 
     @PostMapping("/{id}/prodotti")
     @PreAuthorize("hasRole('DISTRIBUTORE_DI_TIPICITA')")
+    @RequiresAccreditation
     public ResponseEntity<PacchettoDetailDTO> addProductToPackage(
             @PathVariable Long id,
             @Valid @RequestBody ElementoPacchettoRequestDTO request,
@@ -249,6 +254,7 @@ public class PacchettoController {
 
     @DeleteMapping("/{id}/prodotti/{productId}")
     @PreAuthorize("hasRole('DISTRIBUTORE_DI_TIPICITA')")
+    @RequiresAccreditation
     public ResponseEntity<PacchettoDetailDTO> removeProductFromPackage(
             @PathVariable Long id,
             @PathVariable Long productId,
@@ -281,6 +287,7 @@ public class PacchettoController {
 
     @PutMapping("/{id}/prezzi")
     @PreAuthorize("hasRole('DISTRIBUTORE_DI_TIPICITA')")
+    @RequiresAccreditation
     public ResponseEntity<PacchettoDetailDTO> updatePackagePricing(
             @PathVariable Long id,
             @Valid @RequestBody UpdatePacchettoRequestDTO request,

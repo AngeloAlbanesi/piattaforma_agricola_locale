@@ -27,9 +27,9 @@ public interface MetodoDiColtivazioneMapper {
      */
     @Mapping(target = "id", source = "id")
     @Mapping(target = "nome", source = "nome")
-    @Mapping(target = "descrizioneDettagliata", source = "descrizioneDettagliata")
-    @Mapping(target = "tecnicaPrincipale", source = "tecnicaPrincipale")
-    @Mapping(target = "ambienteColtivazione", source = "ambienteColtivazione")
+    @Mapping(target = "descrizione", source = "descrizione")
+    @Mapping(target = "dataInizio", source = "dataInizio")
+    @Mapping(target = "dataFine", source = "dataFine")
     MetodoDiColtivazioneDTO toDTO(MetodoDiColtivazione metodoDiColtivazione);
 
     /**
@@ -38,9 +38,9 @@ public interface MetodoDiColtivazioneMapper {
      */
     @Mapping(target = "id", source = "id")
     @Mapping(target = "nome", source = "nome")
-    @Mapping(target = "descrizioneDettagliata", source = "descrizioneDettagliata")
-    @Mapping(target = "tecnicaPrincipale", source = "tecnicaPrincipale")
-    @Mapping(target = "ambienteColtivazione", source = "ambienteColtivazione")
+    @Mapping(target = "descrizione", source = "descrizione")
+    @Mapping(target = "dataInizio", source = "dataInizio")
+    @Mapping(target = "dataFine", source = "dataFine")
     MetodoDiColtivazione toEntity(MetodoDiColtivazioneDTO metodoDiColtivazioneDTO);
 
     /**
@@ -49,9 +49,9 @@ public interface MetodoDiColtivazioneMapper {
      */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "nome", source = "nome")
-    @Mapping(target = "descrizioneDettagliata", source = "descrizioneDettagliata")
-    @Mapping(target = "tecnicaPrincipale", source = "tecnicaPrincipale")
-    @Mapping(target = "ambienteColtivazione", source = "ambienteColtivazione")
+    @Mapping(target = "descrizione", source = "descrizione")
+    @Mapping(target = "dataInizio", source = "dataInizio")
+    @Mapping(target = "dataFine", source = "dataFine")
     void updateFromDTO(MetodoDiColtivazioneDTO metodoDiColtivazioneDTO, @MappingTarget MetodoDiColtivazione metodoDiColtivazione);
 
     /**
@@ -60,8 +60,8 @@ public interface MetodoDiColtivazioneMapper {
      */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "nome", source = "nome")
-    @Mapping(target = "descrizioneDettagliata", source = "descrizioneDettagliata")
-    @Mapping(target = "tecnicaPrincipale", source = "tecnicaPrincipale")
-    @Mapping(target = "ambienteColtivazione", source = "ambienteColtivazione")
+    @Mapping(target = "descrizione", source = "descrizione")
+    @Mapping(target = "dataInizio", source = "dataInizio")
+    @Mapping(target = "dataFine", source = "dataFine")
     MetodoDiColtivazione toEntityIgnoreId(MetodoDiColtivazioneDTO metodoDiColtivazioneDTO);
 }

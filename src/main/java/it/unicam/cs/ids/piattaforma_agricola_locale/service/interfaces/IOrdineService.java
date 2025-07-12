@@ -110,17 +110,67 @@ public interface IOrdineService {
      *                                                                                                          dell'ordine
      *                                                                                                          dell'ordine
      */
+    @Deprecated
     Ordine creaOrdineDaCarrello(Acquirente acquirente) throws OrdineException;
 
     /**
-     * Conferma il pagamento di un ordine utilizzando la strategia di pagamento specificata
-     * e gestisce la transizione di stato. Questo metodo attiva il pattern Observer quando
+     * NUOVO: Crea ordini separati per ogni venditore dal carrello dell'acquirente
+     * 
+     * @param acquirente l'acquirente di cui si vuole convertire il carrello in
+     *                   ordini
+     * @return lista degli ordini creati, uno per ogni venditore
+     * @throws it.unicam.cs.ids.piattaforma_agricola_locale.exception.CarrelloVuotoException                    se
+     *                                                                                                          il
+     *                                                                                                          carrello
+     *                                                                                                          è
+     *                                                                                                          vuoto
+     * @throws it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileAlCheckoutException se
+     *                                                                                                          la
+     *                                                                                                          quantità
+     *                                                                                                          richiesta
+     *                                                                                                          non
+     *                                                                                                          è
+     *                                                                                                          disponibile
+     * @throws OrdineException                                                                                  se
+     *                                                                                                          si
+     *                                                                                                          verifica
+     *                                                                                                          un
+     *                                                                                                          errore
+     *                                                                                                          durante
+     *                                                                                                          la
+     *                                                                                                          creazione
+     *                                                                                                          degli
+     *                                                                                                          ordini
+     */
+    List<Ordine> creaOrdiniDaCarrello(Acquirente acquirente) throws OrdineException;
+
+    /**
+     * Conferma il pagamento di un ordine utilizzando la strategia di pagamento
+     * specificata
+     * e gestisce la transizione di stato. Questo metodo attiva il pattern Observer
+     * quando
      * l'ordine transisce allo stato PRONTO_PER_LAVORAZIONE.
      *
-     * @param ordine l'ordine di cui confermare il pagamento
+     * @param ordine             l'ordine di cui confermare il pagamento
      * @param strategiaPagamento la strategia di pagamento da utilizzare
-     * @throws OrdineException se si verifica un errore durante la conferma del pagamento
-     * @throws PagamentoException se si verifica un errore durante l'elaborazione del pagamento
+     * @throws OrdineException    se si verifica un errore durante la conferma del
+     *                            pagamento
+     * @throws PagamentoException se si verifica un errore durante l'elaborazione
+     *                            del pagamento
      */
-    void confermaPagamento(Ordine ordine, IMetodoPagamentoStrategy strategiaPagamento) throws OrdineException, PagamentoException;
+    void confermaPagamento(Ordine ordine, IMetodoPagamentoStrategy strategiaPagamento)
+            throws OrdineException, PagamentoException;
+
+    /**
+     * Avanza lo stato di un ordine al prossimo stato logico
+     * 
+     * @param ordine    l'ordine di cui avanzare lo stato
+     * @param venditore il venditore che richiede l'avanzamento (per controllo
+     *                  autorizzazioni)
+     * @throws OrdineException       se si verifica un errore durante l'avanzamento
+     * @throws IllegalStateException se l'ordine non può avanzare dal suo stato
+     *                               attuale
+     */
+    Ordine avanzaStatoOrdine(Ordine ordine, Venditore venditore)
+            throws OrdineException, IllegalStateException;
 }

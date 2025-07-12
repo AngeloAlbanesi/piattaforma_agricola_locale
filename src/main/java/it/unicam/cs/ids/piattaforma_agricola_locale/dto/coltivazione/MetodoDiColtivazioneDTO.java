@@ -28,11 +28,9 @@ public class MetodoDiColtivazioneDTO {
     private String nome;
     
     @Size(max = 1000, message = "La descrizione non può superare i 1000 caratteri")
-    private String descrizioneDettagliata;
+    private String descrizione;
     
-    @Size(max = 255, message = "La tecnica principale non può superare i 255 caratteri")
-    private String tecnicaPrincipale;
+    private java.time.LocalDate dataInizio;
     
-    @Size(max = 255, message = "L'ambiente di coltivazione non può superare i 255 caratteri")
-    private String ambienteColtivazione;
+    private java.time.LocalDate dataFine;
 }

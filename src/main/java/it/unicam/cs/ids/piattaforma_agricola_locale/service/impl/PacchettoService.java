@@ -2,12 +2,11 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.impl;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Pacchetto;
@@ -32,10 +31,9 @@ public class PacchettoService implements IPacchettoService {
     private final IPacchettoElementoRepository pacchettoElementoRepository;
     private final IVenditoreRepository venditoreRepository;
 
-    @Autowired
-    public PacchettoService(IPacchettoRepository pacchettoRepository, 
-                           IPacchettoElementoRepository pacchettoElementoRepository,
-                           IVenditoreRepository venditoreRepository) {
+    public PacchettoService(IPacchettoRepository pacchettoRepository,
+            IPacchettoElementoRepository pacchettoElementoRepository,
+            IVenditoreRepository venditoreRepository) {
         this.pacchettoRepository = pacchettoRepository;
         this.pacchettoElementoRepository = pacchettoElementoRepository;
         this.venditoreRepository = venditoreRepository;
@@ -44,10 +42,10 @@ public class PacchettoService implements IPacchettoService {
     @Override
     public void creaPacchetto(DistributoreDiTipicita distributore, String nome, String descrizione, int quantita,
             double prezzoPacchetto) {
-        int idPacchetto = UUID.randomUUID().hashCode();
 
-        // Il prezzo iniziale del pacchetto è sempre 0.0, verrà calcolato automaticamente quando si aggiungono prodotti
-        Pacchetto pacchetto = new Pacchetto(distributore,  nome, descrizione, quantita, 0.0);
+        // Il prezzo iniziale del pacchetto è sempre 0.0, verrà calcolato
+        // automaticamente quando si aggiungono prodotti
+        Pacchetto pacchetto = new Pacchetto(distributore, nome, descrizione, quantita, 0.0);
 
         distributore.getPacchettiOfferti().add(pacchetto);
         this.pacchettoRepository.save(pacchetto);
@@ -71,7 +69,7 @@ public class PacchettoService implements IPacchettoService {
     @Override
     public void aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
             Prodotto prodotto) {
-        if (pacchetto == null || prodotto == null ) {
+        if (pacchetto == null || prodotto == null) {
             throw new IllegalArgumentException("Errore nei parametri");
         }
         if (prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO) {
@@ -88,6 +86,7 @@ public class PacchettoService implements IPacchettoService {
     }
 
     @Override
+    @Transactional
     public void rimuoviProdottoDalPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
             Prodotto prodotto) {
 
@@ -97,12 +96,22 @@ public class PacchettoService implements IPacchettoService {
             throw new IllegalArgumentException("Il prodotto non puo essere null");
         if (!pacchetto.getDistributore().equals(distributore))
             throw new IllegalArgumentException("Il distributore non possiede questo pacchetto");
-        if (!pacchetto.getElementiInclusi().contains(prodotto))
+
+        // Verifica che il prodotto faccia parte del pacchetto confrontando gli ID
+        boolean prodottoTrovato = pacchetto.getElementiInclusi().stream()
+                .anyMatch(elemento -> elemento.getId().equals(prodotto.getId()));
+
+        if (!prodottoTrovato)
             throw new IllegalArgumentException("il prodotto non fa parte di questo pacchetto");
 
+        // Rimuovi l'elemento dal pacchetto
         pacchetto.rimuoviElemento(prodotto);
-        this.pacchettoRepository.save(pacchetto);
 
+        // Rimuovi esplicitamente dalla tabella di associazione
+        this.pacchettoElementoRepository.deleteByPacchettoAndProdotto(pacchetto, prodotto);
+
+        // Salva il pacchetto
+        this.pacchettoRepository.save(pacchetto);
     }
 
     public void aggiungiQuantitaPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
@@ -166,7 +175,7 @@ public class PacchettoService implements IPacchettoService {
     }
 
     // ===== PUBLIC CATALOG METHODS =====
-    
+
     @Override
     public Page<Pacchetto> getAllPacchetti(Pageable pageable) {
         return pacchettoRepository.findAll(pageable);
@@ -194,7 +203,8 @@ public class PacchettoService implements IPacchettoService {
             throw new IllegalArgumentException("ID distributore non può essere null");
         }
         DistributoreDiTipicita distributore = (DistributoreDiTipicita) venditoreRepository.findById(distributoreId)
-                .orElseThrow(() -> new IllegalArgumentException("Distributore con ID " + distributoreId + " non trovato"));
+                .orElseThrow(
+                        () -> new IllegalArgumentException("Distributore con ID " + distributoreId + " non trovato"));
         return pacchettoRepository.findByDistributore(distributore);
     }
 

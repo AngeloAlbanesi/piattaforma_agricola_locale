@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.CarrelloVuotoException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.OrdineException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.QuantitaNonDisponibileAlCheckoutException;
@@ -35,7 +37,6 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IProdottoRe
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IPacchettoRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IRigaOrdineRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Acquirente;
-import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IOrdineService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.observer.IOrdineObservable;
@@ -44,6 +45,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.IMetodoPag
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.PagamentoException;
 
 @Service
+@Slf4j
 public class OrdineService implements IOrdineService, IOrdineObservable {
 
     private final IOrdineRepository ordineRepository;
@@ -57,7 +59,9 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
     private final IPacchettoRepository pacchettoRepository;
 
     @Autowired
-    public OrdineService(IOrdineRepository ordineRepository, IRigaOrdineRepository rigaOrdineRepository, CarrelloService carrelloService, IProdottoRepository prodottoRepository, IPacchettoRepository pacchettoRepository) {
+    public OrdineService(IOrdineRepository ordineRepository, IRigaOrdineRepository rigaOrdineRepository,
+            CarrelloService carrelloService, IProdottoRepository prodottoRepository,
+            IPacchettoRepository pacchettoRepository) {
         this.ordineRepository = ordineRepository;
         this.rigaOrdineRepository = rigaOrdineRepository;
         this.carrelloService = carrelloService;
@@ -154,24 +158,35 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
     }
 
     /**
-     * Ottiene gli ordini relativi a un venditore
+     * NUOVO: Ottiene gli ordini relativi a un venditore specifico.
+     * Usa la relazione diretta venditore-ordine invece di cercare attraverso i
+     * prodotti.
      * 
      * @param venditore il venditore
-     * @return lista degli ordini che contengono prodotti del venditore
+     * @return lista degli ordini del venditore
      */
     public List<Ordine> getOrdiniVenditore(Venditore venditore) {
-        List<Long> prodottoIds = prodottoRepository.findByVenditore(venditore).stream().map(Prodotto::getId).collect(Collectors.toList());
-        List<Ordine> ordini = new ArrayList<>();
-        if(!prodottoIds.isEmpty()){
-            ordini.addAll(ordineRepository.findByProdottoIds(prodottoIds));
+        if (venditore == null) {
+            return new ArrayList<>();
         }
-        if(venditore instanceof DistributoreDiTipicita){
-            List<Long> pacchettoIds = pacchettoRepository.findByDistributore((DistributoreDiTipicita) venditore).stream().map(Pacchetto::getId).collect(Collectors.toList());
-            if(!pacchettoIds.isEmpty()){
-                ordini.addAll(ordineRepository.findByPacchettoIds(pacchettoIds));
-            }
-        }
-        return ordini.stream().distinct().collect(Collectors.toList());
+
+        // NUOVA LOGICA: Cerca direttamente gli ordini per venditore
+        List<Ordine> ordini = ordineRepository.findByVenditore(venditore);
+
+        // DEBUG: Log detailed information about returned orders
+        log.info("DEBUG getOrdiniVenditore - Vendor: {}, Found {} orders",
+                venditore.getIdUtente(), ordini.size());
+
+        ordini.forEach(ordine -> {
+            Long ordineVendorId = ordine.getVenditore() != null ? ordine.getVenditore().getIdUtente() : null;
+            log.info("DEBUG Order: {} - DirectVendor: {}, RequestedVendor: {}, Match: {}",
+                    ordine.getIdOrdine(),
+                    ordineVendorId,
+                    venditore.getIdUtente(),
+                    ordineVendorId != null && ordineVendorId.equals(venditore.getIdUtente()));
+        });
+
+        return ordini;
     }
 
     /**
@@ -240,6 +255,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
         }
     }
 
+    @Deprecated
     @Override
     public Ordine creaOrdineDaCarrello(Acquirente acquirente)
             throws CarrelloVuotoException, QuantitaNonDisponibileAlCheckoutException, OrdineException {
@@ -263,18 +279,20 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
             }
 
             Date dataOrdine = new Date();
-            Ordine ordine = new Ordine( dataOrdine, acquirente);
+            Ordine ordine = new Ordine(dataOrdine, acquirente);
 
             double importoTotale = 0.0;
 
-            // 4. Inietta il service negli elementi del carrello per permettere il recupero degli acquistabili
+            // 4. Inietta il service negli elementi del carrello per permettere il recupero
+            // degli acquistabili
             elementi.forEach(elemento -> elemento.setAcquistabileService(carrelloService.getAcquistabileService()));
 
             // 5. Per ogni elemento del carrello, verifica disponibilità e crea riga ordine
             for (ElementoCarrello elemento : elementi) {
                 Acquistabile acquistabile = elemento.getAcquistabile();
                 if (acquistabile == null) {
-                    throw new OrdineException("Impossibile recuperare l'acquistabile per l'elemento con ID: " + elemento.getIdElemento());
+                    throw new OrdineException(
+                            "Impossibile recuperare l'acquistabile per l'elemento con ID: " + elemento.getIdElemento());
                 }
                 int quantitaRichiesta = elemento.getQuantita();
 
@@ -345,24 +363,159 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
         }
     }
 
+    @Override
+    public List<Ordine> creaOrdiniDaCarrello(Acquirente acquirente)
+            throws CarrelloVuotoException, QuantitaNonDisponibileAlCheckoutException, OrdineException {
+        if (acquirente == null) {
+            throw new OrdineException("Impossibile creare ordini: l'acquirente non può essere null");
+        }
+
+        try {
+            // 1. Recupera il carrello dell'acquirente
+            Optional<Carrello> carrelloOpt = carrelloService.getCarrelloAcquirente(acquirente);
+            if (carrelloOpt.isEmpty()) {
+                throw new CarrelloVuotoException(acquirente.getId());
+            }
+
+            Carrello carrello = carrelloOpt.get();
+            List<ElementoCarrello> elementi = carrello.getElementiCarrello();
+
+            // 2. Verifica che il carrello non sia vuoto
+            if (elementi.isEmpty()) {
+                throw new CarrelloVuotoException("Il carrello dell'acquirente " + acquirente.getNome() + " è vuoto");
+            }
+
+            // 3. Inietta il service negli elementi del carrello per permettere il recupero
+            // degli acquistabili
+            elementi.forEach(elemento -> elemento.setAcquistabileService(carrelloService.getAcquistabileService()));
+
+            // 4. Raggruppa gli elementi del carrello per venditore
+            Map<Venditore, List<ElementoCarrello>> elementiPerVenditore = new HashMap<>();
+
+            for (ElementoCarrello elemento : elementi) {
+                Acquistabile acquistabile = elemento.getAcquistabile();
+                if (acquistabile == null) {
+                    throw new OrdineException(
+                            "Impossibile recuperare l'acquistabile per l'elemento con ID: " + elemento.getIdElemento());
+                }
+
+                // Ottieni il venditore dell'acquistabile
+                Venditore venditore = null;
+                if (acquistabile instanceof Prodotto) {
+                    venditore = ((Prodotto) acquistabile).getVenditore();
+                } else if (acquistabile instanceof Pacchetto) {
+                    venditore = ((Pacchetto) acquistabile).getVenditore();
+                }
+
+                if (venditore == null) {
+                    throw new OrdineException(
+                            "Impossibile determinare il venditore per l'acquistabile: " + acquistabile.getNome());
+                }
+
+                // Aggiungi l'elemento alla lista del venditore
+                elementiPerVenditore.computeIfAbsent(venditore, k -> new ArrayList<>()).add(elemento);
+            }
+
+            Date dataOrdine = new Date();
+            List<Ordine> ordiniCreati = new ArrayList<>();
+
+            // 5. Crea un ordine separato per ogni venditore
+            for (Map.Entry<Venditore, List<ElementoCarrello>> entry : elementiPerVenditore.entrySet()) {
+                Venditore venditore = entry.getKey();
+                List<ElementoCarrello> elementiVenditore = entry.getValue();
+
+                // Crea nuovo ordine per questo venditore
+                Ordine ordine = new Ordine(dataOrdine, acquirente, venditore);
+                double importoTotale = 0.0;
+
+                // Per ogni elemento del venditore, verifica disponibilità e crea riga ordine
+                for (ElementoCarrello elemento : elementiVenditore) {
+                    Acquistabile acquistabile = elemento.getAcquistabile();
+                    int quantitaRichiesta = elemento.getQuantita();
+
+                    // Verifica disponibilità finale
+                    int quantitaDisponibile = 0;
+                    if (acquistabile instanceof Prodotto) {
+                        Prodotto prodotto = (Prodotto) acquistabile;
+                        quantitaDisponibile = prodotto.getQuantitaDisponibile();
+                    } else if (acquistabile instanceof Pacchetto) {
+                        Pacchetto pacchetto = (Pacchetto) acquistabile;
+                        quantitaDisponibile = pacchetto.getQuantitaDisponibile();
+                    }
+
+                    if (quantitaRichiesta > quantitaDisponibile) {
+                        throw new QuantitaNonDisponibileAlCheckoutException(
+                                acquistabile.getNome(),
+                                quantitaRichiesta,
+                                quantitaDisponibile);
+                    }
+
+                    // Crea riga ordine
+                    RigaOrdine rigaOrdine = new RigaOrdine(
+                            ordine,
+                            acquistabile,
+                            quantitaRichiesta,
+                            acquistabile.getPrezzo());
+
+                    // Aggiunge la riga direttamente alla lista delle righe ordine
+                    ordine.getRigheOrdine().add(rigaOrdine);
+
+                    // Calcola importo parziale
+                    importoTotale += acquistabile.getPrezzo() * quantitaRichiesta;
+                }
+
+                // Imposta l'importo totale per questo ordine
+                ordine.setImportoTotale(importoTotale);
+
+                // Salva l'ordine e le righe nei repository
+                ordineRepository.save(ordine);
+                for (RigaOrdine riga : ordine.getRigheOrdine()) {
+                    // Inietta l'AcquistabileService nelle righe ordine
+                    riga.setAcquistabileService(carrelloService.getAcquistabileService());
+                    rigaOrdineRepository.save(riga);
+                }
+
+                ordiniCreati.add(ordine);
+            }
+
+            // 6. Svuota il carrello dopo aver creato tutti gli ordini
+            carrelloService.svuotaCarrello(acquirente);
+
+            return ordiniCreati;
+
+        } catch (CarrelloVuotoException | QuantitaNonDisponibileAlCheckoutException e) {
+            // Rilancia le eccezioni specifiche senza modificarle
+            throw e;
+        } catch (Exception e) {
+            throw new OrdineException("Errore imprevisto durante la creazione degli ordini dal carrello", e);
+        }
+    }
+
+    @Deprecated
     /**
-     * Conferma il pagamento di un ordine utilizzando la strategia di pagamento specificata
-     * e gestisce la transizione di stato. Questo metodo attiva il pattern Observer quando
+     * Conferma il pagamento di un ordine utilizzando la strategia di pagamento
+     * specificata
+     * e gestisce la transizione di stato. Questo metodo attiva il pattern Observer
+     * quando
      * l'ordine transisce allo stato PRONTO_PER_LAVORAZIONE.
      *
-     * @param ordine l'ordine di cui confermare il pagamento
+     * @param ordine             l'ordine di cui confermare il pagamento
      * @param strategiaPagamento la strategia di pagamento da utilizzare
-     * @throws OrdineException se si verifica un errore durante la conferma del pagamento
-     * @throws PagamentoException se si verifica un errore durante l'elaborazione del pagamento
+     * @throws OrdineException    se si verifica un errore durante la conferma del
+     *                            pagamento
+     * @throws PagamentoException se si verifica un errore durante l'elaborazione
+     *                            del pagamento
      */
-    public void confermaPagamento(Ordine ordine, IMetodoPagamentoStrategy strategiaPagamento) throws OrdineException, PagamentoException {
+    public void confermaPagamento(Ordine ordine, IMetodoPagamentoStrategy strategiaPagamento)
+            throws OrdineException, PagamentoException {
         // Validazione parametri
         if (ordine == null) {
             throw new OrdineException("Impossibile confermare il pagamento: l'ordine non può essere null");
         }
-        
+
         if (strategiaPagamento == null) {
-            throw new OrdineException("Impossibile confermare il pagamento: la strategia di pagamento non può essere null");
+            throw new OrdineException(
+                    "Impossibile confermare il pagamento: la strategia di pagamento non può essere null");
         }
 
         // Assicurati che lo stato sia inizializzato correttamente
@@ -374,7 +527,8 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                 // Usa il metodo createStateFromEnum che abbiamo aggiunto a Ordine
                 // Questo viene fatto tramite reflection per evitare di duplicare la logica
                 try {
-                    java.lang.reflect.Method createStateMethod = Ordine.class.getDeclaredMethod("createStateFromEnum", StatoCorrente.class);
+                    java.lang.reflect.Method createStateMethod = Ordine.class.getDeclaredMethod("createStateFromEnum",
+                            StatoCorrente.class);
                     createStateMethod.setAccessible(true);
                     IStatoOrdine nuovoStato = (IStatoOrdine) createStateMethod.invoke(ordine, ordine.getStatoOrdine());
                     ordine.setStato(nuovoStato);
@@ -402,7 +556,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                 }
             }
         }
-        
+
         // Verifica che l'ordine sia nello stato corretto per il pagamento
         if (ordine.getStatoOrdine() != StatoCorrente.ATTESA_PAGAMENTO) {
             throw new OrdineException("L'ordine non è in attesa di pagamento e non può essere processato");
@@ -411,22 +565,24 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
         try {
             // Aggiungi log per debug
             System.out.println("DEBUG - Prima del pagamento - Stato ordine: " + ordine.getStatoOrdine());
-            System.out.println("DEBUG - Prima del pagamento - Stato object: " + (ordine.getStato() != null ? ordine.getStato().getClass().getSimpleName() : "null"));
-            
+            System.out.println("DEBUG - Prima del pagamento - Stato object: "
+                    + (ordine.getStato() != null ? ordine.getStato().getClass().getSimpleName() : "null"));
+
             // Elabora il pagamento utilizzando la strategia fornita
             boolean successo = strategiaPagamento.elaboraPagamento(ordine);
-            
+
             if (successo) {
                 // Se il pagamento è andato a buon fine:
                 try {
                     System.out.println("DEBUG - Pagamento riuscito, eseguo transizione di stato");
-                    
+
                     // 1. Effettua la transizione di stato tramite il pattern State
                     // Questo cambierà lo stato da ATTESA_PAGAMENTO a PRONTO_PER_LAVORAZIONE
                     ordine.paga();
-                    
+
                     System.out.println("DEBUG - Dopo paga() - Stato ordine: " + ordine.getStatoOrdine());
-                    System.out.println("DEBUG - Dopo paga() - Stato object: " + (ordine.getStato() != null ? ordine.getStato().getClass().getSimpleName() : "null"));
+                    System.out.println("DEBUG - Dopo paga() - Stato object: "
+                            + (ordine.getStato() != null ? ordine.getStato().getClass().getSimpleName() : "null"));
 
                     // 2. Aggiorna l'ordine nel repository con il nuovo stato
                     ordineRepository.save(ordine);
@@ -451,7 +607,8 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
             } else {
                 // Se il pagamento non è andato a buon fine, lancia PagamentoException
                 System.out.println("DEBUG - Pagamento non riuscito");
-                throw new PagamentoException("Il pagamento dell'ordine ID " + ordine.getIdOrdine() + " non è andato a buon fine");
+                throw new PagamentoException(
+                        "Il pagamento dell'ordine ID " + ordine.getIdOrdine() + " non è andato a buon fine");
             }
 
         } catch (PagamentoException e) {
@@ -497,18 +654,20 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
 
         try {
             System.out.println("DEBUG - notificaObservers - Inizio notifica");
-            
+
             if (venditoreSpecifico != null) {
                 // Notifica solo il venditore specifico
-                System.out.println("DEBUG - notificaObservers - Notifica venditore specifico: " + 
-                    (venditoreSpecifico.getDatiAzienda() != null ? venditoreSpecifico.getDatiAzienda().getNomeAzienda() : "senza nome"));
+                System.out.println("DEBUG - notificaObservers - Notifica venditore specifico: " +
+                        (venditoreSpecifico.getDatiAzienda() != null
+                                ? venditoreSpecifico.getDatiAzienda().getNomeAzienda()
+                                : "senza nome"));
                 notificaVenditoreSpecifico(ordine, venditoreSpecifico);
             } else {
                 // Identifica e notifica tutti i venditori coinvolti nell'ordine
                 System.out.println("DEBUG - notificaObservers - Notifica tutti i venditori coinvolti");
                 notificaTuttiIVenditoriCoinvolti(ordine);
             }
-            
+
             System.out.println("DEBUG - notificaObservers - Notifica completata");
         } catch (Exception e) {
             System.err.println("DEBUG - Errore in notificaObservers: " + e.getMessage());
@@ -562,17 +721,19 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
     private void notificaTuttiIVenditoriCoinvolti(Ordine ordine) {
         try {
             System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Inizio");
-            
+
             // Mappa per raggruppare le righe d'ordine per venditore
             Map<Venditore, List<RigaOrdine>> righePeerVenditore = new HashMap<>();
 
             // Verifica che l'ordine e le righe ordine non siano null
             if (ordine.getRigheOrdine() == null) {
-                System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Righe ordine null, nessuna notifica necessaria");
+                System.out.println(
+                        "DEBUG - notificaTuttiIVenditoriCoinvolti - Righe ordine null, nessuna notifica necessaria");
                 return;
             }
-            
-            System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Numero righe ordine: " + ordine.getRigheOrdine().size());
+
+            System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Numero righe ordine: "
+                    + ordine.getRigheOrdine().size());
 
             // Raggruppa le righe d'ordine per venditore
             for (RigaOrdine riga : ordine.getRigheOrdine()) {
@@ -581,22 +742,24 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                         System.out.println("DEBUG - Riga ordine null, salto");
                         continue;
                     }
-                    
+
                     Acquistabile acquistabile = riga.getAcquistabile();
                     if (acquistabile == null) {
                         System.out.println("DEBUG - Acquistabile null per riga " + riga.getIdRiga() + ", salto");
                         continue;
                     }
-                    
+
                     Venditore venditore = acquistabile.getVenditore();
                     if (venditore == null) {
-                        System.out.println("DEBUG - Venditore null per acquistabile " + acquistabile.getNome() + ", salto");
+                        System.out.println(
+                                "DEBUG - Venditore null per acquistabile " + acquistabile.getNome() + ", salto");
                         continue;
                     }
 
                     righePeerVenditore.computeIfAbsent(venditore, k -> new ArrayList<>()).add(riga);
-                    System.out.println("DEBUG - Aggiunta riga per venditore: " + 
-                        (venditore.getDatiAzienda() != null ? venditore.getDatiAzienda().getNomeAzienda() : "senza nome"));
+                    System.out.println("DEBUG - Aggiunta riga per venditore: " +
+                            (venditore.getDatiAzienda() != null ? venditore.getDatiAzienda().getNomeAzienda()
+                                    : "senza nome"));
                 } catch (Exception e) {
                     System.err.println("DEBUG - Errore durante l'elaborazione della riga: " + e.getMessage());
                     e.printStackTrace();
@@ -604,17 +767,20 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                 }
             }
 
-            System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Numero venditori trovati: " + righePeerVenditore.size());
-            
+            System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Numero venditori trovati: "
+                    + righePeerVenditore.size());
+
             // Notifica ogni venditore con le sue righe di competenza
             for (Map.Entry<Venditore, List<RigaOrdine>> entry : righePeerVenditore.entrySet()) {
                 try {
                     Venditore venditore = entry.getKey();
                     List<RigaOrdine> righeDiCompetenza = entry.getValue();
-                    
-                    System.out.println("DEBUG - Notifica venditore: " + 
-                        (venditore.getDatiAzienda() != null ? venditore.getDatiAzienda().getNomeAzienda() : "senza nome") + 
-                        " con " + righeDiCompetenza.size() + " righe");
+
+                    System.out.println("DEBUG - Notifica venditore: " +
+                            (venditore.getDatiAzienda() != null ? venditore.getDatiAzienda().getNomeAzienda()
+                                    : "senza nome")
+                            +
+                            " con " + righeDiCompetenza.size() + " righe");
 
                     // Verifica che ci siano observer registrati
                     if (observers.isEmpty()) {
@@ -628,7 +794,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                                 System.out.println("DEBUG - Observer null, salto");
                                 return;
                             }
-                            
+
                             if (obs instanceof VenditoreObserverService) {
                                 System.out.println("DEBUG - Notifica VenditoreObserverService");
                                 try {
@@ -638,7 +804,8 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                                     System.err.println(
                                             "DEBUG - Errore durante la notifica dell'observer (VenditoreOrderHandlerService) per il venditore "
                                                     +
-                                                    venditore.getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
+                                                    venditore.getDatiAzienda().getNomeAzienda() + ": "
+                                                    + e.getMessage());
                                     e.printStackTrace();
                                 }
                             } else if (obs instanceof Venditore && obs instanceof IVenditoreObserver &&
@@ -649,11 +816,13 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                                     System.out.println("DEBUG - Venditore observer notificato con successo");
                                 } catch (Exception e) {
                                     System.err.println("DEBUG - Errore durante la notifica dell'observer (Venditore) " +
-                                            ((Venditore) obs).getDatiAzienda().getNomeAzienda() + ": " + e.getMessage());
+                                            ((Venditore) obs).getDatiAzienda().getNomeAzienda() + ": "
+                                            + e.getMessage());
                                     e.printStackTrace();
                                 }
                             } else {
-                                System.out.println("DEBUG - Observer non compatibile: " + obs.getClass().getSimpleName());
+                                System.out
+                                        .println("DEBUG - Observer non compatibile: " + obs.getClass().getSimpleName());
                             }
                         } catch (Exception e) {
                             System.err.println("DEBUG - Errore durante la gestione dell'observer: " + e.getMessage());
@@ -666,7 +835,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                     // Continua con il prossimo venditore
                 }
             }
-            
+
             System.out.println("DEBUG - notificaTuttiIVenditoriCoinvolti - Completato");
         } catch (Exception e) {
             System.err.println("DEBUG - Errore generale in notificaTuttiIVenditoriCoinvolti: " + e.getMessage());
@@ -679,7 +848,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
     public IOrdineRepository getOrdineRepository() {
         return ordineRepository;
     }
-    
+
     /**
      * Ottiene il servizio per i carrelli
      * 
@@ -688,4 +857,82 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
     public CarrelloService getCarrelloService() {
         return carrelloService;
     }
+
+    @Override
+    public Ordine avanzaStatoOrdine(Ordine ordine, Venditore venditore)
+            throws OrdineException, IllegalStateException {
+
+        if (ordine == null) {
+            throw new OrdineException("Ordine non può essere null");
+        }
+
+        if (venditore == null) {
+            throw new OrdineException("Venditore non può essere null");
+        }
+
+        // Verifica che il venditore abbia prodotti in questo ordine
+        boolean hasProductsInOrder = ordine.getRigheOrdine().stream()
+                .anyMatch(riga -> {
+                    if (riga.getAcquistabile() == null)
+                        return false;
+                    Venditore venditoreProdotto = riga.getAcquistabile().getVenditore();
+                    return venditoreProdotto != null &&
+                            venditoreProdotto.getIdUtente().equals(venditore.getIdUtente());
+                });
+
+        if (!hasProductsInOrder) {
+            throw new OrdineException("Il venditore non ha prodotti in questo ordine");
+        }
+
+        // Ottieni lo stato corrente e determina l'azione da eseguire
+        StatoCorrente statoCorrente = ordine.getStatoOrdine();
+
+        try {
+            switch (statoCorrente) {
+                case PRONTO_PER_LAVORAZIONE:
+                    // Avanza a IN_LAVORAZIONE
+                    ordine.processa();
+                    System.out.println("Ordine " + ordine.getIdOrdine() + " avanzato a IN_LAVORAZIONE dal venditore "
+                            + venditore.getIdUtente());
+                    break;
+
+                case IN_LAVORAZIONE:
+                    // Avanza a SPEDITO
+                    ordine.spedisci();
+                    System.out.println("Ordine " + ordine.getIdOrdine() + " avanzato a SPEDITO dal venditore "
+                            + venditore.getIdUtente());
+                    break;
+
+                case SPEDITO:
+                    // Avanza a CONSEGNATO
+                    ordine.consegna();
+                    System.out.println("Ordine " + ordine.getIdOrdine() + " avanzato a CONSEGNATO dal venditore "
+                            + venditore.getIdUtente());
+                    break;
+
+                case CONSEGNATO:
+                    throw new IllegalStateException("L'ordine è già stato consegnato e non può avanzare ulteriormente");
+
+                case ANNULLATO:
+                    throw new IllegalStateException("L'ordine è stato annullato e non può avanzare");
+
+                case ATTESA_PAGAMENTO:
+                    throw new IllegalStateException(
+                            "L'ordine è in attesa di pagamento. Il venditore non può farlo avanzare.");
+
+                default:
+                    throw new IllegalStateException("Stato ordine non riconosciuto: " + statoCorrente);
+            }
+
+            // Aggiorna l'ordine nel database
+            ordineRepository.save(ordine);
+
+            return ordine;
+
+        } catch (UnsupportedOperationException e) {
+            throw new IllegalStateException(
+                    "Impossibile avanzare l'ordine dallo stato " + statoCorrente + ": " + e.getMessage());
+        }
+    }
+
 }

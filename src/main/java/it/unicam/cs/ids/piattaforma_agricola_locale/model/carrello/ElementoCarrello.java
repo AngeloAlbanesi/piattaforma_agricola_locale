@@ -118,7 +118,7 @@ public class ElementoCarrello {
     }
 
     /**
-     * Calcola il prezzo totale per questo elemento (quantità * prezzo unitario)
+     * Calcola il prezzo totale per questo elemento (quantit√† * prezzo unitario)
      * 
      * @return il prezzo totale dell'elemento
      */
@@ -147,7 +147,7 @@ public class ElementoCarrello {
 
     @Override
     public int hashCode() {
-        // Se l'elemento è persistito, usa l'ID
+        // Se l'elemento √† persistito, usa l'ID
         if (idElemento != null) {
             return idElemento.hashCode();
         }

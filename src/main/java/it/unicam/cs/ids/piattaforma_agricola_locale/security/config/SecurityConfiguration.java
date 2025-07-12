@@ -33,7 +33,12 @@ public class SecurityConfiguration {
                         // SWAGGER e endpoint pubblici delle aziende
                         .requestMatchers(
                                 new AntPathRequestMatcher("/api/auth/**"),
+                                new AntPathRequestMatcher("/api/prodotti/{id}"),
+                                new AntPathRequestMatcher("/api/processi-trasformazione/{id}"),
+                                new AntPathRequestMatcher("/api/processi-trasformazione/{id}/tracciabilita"),
+                                new AntPathRequestMatcher("/api/processi-trasformazione"),
                                 new AntPathRequestMatcher("/api/prodotti"),
+                                new AntPathRequestMatcher("/api/prodotti/*/metodi-coltivazione"),
                                 new AntPathRequestMatcher("/api/pacchetti"),
                                 new AntPathRequestMatcher("/api/azienda/{id}/geocode"),
                                 new AntPathRequestMatcher("/api/azienda/{id}/distanza"),

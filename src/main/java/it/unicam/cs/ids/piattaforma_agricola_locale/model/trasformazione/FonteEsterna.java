@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import jakarta.persistence.*;
 import java.util.Objects;
 
@@ -9,6 +10,7 @@ import java.util.Objects;
  */
 @Entity
 @DiscriminatorValue("ESTERNA")
+@JsonTypeName("ESTERNA")
 public class FonteEsterna extends FonteMateriaPrima {
 
     @Column(name = "nome_fornitore", nullable = false)

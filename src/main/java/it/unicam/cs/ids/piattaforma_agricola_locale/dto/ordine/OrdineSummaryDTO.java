@@ -28,5 +28,6 @@ public class OrdineSummaryDTO {
     private StatoCorrente statoCorrente;
     private String nomeAcquirente;
     private Long idAcquirente;
+    private Long idVenditore;
     private int numeroArticoli;
 }

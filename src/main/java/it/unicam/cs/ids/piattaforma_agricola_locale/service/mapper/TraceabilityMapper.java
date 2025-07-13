@@ -83,7 +83,9 @@ public class TraceabilityMapper {
         StringBuilder tracciabilita = new StringBuilder();
         
         // Intestazione del processo
-        tracciabilita.append("=== TRACCIABILITÀ PROCESSO DI TRASFORMAZIONE ===\n");
+        tracciabilita.append("================================================================================\n");
+        tracciabilita.append("                    TRACCIABILITA' PROCESSO DI TRASFORMAZIONE\n");
+        tracciabilita.append("================================================================================\n");
         tracciabilita.append("Processo: ").append(processo.getNome()).append("\n");
         tracciabilita.append("Trasformatore: ").append(processo.getTrasformatore().getNome())
                     .append(" ").append(processo.getTrasformatore().getCognome()).append("\n");
@@ -92,33 +94,49 @@ public class TraceabilityMapper {
             tracciabilita.append("Azienda: ").append(processo.getTrasformatore().getDatiAzienda().getNomeAzienda()).append("\n");
         }
         
-        if (processo.getMetodoProduzione() != null) {
+        if (processo.getMetodoProduzione() != null && !processo.getMetodoProduzione().trim().isEmpty()) {
             tracciabilita.append("Metodo di Produzione: ").append(processo.getMetodoProduzione()).append("\n");
         }
         
-        tracciabilita.append("\n=== FASI DI LAVORAZIONE ===\n");
+        if (processo.getDescrizione() != null && !processo.getDescrizione().trim().isEmpty()) {
+            tracciabilita.append("Descrizione: ").append(processo.getDescrizione()).append("\n");
+        }
+        
+        tracciabilita.append("\n");
+        tracciabilita.append("================================================================================\n");
+        tracciabilita.append("                              FASI DI LAVORAZIONE\n");
+        tracciabilita.append("================================================================================\n");
         
         // Dettagli delle fasi
-        for (FaseLavorazioneDTO fase : fasi) {
-            tracciabilita.append("\n--- Fase ").append(fase.getOrdineEsecuzione()).append(": ")
-                        .append(fase.getNome()).append(" ---\n");
-            tracciabilita.append("Descrizione: ").append(fase.getDescrizione()).append("\n");
-            tracciabilita.append("Materia Prima: ").append(fase.getMateriaPrimaUtilizzata()).append("\n");
-            tracciabilita.append("Fonte: ").append(fase.getDescrizioneFonte())
+        for (int i = 0; i < fasi.size(); i++) {
+            FaseLavorazioneDTO fase = fasi.get(i);
+            
+            tracciabilita.append("\n>> FASE ").append(fase.getOrdineEsecuzione()).append(": ").append(fase.getNome()).append("\n");
+            tracciabilita.append("   Descrizione: ").append(fase.getDescrizione()).append("\n");
+            tracciabilita.append("   Materia Prima: ").append(fase.getMateriaPrimaUtilizzata()).append("\n");
+            tracciabilita.append("   Fonte: ").append(fase.getDescrizioneFonte())
                         .append(" (").append(fase.getTipoFonte()).append(")\n");
             
-            if (fase.isFonteInterna()) {
-                tracciabilita.append("ID Produttore Interno: ").append(fase.getIdProduttoreInterno()).append("\n");
+            if (fase.isFonteInterna() && fase.getIdProduttoreInterno() != null) {
+                tracciabilita.append("   ID Produttore Interno: ").append(fase.getIdProduttoreInterno()).append("\n");
+            }
+            
+            // Aggiungi separatore tra le fasi (tranne per l'ultima)
+            if (i < fasi.size() - 1) {
+                tracciabilita.append("   ").append("-".repeat(70)).append("\n");
             }
         }
         
         // Prodotto finale
         if (processo.getProdottoFinale() != null) {
-            tracciabilita.append("\n=== PRODOTTO FINALE ===\n");
+            tracciabilita.append("\n");
+            tracciabilita.append("================================================================================\n");
+            tracciabilita.append("                                PRODOTTO FINALE\n");
+            tracciabilita.append("================================================================================\n");
             tracciabilita.append("Prodotto: ").append(processo.getProdottoFinale().getNome()).append("\n");
         }
         
-        tracciabilita.append("\n=== FINE TRACCIABILITÀ ===");
+        tracciabilita.append("================================================================================");
         
         return tracciabilita.toString();
     }

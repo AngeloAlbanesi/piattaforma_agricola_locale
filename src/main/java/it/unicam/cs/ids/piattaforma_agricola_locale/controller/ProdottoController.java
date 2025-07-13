@@ -5,18 +5,23 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.exception.ResourceOwnershipE
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.coltivazione.MetodoDiColtivazioneDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareResponseDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.processo.TraceabilityDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.coltivazione.MetodoDiColtivazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.ProcessoTrasformazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.OwnershipValidationService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProduttoreService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProcessoTrasformazioneService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IUtenteService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.MetodoDiColtivazioneMapper;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.ProdottoMapper;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.TraceabilityMapper;
 import it.unicam.cs.ids.piattaforma_agricola_locale.security.RequiresAccreditation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +56,8 @@ public class ProdottoController {
     private final OwnershipValidationService ownershipValidationService;
     private final IProduttoreService produttoreService;
     private final MetodoDiColtivazioneMapper metodiColtivazioneMapper;
+    private final IProcessoTrasformazioneService processoTrasformazioneService;
+    private final TraceabilityMapper traceabilityMapper;
 
     @GetMapping
     public ResponseEntity<Page<ProductSummaryDTO>> getAllProducts(
@@ -584,6 +591,69 @@ public class ProdottoController {
             // Se il prodotto con quell'ID non esiste
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Prodotto con ID " + id + " non trovato.");
+        }
+    }
+
+    /**
+     * Endpoint per ottenere la tracciabilità di un prodotto trasformato.
+     * Verifica che il prodotto sia di tipo TRASFORMATO e restituisce
+     * la tracciabilità completa del processo di trasformazione associato.
+     *
+     * @param id L'ID del prodotto di cui ottenere la tracciabilità
+     * @return ResponseEntity con TraceabilityDTO o messaggio di errore
+     */
+    @GetMapping("/{id}/tracciabilita")
+    public ResponseEntity<?> getProductTraceability(@PathVariable Long id) {
+        try {
+            log.info("Richiesta tracciabilità per prodotto con ID: {}", id);
+            
+            // Verifica che il prodotto esista
+            Optional<Prodotto> prodottoOpt = prodottoService.getProdottoById(id);
+            if (prodottoOpt.isEmpty()) {
+                log.warn("Prodotto con ID {} non trovato", id);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Prodotto con ID " + id + " non trovato");
+            }
+            
+            Prodotto prodotto = prodottoOpt.get();
+            
+            // Verifica che il prodotto sia di tipo TRASFORMATO
+            if (prodotto.getTipoOrigine() != TipoOrigineProdotto.TRASFORMATO) {
+                log.warn("Prodotto con ID {} non è di tipo TRASFORMATO. Tipo attuale: {}", 
+                        id, prodotto.getTipoOrigine());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Il prodotto con ID " + id + " non è di tipo TRASFORMATO. " +
+                              "La tracciabilità è disponibile solo per prodotti trasformati.");
+            }
+            
+            // Verifica che il prodotto abbia un processo di trasformazione associato
+            Long processoId = prodotto.getIdProcessoTrasformazioneOriginario();
+            if (processoId == null) {
+                log.warn("Prodotto trasformato con ID {} non ha un processo di trasformazione associato", id);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Errore: il prodotto trasformato non ha un processo di trasformazione associato");
+            }
+            
+            // Recupera il processo di trasformazione con tutte le informazioni necessarie
+            Optional<ProcessoTrasformazione> processoOpt = processoTrasformazioneService.getProcessoTracciabilita(processoId);
+            if (processoOpt.isEmpty()) {
+                log.warn("Processo di trasformazione con ID {} non trovato per prodotto {}", processoId, id);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Errore: processo di trasformazione associato non trovato");
+            }
+            
+            ProcessoTrasformazione processo = processoOpt.get();
+            
+            // Converte il processo in DTO di tracciabilità
+            TraceabilityDTO traceabilityDTO = traceabilityMapper.toTraceabilityDTO(processo);
+            
+            log.info("Tracciabilità recuperata con successo per prodotto ID: {}", id);
+            return ResponseEntity.ok(traceabilityDTO);
+            
+        } catch (Exception e) {
+            log.error("Errore durante il recupero della tracciabilità per prodotto ID {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Errore interno del server durante il recupero della tracciabilità");
         }
     }
 }

@@ -3,7 +3,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.factory;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteBaseRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.*;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.crypto.password.PasswordEncoder; // <-- Importa PasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder; 
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
 
     private final IUtenteBaseRepository utenteRepository;
-    private final PasswordEncoder passwordEncoder; // <-- MODIFICA 1: Aggiungi il campo
+    private final PasswordEncoder passwordEncoder; 
 
     /**
      * Costruttore che accetta un repository e un password encoder.
@@ -26,13 +26,11 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
      * @param utenteRepository Repository per la persistenza degli utenti
      * @param passwordEncoder  Encoder per le password
      */
-    public SpringReadyUtenteFactory(IUtenteBaseRepository utenteRepository, PasswordEncoder passwordEncoder) { // <-- MODIFICA 2: Aggiungi al costruttore
+    public SpringReadyUtenteFactory(IUtenteBaseRepository utenteRepository, PasswordEncoder passwordEncoder) { 
         this.utenteRepository = utenteRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    // NOTA: Il corpo di tutti i metodi "crea..." rimane identico,
-    // perché la logica di hashing è centralizzata nel metodo "creaUtente" generale.
 
     @Override
     public Acquirente creaAcquirente(
@@ -86,7 +84,7 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
             String nome,
             String cognome,
             String email,
-            String password, // <-- Ora riceviamo la password in chiaro
+            String password, 
             String numeroTelefono) {
 
         return (Curatore) creaUtente(TipoRuolo.CURATORE, nome, cognome, email, password, numeroTelefono, null);
@@ -97,7 +95,7 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
             String nome,
             String cognome,
             String email,
-            String password, // <-- Ora riceviamo la password in chiaro
+            String password, 
             String numeroTelefono) {
 
         return (AnimatoreDellaFiliera) creaUtente(TipoRuolo.ANIMATORE_DELLA_FILIERA, nome, cognome, email, password, numeroTelefono, null);
@@ -108,7 +106,7 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
             String nome,
             String cognome,
             String email,
-            String password, // <-- Ora riceviamo la password in chiaro
+            String password, 
             String numeroTelefono) {
 
         return (GestorePiattaforma) creaUtente(TipoRuolo.GESTORE_PIATTAFORMA, nome, cognome, email, password, numeroTelefono, null);
@@ -120,18 +118,18 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
             String nome,
             String cognome,
             String email,
-            String password, // <-- Riceviamo la password in chiaro
+            String password,
             String numeroTelefono,
             DatiAzienda datiAzienda) {
 
-        validateUserData(nome, cognome, email, password); // La validazione ora riceve la password in chiaro
+        validateUserData(nome, cognome, email, password); 
         checkEmailNotInUse(email);
 
         if (requiresDatiAzienda(tipoRuolo) && datiAzienda == null) {
             throw new IllegalArgumentException("I dati azienda sono richiesti per il ruolo " + tipoRuolo);
         }
 
-        // <-- MODIFICA 3: Codifica la password prima di passarla al costruttore dell'entità
+
         String passwordHash = passwordEncoder.encode(password);
 
         Utente utente;

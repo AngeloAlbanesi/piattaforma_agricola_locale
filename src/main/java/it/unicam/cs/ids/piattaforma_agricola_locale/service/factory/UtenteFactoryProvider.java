@@ -2,7 +2,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.factory;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteBaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder; // <-- Importa PasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class UtenteFactoryProvider {
 
     private final IUtenteBaseRepository utenteRepository;
-    private final PasswordEncoder passwordEncoder; // <-- MODIFICA 1: Aggiungi il campo
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Costruttore per l'iniezione delle dipendenze.
@@ -23,22 +23,17 @@ public class UtenteFactoryProvider {
      * @param passwordEncoder  Encoder per le password
      */
     @Autowired
-    public UtenteFactoryProvider(IUtenteBaseRepository utenteRepository, PasswordEncoder passwordEncoder) { // <-- MODIFICA 2: Aggiungi al costruttore
+    public UtenteFactoryProvider(IUtenteBaseRepository utenteRepository, PasswordEncoder passwordEncoder) {
         this.utenteRepository = utenteRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     /**
      * Ottiene una factory di utenti standard.
-     * NOTA: Anche SimpleUtenteFactory potrebbe richiedere il PasswordEncoder.
-     * Per coerenza, lo aggiungiamo anche qui.
      *
      * @return Una factory di utenti standard
      */
     public UtenteFactory getUtenteFactory() {
-        // Per coerenza, anche SimpleUtenteFactory dovrebbe usare il PasswordEncoder.
-        // Se non lo fa, questo è il punto in cui si decide quale implementazione usare.
-        // Per ora, assumiamo che la factory "pronta per Spring" sia quella di default.
         return getSpringReadyUtenteFactory();
     }
 
@@ -48,7 +43,7 @@ public class UtenteFactoryProvider {
      * @return Una factory di utenti pronta per Spring Boot
      */
     public UtenteFactory getSpringReadyUtenteFactory() {
-        // <-- MODIFICA 3: Passa il passwordEncoder al costruttore
+
         return new SpringReadyUtenteFactory(utenteRepository, passwordEncoder);
     }
 
@@ -59,7 +54,6 @@ public class UtenteFactoryProvider {
      * @return Una factory di utenti personalizzata
      */
     public UtenteFactory getUtenteFactory(IUtenteBaseRepository repository) {
-        // <-- MODIFICA 4: Passa anche il passwordEncoder qui
         return new SpringReadyUtenteFactory(repository, passwordEncoder);
     }
 

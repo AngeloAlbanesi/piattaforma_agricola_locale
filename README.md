@@ -816,7 +816,7 @@ public abstract class ProdottoMapper {
 - **Versioning**: Supporto per diverse versioni API
 - **Performance**: Controllo dati trasferiti
 
-### 9. Aspect-Oriented Programming (AOP) ⭐⭐
+### 7. Aspect-Oriented Programming (AOP) ⭐⭐
 
 **Implementazione**: Cross-cutting concerns con Spring AOP
 

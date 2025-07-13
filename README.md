@@ -276,12 +276,7 @@ Content-Type: application/json
 
 
 
-### Interfaccia Web (Opzionale)
 
-Se preferisci l'interfaccia web:
-1. **Accedi** a `http://localhost:8080`
-2. **Registrati** tramite il form web
-3. **Naviga** le funzionalita tramite dashboard
 
 ### Console H2 (Sviluppo)
 

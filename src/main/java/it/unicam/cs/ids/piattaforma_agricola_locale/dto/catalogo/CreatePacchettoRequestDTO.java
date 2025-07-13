@@ -48,4 +48,11 @@ public class CreatePacchettoRequestDTO {
     public Double getPrezzoTotale() {
         return prezzoPacchetto;
     }
+
+    /**
+     * Imposta il prezzo totale del pacchetto (alias per prezzoPacchetto).
+     */
+    public void setPrezzoTotale(Double prezzoTotale) {
+        this.prezzoPacchetto = prezzoTotale;
+    }
 }

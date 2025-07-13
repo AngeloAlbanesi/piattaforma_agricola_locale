@@ -119,6 +119,22 @@ public class PacchettoController {
         return ResponseEntity.ok(summaryDTOs);
     }
 
+    @GetMapping("/miei-pacchetti")
+    @PreAuthorize("hasRole('DISTRIBUTORE_DI_TIPICITA')")
+    public ResponseEntity<List<PacchettoSummaryDTO>> getMyPackages(Authentication authentication) {
+        String email = authentication.getName();
+        log.info("Getting packages for authenticated distributor: {}", email);
+        
+        DistributoreDiTipicita distributore = (DistributoreDiTipicita) utenteService.getUtenteByEmail(email);
+        List<Pacchetto> distributorPackages = pacchettoService.getPacchettiByDistributore(distributore.getId());
+        List<PacchettoSummaryDTO> summaryDTOs = distributorPackages.stream()
+                .map(pacchettoMapper::toSummaryDTO)
+                .collect(Collectors.toList());
+        
+        log.info("Found {} packages for distributor: {}", summaryDTOs.size(), email);
+        return ResponseEntity.ok(summaryDTOs);
+    }
+
     // =================== DISTRIBUTOR CRUD OPERATIONS ===================
 
     @PostMapping

@@ -32,4 +32,11 @@ public class ElementoPacchettoRequestDTO {
     public Long getIdProdotto() {
         return idElemento;
     }
+
+    /**
+     * Imposta l'ID del prodotto (alias per idElemento per compatibilità).
+     */
+    public void setIdProdotto(Long idProdotto) {
+        this.idElemento = idProdotto;
+    }
 }

@@ -27,6 +27,7 @@ La **Piattaforma di Digitalizzazione e Valorizzazione della Filiera Agricola Loc
 ### Perché è stato creato?
 
 Il progetto nasce dall'esigenza di:
+
 - **Promuovere il territorio** e i suoi prodotti tipici
 - **Garantire la tracciabilita** completa dei prodotti agricoli
 - **Facilitare la commercializzazione** diretta tra produttori e consumatori
@@ -47,31 +48,34 @@ Il progetto nasce dall'esigenza di:
 ### Sfide affrontate e funzionalita future
 
 **Sfide principali:**
+
 - Implementazione di un sistema di tracciabilita completo
 - Gestione di ruoli e permessi complessi
-
-
 
 ## Funzionalita Principali
 
 ### E-commerce e Marketplace
+
 - Vendita diretta di prodotti agricoli
 - Gestione carrello e ordini
 - Sistema di pagamento integrato
 - Creazione di pacchetti prodotto personalizzati
 
 ### Tracciabilita e Geolocalizzazione
+
 - Tracciamento completo della filiera produttiva
-- Visualizzazione su mappa interattiva 
+- Visualizzazione su mappa interattiva
 - Collegamento tra fasi di produzione e trasformazione
 - Certificazioni di qualita e origine
 
 ### Gestione Multi-Ruolo
+
 - Sistema di autenticazione e autorizzazione avanzato
 - Gestione permessi granulari per ogni tipologia di utente
 - Workflow di approvazione contenuti
 
 ### Processi di Trasformazione
+
 - Documentazione completa dei processi produttivi
 - Collegamento tra materie prime e prodotti finiti
 - Gestione fasi di lavorazione
@@ -81,10 +85,9 @@ Il progetto nasce dall'esigenza di:
 - Promozione eventi e prodotti
 
 ### Gestione Eventi
+
 - Organizzazione fiere e mercati locali
 - Prenotazione ad eventi
-
-
 
 ## Tecnologie Utilizzate
 
@@ -117,7 +120,7 @@ Il progetto nasce dall'esigenza di:
 
 ### Sistemi Esterni
 
-- **Sistema OSM**: Mappe 
+- **Sistema OSM**: Mappe
 - **Sistemi Social**: Condivisione contenuti
 
 ## Installazione e Avvio
@@ -131,28 +134,33 @@ Il progetto nasce dall'esigenza di:
 ### Installazione
 
 1. **Clona il repository**
+
 ```bash
 git clone https://github.com/your-username/piattaforma-agricola-locale.git
 cd piattaforma-agricola-locale
 ```
 
 2. **Installa le dipendenze**
+
 ```bash
 ./mvnw clean install
 ```
 
 3. **Configura il database** (opzionale)
+
 ```bash
 # Il progetto usa H2 in-memory di default
 # Per configurazione personalizzata, modifica src/main/resources/application.properties
 ```
 
 4. **Avvia l'applicazione**
+
 ```bash
 ./mvnw spring-boot:run
 ```
 
 5. **Accedi all'applicazione**
+
 ```
 http://localhost:8080
 ```
@@ -182,8 +190,6 @@ Per testare le API REST del progetto, puoi utilizzare:
    - Importa la collection delle API
    - Testa gli endpoint con richieste personalizzate
    - Gestione dell'autenticazione JWT
-
-
 
 ### Registrazione e Autenticazione
 
@@ -217,11 +223,10 @@ Content-Type: application/json
 }
 ```
 
-
-
 ### Utilizzo del Token JWT
 
 Per le API protette, includi il token nell'header:
+
 ```bash
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
@@ -274,13 +279,10 @@ Content-Type: application/json
 }
 ```
 
-
-
-
-
 ### Console H2 (Sviluppo)
 
 Accedi al database H2 per debugging:
+
 ```
 # Database configuration (H2 in-memory for development)
 spring.datasource.url=jdbc:h2:file:./data/piattaforma_agricola
@@ -288,7 +290,6 @@ spring.datasource.driverClassName=org.h2.Driver
 spring.datasource.username=sa
 spring.datasource.password=password
 ```
-
 
 ## Architettura e Design Pattern
 
@@ -388,7 +389,8 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
 }
 ```
 
-**Rationale**: 
+**Rationale**:
+
 - **Type Safety**: Metodi dedicati prevengono errori a compile-time
 - **Validazione Centralizzata**: Logica comune in AbstractUtenteFactory
 - **Estensibilità**: Facile aggiunta di nuovi tipi utente
@@ -468,6 +470,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
 ```
 
 **Rationale**:
+
 - **Semplificazione**: Client usano interfaccia semplice invece di multiple classi
 - **Disaccoppiamento**: Nasconde implementazioni interne
 - **Coordinamento**: Gestisce interazioni tra subsistemi
@@ -533,6 +536,7 @@ public class OrdineController {
 ```
 
 **Rationale**:
+
 - **Estensibilità**: Nuovi metodi di pagamento senza modificare codice esistente
 - **Runtime Selection**: Scelta del metodo a runtime
 - **Single Responsibility**: Ogni strategia gestisce un solo tipo di pagamento
@@ -612,6 +616,7 @@ public class StatoOrdineNuovoInAttesaDiPagamento implements IStatoOrdine {
 ```
 
 **Rationale**:
+
 - **Controllo Transizioni**: Ogni stato definisce transizioni permesse
 - **Eliminazione Condizionali**: No più if/else complessi
 - **Estensibilità**: Facile aggiunta di nuovi stati
@@ -717,52 +722,12 @@ public class ObserverConfig {
 ```
 
 **Rationale**:
+
 - **Disaccoppiamento**: Oggetti osservati non conoscono i loro observer
 - **Estensibilità**: Facile aggiunta di nuovi observer
 - **Reattività**: Notifiche immediate su eventi importanti
 
-### 6. Repository Pattern ⭐⭐⭐
-
-**Implementazione**: Astrazione completa dell'accesso ai dati
-
-**Ubicazione**: `src/main/java/it/unicam/cs/ids/piattaforma_agricola_locale/model/repository/`
-
-**Problema risolto**: Separare la logica di business dall'accesso ai dati, permettendo di cambiare implementazione del persistence layer.
-
-**Struttura con Spring Data JPA**:
-
-```java
-// Repository base
-@Repository
-public interface IUtenteBaseRepository extends JpaRepository<Utente, Long> {
-    Optional<Utente> findByEmail(String email);
-    List<Utente> findByTipoRuolo(TipoRuolo tipoRuolo);
-    
-    @Query("SELECT u FROM Utente u WHERE u.statoAccreditamento = :stato")
-    List<Utente> findByStatoAccreditamento(@Param("stato") StatoAccreditamento stato);
-}
-
-// Repository specializzato
-@Repository
-public interface IProdottoRepository extends JpaRepository<Prodotto, Long> {
-    List<Prodotto> findByVenditore(Venditore venditore);
-    List<Prodotto> findByStatoVerifica(StatoVerificaValori statoVerifica);
-    
-    @Query("SELECT p FROM Prodotto p WHERE p.prezzo BETWEEN :minPrice AND :maxPrice")
-    List<Prodotto> findByPriceRange(@Param("minPrice") double minPrice, 
-                                    @Param("maxPrice") double maxPrice);
-    
-    @Query("SELECT p FROM Prodotto p JOIN p.certificazioni c WHERE c.nome = :certificazione")
-    List<Prodotto> findByCertificazione(@Param("certificazione") String certificazione);
-}
-```
-
-**Rationale**:
-- **Separazione Concerns**: Business logic separata da data access
-- **Testabilità**: Facile mocking dei repository
-- **Flessibilità**: Possibile cambio di database senza impatto sui service
-
-### 7. DTO Pattern ⭐⭐⭐
+### 6. DTO Pattern ⭐⭐⭐
 
 **Implementazione**: Oggetti per trasferimento dati tra layer
 
@@ -845,63 +810,11 @@ public abstract class ProdottoMapper {
 ```
 
 **Rationale**:
+
 - **Sicurezza**: Non espone entità interne
 - **Validazione**: Validazione centralizzata input
 - **Versioning**: Supporto per diverse versioni API
 - **Performance**: Controllo dati trasferiti
-
-### 8. Dependency Injection Pattern ⭐⭐⭐
-
-**Implementazione**: Iniezione dipendenze nativa Spring Boot
-
-**Ubicazione**: Presente ovunque nel progetto
-
-**Problema risolto**: Eliminare accoppiamento tra classi, facilitare testing, gestire lifecycle degli oggetti.
-
-**Esempi di Implementazione**:
-
-```java
-// Constructor Injection (Raccomandato)
-@Service
-public class ProdottoService {
-    
-    private final IProdottoRepository prodottoRepository;
-    private final IVenditoreRepository venditoreRepository;
-    private final List<ICuratoreObserver> observers;
-    
-    @Autowired
-    public ProdottoService(IProdottoRepository prodottoRepository,
-                          IVenditoreRepository venditoreRepository) {
-        this.prodottoRepository = prodottoRepository;
-        this.venditoreRepository = venditoreRepository;
-        this.observers = new ArrayList<>();
-    }
-}
-
-// Field Injection con @Autowired
-@RestController
-public class ProdottoController {
-    
-    @Autowired
-    private IProdottoService prodottoService;
-    
-    @Autowired
-    private IUtenteService utenteService;
-}
-
-// Conditional Injection
-@Component
-@ConditionalOnProperty(name = "app.features.social.enabled", havingValue = "true")
-public class SocialShareService {
-    // Viene creato solo se la proprietà è abilitata
-}
-```
-
-**Rationale**:
-- **Testabilità**: Facile mocking delle dipendenze
-- **Configurabilità**: Gestione configurazioni esterne
-- **Lifecycle Management**: Spring gestisce creazione/distruzione oggetti
-- **Loose Coupling**: Classi dipendono da astrazioni, non implementazioni
 
 ### 9. Aspect-Oriented Programming (AOP) ⭐⭐
 
@@ -979,135 +892,11 @@ public class ProdottoController {
 ```
 
 **Rationale**:
+
 - **Separation of Concerns**: Logica di sicurezza separata dalla business logic
 - **Reusability**: Aspect riutilizzabile su tutti i metodi
 - **Maintainability**: Centralizzazione della logica di sicurezza
 - **Clean Code**: Controller focalizzati sulla business logic
-
-### 10. Template Method Pattern ⭐⭐
-
-**Implementazione**: Algoritmi con step variabili nella gerarchia Factory
-
-**Ubicazione**: `src/main/java/it/unicam/cs/ids/piattaforma_agricola_locale/service/factory/AbstractUtenteFactory.java`
-
-**Problema risolto**: Definire lo scheletro di un algoritmo permettendo alle sottoclassi di ridefinire alcuni step.
-
-**Implementazione**:
-
-```java
-// Template Class
-public abstract class AbstractUtenteFactory implements UtenteFactory {
-    
-    // Template Method - definisce l'algoritmo generale
-    protected final Utente createUser(TipoRuolo tipoRuolo, String nome, String cognome, 
-                                      String email, String password, String numeroTelefono, 
-                                      DatiAzienda datiAzienda) {
-        
-        // Step 1: Validazioni comuni (implementazione fissa)
-        validateUserData(nome, cognome, email, password);
-        
-        // Step 2: Validazione specifica ruolo (implementazione fissa)
-        if (requiresDatiAzienda(tipoRuolo) && datiAzienda == null) {
-            throw new IllegalArgumentException("Dati azienda richiesti per il ruolo " + tipoRuolo);
-        }
-        
-        // Step 3: Preprocessing specifico (hook method - può essere overridden)
-        preprocessUserData(nome, cognome, email, password);
-        
-        // Step 4: Creazione utente (metodo astratto - deve essere implementato)
-        Utente utente = createUserInstance(tipoRuolo, nome, cognome, email, password, numeroTelefono, datiAzienda);
-        
-        // Step 5: Post-processing (hook method)
-        postprocessUser(utente);
-        
-        // Step 6: Persistenza (implementazione fissa)
-        return saveUser(utente);
-    }
-    
-    // Metodi concreti (implementazione fissa)
-    protected final void validateUserData(String nome, String cognome, String email, String password) {
-        if (nome == null || nome.trim().isEmpty()) {
-            throw new IllegalArgumentException("Il nome non può essere vuoto");
-        }
-        if (!isValidEmail(email)) {
-            throw new IllegalArgumentException("Formato email non valido");
-        }
-    }
-    
-    protected final boolean requiresDatiAzienda(TipoRuolo tipoRuolo) {
-        return tipoRuolo == TipoRuolo.PRODUTTORE || 
-               tipoRuolo == TipoRuolo.TRASFORMATORE || 
-               tipoRuolo == TipoRuolo.DISTRIBUTORE_DI_TIPICITA;
-    }
-    
-    // Hook Methods (implementazione di default, possono essere override)
-    protected void preprocessUserData(String nome, String cognome, String email, String password) {
-        // Default: no preprocessing
-    }
-    
-    protected void postprocessUser(Utente utente) {
-        // Default: no postprocessing
-    }
-    
-    // Abstract Methods (devono essere implementati dalle sottoclassi)
-    protected abstract Utente createUserInstance(TipoRuolo tipoRuolo, String nome, String cognome, 
-                                                  String email, String password, String numeroTelefono, 
-                                                  DatiAzienda datiAzienda);
-    
-    protected abstract Utente saveUser(Utente utente);
-}
-
-// Concrete Implementation
-@Component
-public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
-    
-    private final PasswordEncoder passwordEncoder;
-    private final IUtenteBaseRepository repository;
-    
-    @Override
-    protected void preprocessUserData(String nome, String cognome, String email, String password) {
-        // Implementazione specifica: verifica email non già in uso
-        if (repository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("Email già in uso");
-        }
-    }
-    
-    @Override
-    protected Utente createUserInstance(TipoRuolo tipoRuolo, String nome, String cognome, 
-                                        String email, String password, String numeroTelefono, 
-                                        DatiAzienda datiAzienda) {
-        
-        String passwordHash = passwordEncoder.encode(password);
-        
-        switch (tipoRuolo) {
-            case PRODUTTORE:
-                return new Produttore(nome, cognome, email, passwordHash, numeroTelefono, datiAzienda, tipoRuolo);
-            case ACQUIRENTE:
-                return new Acquirente(nome, cognome, email, passwordHash, numeroTelefono, tipoRuolo);
-            // Altri casi...
-            default:
-                throw new IllegalArgumentException("Tipo ruolo non supportato: " + tipoRuolo);
-        }
-    }
-    
-    @Override
-    protected Utente saveUser(Utente utente) {
-        return repository.save(utente);
-    }
-    
-    @Override
-    protected void postprocessUser(Utente utente) {
-        // Implementazione specifica: logging
-        logger.info("Utente creato: {} - {}", utente.getEmail(), utente.getTipoRuolo());
-    }
-}
-```
-
-**Rationale**:
-- **Code Reuse**: Algoritmo comune condiviso tra implementazioni
-- **Flexibility**: Sottoclassi possono customizzare step specifici
-- **Control**: Classe base controlla il flusso dell'algoritmo
-- **Extension Points**: Hook methods per future estensioni
 
 ## Valutazione Complessiva
 
@@ -1129,6 +918,7 @@ public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
 ### Principi SOLID
 
 Il progetto segue i principi SOLID per garantire:
+
 - **S**ingle Responsibility Principle
 - **O**pen/Closed Principle
 - **L**iskov Substitution Principle
@@ -1168,10 +958,10 @@ Il progetto segue i principi SOLID per garantire:
 
 - **Team di Sviluppo** - Universita di Camerino
 - **Corso**: Ingegneria del Software (IDS)
-- **Sviluppatori**: 
+- **Sviluppatori**:
 - - [Angelo Albanesi](https://github.com/angeloalbanesi)
 - - [Paolo Campanari](https://github.com/PaoloCampanari)
-- - [Lorenzo Donadio](https://github.com/Lor3Don4)                  
+- - [Lorenzo Donadio](https://github.com/Lor3Don4)
 
 ### Risorse e Riferimenti
 
@@ -1182,6 +972,7 @@ Il progetto segue i principi SOLID per garantire:
 ### Librerie Open Source
 
 Ringraziamo tutti i maintainer delle librerie utilizzate:
+
 - Spring Framework Team
 - Hibernate Team
 - MapStruct Contributors
@@ -1214,4 +1005,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-

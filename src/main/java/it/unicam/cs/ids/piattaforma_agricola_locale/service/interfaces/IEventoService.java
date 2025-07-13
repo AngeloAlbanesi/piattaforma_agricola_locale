@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IEventoService {
-    void creaEvento(String nomeEvento, String descrizione,
+    Evento creaEvento(String nomeEvento, String descrizione,
                     Date dataOraInizio, Date dataOraFine, String luogoEvento,
                     int capienzaMassima, AnimatoreDellaFiliera organizzatore);
     void aggiornaEvento(Long idEvento, String nuovoNomeEvento, String nuovaDescrizione,

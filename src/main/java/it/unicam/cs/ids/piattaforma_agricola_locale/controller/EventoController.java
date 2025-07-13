@@ -148,11 +148,8 @@ public class EventoController {
         AnimatoreDellaFiliera animatore = (AnimatoreDellaFiliera) utenteService.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
 
-        // Create the event from the request
-        Evento evento = eventoMapper.fromCreateRequestDTO(createEventoRequest);
-
-        // Set the organizer and create the event
-        eventoService.creaEvento(
+        // Create the event through service and get the saved entity with ID
+        Evento eventoSalvato = eventoService.creaEvento(
                 createEventoRequest.getNomeEvento(),
                 createEventoRequest.getDescrizione(),
                 createEventoRequest.getDataOraInizio(),
@@ -161,8 +158,8 @@ public class EventoController {
                 createEventoRequest.getCapienzaMassima(),
                 animatore);
 
-        // Get the created event and return it
-        EventoDetailDTO eventDetail = eventoMapper.toDetailDTO(evento);
+        // Map the saved event (with ID and organizer) to DTO
+        EventoDetailDTO eventDetail = eventoMapper.toDetailDTO(eventoSalvato);
 
         log.info("Created new event: {} by organizer: {}", eventDetail.getNomeEvento(), animatore.getNome());
 

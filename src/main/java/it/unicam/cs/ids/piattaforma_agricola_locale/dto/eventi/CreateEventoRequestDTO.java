@@ -4,6 +4,10 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import it.unicam.cs.ids.piattaforma_agricola_locale.config.DateDeserializer;
+import it.unicam.cs.ids.piattaforma_agricola_locale.config.DateSerializer;
 import it.unicam.cs.ids.piattaforma_agricola_locale.validation.ValidDateRange;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -35,10 +39,14 @@ public class CreateEventoRequestDTO {
 
     @NotNull(message = "La data e ora di inizio sono obbligatorie")
     @Future(message = "La data e ora di inizio devono essere nel futuro")
+    @JsonDeserialize(using = DateDeserializer.class)
+    @JsonSerialize(using = DateSerializer.class)
     private Date dataOraInizio;
 
     @NotNull(message = "La data e ora di fine sono obbligatorie")
     @Future(message = "La data e ora di fine devono essere nel futuro")
+    @JsonDeserialize(using = DateDeserializer.class)
+    @JsonSerialize(using = DateSerializer.class)
     private Date dataOraFine;
 
     @NotBlank(message = "Il luogo dell'evento è obbligatorio")

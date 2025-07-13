@@ -43,7 +43,7 @@ public class EventoService implements IEventoService {
     }
 
     @Override
-    public void creaEvento(String nomeEvento, String descrizione,
+    public Evento creaEvento(String nomeEvento, String descrizione,
 
                            Date dataOraInizio, Date dataOraFine, String luogoEvento,
                            int capienzaMassima, AnimatoreDellaFiliera organizzatore) {
@@ -69,7 +69,7 @@ public class EventoService implements IEventoService {
                                    dataOraInizio, dataOraFine, luogoEvento,
                                    capienzaMassima, organizzatore);
 
-        eventoRepository.save(evento);
+        return eventoRepository.save(evento);
     }
 
     @Override
@@ -293,6 +293,16 @@ public class EventoService implements IEventoService {
         EventoRegistrazione registrazione = new EventoRegistrazione(evento, utente, numeroPosti);
         registrazione.setNote(note);
         
+        // Se l'utente è un Venditore (PRODUTTORE, DISTRIBUTORE, TRASFORMATORE), aggiungi l'azienda ai partecipanti
+        if (utente instanceof Venditore) {
+            Venditore venditore = (Venditore) utente;
+            // Verifica che l'azienda non sia già nella lista
+            if (!evento.getAziendePartecipanti().contains(venditore)) {
+                evento.addAziendaPartecipante(venditore);
+                eventoRepository.save(evento); // Salva l'evento aggiornato
+            }
+        }
+        
         // Aggiorna i posti prenotati nell'evento
         prenotaPosti(evento, numeroPosti);
         
@@ -321,6 +331,14 @@ public class EventoService implements IEventoService {
         
         // Aggiorna i posti prenotati nell'evento
         eliminaPostiPrenotati(evento, registrazione.getNumeroPosti());
+        
+        // Se l'utente è un Venditore, rimuovi l'azienda dai partecipanti
+        if (utente instanceof Venditore) {
+            Venditore venditore = (Venditore) utente;
+            // Rimuovi l'azienda dai partecipanti (la logica può essere migliorata per verificare se ha altre registrazioni)
+            evento.removeAziendaPartecipante(venditore);
+            eventoRepository.save(evento); // Salva l'evento aggiornato
+        }
         
         // Elimina la registrazione
         eventoRegistrazioneRepository.delete(registrazione);

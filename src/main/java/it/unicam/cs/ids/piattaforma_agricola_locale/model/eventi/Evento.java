@@ -26,11 +26,11 @@ public class Evento implements Acquistabile {
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "data_ora_inizio", nullable = false)
-    private Date DataOraInizio;
+    private Date dataOraInizio;
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "data_ora_fine", nullable = false)
-    private Date DataOraFine;
+    private Date dataOraFine;
     
     @Column(name = "luogo_evento", nullable = false)
     private String luogoEvento;
@@ -59,13 +59,13 @@ public class Evento implements Acquistabile {
 
     public Evento() {}
 
-    public Evento(String nomeEvento, String descrizione, Date DataOraInizio, Date DataOraFine,
+    public Evento(String nomeEvento, String descrizione, Date dataOraInizio, Date dataOraFine,
             String luogoEvento, int capienzaMassima, AnimatoreDellaFiliera organizzatore) {
 
         this.nomeEvento = nomeEvento;
         this.descrizione = descrizione;
-        this.DataOraInizio = DataOraInizio;
-        this.DataOraFine = DataOraFine;
+        this.dataOraInizio = dataOraInizio;
+        this.dataOraFine = dataOraFine;
         this.luogoEvento = luogoEvento;
         this.capienzaMassima = capienzaMassima;
         this.postiAttualmentePrenotati = 0;
@@ -99,19 +99,19 @@ public class Evento implements Acquistabile {
     }
 
     public Date getDataOraInizio() {
-        return DataOraInizio;
+        return dataOraInizio;
     }
 
-    public void setDataOraInizio(Date DataOraInizio) {
-        this.DataOraInizio = DataOraInizio;
+    public void setDataOraInizio(Date dataOraInizio) {
+        this.dataOraInizio = dataOraInizio;
     }
 
     public Date getDataOraFine() {
-        return DataOraFine;
+        return dataOraFine;
     }
 
-    public void setDataOraFine(Date DataOraFine) {
-        this.DataOraFine = DataOraFine;
+    public void setDataOraFine(Date dataOraFine) {
+        this.dataOraFine = dataOraFine;
     }
 
     public String getLuogoEvento() {

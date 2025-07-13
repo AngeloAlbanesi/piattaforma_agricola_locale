@@ -29,9 +29,16 @@ public class GlobalExceptionHandler {
 
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+            if (error instanceof FieldError) {
+                String fieldName = ((FieldError) error).getField();
+                String errorMessage = error.getDefaultMessage();
+                errors.put(fieldName, errorMessage);
+            } else {
+                // Handle ObjectError (class-level validation errors)
+                String objectName = error.getObjectName();
+                String errorMessage = error.getDefaultMessage();
+                errors.put(objectName, errorMessage);
+            }
         });
 
         ErrorResponse errorResponse = ErrorResponse.builder()

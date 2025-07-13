@@ -4,6 +4,10 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import it.unicam.cs.ids.piattaforma_agricola_locale.config.DateDeserializer;
+import it.unicam.cs.ids.piattaforma_agricola_locale.config.DateSerializer;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserPublicDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.StatoEventoValori;
 import lombok.AllArgsConstructor;
@@ -27,7 +31,11 @@ public class EventoDetailDTO {
     private Long idEvento;
     private String nomeEvento;
     private String descrizione;
+    @JsonDeserialize(using = DateDeserializer.class)
+    @JsonSerialize(using = DateSerializer.class)
     private Date dataOraInizio;
+    @JsonDeserialize(using = DateDeserializer.class)
+    @JsonSerialize(using = DateSerializer.class)
     private Date dataOraFine;
     private String luogoEvento;
     private int capienzaMassima;
@@ -35,7 +43,7 @@ public class EventoDetailDTO {
     private int postiDisponibili;
     private StatoEventoValori statoEvento;
     private UserPublicDTO organizzatore;
-    private List<UserPublicDTO> aziendePartecipanti;
+    private List<AziendaPartecipanteDTO> aziendePartecipanti;
 
     /**
      * Gets the number of participating companies.

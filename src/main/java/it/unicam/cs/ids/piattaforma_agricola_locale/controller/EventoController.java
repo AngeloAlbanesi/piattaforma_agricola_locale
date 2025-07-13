@@ -5,6 +5,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoDetailDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoPartecipanteDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoRegistrazioneRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.EventoSummaryDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.eventi.AziendaPartecipanteDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.PromoteRequestDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.social.ShareResponseDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.exception.BusinessRuleViolationException;
@@ -13,6 +14,8 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.EventoRegistrazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.AnimatoreDellaFiliera;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IVenditoreRepository;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.OwnershipValidationService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IEventoService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IUtenteService;
@@ -49,6 +52,7 @@ public class EventoController {
     private final IUtenteService utenteService;
     private final EventoMapper eventoMapper;
     private final OwnershipValidationService ownershipValidationService;
+    private final IVenditoreRepository venditoreRepository;
 
     @GetMapping
     public ResponseEntity<Page<EventoSummaryDTO>> getAllEvents(
@@ -325,5 +329,217 @@ public class EventoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Evento con ID " + id + " non trovato.");
         }
+    }
+
+    // ===== EVENT STATE MANAGEMENT ENDPOINTS =====
+
+    /**
+     * Start an event.
+     * Only the organizer of the event can start it.
+     * Changes status from IN_PROGRAMMA to IN_CORSO.
+     */
+    @PatchMapping("/{id}/inizia")
+    @RequiresAccreditation
+    @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA') and @ownershipValidationService.isEventOwner(#id, authentication.name)")
+    public ResponseEntity<EventoDetailDTO> iniziaEvento(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        // Get the authenticated user
+        String username = authentication.getName();
+        AnimatoreDellaFiliera animatore = (AnimatoreDellaFiliera) utenteService.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+
+        try {
+            // Start the event
+            eventoService.iniziaEvento(id, animatore);
+
+            // Get the updated event and return it
+            Evento updatedEvento = eventoService.getEventoById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Evento non trovato"));
+
+            EventoDetailDTO eventDetail = eventoMapper.toDetailDTO(updatedEvento);
+
+            log.info("Started event ID: {} by organizer: {}", id, animatore.getNome());
+
+            return ResponseEntity.ok(eventDetail);
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Failed to start event ID: {} - {}", id, e.getMessage());
+            throw new BusinessRuleViolationException(e.getMessage());
+        }
+    }
+
+    /**
+     * End an event.
+     * Only the organizer of the event can end it.
+     * Changes status from IN_CORSO to CONCLUSO.
+     */
+    @PatchMapping("/{id}/termina")
+    @RequiresAccreditation
+    @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA') and @ownershipValidationService.isEventOwner(#id, authentication.name)")
+    public ResponseEntity<EventoDetailDTO> terminaEvento(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        // Get the authenticated user
+        String username = authentication.getName();
+        AnimatoreDellaFiliera animatore = (AnimatoreDellaFiliera) utenteService.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+
+        try {
+            // End the event
+            eventoService.terminaEvento(id, animatore);
+
+            // Get the updated event and return it
+            Evento updatedEvento = eventoService.getEventoById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Evento non trovato"));
+
+            EventoDetailDTO eventDetail = eventoMapper.toDetailDTO(updatedEvento);
+
+            log.info("Ended event ID: {} by organizer: {}", id, animatore.getNome());
+
+            return ResponseEntity.ok(eventDetail);
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Failed to end event ID: {} - {}", id, e.getMessage());
+            throw new BusinessRuleViolationException(e.getMessage());
+        }
+    }
+
+    /**
+     * Cancel an event.
+     * Only the organizer of the event can cancel it.
+     * Changes status to ANNULLATO (cannot cancel if already CONCLUSO).
+     */
+    @PatchMapping("/{id}/annulla")
+    @RequiresAccreditation
+    @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA') and @ownershipValidationService.isEventOwner(#id, authentication.name)")
+    public ResponseEntity<EventoDetailDTO> annullaEvento(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        // Get the authenticated user
+        String username = authentication.getName();
+        AnimatoreDellaFiliera animatore = (AnimatoreDellaFiliera) utenteService.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+
+        try {
+            // Cancel the event
+            eventoService.annullaEvento(id, animatore);
+
+            // Get the updated event and return it
+            Evento updatedEvento = eventoService.getEventoById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Evento non trovato"));
+
+            EventoDetailDTO eventDetail = eventoMapper.toDetailDTO(updatedEvento);
+
+            log.info("Cancelled event ID: {} by organizer: {}", id, animatore.getNome());
+
+            return ResponseEntity.ok(eventDetail);
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Failed to cancel event ID: {} - {}", id, e.getMessage());
+            throw new BusinessRuleViolationException(e.getMessage());
+        }
+    }
+
+    // ===== COMPANY PARTICIPANT MANAGEMENT ENDPOINTS =====
+
+    /**
+     * Add a company as participant to an event.
+     * Only the organizer of the event can add participants.
+     */
+    @PostMapping("/{id}/partecipanti-azienda/{venditorId}")
+    @RequiresAccreditation
+    @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA') and @ownershipValidationService.isEventOwner(#id, authentication.name)")
+    public ResponseEntity<Void> aggiungiAziendaPartecipante(
+            @PathVariable Long id,
+            @PathVariable Long venditorId,
+            Authentication authentication) {
+
+        try {
+            // Get the vendor user
+            Venditore venditore = venditoreRepository.findById(venditorId)
+                    .orElseThrow(() -> new IllegalArgumentException("Venditore con ID " + venditorId + " non trovato"));
+
+            // Add the company participant
+            eventoService.aggiungiAziendaPartecipante(id, venditore);
+
+            log.info("Added company participant (vendor ID: {}) to event ID: {}", venditorId, id);
+
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Failed to add company participant to event ID: {} - {}", id, e.getMessage());
+            throw new BusinessRuleViolationException(e.getMessage());
+        }
+    }
+
+    /**
+     * Remove a company participant from an event.
+     * Only the organizer of the event can remove participants.
+     */
+    @DeleteMapping("/{id}/partecipanti-azienda/{venditorId}")
+    @RequiresAccreditation
+    @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA') and @ownershipValidationService.isEventOwner(#id, authentication.name)")
+    public ResponseEntity<Void> rimuoviAziendaPartecipante(
+            @PathVariable Long id,
+            @PathVariable Long venditorId,
+            Authentication authentication) {
+
+        try {
+            // Get the vendor user
+            Venditore venditore = venditoreRepository.findById(venditorId)
+                    .orElseThrow(() -> new IllegalArgumentException("Venditore con ID " + venditorId + " non trovato"));
+
+            // Remove the company participant
+            eventoService.rimuoviAziendaPartecipante(id, venditore);
+
+            log.info("Removed company participant (vendor ID: {}) from event ID: {}", venditorId, id);
+
+            return ResponseEntity.noContent().build();
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Failed to remove company participant from event ID: {} - {}", id, e.getMessage());
+            throw new BusinessRuleViolationException(e.getMessage());
+        }
+    }
+
+    /**
+     * Get the list of company participants for an event.
+     * Only the organizer of the event can see the company participants.
+     */
+    @GetMapping("/{id}/partecipanti-azienda")
+    @RequiresAccreditation
+    @PreAuthorize("hasRole('ANIMATORE_DELLA_FILIERA') and @ownershipValidationService.isEventOwner(#id, authentication.name)")
+    public ResponseEntity<List<AziendaPartecipanteDTO>> getAziendePartecipanti(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        // Get the event
+        Evento evento = eventoService.getEventoById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Evento con ID " + id + " non trovato"));
+
+        // Get company participants and map to DTOs manually
+        List<AziendaPartecipanteDTO> aziendePartecipanti = evento.getAziendePartecipanti()
+                .stream()
+                .map(venditore -> {
+                    var datiAzienda = venditore.getDatiAzienda();
+                    return AziendaPartecipanteDTO.builder()
+                            .id(datiAzienda.getId())
+                            .nomeAzienda(datiAzienda.getNomeAzienda())
+                            .partitaIva(datiAzienda.getPartitaIva())
+                            .indirizzoAzienda(datiAzienda.getIndirizzoAzienda())
+                            .descrizioneAzienda(datiAzienda.getDescrizioneAzienda())
+                            .sitoWebUrl(datiAzienda.getSitoWebUrl())
+                            .certificazioniAzienda(List.of()) // Simplified for now
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        log.info("Retrieved {} company participants for event ID: {}", aziendePartecipanti.size(), id);
+
+        return ResponseEntity.ok(aziendePartecipanti);
     }
 }

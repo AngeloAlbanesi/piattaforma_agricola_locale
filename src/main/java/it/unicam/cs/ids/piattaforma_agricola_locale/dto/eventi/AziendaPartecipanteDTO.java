@@ -50,4 +50,20 @@ public class AziendaPartecipanteDTO {
     public String getSitoWeb() {
         return sitoWebUrl;
     }
+
+    // Alias setter methods for JSON compatibility
+    public void setNome(String nome) {
+        this.nomeAzienda = nome;
+    }
+    
+    public void setIndirizzo(String indirizzo) {
+        this.indirizzoAzienda = indirizzo;
+    }
+    
+    public void setSitoWeb(String sitoWeb) {
+        this.sitoWebUrl = sitoWeb;
+    }
+    
+    // Note: setTelefono and setEmail are not implemented as these fields
+    // return hardcoded values and are not stored in the model
 }

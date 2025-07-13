@@ -48,4 +48,11 @@ public class CertificazioneDTO {
     public String getNome() {
         return nomeCertificazione;
     }
+
+    /**
+     * Imposta il nome della certificazione (alias per nomeCertificazione per compatibilità).
+     */
+    public void setNome(String nome) {
+        this.nomeCertificazione = nome;
+    }
 }

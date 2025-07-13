@@ -24,4 +24,5 @@ public class ElementoPacchettoDTO {
     private String nomeElemento;
     private String descrizioneElemento;
     private double prezzoElemento;
+    private int quantita; // Quantita di questo elemento nel pacchetto
 }

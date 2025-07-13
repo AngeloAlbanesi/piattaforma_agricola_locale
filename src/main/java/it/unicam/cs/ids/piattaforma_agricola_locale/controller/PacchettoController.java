@@ -26,6 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -342,15 +343,7 @@ public class PacchettoController {
                             .descrizione(pacchetto.getDescrizione())
                             .prezzoTotale(pacchetto.getPrezzoTotale())
                             .quantitaDisponibile(pacchetto.getQuantitaDisponibile())
-                            .elementi(pacchetto.getElementi().stream()
-                                    .map(elemento -> ElementoPacchettoDTO.builder()
-                                            .tipoElemento(getActualClassName(elemento))
-                                            .idElemento(elemento.getId())
-                                            .nomeElemento(elemento.getNome())
-                                            .descrizioneElemento(elemento.getDescrizione())
-                                            .prezzoElemento(elemento.getPrezzo())
-                                            .build())
-                                    .collect(Collectors.toList()))
+                            .elementi(raggruppaProdottiConQuantita(pacchetto.getElementi()))
                             .prezzoCalcolato(calculatePackagePrice(pacchetto))
                             .disponibilitaCompleta(checkPackageAvailability(pacchetto))
                             .build();
@@ -359,6 +352,48 @@ public class PacchettoController {
                     return ResponseEntity.ok(composition);
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Raggruppa elementi duplicati per ID e conta le quantita.
+     */
+    private List<ElementoPacchettoDTO> raggruppaProdottiConQuantita(List<Acquistabile> elementi) {
+        if (elementi == null || elementi.isEmpty()) {
+            return List.of();
+        }
+        
+        Map<Long, Long> conteggi = elementi.stream()
+                .collect(Collectors.groupingBy(
+                    Acquistabile::getId,
+                    Collectors.counting()
+                ));
+        
+        return conteggi.entrySet().stream()
+                .map(entry -> {
+                    Long elementId = entry.getKey();
+                    Long count = entry.getValue();
+                    
+                    // Trova il primo elemento con questo ID per ottenere i dettagli
+                    Acquistabile elemento = elementi.stream()
+                            .filter(e -> e.getId().equals(elementId))
+                            .findFirst()
+                            .orElse(null);
+                    
+                    if (elemento == null) {
+                        return null;
+                    }
+                    
+                    return ElementoPacchettoDTO.builder()
+                            .tipoElemento(getActualClassName(elemento))
+                            .idElemento(elemento.getId())
+                            .nomeElemento(elemento.getNome())
+                            .descrizioneElemento(elemento.getDescrizione())
+                            .prezzoElemento(elemento.getPrezzo())
+                            .quantita(count.intValue())
+                            .build();
+                })
+                .filter(dto -> dto != null)
+                .collect(Collectors.toList());
     }
 
     // Helper methods

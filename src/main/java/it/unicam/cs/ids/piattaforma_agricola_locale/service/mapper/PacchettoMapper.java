@@ -86,7 +86,7 @@ public interface PacchettoMapper {
 
     /**
      * Converts List of Acquistabile to List of ElementoPacchettoDTO.
-     * Handles polymorphic conversion for different Acquistabile implementations.
+     * Groups duplicate elements by ID and counts quantities.
      */
     @Named("acquistabiliToElementiDTO")
     default List<ElementoPacchettoDTO> acquistabiliToElementiDTO(List<Acquistabile> acquistabili) {
@@ -95,7 +95,30 @@ public interface PacchettoMapper {
         }
         
         return acquistabili.stream()
-                .map(this::acquistabileToElementoDTO)
+                .collect(Collectors.groupingBy(
+                    acquistabile -> acquistabile.getId(),
+                    Collectors.counting()
+                ))
+                .entrySet().stream()
+                .map(entry -> {
+                    Long elementId = entry.getKey();
+                    Long count = entry.getValue();
+                    
+                    // Find the first occurrence to get element details
+                    Acquistabile elemento = acquistabili.stream()
+                            .filter(a -> a.getId().equals(elementId))
+                            .findFirst()
+                            .orElse(null);
+                    
+                    if (elemento == null) {
+                        return null;
+                    }
+                    
+                    ElementoPacchettoDTO dto = acquistabileToElementoDTO(elemento);
+                    dto.setQuantita(count.intValue());
+                    return dto;
+                })
+                .filter(dto -> dto != null)
                 .collect(Collectors.toList());
     }
 
@@ -113,6 +136,7 @@ public interface PacchettoMapper {
         dto.setNomeElemento(acquistabile.getNome());
         dto.setDescrizioneElemento(acquistabile.getDescrizione());
         dto.setPrezzoElemento(acquistabile.getPrezzo());
+        dto.setQuantita(1); // Default quantity for single element
 
         // Determine type based on instanceof
         if (acquistabile instanceof Prodotto) {

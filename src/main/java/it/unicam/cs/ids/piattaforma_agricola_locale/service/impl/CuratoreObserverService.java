@@ -44,16 +44,9 @@ public class CuratoreObserverService implements ICuratoreObserver {
         if (prodotto
                 .getStatoVerifica() == it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori.IN_REVISIONE) {
             try {
-                // Aggiunge il prodotto alla coda di revisione interna del curatore
                 curatoreService.aggiungiProdottoALlaCodeDiRevisione(prodotto);
-
-                // Log di conferma (opzionale)
-                System.out.println("Prodotto '" + prodotto.getNome() + "' (ID: " + prodotto.getId() +
-                        ") aggiunto automaticamente alla coda di revisione del curatore");
-
             } catch (Exception e) {
-                // Gestione errori senza propagare l'eccezione per non bloccare altri observer
-                System.err.println("Errore durante l'aggiunta del prodotto alla coda di revisione: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }

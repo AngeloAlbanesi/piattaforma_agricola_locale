@@ -38,7 +38,6 @@ public abstract class Utente implements UserDetails {
     private boolean isAttivo;
 
     protected Utente() {
-        // Default constructor for JPA
     }
 
     public Utente(String nome, String cognome, String email, String passwordHash, String numeroTelefono,
@@ -101,14 +100,6 @@ public abstract class Utente implements UserDetails {
         this.tipoRuolo = tipoRuolo;
     }
 
-    public boolean modificaPassword(String nuovaPassword) {
-
-        // TODO: implementare la logica per modificare la password
-        // Ad esempio, potresti aggiornare il campo passwordHash con un nuovo hash della
-        // password
-        // Restituisci true se la modifica è avvenuta con successo, altrimenti false
-        return false;
-    }
 
     public void disattivaAccount() {
         this.isAttivo = false;

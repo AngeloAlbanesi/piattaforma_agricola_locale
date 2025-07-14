@@ -35,12 +35,13 @@ public class VenditoreService implements IVenditoreService {
     private DistanceCalculationService distanceCalculationService;
 
     @Autowired
-    public VenditoreService(ICertificazioneService certificazioneService, IVenditoreRepository venditoreRepository, IDatiAziendaRepository datiAziendaRepository) {
+    public VenditoreService(ICertificazioneService certificazioneService, IVenditoreRepository venditoreRepository,
+            IDatiAziendaRepository datiAziendaRepository) {
         this.certificazioneService = certificazioneService;
         this.venditoreRepository = venditoreRepository;
         this.datiAziendaRepository = datiAziendaRepository;
     }
-    
+
     @Override
     public Optional<Venditore> getVenditoreById(Long id) {
         if (id == null) {
@@ -68,34 +69,36 @@ public class VenditoreService implements IVenditoreService {
     }
 
     @Override
-    public DatiAzienda aggiungiDatiAzienda(Venditore venditore, String nomeAzienda, String partitaIva, String indirizzoAzienda,
-                                           String descrizioneAzienda, String logoUrl, String sitoWebUrl) { // Modificato per ritornare DatiAzienda
+    public DatiAzienda aggiungiDatiAzienda(Venditore venditore, String nomeAzienda, String partitaIva,
+            String indirizzoAzienda,
+            String descrizioneAzienda, String logoUrl, String sitoWebUrl) { // Modificato per ritornare DatiAzienda
 
-        if(datiAziendaRepository.findByPartitaIva(partitaIva).isEmpty()) {
+        if (datiAziendaRepository.findByPartitaIva(partitaIva).isEmpty()) {
             // Genera un ID per DatiAzienda se non fornito o gestito diversamente
             Long idVenditore = venditore.getId();
-            DatiAzienda datiAzienda = new DatiAzienda( nomeAzienda, partitaIva, indirizzoAzienda, descrizioneAzienda,
+            DatiAzienda datiAzienda = new DatiAzienda(nomeAzienda, partitaIva, indirizzoAzienda, descrizioneAzienda,
                     logoUrl, sitoWebUrl);
             venditore.setDatiAzienda(datiAzienda);
             // Se il venditore deve essere salvato dopo questa modifica:
 
             datiAziendaRepository.save(datiAzienda);
             return datiAzienda;
-        }else
-        {
+        } else {
             throw new IllegalStateException("DatiAzienda gia presenti");
         }
     }
 
     // Metodo per aggiungere una certificazione ai DatiAzienda di un Venditore
     @Override
-    public Certificazione aggiungiCertificazioneAdAzienda(Venditore venditore, String nomeCertificazione, String enteRilascio, Date dataRilascio, Date dataScadenza) {
+    public Certificazione aggiungiCertificazioneAdAzienda(Venditore venditore, String nomeCertificazione,
+            String enteRilascio, Date dataRilascio, Date dataScadenza) {
         if (venditore == null || venditore.getDatiAzienda() == null || certificazioneService == null) {
             System.err.println("Venditore, dati azienda o servizio certificazioni non disponibile.");
             return null;
         }
         DatiAzienda datiAzienda = venditore.getDatiAzienda();
-        return certificazioneService.creaCertificazionePerAzienda(nomeCertificazione, enteRilascio, dataRilascio, dataScadenza, datiAzienda);
+        return certificazioneService.creaCertificazionePerAzienda(nomeCertificazione, enteRilascio, dataRilascio,
+                dataScadenza, datiAzienda);
     }
 
     // Metodo per rimuovere una certificazione dai DatiAzienda di un Venditore
@@ -116,38 +119,21 @@ public class VenditoreService implements IVenditoreService {
         return certificazioneService.getCertificazioniAzienda(venditore.getDatiAzienda().getId());
     }
 
-
-
-    // Metodo per stampare le certificazioni dell'azienda (simile a quello per prodotto)
-    public void stampaCertificazioniAzienda(Venditore venditore) {
-        if (venditore == null || venditore.getDatiAzienda() == null) return;
-
-        List<Certificazione> certificazioni = getCertificazioniAzienda(venditore);
-
-        if (certificazioni.isEmpty()) {
-            System.out.println("  Nessuna certificazione per questa azienda.");
-        } else {
-            System.out.println("  Certificazioni dell'azienda ("+ venditore.getDatiAzienda().getNomeAzienda() +"):");
-            for (Certificazione c : certificazioni) {
-                c.stampaCertificazione();
-            }
-        }
-    }
-    
     @Override
     public Page<DatiAzienda> getAllAziende(Pageable pageable) {
         // Restituisce tutte le aziende approvate
         return datiAziendaRepository.findByStatoVerifica(StatoVerificaValori.APPROVATO, pageable);
     }
-    
+
     @Override
     public Page<DatiAzienda> searchAziende(String query, Pageable pageable) {
         // Implementazione semplificata: cerca per nome azienda
-        // In una implementazione reale, si userebbe un repository con query pi� complesse
+        // In una implementazione reale, si userebbe un repository con query pi�
+        // complesse
         // o un motore di ricerca come Elasticsearch
         return datiAziendaRepository.findByNomeAziendaContainingIgnoreCase(query, pageable);
     }
-    
+
     @Override
     public Venditore updateVenditore(Venditore venditore) {
         if (venditore == null) {
@@ -203,8 +189,7 @@ public class VenditoreService implements IVenditoreService {
                 coordPartenza.getLatitudine(),
                 coordPartenza.getLongitudine(),
                 coordAzienda.getLatitudine(),
-                coordAzienda.getLongitudine()
-        );
+                coordAzienda.getLongitudine());
 
         // 5. Crea e restituisci il DTO con tutte le informazioni
         DistanzaDTO risultato = new DistanzaDTO(indirizzoPartenza, indirizzoAzienda, distanza);

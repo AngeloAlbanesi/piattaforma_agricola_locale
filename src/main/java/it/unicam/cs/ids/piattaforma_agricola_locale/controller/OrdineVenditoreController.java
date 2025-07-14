@@ -453,10 +453,7 @@ public class OrdineVenditoreController {
     }
 
     private Ordine createFilteredOrderForVendor(Ordine originalOrder, Venditore venditore) {
-        // Create a copy of the order with only the vendor's products
-        // This is a simplified implementation - in a real scenario you might want to
-        // create
-        // a proper deep copy or use a builder pattern
+
         Ordine filteredOrder = new Ordine();
         filteredOrder.setIdOrdine(originalOrder.getIdOrdine());
         filteredOrder.setDataOrdine(originalOrder.getDataOrdine());
@@ -600,16 +597,16 @@ public class OrdineVenditoreController {
                 log.error("DELIVER AUTH - No user found for email: {}", email);
                 throw new RuntimeException("Utente non trovato per email: " + email);
             }
-            
+
             Utente utente = utenteOpt.get();
             log.info("DELIVER AUTH - Found Utente: ID={}, Email={}, Type={}",
                     utente.getIdUtente(), utente.getEmail(), utente.getClass().getSimpleName());
-            
+
             if (!(utente instanceof Venditore)) {
                 log.error("DELIVER AUTH - User is not a Venditore: {}", utente.getClass().getSimpleName());
                 throw new RuntimeException("L'utente non è un venditore");
             }
-            
+
             Venditore venditore = (Venditore) utente;
             log.info("DELIVER AUTH - Venditore cast successful: ID={}, Email={}",
                     venditore.getIdUtente(), venditore.getEmail());
@@ -818,8 +815,6 @@ public class OrdineVenditoreController {
         boolean hasProducts = !vendorLines.isEmpty();
         boolean allVendorProductsInSameState = true;
 
-        // Check if all vendor's products are in a consistent state for delivery
-        // This is important for multi-vendor orders
         if (hasProducts && vendorLines.size() > 1) {
             // If there are multiple products, they should all be in the same fulfillment
             // state

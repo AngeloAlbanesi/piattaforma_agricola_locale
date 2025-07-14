@@ -25,7 +25,6 @@ public abstract class Venditore extends Utente {
 
     protected Venditore() {
         super();
-        // Default constructor for JPA
     }
 
     public Venditore(String nome, String cognome, String email, String passwordHash,
@@ -35,8 +34,6 @@ public abstract class Venditore extends Utente {
         this.prodottiOfferti = new ArrayList<>();
         this.statoAccreditamento = StatoAccreditamento.PENDING;
     }
-
-
 
     public DatiAzienda getDatiAzienda() {
         return datiAzienda;

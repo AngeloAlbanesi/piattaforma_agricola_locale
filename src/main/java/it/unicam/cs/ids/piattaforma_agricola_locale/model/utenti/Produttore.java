@@ -13,7 +13,6 @@ public class Produttore extends Venditore {
 
     public Produttore() {
         super();
-        // Default constructor for JPA
     }
 
     public Produttore(String nome, String cognome, String email, String passwordHash,

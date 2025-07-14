@@ -79,10 +79,7 @@ public class VenditoreObserverService implements IVenditoreObserver {
                 // Altri tipi di acquistabili possono essere aggiunti qui in futuro
 
             } catch (Exception e) {
-                // Log dell'errore ma continua con le altre righe
-                System.err.println("Errore durante il decremento della quantità per l'acquistabile "
-                        + acquistabile.getId() + ": " + e.getMessage());
-                // In un'implementazione reale, qui si dovrebbe utilizzare un logger appropriato
+                e.printStackTrace();
             }
         }
     }

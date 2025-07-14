@@ -17,7 +17,6 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.IMetodoPag
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.PagamentoException;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.impl.PagamentoCartaCreditoStrategy;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.impl.PagamentoPayPalStrategy;
-import it.unicam.cs.ids.piattaforma_agricola_locale.service.pagamento.impl.PagamentoSimulatoStrategy;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -393,8 +392,6 @@ public class OrdineController {
                 return new PagamentoCartaCreditoStrategy();
             case "PAYPAL":
                 return new PagamentoPayPalStrategy();
-            case "SIMULATO":
-                return new PagamentoSimulatoStrategy();
             default:
                 throw new IllegalArgumentException("Metodo di pagamento non supportato: " + metodoPagamento);
         }

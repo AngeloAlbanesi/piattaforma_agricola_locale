@@ -21,11 +21,7 @@ import java.util.stream.Collectors;
  * MapStruct mapper for converting between Pacchetto entities and Package DTOs.
  * Handles complex polymorphic relationships for Acquistabile elements.
  */
-@Mapper(
-    componentModel = "spring",
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS
-)
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 @Component
 public interface PacchettoMapper {
 
@@ -65,7 +61,8 @@ public interface PacchettoMapper {
     }
 
     /**
-     * Updates an existing Pacchetto entity with data from CreatePacchettoRequestDTO.
+     * Updates an existing Pacchetto entity with data from
+     * CreatePacchettoRequestDTO.
      * Note: Entity updates must be handled by the service.
      */
     default void updateFromCreateRequestDTO(CreatePacchettoRequestDTO createPacchettoRequestDTO, Pacchetto pacchetto) {
@@ -93,27 +90,26 @@ public interface PacchettoMapper {
         if (acquistabili == null) {
             return null;
         }
-        
+
         return acquistabili.stream()
                 .collect(Collectors.groupingBy(
-                    acquistabile -> acquistabile.getId(),
-                    Collectors.counting()
-                ))
+                        acquistabile -> acquistabile.getId(),
+                        Collectors.counting()))
                 .entrySet().stream()
                 .map(entry -> {
                     Long elementId = entry.getKey();
                     Long count = entry.getValue();
-                    
+
                     // Find the first occurrence to get element details
                     Acquistabile elemento = acquistabili.stream()
                             .filter(a -> a.getId().equals(elementId))
                             .findFirst()
                             .orElse(null);
-                    
+
                     if (elemento == null) {
                         return null;
                     }
-                    
+
                     ElementoPacchettoDTO dto = acquistabileToElementoDTO(elemento);
                     dto.setQuantita(count.intValue());
                     return dto;
@@ -150,15 +146,11 @@ public interface PacchettoMapper {
         return dto;
     }
 
-    /**
-     * Converts List of ElementoPacchettoRequestDTO to determine the types for service processing.
-     * This is a utility method for the service layer to understand what types of elements to load.
-     */
     default List<String> extractElementTypes(List<ElementoPacchettoRequestDTO> elementiRequest) {
         if (elementiRequest == null) {
             return null;
         }
-        
+
         return elementiRequest.stream()
                 .map(ElementoPacchettoRequestDTO::getTipoElemento)
                 .distinct()
@@ -172,7 +164,7 @@ public interface PacchettoMapper {
         if (elementiRequest == null) {
             return null;
         }
-        
+
         return elementiRequest.stream()
                 .filter(elemento -> tipo.equals(elemento.getTipoElemento()))
                 .map(ElementoPacchettoRequestDTO::getIdElemento)

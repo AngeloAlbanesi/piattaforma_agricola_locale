@@ -176,8 +176,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
     public Certificazione aggiungiCertificazioneAProdotto(Prodotto prodotto, String nomeCertificazione,
             String enteRilascio, Date dataRilascio, Date dataScadenza) {
         if (prodotto == null || certificazioneService == null) {
-            System.err.println("Prodotto o servizio certificazioni non disponibile.");
-            return null;
+            throw new IllegalArgumentException("Prodotto o servizio certificazioni non disponibile");
         }
         return certificazioneService.creaCertificazionePerProdotto(nomeCertificazione, enteRilascio, dataRilascio,
                 dataScadenza, prodotto);
@@ -351,8 +350,7 @@ public class ProdottoService implements IProdottoService, IProdottoObservable {
                 try {
                     observer.onProdottoCreato(prodotto);
                 } catch (Exception e) {
-                    // Log dell'errore ma continua con gli altri observer
-                    System.err.println("Errore durante la notifica dell'observer: " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
         }

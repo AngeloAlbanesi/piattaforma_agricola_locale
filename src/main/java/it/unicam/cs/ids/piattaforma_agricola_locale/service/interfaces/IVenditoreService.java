@@ -23,20 +23,18 @@ public interface IVenditoreService {
      */
     Optional<Venditore> getVenditoreById(Long id);
 
-    void aggiornaDatiAzienda(Venditore venditore,  DatiAzienda datiAggiornati);
-
+    void aggiornaDatiAzienda(Venditore venditore, DatiAzienda datiAggiornati);
 
     DatiAzienda aggiungiDatiAzienda(Venditore venditore, String nomeAzienda, String partitaIva, String indirizzoAzienda,
-                                    String descrizioneAzienda, String logoUrl, String sitoWebUrl);
+            String descrizioneAzienda, String logoUrl, String sitoWebUrl);
 
-    Certificazione aggiungiCertificazioneAdAzienda(Venditore venditore, String nomeCertificazione, String enteRilascio, Date dataRilascio, Date dataScadenza);
-
-    void stampaCertificazioniAzienda(Venditore venditore);
+    Certificazione aggiungiCertificazioneAdAzienda(Venditore venditore, String nomeCertificazione, String enteRilascio,
+            Date dataRilascio, Date dataScadenza);
 
     List<Certificazione> getCertificazioniAzienda(Venditore venditore);
 
     boolean rimuoviCertificazioneDaAzienda(Venditore venditore, Long idCertificazione);
-    
+
     /**
      * Ottiene tutte le aziende.
      * 
@@ -44,16 +42,16 @@ public interface IVenditoreService {
      * @return Una pagina di tutte le aziende
      */
     Page<DatiAzienda> getAllAziende(Pageable pageable);
-    
+
     /**
      * Cerca aziende in base a una query di ricerca.
      * 
-     * @param query La query di ricerca
+     * @param query    La query di ricerca
      * @param pageable Parametri di paginazione
      * @return Una pagina di risultati
      */
     Page<DatiAzienda> searchAziende(String query, Pageable pageable);
-    
+
     /**
      * Aggiorna un venditore.
      * 

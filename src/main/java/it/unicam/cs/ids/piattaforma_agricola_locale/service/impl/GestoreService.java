@@ -23,10 +23,10 @@ public class GestoreService implements IGestoreService {
 
     @Autowired
     public GestoreService(IUtenteBaseRepository utenteBaseRepository,
-                          IVenditoreRepository venditoreRepository,
-                          ICuratoreRepository curatoreRepository,
-                          IAnimatoreRepository animatoreRepository,
-                          IDatiAziendaRepository datiAziendaRepository) {
+            IVenditoreRepository venditoreRepository,
+            ICuratoreRepository curatoreRepository,
+            IAnimatoreRepository animatoreRepository,
+            IDatiAziendaRepository datiAziendaRepository) {
         this.utenteBaseRepository = utenteBaseRepository;
         this.venditoreRepository = venditoreRepository;
         this.curatoreRepository = curatoreRepository;
@@ -62,11 +62,8 @@ public class GestoreService implements IGestoreService {
             Venditore venditore = venditoreOpt.get();
             venditore.setStatoAccreditamento(nuovoStato);
             venditoreRepository.save(venditore);
-            System.out.println("Stato accreditamento venditore " + venditore.getEmail() + " aggiornato a " + nuovoStato);
-            // Qui potresti voler inviare una notifica, loggare, ecc.
             return true;
         }
-        System.err.println("Venditore con ID " + venditoreId + " non trovato.");
         return false;
     }
 
@@ -77,10 +74,8 @@ public class GestoreService implements IGestoreService {
             Curatore curatore = curatoreOpt.get();
             curatore.setStatoAccreditamento(nuovoStato);
             curatoreRepository.save(curatore);
-            System.out.println("Stato accreditamento curatore " + curatore.getEmail() + " aggiornato a " + nuovoStato);
             return true;
         }
-        System.err.println("Curatore con ID " + curatoreId + " non trovato.");
         return false;
     }
 
@@ -91,16 +86,12 @@ public class GestoreService implements IGestoreService {
             AnimatoreDellaFiliera animatore = animatoreOpt.get();
             animatore.setStatoAccreditamento(nuovoStato);
             animatoreRepository.save(animatore);
-            System.out.println("Stato accreditamento animatore " + animatore.getEmail() + " aggiornato a " + nuovoStato);
             return true;
         }
-        System.err.println("Animatore con ID " + animatoreId + " non trovato.");
         return false;
     }
 
     // --- Metodi per gestire lo stato attivo/disattivo degli utenti ---
-    // Come discusso, la gestione di isAttivo può essere complessa con repository separati
-    // se si vuole un metodo generico. Qui forniamo metodi specifici per tipo per chiarezza.
 
     @Override
     public boolean attivaDisattivaAcquirente(Long acquirenteId, boolean attivo) {
@@ -109,11 +100,9 @@ public class GestoreService implements IGestoreService {
         if (utenteOpt.isPresent() && utenteOpt.get() instanceof Acquirente) {
             Acquirente acquirente = (Acquirente) utenteOpt.get();
             acquirente.setAttivo(attivo);
-            utenteBaseRepository.save(acquirente); // Salva l'acquirente modificato
-            System.out.println("Acquirente " + acquirente.getEmail() + (attivo ? " attivato." : " disattivato."));
+            utenteBaseRepository.save(acquirente);
             return true;
         }
-        System.err.println("Acquirente con ID " + acquirenteId + " non trovato.");
         return false;
     }
 
@@ -124,10 +113,8 @@ public class GestoreService implements IGestoreService {
             Venditore venditore = venditoreOpt.get();
             venditore.setAttivo(attivo);
             venditoreRepository.save(venditore);
-            System.out.println("Venditore " + venditore.getEmail() + (attivo ? " attivato." : " disattivato."));
             return true;
         }
-        System.err.println("Venditore con ID " + venditoreId + " non trovato.");
         return false;
     }
 
@@ -138,10 +125,8 @@ public class GestoreService implements IGestoreService {
             Curatore curatore = curatoreOpt.get();
             curatore.setAttivo(attivo);
             curatoreRepository.save(curatore);
-            System.out.println("Curatore " + curatore.getEmail() + (attivo ? " attivato." : " disattivato."));
             return true;
         }
-        System.err.println("Curatore con ID " + curatoreId + " non trovato.");
         return false;
     }
 
@@ -152,42 +137,29 @@ public class GestoreService implements IGestoreService {
             AnimatoreDellaFiliera animatore = animatoreOpt.get();
             animatore.setAttivo(attivo);
             animatoreRepository.save(animatore);
-            System.out.println("Animatore " + animatore.getEmail() + (attivo ? " attivato." : " disattivato."));
             return true;
         }
-        System.err.println("Animatore con ID " + animatoreId + " non trovato.");
         return false;
     }
-
 
     // --- Metodi di utilità/visualizzazione generale ---
 
     @Override
     public Optional<DatiAzienda> getDatiAziendaPerVenditore(Long venditoreId) {
-        // Questo presuppone che DatiAzienda abbia un campo come idUtente o che ci sia
-        // un modo per collegarlo. Se Venditore ha un riferimento diretto a DatiAzienda o al suo ID,
-        // potresti recuperarlo diversamente.
-        // Esempio: se DatiAzienda ha findByUtenteId(Long utenteId)
+
         return datiAziendaRepository.findById(venditoreId);
-        // Oppure, se Venditore ha un campo datiAziendaId:
-        // Optional<Venditore> vOpt = venditoreRepository.findById(venditoreId);
-        // if (vOpt.isPresent() && vOpt.get().getDatiAziendaId() != null) {
-        //     return datiAziendaRepository.findById(vOpt.get().getDatiAziendaId());
-        // }
-        // return Optional.empty();
+
     }
 
     @Override
     public List<Utente> getTuttiGliUtenti() {
         List<Utente> tuttiGliUtenti = new ArrayList<>();
-        // Assumendo che UtenteBaseRepository.findAll() restituisca List<Utente>
-        // e che contenga Acquirenti e Gestori
+
         tuttiGliUtenti.addAll(utenteBaseRepository.findAll());
         tuttiGliUtenti.addAll(venditoreRepository.findAll());
         tuttiGliUtenti.addAll(curatoreRepository.findAll());
         tuttiGliUtenti.addAll(animatoreRepository.findAll());
-        // Se hai un GestorePiattaformaRepository separato e non è in UtenteBaseRepository:
-        // tuttiGliUtenti.addAll(gestorePiattaformaRepository.findAll());
+
         return tuttiGliUtenti;
     }
 
@@ -198,5 +170,3 @@ public class GestoreService implements IGestoreService {
                 .collect(Collectors.toList());
     }
 }
-
-

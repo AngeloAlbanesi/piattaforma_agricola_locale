@@ -1,0 +1,259 @@
+<div class="landing-container">
+  <!-- Hero Section -->
+  <header class="hero-section" id="hero">
+    <nav class="hero-nav">
+      <div class="nav-container">
+        <div class="logo">
+          <mat-icon class="logo-icon">eco</mat-icon>
+          <span class="logo-text">Filiera Locale</span>
+        </div>
+        <div class="nav-actions">
+          <button mat-stroked-button (click)="navigateToAuth()">Accedi</button>
+          <button mat-raised-button color="primary" (click)="scrollToSection('cta')">Registrati</button>
+        </div>
+      </div>
+    </nav>
+    
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">Dalla Terra alla Tua Tavola</h1>
+        <p class="hero-subtitle">
+          La piattaforma che connette produttori locali e consumatori, 
+          garantendo tracciabilità completa e sostegno all'economia del territorio
+        </p>
+        <div class="hero-actions">
+          <button mat-raised-button color="primary" size="large" (click)="navigateToCatalog()">
+            Scopri i Prodotti
+          </button>
+          <button mat-stroked-button size="large" (click)="scrollToSection('features')">
+            Scopri di Più
+          </button>
+        </div>
+      </div>
+      <div class="hero-image">
+        <mat-icon class="hero-main-icon">agriculture</mat-icon>
+      </div>
+    </div>
+  </header>
+
+  <!-- Value Proposition Section -->
+  <section class="value-section" id="value">
+    <div class="container">
+      <h2 class="section-title">Perché Scegliere la Nostra Piattaforma</h2>
+      <div class="value-cards">
+        <mat-card class="value-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="value-icon">eco</mat-icon>
+              Tracciabilità Completa
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Segui l'intero percorso dei prodotti dal campo alla tua tavola, 
+            con certificazioni garantite e processi trasparenti.</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="value-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="value-icon">shopping_basket</mat-icon>
+              Vendita Diretta
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Acquista direttamente dai produttori locali, 
+            eliminando intermediari e garantendo prezzi equi per tutti.</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="value-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="value-icon">public</mat-icon>
+              Sostegno Locale
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Contribuisci allo sviluppo dell'economia locale e 
+            preserva le tradizioni agricole del nostro territorio.</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <h2 class="section-title">Funzionalità Principali</h2>
+      <div class="features-grid">
+        <div class="feature-item">
+          <mat-icon class="feature-icon">storefront</mat-icon>
+          <h3>E-commerce Marketplace</h3>
+          <p>Vendita diretta di prodotti agricoli con gestione carrello e ordini</p>
+        </div>
+
+        <div class="feature-item">
+          <mat-icon class="feature-icon">location_on</mat-icon>
+          <h3>Tracciabilità e Geolocalizzazione</h3>
+          <p>Tracciamento completo della filiera con visualizzazione su mappa</p>
+        </div>
+
+        <div class="feature-item">
+          <mat-icon class="feature-icon">people</mat-icon>
+          <h3>Gestione Multi-Ruolo</h3>
+          <p>Sistema avanzato per tutti gli attori della filiera agricola</p>
+        </div>
+
+        <div class="feature-item">
+          <mat-icon class="feature-icon">sync</mat-icon>
+          <h3>Processi di Trasformazione</h3>
+          <p>Documentazione completa dei processi produttivi</p>
+        </div>
+
+        <div class="feature-item">
+          <mat-icon class="feature-icon">event</mat-icon>
+          <h3>Eventi Locali</h3>
+          <p>Organizzazione fiere, mercati e visite guidate</p>
+        </div>
+
+        <div class="feature-item">
+          <mat-icon class="feature-icon">verified</mat-icon>
+          <h3>Certificazioni</h3>
+          <p>Validazione qualità e origine dei prodotti</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Actors Section -->
+  <section class="actors-section" id="actors">
+    <div class="container">
+      <h2 class="section-title">Attori della Filiera</h2>
+      <div class="actors-grid">
+        <div class="actor-card">
+          <div class="actor-icon">
+            <mat-icon>agriculture</mat-icon>
+          </div>
+          <h3>Produttore</h3>
+          <p>Agricoltori e allevatori locali che caricano prodotti e gestiscono certificazioni</p>
+        </div>
+
+        <div class="actor-card">
+          <div class="actor-icon">
+            <mat-icon>factory</mat-icon>
+          </div>
+          <h3>Trasformatore</h3>
+          <p>Aziende che trasformano materie prime in prodotti finiti</p>
+        </div>
+
+        <div class="actor-card">
+          <div class="actor-icon">
+            <mat-icon>store</mat-icon>
+          </div>
+          <h3>Distributore</h3>
+          <p>Negozi e rivenditori che creano pacchetti e gestiscono vendite</p>
+        </div>
+
+        <div class="actor-card">
+          <div class="actor-icon">
+            <mat-icon>verified_user</mat-icon>
+          </div>
+          <h3>Curatore</h3>
+          <p>Responsabile qualità che verifica e approva i contenuti</p>
+        </div>
+
+        <div class="actor-card">
+          <div class="actor-icon">
+            <mat-icon>celebration</mat-icon>
+          </div>
+          <h3>Animatore</h3>
+          <p>Organizzatore di eventi e coordinatore visite aziendali</p>
+        </div>
+
+        <div class="actor-card">
+          <div class="actor-icon">
+            <mat-icon>shopping_cart</mat-icon>
+          </div>
+          <h3>Acquirente</h3>
+          <p>Consumatori finali che acquistano prodotti e partecipano ad eventi</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="stats-section" id="stats">
+    <div class="container">
+      <h2 class="section-title">Il Nostro Impatto</h2>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" data-target="150">0</div>
+          <div class="stat-label">Produttori Connessi</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="500">0</div>
+          <div class="stat-label">Prodotti Tracciati</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="50">0</div>
+          <div class="stat-label">Eventi Organizzati</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="1000000">0</div>
+          <div class="stat-label">€ Valore Generato</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="cta-section" id="cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2 class="cta-title">Unisciti alla Filiera Agricola Locale</h2>
+        <p class="cta-subtitle">
+          Scegli il tuo ruolo e inizia a far parte della nostra community
+        </p>
+        <div class="cta-buttons">
+          <button mat-raised-button color="primary" size="large" (click)="navigateToAuth()">
+            Registrati Ora
+          </button>
+          <button mat-stroked-button size="large" (click)="scrollToSection('features')">
+            Scopri di Più
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Piattaforma Filiera Locale</h4>
+          <p>Connettendo produttori e consumatori per un'agricoltura sostenibile</p>
+        </div>
+        <div class="footer-section">
+          <h4>Link Utili</h4>
+          <ul>
+            <li><a href="#" (click)="scrollToSection('hero')">Home</a></li>
+            <li><a href="#" (click)="scrollToSection('features')">Funzionalità</a></li>
+            <li><a href="#" (click)="scrollToSection('actors')">Attori</a></li>
+            <li><a href="#" (click)="navigateToAuth()">Accedi</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Contatti</h4>
+          <p>Email: info@filieralocale.it</p>
+          <p>Tel: +39 123 456 7890</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Piattaforma Filiera Locale. Tutti i diritti riservati.</p>
+      </div>
+    </div>
+  </footer>
+</div>

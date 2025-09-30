@@ -1,0 +1,11 @@
+.carrello {
+    padding: 2rem;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.carrello__placeholder {
+    padding: 2rem;
+    border: 1px dashed var(--mat-sys-outline, #9e9e9e);
+    border-radius: 8px;
+}

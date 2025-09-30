@@ -1,0 +1,56 @@
+.shell {
+    height: 100vh;
+}
+
+.shell__brand {
+    padding: 1.5rem 1.25rem 1rem;
+}
+
+.shell__brand h1 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+nav {
+    display: flex;
+    flex-direction: column;
+}
+
+a[mat-list-item] {
+    gap: 0.75rem;
+    padding-block: 0.75rem;
+}
+
+a[mat-list-item].active {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.shell__toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.shell__menu {
+    display: none;
+}
+
+.shell__toolbar-title {
+    font-weight: 600;
+}
+
+.shell__spacer {
+    flex: 1;
+}
+
+.shell__content {
+    padding: 2rem;
+    min-height: calc(100vh - 64px);
+    background-color: color-mix(in srgb, var(--mat-sys-surface, #f5f5f5) 70%, #fff);
+}
+
+@media (max-width: 960px) {
+    .shell__menu {
+        display: inline-flex;
+    }
+}

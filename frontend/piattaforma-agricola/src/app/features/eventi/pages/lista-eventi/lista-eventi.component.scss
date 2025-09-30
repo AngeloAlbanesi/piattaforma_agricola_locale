@@ -1,0 +1,11 @@
+.eventi {
+    display: grid;
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+.eventi__placeholder {
+    padding: 2rem;
+    border: 1px dashed var(--mat-sys-outline, #9e9e9e);
+    border-radius: 8px;
+}

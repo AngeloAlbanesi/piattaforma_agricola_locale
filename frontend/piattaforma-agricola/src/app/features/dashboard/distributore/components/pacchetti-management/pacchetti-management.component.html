@@ -1,0 +1,69 @@
+<div class="pacchetti-management">
+  <!-- Header con azioni -->
+  <div class="management-header">
+    <div class="header-title">
+      <h3>I Miei Pacchetti</h3>
+      <p>Gestisci i pacchetti di tipicità che offri</p>
+    </div>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="createNewPackage()">
+        <mat-icon>add</mat-icon>
+        Nuovo Pacchetto
+      </button>
+      <button mat-icon-button (click)="refreshPacchetti()" matTooltip="Aggiorna">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+    <p>Caricamento pacchetti...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="errorMessage">
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-content>
+        <div class="error-content">
+          <mat-icon class="error-icon">error</mat-icon>
+          <p class="error-message">{{ errorMessage }}</p>
+          <button mat-stroked-button color="primary" (click)="refreshPacchetti()">
+            Riprova
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Lista Pacchetti -->
+  <div class="pacchetti-list" *ngIf="!isLoading && !errorMessage">
+    <div *ngIf="pacchetti.length > 0; else emptyState" class="pacchetti-grid">
+      <app-pacchetto-card
+        *ngFor="let pacchetto of pacchetti"
+        [pacchetto]="pacchetto"
+        (edit)="editPackage($event)"
+        (delete)="deletePackage($event)"
+        (viewDetails)="viewPackageDetails($event)">
+      </app-pacchetto-card>
+    </div>
+
+    <!-- Empty State -->
+    <ng-template #emptyState>
+      <mat-card appearance="outlined" class="empty-card">
+        <mat-card-content>
+          <div class="empty-content">
+            <mat-icon class="empty-icon">inventory_2</mat-icon>
+            <h3>Nessun pacchetto creato</h3>
+            <p>Inizia creando il tuo primo pacchetto di tipicità</p>
+            <button mat-raised-button color="primary" (click)="createNewPackage()">
+              <mat-icon>add</mat-icon>
+              Crea Pacchetto
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,98 @@
+<div class="approvazioni-management">
+  <!-- Header con azioni -->
+  <div class="management-header">
+    <div class="header-title">
+      <h3>Approvazioni in corso</h3>
+      <p>Gestisci le approvazioni in attesa di revisione</p>
+    </div>
+    <div class="header-actions">
+      <button mat-icon-button (click)="refreshApprovazioni()" matTooltip="Aggiorna">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+    <p>Caricamento approvazioni...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="errorMessage">
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-content>
+        <div class="error-content">
+          <mat-icon class="error-icon">error</mat-icon>
+          <p class="error-message">{{ errorMessage }}</p>
+          <button mat-stroked-button color="primary" (click)="refreshApprovazioni()">
+            Riprova
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Tabs per tipo di approvazione -->
+  <div class="tabs-container" *ngIf="!isLoading && !errorMessage">
+    <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event.index)">
+      <!-- Tab Prodotti -->
+      <mat-tab label="Prodotti">
+        <div class="tab-content">
+          <div class="approvazioni-list" *ngIf="approvazioni.length > 0; else emptyState">
+            <app-approvazione-card
+              *ngFor="let approvazione of approvazioni"
+              [approvazione]="approvazione"
+              (approve)="approveElement(approvazione.elementoId, approvazione.tipo)"
+              (reject)="rejectElement(approvazione.elementoId, approvazione.tipo, $event)"
+              (viewDetails)="viewElementDetails(approvazione.elementoId, approvazione.tipo)">
+            </app-approvazione-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Tab Aziende -->
+      <mat-tab label="Aziende">
+        <div class="tab-content">
+          <div class="approvazioni-list" *ngIf="approvazioni.length > 0; else emptyState">
+            <app-approvazione-card
+              *ngFor="let approvazione of approvazioni"
+              [approvazione]="approvazione"
+              (approve)="approveElement(approvazione.elementoId, approvazione.tipo)"
+              (reject)="rejectElement(approvazione.elementoId, approvazione.tipo, $event)"
+              (viewDetails)="viewElementDetails(approvazione.elementoId, approvazione.tipo)">
+            </app-approvazione-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Tab Contenuti -->
+      <mat-tab label="Contenuti">
+        <div class="tab-content">
+          <div class="approvazioni-list" *ngIf="approvazioni.length > 0; else emptyState">
+            <app-approvazione-card
+              *ngFor="let approvazione of approvazioni"
+              [approvazione]="approvazione"
+              (approve)="approveElement(approvazione.elementoId, approvazione.tipo)"
+              (reject)="rejectElement(approvazione.elementoId, approvazione.tipo, $event)"
+              (viewDetails)="viewElementDetails(approvazione.elementoId, approvazione.tipo)">
+            </app-approvazione-card>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <!-- Empty State -->
+  <ng-template #emptyState>
+    <mat-card appearance="outlined" class="empty-card">
+      <mat-card-content>
+        <div class="empty-content">
+          <mat-icon class="empty-icon">fact_check</mat-icon>
+          <h3>Nessuna approvazione in corso</h3>
+          <p>Non ci sono approvazioni in attesa di revisione</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+</div>

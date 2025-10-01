@@ -1,0 +1,160 @@
+<div class="produttore-dashboard">
+  <!-- Header Dashboard -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="welcome-section">
+        <h1 class="welcome-title">{{ welcomeMessage }}</h1>
+        <p class="welcome-subtitle">Gestisci i tuoi prodotti e monitora le performance della tua azienda agricola</p>
+      </div>
+      
+      <div class="header-actions">
+        <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button mat-icon-button (click)="logout()" matTooltip="Logout">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+    <p>Caricamento dashboard...</p>
+  </div>
+
+  <!-- Main Content -->
+  <main class="dashboard-content" *ngIf="!isLoading">
+    <!-- Statistiche Overview -->
+    <section class="stats-section" *ngIf="hasStats">
+      <app-produttore-stats-overview 
+        [totalProducts]="totalProducts"
+        [approvedProducts]="approvedProducts"
+        [pendingProducts]="pendingProducts"
+        [rejectedProducts]="rejectedProducts"
+        [totalOrders]="totalOrders"
+        [completedOrders]="completedOrders"
+        [totalRevenue]="totalRevenue"
+        [productsSold]="productsSold"
+        [totalViews]="totalViews"
+        [totalCertifications]="totalCertifications"
+        [approvalRate]="approvalRate"
+        [completionRate]="completionRate">
+      </app-produttore-stats-overview>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions-section">
+      <app-produttore-quick-actions (action)="onQuickAction($event)"></app-produttore-quick-actions>
+    </section>
+
+    <!-- Tab Navigation -->
+    <section class="tabs-section">
+      <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event.index)">
+        <!-- Tab Gestione Prodotti -->
+        <mat-tab label="Gestione Prodotti">
+          <div class="tab-content">
+            <app-prodotti-management></app-prodotti-management>
+          </div>
+        </mat-tab>
+
+        <!-- Tab Ordini -->
+        <mat-tab label="Ordini">
+          <div class="tab-content">
+            <app-ordini-management></app-ordini-management>
+          </div>
+        </mat-tab>
+
+        <!-- Tab Certificazioni -->
+        <mat-tab label="Certificazioni">
+          <div class="tab-content">
+            <app-certificazioni-management></app-certificazioni-management>
+          </div>
+        </mat-tab>
+
+        <!-- Tab Metodi di Coltivazione -->
+        <mat-tab label="Metodi di Coltivazione">
+          <div class="tab-content">
+            <app-metodi-coltivazione></app-metodi-coltivazione>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </section>
+
+    <!-- Sezione Riepilogo -->
+    <section class="summary-section" *ngIf="hasStats">
+      <div class="summary-grid">
+        <!-- Card Ordini Recenti -->
+        <mat-card class="summary-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Ordini Recenti</mat-card-title>
+            <mat-card-subtitle>{{ recentOrdersCount }} ordini</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="card-action">
+              <button mat-raised-button color="primary" (click)="navigateToOrdersManagement()">
+                Gestisci Ordini
+                <mat-icon>receipt_long</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Card Prodotti Popolari -->
+        <mat-card class="summary-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Prodotti Popolari</mat-card-title>
+            <mat-card-subtitle>{{ popularProductsCount }} prodotti</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="card-action">
+              <button mat-raised-button color="accent" (click)="navigateToProductsManagement()">
+                Visualizza Prodotti
+                <mat-icon>trending_up</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Card Performance -->
+        <mat-card class="summary-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Performance Vendite</mat-card-title>
+            <mat-card-subtitle>Tasso completamento: {{ completionRate }}%</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="performance-metrics">
+              <div class="metric">
+                <span class="metric-label">Fatturato:</span>
+                <span class="metric-value">{{ formatCurrency(totalRevenue) }}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Prodotti Venduti:</span>
+                <span class="metric-value">{{ formatNumber(productsSold) }}</span>
+              </div>
+            </div>
+            <div class="card-action">
+              <button mat-raised-button color="warn" (click)="viewAnalytics()">
+                Analisi Dettagliata
+                <mat-icon>analytics</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer Dashboard -->
+  <footer class="dashboard-footer">
+    <div class="footer-content">
+      <p>&copy; 2024 Piattaforma Agricola Locale. Tutti i diritti riservati.</p>
+      <div class="footer-links">
+        <a mat-button color="primary" href="/help">Aiuto</a>
+        <a mat-button color="primary" href="/terms">Termini</a>
+        <a mat-button color="primary" href="/privacy">Privacy</a>
+      </div>
+    </div>
+  </footer>
+</div>

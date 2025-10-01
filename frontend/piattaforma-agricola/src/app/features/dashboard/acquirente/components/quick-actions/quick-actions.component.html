@@ -1,0 +1,18 @@
+<div class="quick-actions">
+  <h2 class="section-title">Azioni Rapide</h2>
+  
+  <div class="actions-grid">
+    <button 
+      *ngFor="let action of quickActions; trackBy: trackByAction"
+      mat-raised-button 
+      [color]="action.color"
+      class="action-button"
+      (click)="onActionClick(action.id)"
+      matTooltip="{{ action.description }}"
+      matTooltipPosition="above">
+      
+      <mat-icon class="action-icon">{{ action.icon }}</mat-icon>
+      <span class="action-label">{{ action.label }}</span>
+    </button>
+  </div>
+</div>

@@ -32,6 +32,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/processi/processi.module').then(m => m.ProcessiModule),
     },
     {
+        path: 'dashboard',
+        loadChildren: () => import('./features/dashboard/dashboard-routing.module').then(m => m.DashboardRoutingModule),
+    },
+    {
         path: '**',
         redirectTo: '',
     },

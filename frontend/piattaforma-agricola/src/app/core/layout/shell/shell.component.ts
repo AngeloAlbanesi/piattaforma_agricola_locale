@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
 interface NavItem {
     label: string;
@@ -24,4 +25,14 @@ export class ShellComponent {
         { label: 'Processi', icon: 'sync_alt', route: '/processi' },
         { label: 'Gestione Utenti', icon: 'admin_panel_settings', route: '/gestione-utenti' },
     ];
+
+    constructor(private router: Router) {}
+
+    /**
+     * Verifica se l'utente è sulla landing page principale
+     */
+    isLandingPage(): boolean {
+        const currentUrl = this.router.url;
+        return currentUrl === '/' || currentUrl === '';
+    }
 }

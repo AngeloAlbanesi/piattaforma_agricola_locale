@@ -1,0 +1,194 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <mat-icon class="auth-icon">person_add</mat-icon>
+      <h1>Crea il tuo Account</h1>
+      <p class="auth-subtitle">Unisciti alla filiera agricola locale</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      <!-- Selezione Ruolo -->
+      <div class="role-selection">
+        <h3>Scegli il tuo ruolo nella filiera</h3>
+        <div class="roles-grid">
+          <div class="role-card"
+               *ngFor="let role of availableRoles"
+               [class.selected]="selectedRole === role.value"
+               (click)="onRoleSelect(role.value)">
+            <mat-icon class="role-icon">{{ role.icon }}</mat-icon>
+            <h4>{{ role.label }}</h4>
+            <p>{{ role.description }}</p>
+          </div>
+        </div>
+        <input type="hidden" formControlName="ruolo">
+        <mat-error *ngIf="registerForm.get('ruolo')?.hasError('required') && registerForm.get('ruolo')?.touched">
+          Seleziona un ruolo per continuare
+        </mat-error>
+      </div>
+
+      <!-- Dati Personali -->
+      <div class="form-section">
+        <h3>Dati Personali</h3>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field half">
+            <mat-label>Nome</mat-label>
+            <input matInput
+                   formControlName="nome"
+                   placeholder="Inserisci il tuo nome"
+                   [errorStateMatcher]="errorStateMatcher">
+            <mat-icon matSuffix>person</mat-icon>
+            <mat-error>{{ getErrorMessage('nome') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field half">
+            <mat-label>Cognome</mat-label>
+            <input matInput
+                   formControlName="cognome"
+                   placeholder="Inserisci il tuo cognome"
+                   [errorStateMatcher]="errorStateMatcher">
+            <mat-icon matSuffix>person</mat-icon>
+            <mat-error>{{ getErrorMessage('cognome') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Username</mat-label>
+          <input matInput
+                 formControlName="username"
+                 placeholder="Scegli un username"
+                 [errorStateMatcher]="errorStateMatcher">
+          <mat-icon matSuffix>alternate_email</mat-icon>
+          <mat-error>{{ getErrorMessage('username') }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Email</mat-label>
+          <input matInput
+                 formControlName="email"
+                 placeholder="La tua email"
+                 [errorStateMatcher]="errorStateMatcher">
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error>{{ getErrorMessage('email') }}</mat-error>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field half">
+            <mat-label>Password</mat-label>
+            <input matInput
+                   [type]="hidePassword ? 'password' : 'text'"
+                   formControlName="password"
+                   placeholder="Crea una password"
+                   [errorStateMatcher]="errorStateMatcher">
+            <button mat-icon-button
+                    matSuffix
+                    type="button"
+                    (click)="togglePasswordVisibility()"
+                    [attr.aria-label]="'Mostra password'"
+                    aria-pressed="false">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error>{{ getErrorMessage('password') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field half">
+            <mat-label>Conferma Password</mat-label>
+            <input matInput
+                   [type]="hidePassword ? 'password' : 'text'"
+                   formControlName="confirmPassword"
+                   placeholder="Ripeti la password"
+                   [errorStateMatcher]="errorStateMatcher">
+            <mat-error>{{ getErrorMessage('confirmPassword') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field half">
+            <mat-label>Telefono</mat-label>
+            <input matInput
+                   formControlName="telefono"
+                   placeholder="Il tuo numero di telefono"
+                   [errorStateMatcher]="errorStateMatcher">
+            <mat-icon matSuffix>phone</mat-icon>
+            <mat-error>{{ getErrorMessage('telefono') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field half">
+            <mat-label>Indirizzo</mat-label>
+            <input matInput
+                   formControlName="indirizzo"
+                   placeholder="Il tuo indirizzo"
+                   [errorStateMatcher]="errorStateMatcher">
+            <mat-icon matSuffix>location_on</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Dati Aziendali (condizionali) -->
+      <div class="form-section" *ngIf="needsCompanyData()">
+        <h3>Dati Aziendali</h3>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Ragione Sociale</mat-label>
+          <input matInput
+                 formControlName="ragioneSociale"
+                 placeholder="Nome della tua azienda"
+                 [errorStateMatcher]="errorStateMatcher">
+          <mat-icon matSuffix>business</mat-icon>
+          <mat-error>{{ getErrorMessage('ragioneSociale') }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Partita IVA</mat-label>
+          <input matInput
+                 formControlName="partitaIva"
+                 placeholder="La tua Partita IVA"
+                 [errorStateMatcher]="errorStateMatcher">
+          <mat-icon matSuffix>badge</mat-icon>
+          <mat-error>{{ getErrorMessage('partitaIva') }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Indirizzo Azienda</mat-label>
+          <input matInput
+                 formControlName="indirizzoAzienda"
+                 placeholder="Sede legale dell'azienda"
+                 [errorStateMatcher]="errorStateMatcher">
+          <mat-icon matSuffix>location_city</mat-icon>
+          <mat-error>{{ getErrorMessage('indirizzoAzienda') }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Descrizione Azienda</mat-label>
+          <textarea matInput
+                    formControlName="descrizioneAzienda"
+                    placeholder="Breve descrizione della tua attività"
+                    rows="3"></textarea>
+          <mat-icon matSuffix>description</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Pulsanti Azione -->
+      <div class="form-actions">
+        <button mat-raised-button
+                type="submit"
+                color="primary"
+                class="register-btn"
+                [disabled]="registerForm.invalid || isLoading || !selectedRole">
+          <span *ngIf="!isLoading">Crea Account</span>
+          <span *ngIf="isLoading">
+            <mat-spinner class="spinner" diameter="20"></mat-spinner>
+            Sto registrando...
+          </span>
+        </button>
+
+        <button mat-stroked-button
+                type="button"
+                class="login-btn"
+                (click)="goToLogin()">
+          Hai già un account? Accedi
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

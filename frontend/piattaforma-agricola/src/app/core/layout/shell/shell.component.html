@@ -1,5 +1,6 @@
-<mat-sidenav-container class="shell">
-    <mat-sidenav mode="side" opened>
+<mat-sidenav-container class="shell" [class.landing-fullscreen]="isLandingPage()">
+    <!-- Sidenav nascosto sulla landing page -->
+    <mat-sidenav *ngIf="!isLandingPage()" mode="side" opened>
         <div class="shell__brand">
             <h1>{{ appName() }}</h1>
         </div>
@@ -13,7 +14,8 @@
     </mat-sidenav>
 
     <mat-sidenav-content>
-        <mat-toolbar color="primary" class="shell__toolbar">
+        <!-- Toolbar nascosta sulla landing page -->
+        <mat-toolbar *ngIf="!isLandingPage()" color="primary" class="shell__toolbar">
             <button mat-icon-button class="shell__menu" aria-label="toggle navigation" disabled>
                 <mat-icon>menu</mat-icon>
             </button>
@@ -22,7 +24,8 @@
             <a mat-button routerLink="/auth">Accedi</a>
         </mat-toolbar>
 
-        <main class="shell__content">
+        <!-- Main content con stile condizionale per landing page -->
+        <main class="shell__content" [class.landing-fullscreen-content]="isLandingPage()">
             <router-outlet></router-outlet>
         </main>
     </mat-sidenav-content>

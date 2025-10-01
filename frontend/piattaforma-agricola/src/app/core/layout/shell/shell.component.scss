@@ -2,6 +2,12 @@
     height: 100vh;
 }
 
+// Stili full-screen per landing page
+.shell.landing-fullscreen {
+    height: 100vh;
+    overflow: hidden;
+}
+
 .shell__brand {
     padding: 1.5rem 1.25rem 1rem;
 }
@@ -47,6 +53,14 @@ a[mat-list-item].active {
     padding: 2rem;
     min-height: calc(100vh - 64px);
     background-color: color-mix(in srgb, var(--mat-sys-surface, #f5f5f5) 70%, #fff);
+}
+
+// Stili per landing page full-screen
+.shell__content.landing-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    background-color: transparent !important;
+    overflow: hidden;
 }
 
 @media (max-width: 960px) {

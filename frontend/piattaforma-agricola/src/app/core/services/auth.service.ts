@@ -1,7 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { Observable, BehaviorSubject, tap, retry, delay } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface AuthContext {
     token: string | null;
@@ -39,7 +40,7 @@ export interface AuthenticationResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private readonly ctx = signal<AuthContext>({ token: null, roles: [], username: null });
-    private readonly apiUrl = 'http://localhost:8080/api/auth';
+    private readonly apiAuthUrl = this.buildApiUrl('/auth');
 
     readonly authState = this.ctx.asReadonly();
 
@@ -103,7 +104,8 @@ export class AuthService {
     }
 
     login(credentials: LoginRequest): Observable<AuthenticationResponse> {
-        return this.http.post<AuthenticationResponse>(`${this.apiUrl}/login`, credentials).pipe(
+        return this.http.post<AuthenticationResponse>(`${this.apiAuthUrl}/login`, credentials).pipe(
+            retry({ count: 2, delay: 1000 }),
             tap(response => {
                 this.saveAuthState(response);
             })
@@ -111,7 +113,8 @@ export class AuthService {
     }
 
     register(userData: RegisterRequest): Observable<AuthenticationResponse> {
-        return this.http.post<AuthenticationResponse>(`${this.apiUrl}/register`, userData).pipe(
+        return this.http.post<AuthenticationResponse>(`${this.apiAuthUrl}/register`, userData).pipe(
+            retry({ count: 2, delay: 1000 }),
             tap(response => {
                 this.saveAuthState(response);
             })
@@ -134,10 +137,15 @@ export class AuthService {
 
     getAuthHeaders(): HttpHeaders {
         const token = this.ctx().token;
-        return new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json'
         });
+
+        if (token) {
+            headers = headers.set('Authorization', `Bearer ${token}`);
+        }
+
+        return headers;
     }
 
     // Metodi deprecatiati per compatibilità
@@ -147,6 +155,18 @@ export class AuthService {
 
     clearAuthState(): void {
         this.logout();
+    }
+
+    private buildApiUrl(path: string): string {
+        const base = (environment.apiBaseUrl ?? '').replace(/\/$/, '');
+        const prefix = (environment.apiPrefix ?? '').replace(/\/$/, '');
+        const sanitizedPath = path.startsWith('/') ? path : `/${path}`;
+
+        if (base) {
+            return `${base}${prefix}${sanitizedPath}`;
+        }
+
+        return `${prefix || ''}${sanitizedPath}` || sanitizedPath;
     }
 }
 

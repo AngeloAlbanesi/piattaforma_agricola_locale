@@ -36,6 +36,10 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .idUtente(utente.getIdUtente())
+                .username(request.getUsername() != null ? request.getUsername() : request.getEmail())
+                .email(request.getEmail())
+                .roles(new String[]{request.getTipoRuolo().toString()})
+                .tokenType("Bearer")
                 .build();
     }
 
@@ -55,6 +59,10 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .idUtente(utente.getIdUtente())
+                .username(utente.getUsername() != null ? utente.getUsername() : utente.getEmail())
+                .email(utente.getEmail())
+                .roles(new String[]{utente.getTipoRuolo().toString()})
+                .tokenType("Bearer")
                 .build();
     }
 }

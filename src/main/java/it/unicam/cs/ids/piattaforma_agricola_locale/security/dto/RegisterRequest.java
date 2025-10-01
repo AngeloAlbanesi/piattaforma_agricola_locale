@@ -17,28 +17,39 @@ public class RegisterRequest {
     private String cognome;
     private String email;
     private String password;
-    
+
     @JsonProperty("username")
     private String username;
-    
+
     @JsonProperty("telefono")
     private String numeroTelefono;
-    
+
     @JsonProperty("ruolo")
     private String ruoloString;
-    
+
     @JsonProperty("indirizzo")
     private String indirizzo;
-    
+
+    // Dati aziendali mappati dal frontend
+    @JsonProperty("datiAzienda")
+    private DatiAzienda datiAzienda;
+
     // Manteniamo per compatibilità con il codice esistente
     private TipoRuolo tipoRuolo;
-    private DatiAzienda datiAzienda;
-    
+
     // Metodo per convertire la stringa del ruolo in TipoRuolo
     public TipoRuolo getTipoRuolo() {
         if (ruoloString != null) {
             return TipoRuolo.valueOf(ruoloString);
         }
         return tipoRuolo;
+    }
+
+    // Metodo per creare DatiAzienda dai campi del form se necessario
+    public DatiAzienda getDatiAzienda() {
+        if (datiAzienda == null) {
+            return null;
+        }
+        return datiAzienda;
     }
 }

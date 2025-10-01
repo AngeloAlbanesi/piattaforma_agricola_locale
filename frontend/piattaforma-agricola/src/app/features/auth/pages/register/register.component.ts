@@ -145,20 +145,24 @@ export class RegisterComponent {
         const ragioneSocialeControl = this.registerForm.get('ragioneSociale');
         const partitaIvaControl = this.registerForm.get('partitaIva');
         const indirizzoAziendaControl = this.registerForm.get('indirizzoAzienda');
+        const descrizioneAziendaControl = this.registerForm.get('descrizioneAzienda');
 
         if (needsCompanyData) {
             ragioneSocialeControl?.setValidators([Validators.required]);
             partitaIvaControl?.setValidators([Validators.required, Validators.pattern('^[0-9]{11}$')]);
             indirizzoAziendaControl?.setValidators([Validators.required]);
+            descrizioneAziendaControl?.setValidators([Validators.required]);
         } else {
             ragioneSocialeControl?.clearValidators();
             partitaIvaControl?.clearValidators();
             indirizzoAziendaControl?.clearValidators();
+            descrizioneAziendaControl?.clearValidators();
         }
 
         ragioneSocialeControl?.updateValueAndValidity();
         partitaIvaControl?.updateValueAndValidity();
         indirizzoAziendaControl?.updateValueAndValidity();
+        descrizioneAziendaControl?.updateValueAndValidity();
     }
 
     onSubmit(): void {
@@ -183,6 +187,16 @@ export class RegisterComponent {
             telefono: formValue.telefono || undefined,
             indirizzo: formValue.indirizzo || undefined
         };
+
+        // Aggiungi dati aziendali se il ruolo li richiede
+        if (this.needsCompanyData()) {
+            registerRequest.datiAzienda = {
+                nomeAzienda: formValue.ragioneSociale,
+                partitaIva: formValue.partitaIva,
+                indirizzoAzienda: formValue.indirizzoAzienda,
+                descrizioneAzienda: formValue.descrizioneAzienda
+            };
+        }
 
         this.authService.register(registerRequest).subscribe({
             next: (response) => {

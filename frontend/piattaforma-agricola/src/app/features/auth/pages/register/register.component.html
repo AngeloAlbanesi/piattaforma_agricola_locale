@@ -163,8 +163,10 @@
           <textarea matInput
                     formControlName="descrizioneAzienda"
                     placeholder="Breve descrizione della tua attività"
-                    rows="3"></textarea>
+                    rows="3"
+                    [errorStateMatcher]="errorStateMatcher"></textarea>
           <mat-icon matSuffix>description</mat-icon>
+          <mat-error>{{ getErrorMessage('descrizioneAzienda') }}</mat-error>
         </mat-form-field>
       </div>
 

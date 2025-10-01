@@ -26,6 +26,12 @@ export interface RegisterRequest {
     ruolo: string;
     telefono?: string;
     indirizzo?: string;
+    datiAzienda?: {
+        nomeAzienda: string;
+        partitaIva: string;
+        indirizzoAzienda: string;
+        descrizioneAzienda: string;
+    };
 }
 
 export interface AuthenticationResponse {

@@ -1,5 +1,5 @@
-<mat-sidenav-container class="shell" [class.landing-fullscreen]="isLandingPage()"
-    [class.auth-fullscreen]="isAuthPage()" [class.dashboard-fullscreen]="isDashboardPage()">
+<mat-sidenav-container class="shell" [class.landing-fullscreen]="isLandingPage()" [class.auth-fullscreen]="isAuthPage()"
+    [class.dashboard-fullscreen]="isDashboardPage()">
     <!-- Sidenav nascosto sulla landing page, sulle pagine di autenticazione e sulle dashboard -->
     <mat-sidenav *ngIf="!isLandingPage() && !isAuthPage() && !isDashboardPage()" mode="side" opened>
         <div class="shell__brand">

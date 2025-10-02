@@ -1,14 +1,26 @@
 <div class="product-catalog">
-  <mat-card appearance="outlined">
-    <mat-card-header>
-      <mat-card-title>Catalogo Prodotti</mat-card-title>
-      <mat-card-subtitle>Scopri i migliori prodotti locali</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <p class="placeholder-text">
-        <mat-icon>shopping_basket</mat-icon>
-        Il catalogo prodotti sarà disponibile prossimamente.
-      </p>
-    </mat-card-content>
-  </mat-card>
+    <mat-card appearance="outlined">
+        <mat-card-header>
+            <mat-card-title>Catalogo Prodotti</mat-card-title>
+            <mat-card-subtitle>Scopri i migliori prodotti locali</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <div *ngIf="isLoading" class="loading-row">
+                <mat-spinner diameter="32"></mat-spinner>
+                <span>Caricamento prodotti...</span>
+            </div>
+
+            <div *ngIf="!isLoading && products.length === 0" class="placeholder-text">
+                <mat-icon>shopping_basket</mat-icon>
+                Nessun prodotto disponibile al momento.
+            </div>
+
+            <div *ngIf="products.length > 0" class="products-grid">
+                <mat-card *ngFor="let p of products" class="product-card">
+                    <mat-card-title>{{ p.nome }}</mat-card-title>
+                    <mat-card-subtitle>{{ p.venditoreNome }} - €{{ p.prezzo }}</mat-card-subtitle>
+                </mat-card>
+            </div>
+        </mat-card-content>
+    </mat-card>
 </div>

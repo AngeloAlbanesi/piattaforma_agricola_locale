@@ -1,0 +1,104 @@
+<div class="social-share-container">
+  <mat-card class="share-card">
+    <mat-card-header>
+      <mat-card-title>Condividi su Social</mat-card-title>
+      <mat-card-subtitle>Condividi questo prodotto con i tuoi contatti</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <!-- Anteprima prodotto -->
+      <div class="product-preview" *ngIf="productName">
+        <div class="product-image" *ngIf="productImage">
+          <img [src]="productImage" [alt]="productName" />
+        </div>
+        <div class="product-info">
+          <h3>{{ productName }}</h3>
+          <p *ngIf="productDescription">{{ productDescription }}</p>
+        </div>
+      </div>
+
+      <!-- Form di condivisione -->
+      <form [formGroup]="shareForm" class="share-form">
+        <!-- Selezione piattaforma -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Piattaforma</mat-label>
+          <mat-select formControlName="piattaforma" (selectionChange)="onPlatformChange()">
+            <mat-option [value]="PiattaformaSocial.FACEBOOK">
+              <div class="platform-option">
+                <mat-icon class="platform-icon" [style.color]="getPlatformColor(PiattaformaSocial.FACEBOOK)">facebook</mat-icon>
+                Facebook
+              </div>
+            </mat-option>
+            <mat-option [value]="PiattaformaSocial.INSTAGRAM">
+              <div class="platform-option">
+                <mat-icon class="platform-icon" [style.color]="getPlatformColor(PiattaformaSocial.INSTAGRAM)">instagram</mat-icon>
+                Instagram
+              </div>
+            </mat-option>
+            <mat-option [value]="PiattaformaSocial.TWITTER">
+              <div class="platform-option">
+                <mat-icon class="platform-icon" [style.color]="getPlatformColor(PiattaformaSocial.TWITTER)">twitter</mat-icon>
+                Twitter
+              </div>
+            </mat-option>
+            <mat-option [value]="PiattaformaSocial.WHATSAPP">
+              <div class="platform-option">
+                <mat-icon class="platform-icon" [style.color]="getPlatformColor(PiattaformaSocial.WHATSAPP)">whatsapp</mat-icon>
+                WhatsApp
+              </div>
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="piattaformaControl?.hasError('required')">
+            La piattaforma è obbligatoria
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Messaggio personalizzato -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Messaggio</mat-label>
+          <textarea matInput formControlName="messaggio" rows="4" maxlength="500"></textarea>
+          <mat-hint align="end">{{ shareForm.value.messaggio?.length || 0 }}/500</mat-hint>
+          <mat-error *ngIf="messaggioControl?.hasError('required')">
+            Il messaggio è obbligatorio
+          </mat-error>
+          <mat-error *ngIf="messaggioControl?.hasError('maxlength')">
+            Il messaggio non può superare 500 caratteri
+          </mat-error>
+        </mat-form-field>
+      </form>
+
+      <!-- Risultato condivisione -->
+      <div class="share-result" *ngIf="shareResult">
+        <div class="success-message">
+          <mat-icon class="success-icon">check_circle</mat-icon>
+          <span>Prodotto condiviso con successo!</span>
+        </div>
+        
+        <div class="share-actions">
+          <button mat-raised-button color="primary" (click)="openShareWindow()">
+            <mat-icon>open_in_new</mat-icon>
+            Apri su {{ shareForm.value.piattaforma }}
+          </button>
+          
+          <button mat-button (click)="copyShareLink()">
+            <mat-icon>content_copy</mat-icon>
+            Copia link
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+    
+    <mat-card-actions>
+      <button mat-button (click)="resetForm()">Reset</button>
+      <button mat-raised-button color="primary" 
+              [disabled]="shareForm.invalid || isSharing || !productId" 
+              (click)="shareProduct()">
+        <span *ngIf="!isSharing">Condividi</span>
+        <span *ngIf="isSharing">
+          <mat-spinner diameter="20"></mat-spinner>
+          Condivisione in corso...
+        </span>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

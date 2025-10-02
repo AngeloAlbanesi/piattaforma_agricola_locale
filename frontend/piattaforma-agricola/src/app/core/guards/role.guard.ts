@@ -42,16 +42,16 @@ export const roleGuard: CanActivateFn = (route, state) => {
                 router.navigate(['/dashboard/animatore']);
                 break;
             case 'ACQUIRENTE':
-                router.navigate(['/catalogo']);
+                router.navigate(['/dashboard/acquirente']);
                 break;
             case 'GESTORE_PIATTAFORMA':
                 router.navigate(['/dashboard/admin']);
                 break;
             default:
-                router.navigate(['/catalogo']);
+                router.navigate(['/']);
         }
     } else {
-        router.navigate(['/catalogo']);
+        router.navigate(['/']);
     }
 
     return false;

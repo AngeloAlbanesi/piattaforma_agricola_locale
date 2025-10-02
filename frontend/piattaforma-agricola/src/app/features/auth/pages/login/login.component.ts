@@ -109,14 +109,14 @@ export class LoginComponent {
                 this.router.navigate(['/dashboard/animatore']);
                 break;
             case 'ACQUIRENTE':
-                this.router.navigate(['/catalogo']);
+                this.router.navigate(['/dashboard/acquirente']);
                 break;
             case 'GESTORE_PIATTAFORMA':
                 this.router.navigate(['/dashboard/admin']);
                 break;
             default:
                 console.warn('⚠️ Ruolo non riconosciuto:', role);
-                this.router.navigate(['/catalogo']);
+                this.router.navigate(['/']);
         }
     }
 

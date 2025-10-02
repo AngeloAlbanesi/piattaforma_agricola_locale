@@ -26,10 +26,76 @@ body {
 
 html,
 body {
-    height: 100%;
+    /* usare min-height per permettere al contenuto di crescere e allo scroll di funzionare */
+    min-height: 100%;
+    height: auto;
 }
 
 #root,
 app-root {
-    height: 100%;
+    /* evitare di forzare l'altezza a 100%: usare min-height consente al contenuto di scrollare correttamente */
+    min-height: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Utility per contenitori di pagina che devono essere scrollabili */
+.page-scrollable {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* scorrimento più fluido su iOS */
+}
+
+/* Supporto per viewport mobile: usare --vh impostato da JS (main.ts)
+   Per elementi che devono occupare esattamente l'altezza della viewport usare:
+   height: calc(var(--vh) * 100);
+   Alternativa: usare sempre min-height: 100vh per consentire lo scroll quando necessario. */
+.full-vh {
+    height: calc(var(--vh, 1vh) * 100);
+    min-height: 100vh;
+}
+
+/* Tipografia responsive globale (valori base, override dove necessario nei componenti) */
+h1,
+.page-title {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+h2,
+.section-title {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+}
+
+/* Piccoli aggiustamenti per testi numerici/statistiche globali */
+.stat-value {
+    font-size: clamp(1.25rem, 3.2vw, 2.5rem);
+    font-weight: 700;
+}
+
+/* Estensione: applicare clamp() in modo più aggressivo ai titoli H3/H4 e ad alias comuni */
+h3 {
+    font-size: clamp(1.05rem, 2.2vw, 1.5rem);
+}
+
+h4 {
+    font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+}
+
+/* Titoli specifici usati nei componenti */
+.welcome-title {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+}
+
+.mat-card-title {
+    font-size: clamp(1rem, 1.8vw, 1.4rem);
+}
+
+/* Se vuoi regole ancora più specifiche per landing/auth/dashboard, posso aggiungerle component-scoped */
+
+/* Regola generica per classi che terminano con -title (orders-title, details-title, profile-title, ecc.) */
+[class$="-title"],
+.title,
+.page-header-title {
+    font-size: clamp(1.05rem, 2.6vw, 2rem);
+    line-height: 1.2;
 }

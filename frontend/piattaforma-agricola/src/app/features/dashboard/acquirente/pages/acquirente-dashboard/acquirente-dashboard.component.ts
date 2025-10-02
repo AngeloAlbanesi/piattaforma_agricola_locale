@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Subject, takeUntil, catchError } from 'rxjs';
+import { Subject, takeUntil, catchError, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -83,17 +83,28 @@ export class AcquirenteDashboardComponent implements OnInit, OnDestroy {
 
     private loadDashboardStats(): void {
         this.isLoading = true;
+        const defaultStats: AcquirenteStatsDTO = {
+            totaleOrdini: 0,
+            spesaTotale: 0,
+            prodottiAcquistati: 0,
+            eventiPartecipati: 0,
+            ordiniRecenti: [],
+            prodottiPreferiti: [],
+            eventiProssimi: []
+        };
 
         this.acquirenteService.getAcquirenteStats()
             .pipe(
                 takeUntil(this.destroy$),
                 catchError(error => {
-                    console.error('Errore nel caricamento statistiche:', error);
-                    this.snackBar.open('Impossibile caricare le statistiche', 'Chiudi', {
-                        duration: 3000,
-                        panelClass: 'error-snackbar'
+                    console.warn('Acquirente stats non disponibili, uso default:', error);
+                    // Mostra un messaggio non intrusivo all'utente
+                    this.snackBar.open('Statistiche non disponibili al momento. Verranno mostrate informazioni di base.', 'Chiudi', {
+                        duration: 4000,
+                        panelClass: 'warning-snackbar'
                     });
-                    return [];
+                    // Ritornare valori di default in modo che il template possa renderizzare comunque le sezioni
+                    return of(defaultStats as AcquirenteStatsDTO);
                 })
             )
             .subscribe({
@@ -102,6 +113,8 @@ export class AcquirenteDashboardComponent implements OnInit, OnDestroy {
                     this.isLoading = false;
                 },
                 error: () => {
+                    // In caso di errore imprevisto, impostiamo comunque valori di default per evitare pagina vuota
+                    this.stats = defaultStats;
                     this.isLoading = false;
                 }
             });
@@ -110,11 +123,11 @@ export class AcquirenteDashboardComponent implements OnInit, OnDestroy {
     // === NAVIGAZIONE ===
 
     navigateToCatalog(): void {
-        this.router.navigate(['/catalogo']);
+        this.router.navigate(['/']);
     }
 
     navigateToCart(): void {
-        this.router.navigate(['/carrello']);
+        this.router.navigate(['/']);
     }
 
     navigateToOrders(): void {
@@ -122,7 +135,7 @@ export class AcquirenteDashboardComponent implements OnInit, OnDestroy {
     }
 
     navigateToEvents(): void {
-        this.router.navigate(['/eventi']);
+        this.router.navigate(['/']);
     }
 
     // === GESTIONE TAB ===

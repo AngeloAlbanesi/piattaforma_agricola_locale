@@ -249,7 +249,7 @@ export class RegisterComponent {
                 this.router.navigate(['/dashboard/animatore']);
                 break;
             case ROLES.ACQUIRENTE:
-                this.router.navigate(['/catalogo']);
+                this.router.navigate(['/']);
                 break;
             case ROLES.GESTORE_PIATTAFORMA:
                 this.router.navigate(['/dashboard/admin']);

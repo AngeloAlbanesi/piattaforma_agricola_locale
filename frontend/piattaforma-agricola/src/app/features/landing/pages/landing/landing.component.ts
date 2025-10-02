@@ -101,7 +101,7 @@ export class LandingComponent implements OnInit, AfterViewInit {
 
     // Navigation methods
     navigateToCatalog(): void {
-        this.router.navigate(['/catalogo']);
+        this.router.navigate(['/']);
     }
 
     navigateToLogin(): void {

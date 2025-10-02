@@ -39,36 +39,57 @@ export interface CertificationDTO {
   idAziendaAssociata: number;
 }
 
-// === CARRELLO ===
-export interface CarrelloDTO {
-  acquirente: {
-    id: number;
-    nome: string;
-    cognome: string;
-    email: string;
-  };
-  elementiCarrello: ElementoCarrelloDTO[];
-  ultimaModifica: string;
+// === GESTIONE PROFILO ===
+export interface UserDetailDTO {
+  id: number;
+  username: string;
+  email: string;
+  nome: string;
+  cognome: string;
+  telefono?: string;
+  indirizzo?: string;
+  ruolo: string;
+  dataRegistrazione: string;
+  ultimoAccesso?: string;
+  profiloCompleto: boolean;
 }
 
-export interface ElementoCarrelloDTO {
-  idElemento: number;
-  tipoAcquistabile: 'PRODOTTO' | 'PACCHETTO' | 'EVENTO';
-  acquistabile: {
-    id: number;
-    nome: string;
-    descrizione: string;
-    prezzo: number;
-    immagineUrl?: string;
-  };
+export interface UserUpdateDTO {
+  nome?: string;
+  cognome?: string;
+  telefono?: string;
+  indirizzo?: string;
+  email?: string;
+}
+
+// === CARRELLO ===
+export interface CarrelloDTO {
+  idCarrello: number;
+  righeCarrello: RigaCarrelloDTO[];
+  totale: number;
+  numeroArticoli: number;
+}
+
+export interface RigaCarrelloDTO {
+  idRiga: number;
+  acquistabile: AcquistabileDTO;
   quantita: number;
   prezzoTotale: number;
-  dataAggiunta: string;
+}
+
+export interface AcquistabileDTO {
+  tipo: 'PRODOTTO' | 'PACCHETTO';
+  id: number;
+  nome: string;
+  prezzo: number;
+  immagineUrl?: string;
 }
 
 export interface AddToCartRequestDTO {
-  tipoAcquistabile: 'PRODOTTO' | 'PACCHETTO' | 'EVENTO';
-  idAcquistabile: number;
+  quantita: number;
+}
+
+export interface UpdateCartItemRequestDTO {
   quantita: number;
 }
 
@@ -82,12 +103,25 @@ export interface OrdineSummaryDTO {
   venditoreNome: string;
 }
 
+export interface OrdineExtendedSummaryDTO extends OrdineSummaryDTO {
+  venditore: {
+    id: number;
+    nome: string;
+  };
+  indirizzoSpedizione: string;
+  metodoPagamento: string;
+}
+
 export interface OrdineDetailDTO extends OrdineSummaryDTO {
+  venditore: {
+    id: number;
+    nome: string;
+  };
   righeOrdine: RigaOrdineDTO[];
   indirizzoSpedizione: string;
-  dataConsegnaPrevista?: string;
   metodoPagamento: string;
   trackingNumber?: string;
+  dataConsegnaPrevista?: string;
 }
 
 export interface RigaOrdineDTO {
@@ -95,13 +129,55 @@ export interface RigaOrdineDTO {
   prodotto: ProductSummaryDTO;
   quantita: number;
   prezzoUnitario: number;
-  prezzoTotale: number;
+  sottoTotale: number;
 }
 
 export interface CreateOrdineRequestDTO {
-  indirizzoSpedizione: string;
-  metodoPagamento: string;
-  note?: string;
+  metodoPagamento: 'CARTA_CREDITO' | 'PAYPAL' | 'BONIFICO';
+}
+
+export interface OrderStatusDTO {
+  statoCorrente: string;
+  storicoStati: StatoOrdineDTO[];
+  trackingInfo?: TrackingInfoDTO;
+}
+
+export interface StatoOrdineDTO {
+  stato: string;
+  dataOra: string;
+}
+
+export interface TrackingInfoDTO {
+  trackingNumber: string;
+  carrier: string;
+  dataConsegnaPrevista: string;
+}
+
+export interface CancelOrderRequestDTO {
+  motivoAnnullamento: string;
+}
+
+// === PAGAMENTO ===
+export interface PagamentoRequestDTO {
+  metodoPagamento: 'CARTA_CREDITO' | 'PAYPAL';
+  numeroCarta?: string;
+  intestatarioCarta?: string;
+  dataScadenza?: string;
+  cvv?: string;
+  emailPayPal?: string;
+  passwordPayPal?: string;
+}
+
+export interface DatiCartaCreditoDTO {
+  numeroCarta: string;
+  intestatarioCarta: string;
+  dataScadenza: string;
+  cvv: string;
+}
+
+export interface DatiPayPalDTO {
+  emailPayPal: string;
+  passwordPayPal: string;
 }
 
 // === EVENTI ===
@@ -135,6 +211,20 @@ export interface EventoDetailDTO extends EventoSummaryDTO {
 export interface EventoRegistrazioneRequestDTO {
   numeroPosti: number;
   note?: string;
+}
+
+// === CONDIVISIONE SOCIAL ===
+export interface ShareRequestDTO {
+  nickname: string;
+  piattaforma: 'FACEBOOK' | 'TWITTER' | 'INSTAGRAM' | 'WHATSAPP';
+  messaggio: string;
+}
+
+export interface ShareResponseDTO {
+  success: boolean;
+  shareUrl: string;
+  message: string;
+  timestamp: string;
 }
 
 // === PACCHETTI ===
@@ -228,12 +318,28 @@ export enum TipoOrigineProdotto {
 
 // === STATI ORDINE ===
 export enum StatoOrdine {
-  NUOVO = 'NUOVO_IN_ATTESA_DI_PAGAMENTO',
-  PAGATO = 'PAGATO_PRONTO_PER_LAVORAZIONE',
+  ATTESA_PAGAMENTO = 'ATTESA_PAGAMENTO',
+  PRONTO_PER_LAVORAZIONE = 'PRONTO_PER_LAVORAZIONE',
   IN_LAVORAZIONE = 'IN_LAVORAZIONE',
   SPEDITO = 'SPEDITO',
   CONSEGNATO = 'CONSEGNATO',
-  ANNULLATO = 'ANNULLATO'
+  ANNULLATO = 'ANNULLATO',
+  RIMBORSATO = 'RIMBORSATO'
+}
+
+// === METODI DI PAGAMENTO ===
+export enum MetodoPagamento {
+  CARTA_CREDITO = 'CARTA_CREDITO',
+  PAYPAL = 'PAYPAL',
+  BONIFICO = 'BONIFICO'
+}
+
+// === PIATTAFORME SOCIAL ===
+export enum PiattaformaSocial {
+  FACEBOOK = 'FACEBOOK',
+  TWITTER = 'TWITTER',
+  INSTAGRAM = 'INSTAGRAM',
+  WHATSAPP = 'WHATSAPP'
 }
 
 // === STATI EVENTO ===

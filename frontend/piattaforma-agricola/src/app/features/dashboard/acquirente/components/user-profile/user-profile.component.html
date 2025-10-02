@@ -1,0 +1,128 @@
+<div class="user-profile-container">
+  <mat-card class="profile-card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title class="profile-title">
+        <span>Il Mio Profilo</span>
+        <div class="profile-actions" *ngIf="!isLoading">
+          <button 
+            mat-icon-button 
+            *ngIf="!isEditMode" 
+            (click)="toggleEditMode()" 
+            matTooltip="Modifica profilo">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button 
+            mat-icon-button 
+            *ngIf="isEditMode" 
+            (click)="cancelEdit()" 
+            matTooltip="Annulla modifiche">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </mat-card-title>
+      <mat-card-subtitle *ngIf="profileData">
+        Membro dal {{ profileData.dataRegistrazione | date:'longDate' }}
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Loading State -->
+      <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner></mat-spinner>
+        <p>Caricamento profilo...</p>
+      </div>
+
+      <!-- Profile Form -->
+      <form [formGroup]="profileForm" class="profile-form" *ngIf="!isLoading">
+        <!-- Nome -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="nome" placeholder="Inserisci il tuo nome">
+          <mat-error *ngIf="profileForm.get('nome')?.touched && profileForm.get('nome')?.invalid">
+            {{ getFormErrorMessage('nome') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Cognome -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Cognome</mat-label>
+          <input matInput formControlName="cognome" placeholder="Inserisci il tuo cognome">
+          <mat-error *ngIf="profileForm.get('cognome')?.touched && profileForm.get('cognome')?.invalid">
+            {{ getFormErrorMessage('cognome') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" placeholder="Inserisci la tua email">
+          <mat-error *ngIf="profileForm.get('email')?.touched && profileForm.get('email')?.invalid">
+            {{ getFormErrorMessage('email') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Telefono -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Telefono</mat-label>
+          <input matInput formControlName="telefono" placeholder="Inserisci il tuo numero di telefono">
+          <mat-hint>Opzionale</mat-hint>
+        </mat-form-field>
+
+        <!-- Indirizzo -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Indirizzo</mat-label>
+          <textarea matInput formControlName="indirizzo" placeholder="Inserisci il tuo indirizzo" rows="3"></textarea>
+          <mat-hint>Opzionale</mat-hint>
+        </mat-form-field>
+
+        <!-- Informazioni aggiuntive -->
+        <div class="profile-info" *ngIf="profileData">
+          <div class="info-item">
+            <span class="info-label">Username:</span>
+            <span class="info-value">{{ profileData.username }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Ruolo:</span>
+            <span class="info-value">{{ profileData.ruolo }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Ultimo accesso:</span>
+            <span class="info-value">
+              {{ profileData.ultimoAccesso ? (profileData.ultimoAccesso | date:'medium') : 'Mai' }}
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Profilo completo:</span>
+            <span class="info-value">
+              <mat-icon 
+                [color]="profileData.profiloCompleto ? 'primary' : 'warn'" 
+                class="status-icon">
+                {{ profileData.profiloCompleto ? 'check_circle' : 'warning' }}
+              </mat-icon>
+              {{ profileData.profiloCompleto ? 'Sì' : 'No' }}
+            </span>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="!isLoading" class="card-actions">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        *ngIf="isEditMode"
+        (click)="saveProfile()"
+        [disabled]="!isFormValid || isSaving">
+        <mat-icon *ngIf="isSaving" class="spinner">refresh</mat-icon>
+        {{ isSaving ? 'Salvataggio...' : 'Salva Modifiche' }}
+      </button>
+      
+      <button 
+        mat-stroked-button 
+        *ngIf="isEditMode && hasUnsavedChanges"
+        (click)="cancelEdit()">
+        Annulla
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

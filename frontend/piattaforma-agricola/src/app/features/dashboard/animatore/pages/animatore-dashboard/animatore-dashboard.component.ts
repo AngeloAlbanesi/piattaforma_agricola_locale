@@ -104,7 +104,7 @@ export class AnimatoreDashboardComponent implements OnInit, OnDestroy {
     // === NAVIGAZIONE ===
 
     navigateToEvents(): void {
-        this.router.navigate(['/eventi']);
+        this.router.navigate(['/']);
     }
 
     navigateToCreateEvent(): void {

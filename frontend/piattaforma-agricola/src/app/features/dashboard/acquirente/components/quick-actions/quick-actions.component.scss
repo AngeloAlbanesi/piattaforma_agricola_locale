@@ -1,185 +1,186 @@
 .quick-actions {
-  .section-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin: 0 0 1.5rem 0;
-    
-    @media (max-width: 768px) {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
+    .section-title {
+        font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0 0 1.5rem 0;
+
+        @media (max-width: 768px) {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
     }
-  }
-  
-  .actions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    
-    @media (max-width: 768px) {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.75rem;
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+
+        @media (max-width: 768px) {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        @media (max-width: 480px) {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
     }
-    
-    @media (max-width: 480px) {
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
+
+    .action-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1.5rem 1rem;
+        min-height: 120px;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+
+        @media (max-width: 768px) {
+            padding: 1rem 0.75rem;
+            min-height: 100px;
+        }
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+
+            &::before {
+                opacity: 1;
+            }
+
+            .action-icon {
+                transform: scale(1.1);
+            }
+        }
+
+        &:active {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            width: 2rem;
+            height: 2rem;
+            transition: transform 0.3s ease;
+
+            @media (max-width: 768px) {
+                font-size: 1.5rem;
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+
+        .action-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+            max-width: 100%;
+
+            @media (max-width: 768px) {
+                font-size: 0.85rem;
+            }
+        }
     }
-  }
-  
-  .action-button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 1.5rem 1rem;
-    min-height: 120px;
-    border-radius: 12px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    
-    @media (max-width: 768px) {
-      padding: 1rem 0.75rem;
-      min-height: 100px;
+
+    // Color variations for different actions
+    .action-button.mat-primary {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+
+        &:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
+        }
     }
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+
+    .action-button.mat-accent {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+
+        &:hover {
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+        }
     }
-    
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-      
-      &::before {
-        opacity: 1;
-      }
-      
-      .action-icon {
-        transform: scale(1.1);
-      }
+
+    .action-button.mat-warn {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+
+        &:hover {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+        }
     }
-    
-    &:active {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+    // Animation for buttons
+    .action-button {
+        animation: slideInUp 0.6s ease-out;
+
+        @for $i from 1 through 5 {
+            &:nth-child(#{$i}) {
+                animation-delay: #{$i * 0.1}s;
+            }
+        }
     }
-    
-    .action-icon {
-      font-size: 2rem;
-      width: 2rem;
-      height: 2rem;
-      transition: transform 0.3s ease;
-      
-      @media (max-width: 768px) {
-        font-size: 1.5rem;
-        width: 1.5rem;
-        height: 1.5rem;
-      }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-    
-    .action-label {
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-align: center;
-      line-height: 1.2;
-      max-width: 100%;
-      
-      @media (max-width: 768px) {
-        font-size: 0.85rem;
-      }
-    }
-  }
-  
-  // Color variations for different actions
-  .action-button.mat-primary {
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-    
-    &:hover {
-      background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
-    }
-  }
-  
-  .action-button.mat-accent {
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-    
-    &:hover {
-      background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
-    }
-  }
-  
-  .action-button.mat-warn {
-    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-    
-    &:hover {
-      background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
-    }
-  }
-  
-  // Animation for buttons
-  .action-button {
-    animation: slideInUp 0.6s ease-out;
-    
-    @for $i from 1 through 5 {
-      &:nth-child(#{$i}) {
-        animation-delay: #{$i * 0.1}s;
-      }
-    }
-  }
-  
-  @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 }
 
 // Dark mode support
 @media (prefers-color-scheme: dark) {
-  .quick-actions {
-    .section-title {
-      color: white !important;
+    .quick-actions {
+        .section-title {
+            color: white !important;
+        }
+
+        .action-button {
+            &::before {
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            }
+        }
     }
-    
-    .action-button {
-      &::before {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-      }
-    }
-  }
 }
 
 // Responsive adjustments for very small screens
 @media (max-width: 360px) {
-  .quick-actions {
-    .action-button {
-      padding: 0.75rem 0.5rem;
-      min-height: 80px;
-      
-      .action-icon {
-        font-size: 1.25rem;
-        width: 1.25rem;
-        height: 1.25rem;
-      }
-      
-      .action-label {
-        font-size: 0.75rem;
-      }
+    .quick-actions {
+        .action-button {
+            padding: 0.75rem 0.5rem;
+            min-height: 80px;
+
+            .action-icon {
+                font-size: 1.25rem;
+                width: 1.25rem;
+                height: 1.25rem;
+            }
+
+            .action-label {
+                font-size: 0.75rem;
+            }
+        }
     }
-  }
 }

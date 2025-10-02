@@ -1,119 +1,132 @@
 <div class="trasformatore-dashboard">
-  <!-- Header Dashboard -->
-  <header class="dashboard-header">
-    <div class="header-content">
-      <div class="welcome-section">
-        <h1 class="welcome-title">{{ welcomeMessage }}</h1>
-        <p class="welcome-subtitle">La tua dashboard per la gestione dei processi di trasformazione</p>
-      </div>
-      
-      <div class="header-actions">
-        <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati">
-          <mat-icon>refresh</mat-icon>
-        </button>
-        <button mat-icon-button (click)="logout()" matTooltip="Logout">
-          <mat-icon>logout</mat-icon>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Loading State -->
-  <div class="loading-container" *ngIf="isLoading">
-    <mat-spinner></mat-spinner>
-    <p>Caricamento dashboard...</p>
-  </div>
-
-  <!-- Main Content -->
-  <main class="dashboard-content" *ngIf="!isLoading">
-    <!-- Statistiche Overview -->
-    <section class="stats-section" *ngIf="hasStats">
-      <app-trasformatore-stats-overview 
-        [processiTotali]="stats!.processiTotali"
-        [processiAttivi]="stats!.processiAttivi"
-        [processiCompletati]="stats!.processiCompletati"
-        [prodottiTrasformati]="stats!.prodottiTrasformati"
-        [valoreProduzione]="stats!.valoreProduzione"
-        [costiTotali]="stats!.costiTotali"
-        [ricavoTotale]="stats!.ricavoTotale"
-        [margineProfitto]="stats!.margineProfitto"
-        [certificazioniTotali]="stats!.certificazioniTotali"
-        [tracciabilitaAttive]="stats!.tracciabilitaAttive">
-      </app-trasformatore-stats-overview>
-    </section>
-
-    <!-- Quick Actions -->
-    <section class="quick-actions-section">
-      <app-trasformatore-quick-actions (action)="onQuickAction($event)"></app-trasformatore-quick-actions>
-    </section>
-
-    <!-- Tab Navigation -->
-    <section class="tabs-section">
-      <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event.index)">
-        <!-- Tab Processi -->
-        <mat-tab label="Processi">
-          <div class="tab-content">
-            <app-processi-management></app-processi-management>
-          </div>
-        </mat-tab>
-
-        <!-- Tab Fasi di Lavorazione -->
-        <mat-tab label="Fasi di Lavorazione">
-          <div class="tab-content">
-            <app-fasi-lavorazione></app-fasi-lavorazione>
-          </div>
-        </mat-tab>
-
-        <!-- Tab Tracciabilità -->
-        <mat-tab label="Tracciabilità">
-          <div class="tab-content">
-            <app-tracciabilita></app-tracciabilita>
-          </div>
-        </mat-tab>
-
-        <!-- Tab Certificazioni -->
-        <mat-tab label="Certificazioni">
-          <div class="tab-content">
-            <app-certificazioni-trasformatore></app-certificazioni-trasformatore>
-          </div>
-        </mat-tab>
-      </mat-tab-group>
-    </section>
-
-    <!-- Sezione Riepilogo Processi Recenti -->
-    <section class="recent-processes-section" *ngIf="stats && stats.processiRecenti && stats.processiRecenti.length > 0">
-      <mat-card appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>Processi Recenti</mat-card-title>
-          <mat-card-subtitle>Ultimi processi di trasformazione avviati o completati</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="process-list">
-            <div *ngFor="let processo of stats.processiRecenti" class="process-item">
-              <h4>{{ processo.nome }}</h4>
-              <p>{{ processo.descrizione }}</p>
-              <mat-chip-listbox>
-                <mat-chip [color]="processo.stato === 'COMPLETATO' ? 'primary' : (processo.stato === 'IN_CORSO' ? 'accent' : 'basic')" selected>
-                  {{ processo.stato }}
-                </mat-chip>
-              </mat-chip-listbox>
-              <button mat-button color="primary" [routerLink]="['/dashboard/trasformatore/processi', processo.id]">Dettagli</button>
+    <!-- Header Dashboard -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="welcome-section">
+                <h1 class="welcome-title">{{ welcomeMessage }}</h1>
+                <p class="welcome-subtitle">La tua dashboard per la gestione dei processi di trasformazione</p>
             </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </section>
-  </main>
 
-  <!-- Footer Dashboard -->
-  <footer class="dashboard-footer">
-    <div class="footer-content">
-      <p>&copy; 2024 Piattaforma Agricola Locale. Tutti i diritti riservati.</p>
-      <div class="footer-links">
-        <a mat-button color="primary" href="/help">Aiuto</a>
-        <a mat-button color="primary" href="/terms">Termini</a>
-        <a mat-button color="primary" href="/privacy">Privacy</a>
-      </div>
+            <div class="header-actions">
+                <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+                <button mat-icon-button (click)="logout()" matTooltip="Logout">
+                    <mat-icon>logout</mat-icon>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner></mat-spinner>
+        <p>Caricamento dashboard...</p>
     </div>
-  </footer>
+
+    <!-- Main Content -->
+    <main class="dashboard-content" *ngIf="!isLoading">
+        <!-- Statistiche Overview -->
+        <section class="stats-section" *ngIf="hasStats">
+            <app-trasformatore-stats-overview [processiTotali]="stats!.processiTotali"
+                [processiAttivi]="stats!.processiAttivi" [processiCompletati]="stats!.processiCompletati"
+                [prodottiTrasformati]="stats!.prodottiTrasformati" [valoreProduzione]="stats!.valoreProduzione"
+                [costiTotali]="stats!.costiTotali" [ricavoTotale]="stats!.ricavoTotale"
+                [margineProfitto]="stats!.margineProfitto" [certificazioniTotali]="stats!.certificazioniTotali"
+                [tracciabilitaAttive]="stats!.tracciabilitaAttive">
+            </app-trasformatore-stats-overview>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions-section">
+            <app-trasformatore-quick-actions (action)="onQuickAction($event)"></app-trasformatore-quick-actions>
+        </section>
+
+        <!-- Tab Navigation -->
+        <section class="tabs-section">
+            <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event.index)">
+                <!-- Tab Processi -->
+                <mat-tab label="Processi">
+                    <div class="tab-content">
+                        <app-processi-management></app-processi-management>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Prodotti Trasformati -->
+                <mat-tab label="Prodotti">
+                    <div class="tab-content">
+                        <app-prodotti-management></app-prodotti-management>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Ordini Ricevuti -->
+                <mat-tab label="Ordini">
+                    <div class="tab-content">
+                        <app-ordini-management></app-ordini-management>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Fasi di Lavorazione -->
+                <mat-tab label="Fasi di Lavorazione">
+                    <div class="tab-content">
+                        <app-fasi-lavorazione></app-fasi-lavorazione>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Tracciabilità -->
+                <mat-tab label="Tracciabilità">
+                    <div class="tab-content">
+                        <app-tracciabilita></app-tracciabilita>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Certificazioni -->
+                <mat-tab label="Certificazioni">
+                    <div class="tab-content">
+                        <app-certificazioni-trasformatore></app-certificazioni-trasformatore>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </section>
+
+        <!-- Sezione Riepilogo Processi Recenti -->
+        <section class="recent-processes-section"
+            *ngIf="stats && stats.processiRecenti && stats.processiRecenti.length > 0">
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title>Processi Recenti</mat-card-title>
+                    <mat-card-subtitle>Ultimi processi di trasformazione avviati o completati</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="process-list">
+                        <div *ngFor="let processo of stats.processiRecenti" class="process-item">
+                            <h4>{{ processo.nome }}</h4>
+                            <p>{{ processo.descrizione }}</p>
+                            <mat-chip-listbox>
+                                <mat-chip
+                                    [color]="processo.stato === 'COMPLETATO' ? 'primary' : (processo.stato === 'IN_CORSO' ? 'accent' : 'basic')"
+                                    selected>
+                                    {{ processo.stato }}
+                                </mat-chip>
+                            </mat-chip-listbox>
+                            <button mat-button color="primary"
+                                [routerLink]="['/dashboard/trasformatore/processi', processo.id]">Dettagli</button>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </section>
+    </main>
+
+    <!-- Footer Dashboard -->
+    <footer class="dashboard-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Piattaforma Agricola Locale. Tutti i diritti riservati.</p>
+            <div class="footer-links">
+                <a mat-button color="primary" href="/help">Aiuto</a>
+                <a mat-button color="primary" href="/terms">Termini</a>
+                <a mat-button color="primary" href="/privacy">Privacy</a>
+            </div>
+        </div>
+    </footer>
 </div>

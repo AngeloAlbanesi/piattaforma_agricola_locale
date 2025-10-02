@@ -1,0 +1,147 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            <mat-icon>inventory_2</mat-icon>
+            Gestione Prodotti Trasformati
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+        <!-- Filtri -->
+        <form [formGroup]="filterForm" class="filters-section">
+            <mat-form-field appearance="outline" class="filter-field">
+                <mat-label>Cerca</mat-label>
+                <input matInput formControlName="search" placeholder="Nome prodotto...">
+                <mat-icon matPrefix>search</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="filter-field">
+                <mat-label>Stato</mat-label>
+                <mat-select formControlName="stato">
+                    <mat-option value="">Tutti</mat-option>
+                    @for (stato of stati; track stato.value) {
+                    <mat-option [value]="stato.value">{{ stato.label }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            <button mat-button (click)="clearFilters()" class="clear-filters-btn">
+                <mat-icon>clear</mat-icon>
+                Pulisci Filtri
+            </button>
+
+            <button mat-raised-button color="primary" (click)="createProduct()" class="create-btn">
+                <mat-icon>add</mat-icon>
+                Nuovo Prodotto
+            </button>
+        </form>
+
+        <!-- Tabella Prodotti -->
+        <div class="table-container">
+            @if (isLoading) {
+            <div class="loading-spinner">
+                <mat-spinner></mat-spinner>
+            </div>
+            } @else {
+            <table mat-table [dataSource]="dataSource" matSort class="products-table">
+                <!-- Nome Column -->
+                <ng-container matColumnDef="nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+                    <td mat-cell *matCellDef="let product">
+                        <div class="product-name">
+                            <strong>{{ product.nome }}</strong>
+                            @if (product.descrizione) {
+                            <small>{{ product.descrizione | slice:0:50 }}...</small>
+                            }
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Categoria Column -->
+                <ng-container matColumnDef="categoria">
+                    <th mat-header-cell *matHeaderCellDef>Categoria</th>
+                    <td mat-cell *matCellDef="let product">
+                        {{ product.categoriaNome || 'N/A' }}
+                    </td>
+                </ng-container>
+
+                <!-- Prezzo Column -->
+                <ng-container matColumnDef="prezzo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Prezzo</th>
+                    <td mat-cell *matCellDef="let product">
+                        <strong>{{ formatCurrency(product.prezzo) }}</strong>
+                    </td>
+                </ng-container>
+
+                <!-- Quantità Column -->
+                <ng-container matColumnDef="quantita">
+                    <th mat-header-cell *matHeaderCellDef>Quantità</th>
+                    <td mat-cell *matCellDef="let product">
+                        {{ product.quantitaDisponibile }} {{ product.unitaMisura }}
+                    </td>
+                </ng-container>
+
+                <!-- Stato Column -->
+                <ng-container matColumnDef="stato">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Stato</th>
+                    <td mat-cell *matCellDef="let product">
+                        <mat-chip [color]="getStatoColor(product.stato)">
+                            {{ getStatoLabel(product.stato) }}
+                        </mat-chip>
+                    </td>
+                </ng-container>
+
+                <!-- Data Creazione Column -->
+                <ng-container matColumnDef="dataCreazione">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Data Creazione</th>
+                    <td mat-cell *matCellDef="let product">
+                        {{ formatDate(product.dataCreazione) }}
+                    </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                    <td mat-cell *matCellDef="let product">
+                        <button mat-icon-button color="primary" (click)="viewProduct(product)"
+                            matTooltip="Visualizza dettagli">
+                            <mat-icon>visibility</mat-icon>
+                        </button>
+                        <button mat-icon-button color="accent" (click)="editProduct(product)" matTooltip="Modifica"
+                            [disabled]="product.stato === 'APPROVATO'">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="deleteProduct(product)" matTooltip="Elimina"
+                            [disabled]="product.stato === 'APPROVATO'">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                <!-- Nessun risultato -->
+                @if (dataSource.data.length === 0) {
+                <tr class="mat-row no-data-row">
+                    <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                        <div class="no-data">
+                            <mat-icon>inventory_2</mat-icon>
+                            <p>Nessun prodotto trovato</p>
+                            <button mat-raised-button color="primary" (click)="createProduct()">
+                                Crea il tuo primo prodotto
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </table>
+
+            <!-- Paginazione -->
+            <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 50]"
+                (page)="onPageChange($event)" showFirstLastButtons>
+            </mat-paginator>
+            }
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,149 @@
+<h2 mat-dialog-title>
+    <mat-icon>{{ isEditMode ? 'edit' : 'add' }}</mat-icon>
+    {{ isEditMode ? 'Modifica Prodotto' : 'Nuovo Prodotto' }}
+</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="productForm" class="product-form">
+        <!-- Nome -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nome Prodotto</mat-label>
+            <input matInput formControlName="nome" placeholder="Es: Marmellata di Fragole Bio" required>
+            <mat-icon matPrefix>label</mat-icon>
+            @if (productForm.get('nome')?.hasError('required') && productForm.get('nome')?.touched) {
+            <mat-error>{{ getErrorMessage('nome') }}</mat-error>
+            }
+            @if (productForm.get('nome')?.hasError('minlength')) {
+            <mat-error>{{ getErrorMessage('nome') }}</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Descrizione -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descrizione</mat-label>
+            <textarea matInput formControlName="descrizione"
+                placeholder="Descrivi il prodotto, ingredienti, caratteristiche..." rows="4" required></textarea>
+            <mat-icon matPrefix>description</mat-icon>
+            @if (productForm.get('descrizione')?.hasError('required') && productForm.get('descrizione')?.touched) {
+            <mat-error>{{ getErrorMessage('descrizione') }}</mat-error>
+            }
+            @if (productForm.get('descrizione')?.hasError('minlength')) {
+            <mat-error>{{ getErrorMessage('descrizione') }}</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Prezzo e Categoria -->
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Prezzo (€)</mat-label>
+                <input matInput type="number" formControlName="prezzo" placeholder="0.00" step="0.01" min="0" required>
+                <mat-icon matPrefix>euro</mat-icon>
+                @if (productForm.get('prezzo')?.hasError('required') && productForm.get('prezzo')?.touched) {
+                <mat-error>{{ getErrorMessage('prezzo') }}</mat-error>
+                }
+                @if (productForm.get('prezzo')?.hasError('min')) {
+                <mat-error>{{ getErrorMessage('prezzo') }}</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Categoria</mat-label>
+                <mat-select formControlName="categoriaId" required>
+                    <mat-option value="">Seleziona categoria</mat-option>
+                    <mat-option value="1">Conserve</mat-option>
+                    <mat-option value="2">Marmellate</mat-option>
+                    <mat-option value="3">Formaggi</mat-option>
+                    <mat-option value="4">Salumi</mat-option>
+                    <mat-option value="5">Prodotti da Forno</mat-option>
+                </mat-select>
+                @if (productForm.get('categoriaId')?.hasError('required') && productForm.get('categoriaId')?.touched) {
+                <mat-error>{{ getErrorMessage('categoriaId') }}</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <!-- Quantità e Unità di Misura -->
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Quantità Disponibile</mat-label>
+                <input matInput type="number" formControlName="quantitaDisponibile" placeholder="0" min="0" required>
+                <mat-icon matPrefix>inventory</mat-icon>
+                @if (productForm.get('quantitaDisponibile')?.hasError('required') &&
+                productForm.get('quantitaDisponibile')?.touched) {
+                <mat-error>{{ getErrorMessage('quantitaDisponibile') }}</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Unità di Misura</mat-label>
+                <mat-select formControlName="unitaMisura" required>
+                    @for (unita of unitaMisuraOptions; track unita) {
+                    <mat-option [value]="unita">{{ unita }}</mat-option>
+                    }
+                </mat-select>
+                @if (productForm.get('unitaMisura')?.hasError('required') && productForm.get('unitaMisura')?.touched) {
+                <mat-error>{{ getErrorMessage('unitaMisura') }}</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <!-- Processo di Trasformazione (opzionale) -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Processo di Trasformazione (opzionale)</mat-label>
+            <mat-select formControlName="processoTrasformazioneId">
+                <mat-option value="">Nessuno</mat-option>
+                <!-- Le opzioni verrebbero caricate dinamicamente -->
+            </mat-select>
+            <mat-hint>Collega questo prodotto a un processo di trasformazione</mat-hint>
+        </mat-form-field>
+
+        <!-- Ingredienti -->
+        @if (!isEditMode) {
+        <div class="ingredienti-section">
+            <div class="section-header">
+                <h3>Ingredienti</h3>
+                <button mat-button type="button" (click)="addIngrediente()">
+                    <mat-icon>add</mat-icon>
+                    Aggiungi Ingrediente
+                </button>
+            </div>
+
+            @for (ingrediente of ingredienti.controls; track $index; let i = $index) {
+            <div class="ingrediente-row">
+                <mat-form-field appearance="outline" class="ingrediente-nome">
+                    <mat-label>Nome Ingrediente</mat-label>
+                    <input matInput [formControl]="$any(ingrediente.get('nome'))" placeholder="Es: Zucchero di canna">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="ingrediente-percentuale">
+                    <mat-label>Percentuale (%)</mat-label>
+                    <input matInput type="number" [formControl]="$any(ingrediente.get('percentuale'))" placeholder="0"
+                        min="0" max="100">
+                </mat-form-field>
+
+                <button mat-icon-button color="warn" type="button" (click)="removeIngrediente(i)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+            }
+
+            @if (ingredienti.length === 0) {
+            <p class="no-ingredienti">Nessun ingrediente aggiunto</p>
+            }
+        </div>
+        }
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    @if (isLoading) {
+    <mat-spinner diameter="24"></mat-spinner>
+    }
+    <button mat-button (click)="onCancel()" [disabled]="isLoading">
+        Annulla
+    </button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="isLoading || productForm.invalid">
+        <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+        {{ isEditMode ? 'Salva Modifiche' : 'Crea Prodotto' }}
+    </button>
+</mat-dialog-actions>

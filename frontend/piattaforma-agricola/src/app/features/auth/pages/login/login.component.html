@@ -1,120 +1,105 @@
 <div class="auth-container">
-  <div class="auth-card">
-    <div class="auth-header">
-      <mat-icon class="auth-icon">agriculture</mat-icon>
-      <h1>Accedi alla Piattaforma</h1>
-      <p class="auth-subtitle">Connettiti con la filiera agricola locale</p>
+    <div class="auth-card">
+        <div class="auth-header">
+            <mat-icon class="auth-icon">agriculture</mat-icon>
+            <h1>Accedi alla Piattaforma</h1>
+            <p class="auth-subtitle">Connettiti con la filiera agricola locale</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+            <!-- Campo Email -->
+            <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="Inserisci la tua email"
+                    [errorStateMatcher]="errorStateMatcher">
+                <mat-icon matSuffix>email</mat-icon>
+                <mat-error>{{ getErrorMessage('email') }}</mat-error>
+            </mat-form-field>
+
+            <!-- Campo Password -->
+            <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password"
+                    placeholder="Inserisci la tua password" [errorStateMatcher]="errorStateMatcher">
+                <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()"
+                    [attr.aria-label]="'Mostra password'" aria-pressed="false">
+                    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-error>{{ getErrorMessage('password') }}</mat-error>
+            </mat-form-field>
+
+            <!-- Pulsanti Azione -->
+            <div class="form-actions">
+                <button mat-raised-button type="submit" color="primary" class="login-btn"
+                    [disabled]="loginForm.invalid || isLoading">
+                    <span *ngIf="!isLoading">Accedi</span>
+                    <span *ngIf="isLoading">
+                        <mat-spinner class="spinner" diameter="20"></mat-spinner>
+                    </span>
+                </button>
+
+                <button mat-stroked-button type="button" class="register-btn" (click)="goToRegistration()">
+                    Crea un Account
+                </button>
+            </div>
+
+            <!-- Link per recupero password -->
+            <div class="form-footer">
+                <a href="#" class="forgot-password">Hai dimenticato la password?</a>
+            </div>
+        </form>
+
+        <!-- Benefici del login -->
+        <div class="auth-benefits">
+            <div class="benefit-item">
+                <mat-icon class="benefit-icon">verified_user</mat-icon>
+                <span>Accesso sicuro con JWT</span>
+            </div>
+            <div class="benefit-item">
+                <mat-icon class="benefit-icon">dashboard</mat-icon>
+                <span>Dashboard personalizzato</span>
+            </div>
+            <div class="benefit-item">
+                <mat-icon class="benefit-icon">storefront</mat-icon>
+                <span>Mercato completo</span>
+            </div>
+        </div>
     </div>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-      <!-- Campo Username -->
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Username</mat-label>
-        <input matInput
-               formControlName="username"
-               placeholder="Inserisci il tuo username"
-               [errorStateMatcher]="errorStateMatcher">
-        <mat-icon matSuffix>person</mat-icon>
-        <mat-error>{{ getErrorMessage('username') }}</mat-error>
-      </mat-form-field>
-
-      <!-- Campo Password -->
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Password</mat-label>
-        <input matInput
-               [type]="hidePassword ? 'password' : 'text'"
-               formControlName="password"
-               placeholder="Inserisci la tua password"
-               [errorStateMatcher]="errorStateMatcher">
-        <button mat-icon-button
-                matSuffix
-                type="button"
-                (click)="togglePasswordVisibility()"
-                [attr.aria-label]="'Mostra password'"
-                aria-pressed="false">
-          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-        </button>
-        <mat-error>{{ getErrorMessage('password') }}</mat-error>
-      </mat-form-field>
-
-      <!-- Pulsanti Azione -->
-      <div class="form-actions">
-        <button mat-raised-button
-                type="submit"
-                color="primary"
-                class="login-btn"
-                [disabled]="loginForm.invalid || isLoading">
-          <span *ngIf="!isLoading">Accedi</span>
-          <span *ngIf="isLoading">
-            <mat-spinner class="spinner" diameter="20"></mat-spinner>
-          </span>
-        </button>
-
-        <button mat-stroked-button
-                type="button"
-                class="register-btn"
-                (click)="goToRegistration()">
-          Crea un Account
-        </button>
-      </div>
-
-      <!-- Link per recupero password -->
-      <div class="form-footer">
-        <a href="#" class="forgot-password">Hai dimenticato la password?</a>
-      </div>
-    </form>
-
-    <!-- Benefici del login -->
-    <div class="auth-benefits">
-      <div class="benefit-item">
-        <mat-icon class="benefit-icon">verified_user</mat-icon>
-        <span>Accesso sicuro con JWT</span>
-      </div>
-      <div class="benefit-item">
-        <mat-icon class="benefit-icon">dashboard</mat-icon>
-        <span>Dashboard personalizzato</span>
-      </div>
-      <div class="benefit-item">
-        <mat-icon class="benefit-icon">storefront</mat-icon>
-        <span>Mercato completo</span>
-      </div>
+    <!-- Ruoli disponibili -->
+    <div class="roles-showcase">
+        <h3>Scegli il tuo ruolo nella filiera</h3>
+        <div class="roles-grid">
+            <div class="role-card" (click)="goToRegistration()">
+                <mat-icon class="role-icon">agriculture</mat-icon>
+                <h4>Produttore</h4>
+                <p>Vendi i tuoi prodotti direttamente</p>
+            </div>
+            <div class="role-card" (click)="goToRegistration()">
+                <mat-icon class="role-icon">factory</mat-icon>
+                <h4>Trasformatore</h4>
+                <p>Trasforma materie prime</p>
+            </div>
+            <div class="role-card" (click)="goToRegistration()">
+                <mat-icon class="role-icon">store</mat-icon>
+                <h4>Distributore</h4>
+                <p>Crea pacchetti tipici</p>
+            </div>
+            <div class="role-card" (click)="goToRegistration()">
+                <mat-icon class="role-icon">verified</mat-icon>
+                <h4>Curatore</h4>
+                <p>Verifica contenuti</p>
+            </div>
+            <div class="role-card" (click)="goToRegistration()">
+                <mat-icon class="role-icon">event</mat-icon>
+                <h4>Animatore</h4>
+                <p>Organizza eventi</p>
+            </div>
+            <div class="role-card" (click)="goToRegistration()">
+                <mat-icon class="role-icon">shopping_cart</mat-icon>
+                <h4>Acquirente</h4>
+                <p>Acquista prodotti</p>
+            </div>
+        </div>
     </div>
-  </div>
-
-  <!-- Ruoli disponibili -->
-  <div class="roles-showcase">
-    <h3>Scegli il tuo ruolo nella filiera</h3>
-    <div class="roles-grid">
-      <div class="role-card" (click)="goToRegistration()">
-        <mat-icon class="role-icon">agriculture</mat-icon>
-        <h4>Produttore</h4>
-        <p>Vendi i tuoi prodotti direttamente</p>
-      </div>
-      <div class="role-card" (click)="goToRegistration()">
-        <mat-icon class="role-icon">factory</mat-icon>
-        <h4>Trasformatore</h4>
-        <p>Trasforma materie prime</p>
-      </div>
-      <div class="role-card" (click)="goToRegistration()">
-        <mat-icon class="role-icon">store</mat-icon>
-        <h4>Distributore</h4>
-        <p>Crea pacchetti tipici</p>
-      </div>
-      <div class="role-card" (click)="goToRegistration()">
-        <mat-icon class="role-icon">verified</mat-icon>
-        <h4>Curatore</h4>
-        <p>Verifica contenuti</p>
-      </div>
-      <div class="role-card" (click)="goToRegistration()">
-        <mat-icon class="role-icon">event</mat-icon>
-        <h4>Animatore</h4>
-        <p>Organizza eventi</p>
-      </div>
-      <div class="role-card" (click)="goToRegistration()">
-        <mat-icon class="role-icon">shopping_cart</mat-icon>
-        <h4>Acquirente</h4>
-        <p>Acquista prodotti</p>
-      </div>
-    </div>
-  </div>
 </div>

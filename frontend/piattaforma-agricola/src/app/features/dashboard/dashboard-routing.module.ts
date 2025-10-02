@@ -6,52 +6,52 @@ import { ROLES } from '../../core/services/auth.service';
 
 // Import delle dashboard (lazy loading)
 const routes: Routes = [
-  {
-    path: 'dashboard-produttore',
-    loadChildren: () => import('./produttore/produttore.module').then(m => m.ProduttoreModule),
-    canActivate: [authGuard, roleGuard],
-    data: { expectedRole: ROLES.PRODUTTORE }
-  },
-  {
-    path: 'dashboard-trasformatore',
-    loadChildren: () => import('./trasformatore/trasformatore.module').then(m => m.TrasformatoreModule),
-    canActivate: [authGuard, roleGuard],
-    data: { expectedRole: ROLES.TRASFORMATORE }
-  },
-  {
-    path: 'dashboard-distributore',
-    loadChildren: () => import('./distributore/distributore.module').then(m => m.DistributoreModule),
-    canActivate: [authGuard, roleGuard],
-    data: { expectedRole: ROLES.DISTRIBUTORE_TIPICITA }
-  },
-  {
-    path: 'dashboard-curatore',
-    loadChildren: () => import('./curatore/curatore.module').then(m => m.CuratoreModule),
-    canActivate: [authGuard, roleGuard],
-    data: { expectedRole: ROLES.CURATORE }
-  },
-  {
-    path: 'dashboard-animatore',
-    loadChildren: () => import('./animatore/animatore.module').then(m => m.AnimatoreModule),
-    canActivate: [authGuard, roleGuard],
-    data: { expectedRole: ROLES.ANIMATORE_FILIERA }
-  },
-  {
-    path: 'dashboard-acquirente',
-    loadChildren: () => import('./acquirente/acquirente.module').then(m => m.AcquirenteModule),
-    canActivate: [authGuard, roleGuard],
-    data: { expectedRole: ROLES.ACQUIRENTE }
-  },
-  {
-    path: 'dashboard-admin',
-    loadChildren: () => import('./gestore-platforma/gestore-platforma.module').then(m => m.GestorePlatformaModule),
-    canActivate: [authGuard, roleGuard],
-    data: { expectedRole: ROLES.GESTORE_PIATTAFORMA }
-  }
+    {
+        path: 'produttore',
+        loadChildren: () => import('./produttore/produttore.module').then(m => m.ProduttoreModule),
+        canActivate: [authGuard, roleGuard],
+        data: { expectedRole: ROLES.PRODUTTORE }
+    },
+    {
+        path: 'trasformatore',
+        loadChildren: () => import('./trasformatore/trasformatore.module').then(m => m.TrasformatoreModule),
+        canActivate: [authGuard, roleGuard],
+        data: { expectedRole: ROLES.TRASFORMATORE }
+    },
+    {
+        path: 'distributore',
+        loadChildren: () => import('./distributore/distributore.module').then(m => m.DistributoreModule),
+        canActivate: [authGuard, roleGuard],
+        data: { expectedRole: ROLES.DISTRIBUTORE_TIPICITA }
+    },
+    {
+        path: 'curatore',
+        loadChildren: () => import('./curatore/curatore.module').then(m => m.CuratoreModule),
+        canActivate: [authGuard, roleGuard],
+        data: { expectedRole: ROLES.CURATORE }
+    },
+    {
+        path: 'animatore',
+        loadChildren: () => import('./animatore/animatore.module').then(m => m.AnimatoreModule),
+        canActivate: [authGuard, roleGuard],
+        data: { expectedRole: ROLES.ANIMATORE_FILIERA }
+    },
+    {
+        path: 'acquirente',
+        loadChildren: () => import('./acquirente/acquirente.module').then(m => m.AcquirenteModule),
+        canActivate: [authGuard, roleGuard],
+        data: { expectedRole: ROLES.ACQUIRENTE }
+    },
+    {
+        path: 'admin',
+        loadChildren: () => import('./gestore-platforma/gestore-platforma.module').then(m => m.GestorePlatformaModule),
+        canActivate: [authGuard, roleGuard],
+        data: { expectedRole: ROLES.GESTORE_PIATTAFORMA }
+    }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
 })
 export class DashboardRoutingModule { }

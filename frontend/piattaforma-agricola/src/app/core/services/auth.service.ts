@@ -13,7 +13,7 @@ export interface AuthContext {
 }
 
 export interface LoginRequest {
-    username: string;
+    email: string;
     password: string;
 }
 
@@ -79,6 +79,7 @@ export class AuthService {
             role: response.roles[0] // Primo ruolo come ruolo principale
         };
 
+        console.log('🔐 Salvataggio auth state:', authData);
         this.ctx.set(authData);
 
         // Salva nel localStorage
@@ -87,6 +88,7 @@ export class AuthService {
         localStorage.setItem('auth_roles', JSON.stringify(response.roles));
         localStorage.setItem('auth_user_id', response.id.toString());
         localStorage.setItem('auth_role', response.roles[0]);
+        console.log('✅ Auth state salvato. Ruolo principale:', response.roles[0]);
     }
 
     isAuthenticated(): boolean {

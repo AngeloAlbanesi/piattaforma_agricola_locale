@@ -18,7 +18,8 @@
                         Storia</button>
                     <button mat-stroked-button class="nav-btn" (click)="navigateToCatalog()">Prodotti</button>
                     <button mat-stroked-button class="nav-btn" (click)="navigateToLogin()">Accedi</button>
-                    <button mat-raised-button color="primary" class="nav-cta" (click)="navigateToRegister()">Registrati</button>
+                    <button mat-raised-button color="primary" class="nav-cta"
+                        (click)="navigateToRegister()">Registrati</button>
                 </div>
             </div>
         </nav>
@@ -63,16 +64,15 @@
                 </div>
 
                 <div class="hero-actions">
-                    <button mat-raised-button color="primary" size="large" class="primary-cta"
-                        (click)="navigateToCatalog()">
+                    <button mat-raised-button color="primary" class="primary-cta" (click)="navigateToCatalog()">
                         <mat-icon>shopping_basket</mat-icon>
                         Esplora il Mercato
                     </button>
-                    <button mat-stroked-button size="large" class="secondary-cta" (click)="navigateToLogin()">
+                    <button mat-stroked-button class="secondary-cta" (click)="navigateToLogin()">
                         <mat-icon>login</mat-icon>
                         Accedi
                     </button>
-                    <button mat-stroked-button size="large" class="secondary-cta" (click)="navigateToRegister()">
+                    <button mat-stroked-button class="secondary-cta" (click)="navigateToRegister()">
                         <mat-icon>person_add</mat-icon>
                         Registrati
                     </button>
@@ -446,7 +446,7 @@
             <div class="gallery-cta">
                 <h3>Vuoi scoprire tutti i nostri prodotti?</h3>
                 <p>Oltre 500 prodotti certificati disponibili ogni settimana</p>
-                <button mat-raised-button color="primary" size="large" (click)="navigateToCatalog()">
+                <button mat-raised-button color="primary" (click)="navigateToCatalog()">
                     Vedi Tutti i Prodotti
                     <mat-icon>arrow_forward</mat-icon>
                 </button>
@@ -927,7 +927,7 @@
             <div class="testimonials-cta">
                 <h3>Vuoi condividere la tua esperienza?</h3>
                 <p>La tua opinione ci aiuta a migliorare ogni giorno</p>
-                <button mat-stroked-button size="large" (click)="openTestimonialForm()">
+                <button mat-stroked-button (click)="openTestimonialForm()">
                     Lascia una Recensione
                     <mat-icon>rate_review</mat-icon>
                 </button>
@@ -944,13 +944,13 @@
                     Scegli il tuo ruolo e inizia a far parte della nostra community
                 </p>
                 <div class="cta-buttons">
-                    <button mat-raised-button color="primary" size="large" (click)="navigateToRegister()">
+                    <button mat-raised-button color="primary" (click)="navigateToRegister()">
                         Registrati Ora
                     </button>
-                    <button mat-stroked-button size="large" (click)="navigateToLogin()">
+                    <button mat-stroked-button (click)="navigateToLogin()">
                         Accedi
                     </button>
-                    <button mat-stroked-button size="large" (click)="scrollToSection('features')">
+                    <button mat-stroked-button (click)="scrollToSection('features')">
                         Scopri di Più
                     </button>
                 </div>

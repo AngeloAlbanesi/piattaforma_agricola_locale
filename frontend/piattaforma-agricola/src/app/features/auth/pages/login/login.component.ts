@@ -33,7 +33,7 @@ export class LoginComponent {
         private snackBar: MatSnackBar
     ) {
         this.loginForm = this.fb.group({
-            username: ['', [Validators.required, Validators.minLength(3)]],
+            email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required, Validators.minLength(6)]]
         });
 
@@ -55,7 +55,7 @@ export class LoginComponent {
         this.isLoading = true;
 
         const loginRequest: LoginRequest = {
-            username: this.loginForm.value.username!,
+            email: this.loginForm.value.email!,
             password: this.loginForm.value.password!
         };
 
@@ -73,7 +73,7 @@ export class LoginComponent {
                 let errorMessage = 'Credenziali non valide. Riprova.';
 
                 if (error.status === 401) {
-                    errorMessage = 'Username o password errati.';
+                    errorMessage = 'Email o password errati.';
                 } else if (error.status === 403) {
                     errorMessage = 'Accesso negato. Utente non autorizzato.';
                 } else if (error.status === 0) {
@@ -90,30 +90,32 @@ export class LoginComponent {
 
     private redirectToDashboard(): void {
         const role = this.authService.getRole();
+        console.log('🔍 Redirect con ruolo:', role);
 
         switch (role) {
             case 'PRODUTTORE':
-                this.router.navigate(['/dashboard-produttore']);
+                this.router.navigate(['/dashboard/produttore']);
                 break;
             case 'TRASFORMATORE':
-                this.router.navigate(['/dashboard-trasformatore']);
+                this.router.navigate(['/dashboard/trasformatore']);
                 break;
             case 'DISTRIBUTORE_TIPICITA':
-                this.router.navigate(['/dashboard-distributore']);
+                this.router.navigate(['/dashboard/distributore']);
                 break;
             case 'CURATORE':
-                this.router.navigate(['/dashboard-curatore']);
+                this.router.navigate(['/dashboard/curatore']);
                 break;
             case 'ANIMATORE_FILIERA':
-                this.router.navigate(['/dashboard-animatore']);
+                this.router.navigate(['/dashboard/animatore']);
                 break;
             case 'ACQUIRENTE':
                 this.router.navigate(['/catalogo']);
                 break;
             case 'GESTORE_PIATTAFORMA':
-                this.router.navigate(['/dashboard-admin']);
+                this.router.navigate(['/dashboard/admin']);
                 break;
             default:
+                console.warn('⚠️ Ruolo non riconosciuto:', role);
                 this.router.navigate(['/catalogo']);
         }
     }
@@ -130,6 +132,9 @@ export class LoginComponent {
         const control = this.loginForm.get(field);
         if (control?.hasError('required') && control?.touched) {
             return 'Questo campo è obbligatorio';
+        }
+        if (control?.hasError('email') && control?.touched) {
+            return 'Inserisci un indirizzo email valido';
         }
         if (control?.hasError('minlength') && control?.touched) {
             const minLength = control.errors?.['minlength']['requiredLength'];

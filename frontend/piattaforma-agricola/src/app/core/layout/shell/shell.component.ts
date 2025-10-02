@@ -26,7 +26,7 @@ export class ShellComponent {
         { label: 'Gestione Utenti', icon: 'admin_panel_settings', route: '/gestione-utenti' },
     ];
 
-    constructor(private router: Router) {}
+    constructor(private router: Router) { }
 
     /**
      * Verifica se l'utente è sulla landing page principale
@@ -34,5 +34,13 @@ export class ShellComponent {
     isLandingPage(): boolean {
         const currentUrl = this.router.url;
         return currentUrl === '/' || currentUrl === '';
+    }
+
+    /**
+     * Verifica se l'utente è su una pagina di autenticazione
+     */
+    isAuthPage(): boolean {
+        const currentUrl = this.router.url;
+        return currentUrl.startsWith('/auth');
     }
 }

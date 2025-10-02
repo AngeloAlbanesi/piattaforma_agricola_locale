@@ -8,6 +8,12 @@
     overflow: hidden;
 }
 
+// Stili full-screen per pagine di autenticazione
+.shell.auth-fullscreen {
+    height: 100vh;
+    overflow: hidden;
+}
+
 .shell__brand {
     padding: 1.5rem 1.25rem 1rem;
 }
@@ -37,6 +43,30 @@ a[mat-list-item].active {
     z-index: 2;
 }
 
+// Stile per la toolbar sulla landing page (più trasparente e meno invasiva)
+.shell__toolbar.landing-toolbar {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(10px);
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shell__toolbar.landing-toolbar .shell__toolbar-title {
+    color: white;
+}
+
+.shell__toolbar.landing-toolbar a[mat-button] {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.shell__toolbar.landing-toolbar a[mat-button]:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 .shell__menu {
     display: none;
 }
@@ -61,6 +91,17 @@ a[mat-list-item].active {
     min-height: 100vh !important;
     background-color: transparent !important;
     overflow: hidden;
+}
+
+// Stili per pagine di autenticazione full-screen
+.shell__content.auth-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    height: 100vh !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 @media (max-width: 960px) {

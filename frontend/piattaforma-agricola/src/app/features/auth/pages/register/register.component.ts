@@ -111,7 +111,7 @@ export class RegisterComponent {
         });
     }
 
-  
+
     passwordMatchValidator(form: FormGroup): { [key: string]: boolean } | null {
         const password = form.get('password');
         const confirmPassword = form.get('confirmPassword');
@@ -234,25 +234,25 @@ export class RegisterComponent {
     private redirectToDashboard(role: string): void {
         switch (role) {
             case ROLES.PRODUTTORE:
-                this.router.navigate(['/dashboard-produttore']);
+                this.router.navigate(['/dashboard/produttore']);
                 break;
             case ROLES.TRASFORMATORE:
-                this.router.navigate(['/dashboard-trasformatore']);
+                this.router.navigate(['/dashboard/trasformatore']);
                 break;
             case ROLES.DISTRIBUTORE_TIPICITA:
-                this.router.navigate(['/dashboard-distributore']);
+                this.router.navigate(['/dashboard/distributore']);
                 break;
             case ROLES.CURATORE:
-                this.router.navigate(['/dashboard-curatore']);
+                this.router.navigate(['/dashboard/curatore']);
                 break;
             case ROLES.ANIMATORE_FILIERA:
-                this.router.navigate(['/dashboard-animatore']);
+                this.router.navigate(['/dashboard/animatore']);
                 break;
             case ROLES.ACQUIRENTE:
                 this.router.navigate(['/catalogo']);
                 break;
             case ROLES.GESTORE_PIATTAFORMA:
-                this.router.navigate(['/dashboard-admin']);
+                this.router.navigate(['/dashboard/admin']);
                 break;
             default:
                 this.router.navigate(['/']);

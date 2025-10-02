@@ -12,6 +12,8 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
+import { ShipOrderDialogComponent } from './ship-order-dialog.component';
+import { CancelOrderDialogComponent } from './cancel-order-dialog.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
@@ -154,8 +156,76 @@ export class OrdiniManagementComponent implements OnInit {
     }
 
     updateStatus(ordine: OrdineRiepilogoDTO, nuovoStato: StatoOrdineProduttore): void {
-        // Logica per aggiornare lo stato dell'ordine
-        this.snackBar.open(`Aggiorna stato ordine ${ordine.id} a ${nuovoStato}`, 'Chiudi', { duration: 2000 });
+        // Logica per aggiornare lo stato dell'ordine utilizzando ProduttoreService
+        switch (nuovoStato) {
+            case StatoOrdineProduttore.IN_LAVORAZIONE:
+                // Metti in lavorazione
+                this.produttoreService.processOrder(ordine.id).subscribe({
+                    next: (updated) => {
+                        this.snackBar.open(`Ordine ${ordine.id} impostato in lavorazione`, 'Chiudi', { duration: 3000 });
+                        this.loadOrdini();
+                    },
+                    error: () => {
+                        this.snackBar.open('Errore durante l\'aggiornamento dello stato.', 'Chiudi', { duration: 3000 });
+                    }
+                });
+                break;
+            case StatoOrdineProduttore.SPEDITO:
+                // Apri dialog per raccogliere i dati di spedizione
+                const shipRef = this.dialog.open(ShipOrderDialogComponent, { width: '480px' });
+                shipRef.afterClosed().subscribe(result => {
+                    if (result) {
+                        this.produttoreService.shipOrder(ordine.id, result).subscribe({
+                            next: () => {
+                                this.snackBar.open(`Ordine ${ordine.id} segnato come spedito`, 'Chiudi', { duration: 3000 });
+                                this.loadOrdini();
+                            },
+                            error: () => {
+                                this.snackBar.open('Errore durante la spedizione dell\'ordine.', 'Chiudi', { duration: 3000 });
+                            }
+                        });
+                    }
+                });
+                break;
+            case StatoOrdineProduttore.CONSEGNATO:
+                this.produttoreService.deliverOrder(ordine.id).subscribe({
+                    next: () => {
+                        this.snackBar.open(`Ordine ${ordine.id} segnato come consegnato`, 'Chiudi', { duration: 3000 });
+                        this.loadOrdini();
+                    },
+                    error: () => {
+                        this.snackBar.open('Errore durante l\'aggiornamento a consegnato.', 'Chiudi', { duration: 3000 });
+                    }
+                });
+                break;
+            case StatoOrdineProduttore.ANNULLATO:
+                const cancelRef = this.dialog.open(CancelOrderDialogComponent, { width: '480px' });
+                cancelRef.afterClosed().subscribe(result => {
+                    if (result) {
+                        this.produttoreService.cancelOrder(ordine.id, result).subscribe({
+                            next: () => {
+                                this.snackBar.open(`Ordine ${ordine.id} annullato`, 'Chiudi', { duration: 3000 });
+                                this.loadOrdini();
+                            },
+                            error: () => {
+                                this.snackBar.open('Errore durante l\'annullamento dell\'ordine.', 'Chiudi', { duration: 3000 });
+                            }
+                        });
+                    }
+                });
+                break;
+            default:
+                // Per altri stati, logica generica
+                this.produttoreService.updateOrderStatus(ordine.id, nuovoStato).subscribe({
+                    next: () => {
+                        this.snackBar.open(`Stato ordine ${ordine.id} aggiornato`, 'Chiudi', { duration: 2000 });
+                        this.loadOrdini();
+                    },
+                    error: () => {
+                        this.snackBar.open('Errore durante l\'aggiornamento dello stato.', 'Chiudi', { duration: 3000 });
+                    }
+                });
+        }
     }
 
     getStatoClass(stato: string): string {

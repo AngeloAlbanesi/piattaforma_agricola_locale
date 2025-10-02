@@ -68,7 +68,9 @@ export class ProduttoreDashboardComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.initializeUserData();
-        this.loadDashboardStats();
+        // Le statistiche non sono implementate nel backend in questo momento;
+        // non carichiamo i dati e mostriamo subito la dashboard con i componenti interattivi.
+        this.isLoading = false;
     }
 
     ngOnDestroy(): void {
@@ -85,29 +87,9 @@ export class ProduttoreDashboardComponent implements OnInit, OnDestroy {
     }
 
     private loadDashboardStats(): void {
-        this.isLoading = true;
-
-        this.produttoreService.getProduttoreStats()
-            .pipe(
-                takeUntil(this.destroy$),
-                catchError(error => {
-                    console.error('Errore nel caricamento statistiche:', error);
-                    this.snackBar.open('Impossibile caricare le statistiche', 'Chiudi', {
-                        duration: 3000,
-                        panelClass: 'error-snackbar'
-                    });
-                    return [];
-                })
-            )
-            .subscribe({
-                next: (stats: ProduttoreStatsDTO) => {
-                    this.stats = stats;
-                    this.isLoading = false;
-                },
-                error: () => {
-                    this.isLoading = false;
-                }
-            });
+        // Statistiche disabilitate: non fare nulla.
+        this.stats = null;
+        this.isLoading = false;
     }
 
     // === NAVIGAZIONE ===

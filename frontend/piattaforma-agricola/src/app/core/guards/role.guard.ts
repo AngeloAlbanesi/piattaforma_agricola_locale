@@ -38,7 +38,7 @@ export const roleGuard: CanActivateFn = (route, state) => {
             case 'CURATORE':
                 router.navigate(['/dashboard/curatore']);
                 break;
-            case 'ANIMATORE_FILIERA':
+            case 'ANIMATORE_DELLA_FILIERA':
                 router.navigate(['/dashboard/animatore']);
                 break;
             case 'ACQUIRENTE':

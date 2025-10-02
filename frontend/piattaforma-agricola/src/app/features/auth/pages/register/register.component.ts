@@ -61,7 +61,7 @@ export class RegisterComponent {
             label: 'Animatore',
             description: 'Organizza eventi per la filiera',
             icon: 'event',
-            needsCompanyData: true
+            needsCompanyData: false
         },
         {
             value: ROLES.ACQUIRENTE,

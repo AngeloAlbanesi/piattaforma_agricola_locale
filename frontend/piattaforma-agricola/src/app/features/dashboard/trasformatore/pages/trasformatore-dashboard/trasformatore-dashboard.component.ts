@@ -8,8 +8,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TrasformatoreStatsDTO } from '../../../../../core/models/trasformatore.models';
 import { TrasformatoreService } from '../../../../../core/services/trasformatore.service';
+import { AuthService } from '../../../../../core/services/auth.service';
 import { TrasformatoreStatsOverviewComponent } from '../../components/trasformatore-stats-overview/trasformatore-stats-overview.component';
 import { TrasformatoreQuickActionsComponent } from '../../components/trasformatore-quick-actions/trasformatore-quick-actions.component';
 import { ProcessiManagementComponent } from '../../components/processi-management/processi-management.component';
@@ -33,6 +35,7 @@ import { Router } from '@angular/router';
         MatTabsModule,
         MatCardModule,
         MatChipsModule,
+        MatTooltipModule,
         TrasformatoreStatsOverviewComponent,
         TrasformatoreQuickActionsComponent,
         ProcessiManagementComponent,
@@ -55,6 +58,7 @@ export class TrasformatoreDashboardComponent implements OnInit {
 
     constructor(
         private trasformatoreService: TrasformatoreService,
+        private authService: AuthService,
         private snackBar: MatSnackBar,
         private router: Router
     ) { }
@@ -109,8 +113,6 @@ export class TrasformatoreDashboardComponent implements OnInit {
     }
 
     logout(): void {
-        // Implementare la logica di logout
-        this.snackBar.open('Logout effettuato con successo!', 'Chiudi', { duration: 2000 });
-        this.router.navigate(['/auth/login']);
+        this.authService.logout();
     }
 }

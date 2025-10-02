@@ -105,7 +105,7 @@ export class LoginComponent {
             case 'CURATORE':
                 this.router.navigate(['/dashboard/curatore']);
                 break;
-            case 'ANIMATORE_FILIERA':
+            case 'ANIMATORE_DELLA_FILIERA':
                 this.router.navigate(['/dashboard/animatore']);
                 break;
             case 'ACQUIRENTE':

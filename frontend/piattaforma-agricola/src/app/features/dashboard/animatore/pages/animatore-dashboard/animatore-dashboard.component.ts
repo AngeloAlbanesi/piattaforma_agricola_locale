@@ -59,7 +59,9 @@ export class AnimatoreDashboardComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.initializeUserData();
-        this.loadDashboardStats();
+        // Statistiche rimosse temporaneamente
+        this.stats = null;
+        this.isLoading = false;
     }
 
     ngOnDestroy(): void {
@@ -76,29 +78,8 @@ export class AnimatoreDashboardComponent implements OnInit, OnDestroy {
     }
 
     private loadDashboardStats(): void {
-        this.isLoading = true;
-
-        this.animatoreService.getAnimatoreStats()
-            .pipe(
-                takeUntil(this.destroy$),
-                catchError(error => {
-                    console.error('Errore nel caricamento statistiche:', error);
-                    this.snackBar.open('Impossibile caricare le statistiche', 'Chiudi', {
-                        duration: 3000,
-                        panelClass: 'error-snackbar'
-                    });
-                    return [];
-                })
-            )
-            .subscribe({
-                next: (stats) => {
-                    this.stats = stats;
-                    this.isLoading = false;
-                },
-                error: () => {
-                    this.isLoading = false;
-                }
-            });
+        // Metodo vuoto - statistiche rimosse temporaneamente
+        // Potrebbe essere implementato in futuro quando le API saranno disponibili
     }
 
     // === NAVIGAZIONE ===
@@ -156,7 +137,7 @@ export class AnimatoreDashboardComponent implements OnInit, OnDestroy {
     // === UTILITIES ===
 
     refreshData(): void {
-        this.loadDashboardStats();
+        // Nessun dato da refresh - statistiche rimosse temporaneamente
     }
 
     logout(): void {

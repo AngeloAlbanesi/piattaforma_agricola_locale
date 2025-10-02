@@ -8,50 +8,52 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { EventoDTO, StatoEvento } from '../../../../../core/models/animatore.models';
 
 @Component({
-  selector: 'app-evento-card',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatIconModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatTooltipModule,
-    DatePipe,
-    CurrencyPipe
-  ],
-  templateUrl: './evento-card.component.html',
-  styleUrl: './evento-card.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-evento-card',
+    standalone: true,
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
+        MatChipsModule,
+        MatTooltipModule,
+        DatePipe,
+        CurrencyPipe
+    ],
+    templateUrl: './evento-card.component.html',
+    styleUrl: './evento-card.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventoCardComponent {
-  @Input() evento!: EventoDTO;
-  @Output() viewDetails = new EventEmitter<EventoDTO>();
-  @Output() editEvent = new EventEmitter<EventoDTO>();
-  @Output() deleteEvent = new EventEmitter<EventoDTO>();
+    @Input() evento!: EventoDTO;
+    @Output() viewDetails = new EventEmitter<EventoDTO>();
+    @Output() editEvent = new EventEmitter<EventoDTO>();
+    @Output() deleteEvent = new EventEmitter<EventoDTO>();
 
-  onViewDetails(): void {
-    this.viewDetails.emit(this.evento);
-  }
-
-  onEditEvent(): void {
-    this.editEvent.emit(this.evento);
-  }
-
-  onDeleteEvent(): void {
-    this.deleteEvent.emit(this.evento);
-  }
-
-  getStatoClass(stato: string): string {
-    switch (stato) {
-      case StatoEvento.PUBBLICATO:
-        return 'primary';
-      case StatoEvento.DA_PUBBLICARE:
-        return 'accent';
-      case StatoEvento.ANNULLATO:
-        return 'warn';
-      default:
-        return 'basic';
+    onViewDetails(): void {
+        this.viewDetails.emit(this.evento);
     }
-  }
+
+    onEditEvent(): void {
+        this.editEvent.emit(this.evento);
+    }
+
+    onDeleteEvent(): void {
+        this.deleteEvent.emit(this.evento);
+    }
+
+    getStatoClass(stato: string): string {
+        switch (stato) {
+            case StatoEvento.IN_PROGRAMMA:
+                return 'accent';
+            case StatoEvento.IN_CORSO:
+                return 'primary';
+            case StatoEvento.CONCLUSO:
+                return 'basic';
+            case StatoEvento.ANNULLATO:
+                return 'warn';
+            default:
+                return 'basic';
+        }
+    }
 }

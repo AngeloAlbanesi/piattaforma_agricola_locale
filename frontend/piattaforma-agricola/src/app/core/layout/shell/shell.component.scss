@@ -14,6 +14,12 @@
     overflow: hidden;
 }
 
+// Stili full-screen per dashboard
+.shell.dashboard-fullscreen {
+    height: 100vh;
+    overflow: hidden;
+}
+
 .shell__brand {
     padding: 1.5rem 1.25rem 1rem;
 }
@@ -102,6 +108,17 @@ a[mat-list-item].active {
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+// Stili per dashboard full-screen
+.shell__content.dashboard-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: transparent !important;
 }
 
 @media (max-width: 960px) {

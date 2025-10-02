@@ -43,4 +43,12 @@ export class ShellComponent {
         const currentUrl = this.router.url;
         return currentUrl.startsWith('/auth');
     }
+
+    /**
+     * Verifica se l'utente è su una dashboard
+     */
+    isDashboardPage(): boolean {
+        const currentUrl = this.router.url;
+        return currentUrl.startsWith('/dashboard');
+    }
 }

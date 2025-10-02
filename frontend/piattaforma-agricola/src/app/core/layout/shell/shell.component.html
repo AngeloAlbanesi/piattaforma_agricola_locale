@@ -1,7 +1,7 @@
 <mat-sidenav-container class="shell" [class.landing-fullscreen]="isLandingPage()"
-    [class.auth-fullscreen]="isAuthPage()">
-    <!-- Sidenav nascosto sulla landing page e sulle pagine di autenticazione -->
-    <mat-sidenav *ngIf="!isLandingPage() && !isAuthPage()" mode="side" opened>
+    [class.auth-fullscreen]="isAuthPage()" [class.dashboard-fullscreen]="isDashboardPage()">
+    <!-- Sidenav nascosto sulla landing page, sulle pagine di autenticazione e sulle dashboard -->
+    <mat-sidenav *ngIf="!isLandingPage() && !isAuthPage() && !isDashboardPage()" mode="side" opened>
         <div class="shell__brand">
             <h1>{{ appName() }}</h1>
         </div>
@@ -15,8 +15,8 @@
     </mat-sidenav>
 
     <mat-sidenav-content>
-        <!-- Toolbar nascosta sulle pagine di autenticazione -->
-        <mat-toolbar *ngIf="!isAuthPage()" color="primary" class="shell__toolbar"
+        <!-- Toolbar nascosta sulle pagine di autenticazione e sulle dashboard -->
+        <mat-toolbar *ngIf="!isAuthPage() && !isDashboardPage()" color="primary" class="shell__toolbar"
             [class.landing-toolbar]="isLandingPage()">
             <button mat-icon-button class="shell__menu" aria-label="toggle navigation" disabled>
                 <mat-icon>menu</mat-icon>
@@ -26,9 +26,9 @@
             <a mat-button routerLink="/auth/login">Accedi</a>
         </mat-toolbar>
 
-        <!-- Main content con stile condizionale per landing page e pagine di autenticazione -->
+        <!-- Main content con stile condizionale per landing page, pagine di autenticazione e dashboard -->
         <main class="shell__content" [class.landing-fullscreen-content]="isLandingPage()"
-            [class.auth-fullscreen-content]="isAuthPage()">
+            [class.auth-fullscreen-content]="isAuthPage()" [class.dashboard-fullscreen-content]="isDashboardPage()">
             <router-outlet></router-outlet>
         </main>
     </mat-sidenav-content>

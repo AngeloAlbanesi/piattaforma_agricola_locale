@@ -62,11 +62,21 @@ export class CuratoreQuickActionsComponent {
     }
   ];
 
-  onActionClick(actionId: string): void {
-    this.action.emit(actionId);
+  onActionClick(actionId: string | undefined): void {
+    if (actionId) {
+      this.action.emit(actionId);
+    }
   }
 
-  getActionIconColor(color: 'primary' | 'accent' | 'warn'): string {
+  hasCount(action: AzioneRapidaCuratore): boolean {
+    return action?.count !== undefined && action.count > 0;
+  }
+
+  getDescription(action: AzioneRapidaCuratore): string {
+    return action?.description || '';
+  }
+
+  getActionIconColor(color: 'primary' | 'accent' | 'warn' | undefined): string {
     switch (color) {
       case 'primary':
         return '#3498db';
@@ -79,7 +89,7 @@ export class CuratoreQuickActionsComponent {
     }
   }
 
-  getActionBgColor(color: 'primary' | 'accent' | 'warn'): string {
+  getActionBgColor(color: 'primary' | 'accent' | 'warn' | undefined): string {
     switch (color) {
       case 'primary':
         return 'rgba(52, 152, 219, 0.1)';

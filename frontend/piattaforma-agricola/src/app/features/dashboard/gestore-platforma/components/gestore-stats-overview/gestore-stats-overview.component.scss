@@ -1,0 +1,194 @@
+@import '../../../../../../styles/_variables';
+
+.gestore-stats-overview {
+    margin-bottom: 24px;
+
+    mat-card {
+        border-radius: $border-radius-lg;
+        box-shadow: $shadow-elevation-2;
+        background-color: $card-background-color;
+        color: $text-color-primary;
+    }
+
+    mat-card-header {
+        padding: 16px 24px 0;
+
+        .mat-card-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: $primary-color;
+        }
+
+        .mat-card-subtitle {
+            color: $text-color-secondary;
+        }
+    }
+
+    mat-card-content {
+        padding: 24px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        background-color: $background-color-light;
+        border-radius: $border-radius-md;
+        padding: 16px;
+        box-shadow: $shadow-elevation-1;
+        transition: transform 0.2s ease-in-out;
+
+        &:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            margin-right: 16px;
+            color: $accent-color;
+
+            &.users {
+                color: $color-users;
+            }
+
+            &.products {
+                color: $color-products;
+            }
+
+            &.companies {
+                color: $color-companies;
+            }
+
+            &.events {
+                color: $color-events;
+            }
+
+            &.transactions {
+                color: $color-transactions;
+            }
+        }
+
+        .stat-content {
+            .stat-value {
+                font-size: 2em;
+                font-weight: 700;
+                color: $text-color-dark;
+                line-height: 1;
+            }
+
+            .stat-label {
+                font-size: 0.9em;
+                color: $text-color-secondary;
+                margin-top: 4px;
+            }
+
+            .stat-detail {
+                font-size: 0.8em;
+                color: $text-color-tertiary;
+                margin-top: 8px;
+
+                span {
+                    margin-right: 8px;
+
+                    &:last-child {
+                        margin-right: 0;
+                    }
+                }
+
+                .active-users {
+                    color: $color-users-active;
+                }
+
+                .new-users {
+                    color: $color-users-new;
+                }
+
+                .approved-products {
+                    color: $color-products-approved;
+                }
+
+                .approved-companies {
+                    color: $color-companies-approved;
+                }
+
+                .published-events {
+                    color: $color-events-published;
+                }
+
+                .total-revenue {
+                    color: $color-transactions-revenue;
+                }
+            }
+        }
+    }
+
+    mat-divider {
+        margin: 24px 0;
+        border-color: $border-color;
+    }
+
+    .growth-rates {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 16px;
+
+        .growth-item {
+            display: flex;
+            align-items: center;
+            font-size: 1.1em;
+            color: $text-color-dark;
+
+            mat-icon {
+                color: $success-color;
+                margin-right: 8px;
+            }
+        }
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 992px) {
+    .gestore-stats-overview .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .gestore-stats-overview .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gestore-stats-overview .stat-item {
+        justify-content: center;
+        text-align: center;
+
+        .stat-icon {
+            margin-right: 0;
+            margin-bottom: 8px;
+        }
+
+        .stat-content {
+            .stat-label {
+                font-size: 1em;
+            }
+
+            .stat-detail {
+                font-size: 0.9em;
+            }
+        }
+    }
+
+    .gestore-stats-overview .growth-rates {
+        flex-direction: column;
+        align-items: center;
+    }
+}

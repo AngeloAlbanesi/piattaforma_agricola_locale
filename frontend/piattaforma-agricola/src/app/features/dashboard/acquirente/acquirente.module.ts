@@ -30,68 +30,46 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { AcquirenteRoutingModule } from './acquirente-routing.module';
 import { AcquirenteDashboardComponent } from './pages/acquirente-dashboard/acquirente-dashboard.component';
 
-// Components
-import { StatsOverviewComponent } from './components/stats-overview/stats-overview.component';
-import { ProductCatalogComponent } from './components/product-catalog/product-catalog.component';
-import { CartSummaryComponent } from './components/cart-summary/cart-summary.component';
-import { RecentOrdersComponent } from './components/recent-orders/recent-orders.component';
-import { UpcomingEventsComponent } from './components/upcoming-events/upcoming-events.component';
-import { QuickActionsComponent } from './components/quick-actions/quick-actions.component';
-import { ProductFiltersComponent } from './components/product-filters/product-filters.component';
-import { ProductCardComponent } from './components/product-card/product-card.component';
-import { CartItemComponent } from './components/cart-item/cart-item.component';
-import { OrderCardComponent } from './components/order-card/order-card.component';
-import { EventCardComponent } from './components/event-card/event-card.component';
+// NOTE: Tutti i componenti sono standalone e non vanno importati o dichiarati qui
 
 @NgModule({
-  declarations: [
-    AcquirenteDashboardComponent,
-    StatsOverviewComponent,
-    ProductCatalogComponent,
-    CartSummaryComponent,
-    RecentOrdersComponent,
-    UpcomingEventsComponent,
-    QuickActionsComponent,
-    ProductFiltersComponent,
-    ProductCardComponent,
-    CartItemComponent,
-    OrderCardComponent,
-    EventCardComponent
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    ReactiveFormsModule,
-    
-    // Material Modules
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTabsModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatSliderModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule,
-    MatTooltipModule,
-    MatBadgeModule,
-    MatChipsModule,
-    MatMenuModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatGridListModule,
-    
-    // Feature Routing
-    AcquirenteRoutingModule
-  ],
-  providers: [
-    // Services specifici dell'acquirente verranno aggiunti qui
-  ]
+    declarations: [
+        // Tutti i componenti sono ora standalone
+    ],
+    imports: [
+        CommonModule,
+        RouterModule,
+        FormsModule,
+        ReactiveFormsModule,
+
+        // Material Modules
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTabsModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatSortModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatSliderModule,
+        MatProgressSpinnerModule,
+        MatSnackBarModule,
+        MatTooltipModule,
+        MatBadgeModule,
+        MatChipsModule,
+        MatMenuModule,
+        MatDividerModule,
+        MatExpansionModule,
+        MatGridListModule,
+
+        // Feature Routing
+        AcquirenteRoutingModule
+    ],
+    providers: [
+        // Services specifici dell'acquirente verranno aggiunti qui
+    ]
 })
 export class AcquirenteModule { }

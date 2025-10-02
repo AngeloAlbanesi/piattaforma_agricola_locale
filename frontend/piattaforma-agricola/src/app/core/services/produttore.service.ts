@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { PaginatedResponse } from '../models/common.models';
 import {
   ProduttoreProductSummaryDTO,
   ProduttoreProductDetailDTO,
@@ -27,28 +28,18 @@ export class ProduttoreService {
 
   // === PRODOTTI ===
   
-  getMyProducts(filters?: ProduttoreProductFilters): Observable<ProduttoreProductSummaryDTO[]> {
-    let params = new HttpParams();
+  getMyProducts(filters?: ProduttoreProductFilters & { pagina?: number, elementiPerPagina?: number }): Observable<PaginatedResponse<ProduttoreProductSummaryDTO>> {
+    let params = this.buildParamsFromFilters(filters);
     
-    if (filters) {
-      if (filters.search) {
-        params = params.set('search', filters.search);
-      }
-      if (filters.statoVerifica) {
-        params = params.set('statoVerifica', filters.statoVerifica);
-      }
-      if (filters.tipoOrigine) {
-        params = params.set('tipoOrigine', filters.tipoOrigine);
-      }
-      if (filters.disponibilita !== undefined) {
-        params = params.set('disponibilita', filters.disponibilita.toString());
-      }
-      if (filters.ordinamento) {
-        params = params.set('ordinamento', filters.ordinamento);
-      }
+    // Aggiungo i parametri di paginazione se presenti
+    if (filters?.pagina !== undefined) {
+      params = params.set('pagina', filters.pagina.toString());
+    }
+    if (filters?.elementiPerPagina !== undefined) {
+      params = params.set('elementiPerPagina', filters.elementiPerPagina.toString());
     }
     
-    return this.http.get<ProduttoreProductSummaryDTO[]>(`${this.apiUrl}/api/prodotti/miei-prodotti`, { params });
+    return this.http.get<PaginatedResponse<ProduttoreProductSummaryDTO>>(`${this.apiUrl}/api/prodotti/miei-prodotti`, { params });
   }
 
   getProductById(id: number): Observable<ProduttoreProductDetailDTO> {

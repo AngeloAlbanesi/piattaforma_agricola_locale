@@ -30,66 +30,47 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 // Feature Modules
 import { ProduttoreRoutingModule } from './produttore-routing.module';
-import { ProduttoreDashboardComponent } from './pages/produttore-dashboard/produttore-dashboard.component';
-
-// Components
-import { ProduttoreStatsOverviewComponent } from './components/produttore-stats-overview/produttore-stats-overview.component';
-import { ProduttoreQuickActionsComponent } from './components/produttore-quick-actions/produttore-quick-actions.component';
-import { ProdottiManagementComponent } from './components/prodotti-management/prodotti-management.component';
-import { OrdiniManagementComponent } from './components/ordini-management/ordini-management.component';
-import { CertificazioniManagementComponent } from './components/certificazioni-management/certificazioni-management.component';
-import { MetodiColtivazioneComponent } from './components/metodi-coltivazione/metodi-coltivazione.component';
-import { ProduttoreProductCardComponent } from './components/produttore-product-card/produttore-product-card.component';
-import { ProduttoreOrderCardComponent } from './components/produttore-order-card/produttore-order-card.component';
 
 @NgModule({
-  declarations: [
-    ProduttoreDashboardComponent,
-    ProduttoreStatsOverviewComponent,
-    ProduttoreQuickActionsComponent,
-    ProdottiManagementComponent,
-    OrdiniManagementComponent,
-    CertificazioniManagementComponent,
-    MetodiColtivazioneComponent,
-    ProduttoreProductCardComponent,
-    ProduttoreOrderCardComponent
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    ReactiveFormsModule,
-    
-    // Material Modules
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTabsModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatSliderModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule,
-    MatTooltipModule,
-    MatBadgeModule,
-    MatChipsModule,
-    MatMenuModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatGridListModule,
-    MatStepperModule,
-    MatProgressBarModule,
-    
-    // Feature Routing
-    ProduttoreRoutingModule
-  ],
-  providers: [
-    // Services specifici del produttore verranno aggiunti qui
-  ]
+    declarations: [
+        // Tutti i componenti sono ora standalone
+    ],
+    imports: [
+        CommonModule,
+        RouterModule,
+        FormsModule,
+        ReactiveFormsModule,
+
+        // Material Modules
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTabsModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatSortModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatSliderModule,
+        MatProgressSpinnerModule,
+        MatSnackBarModule,
+        MatTooltipModule,
+        MatBadgeModule,
+        MatChipsModule,
+        MatMenuModule,
+        MatDividerModule,
+        MatExpansionModule,
+        MatGridListModule,
+        MatStepperModule,
+        MatProgressBarModule,
+
+        // Feature Routing
+        ProduttoreRoutingModule
+    ],
+    providers: [
+        // Services specifici del produttore verranno aggiunti qui
+    ]
 })
 export class ProduttoreModule { }

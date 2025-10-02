@@ -32,26 +32,22 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { GestorePlatformaRoutingModule } from './gestore-platforma-routing.module';
-import { GestorePlatformaDashboardComponent } from './pages/gestore-platforma-dashboard/gestore-platforma-dashboard.component';
 
-// Componenti condivisi
-import { GestoreStatsOverviewComponent } from './components/gestore-stats-overview/gestore-stats-overview.component';
-import { GestoreQuickActionsComponent } from './components/gestore-quick-actions/gestore-quick-actions.component';
-import { UtentiManagementComponent } from './components/utenti-management/utenti-management.component';
-import { UtenteCardComponent } from './components/utente-card/utente-card.component';
+// Import FormsModule e ReactiveFormsModule per i form
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    GestorePlatformaDashboardComponent,
-    GestoreStatsOverviewComponent,
-    GestoreQuickActionsComponent,
-    UtentiManagementComponent,
-    UtenteCardComponent
+    // GestorePlatformaDashboardComponent è ora standalone
   ],
   imports: [
     CommonModule,
     RouterModule,
     GestorePlatformaRoutingModule,
+
+    // Aggiungi FormsModule e ReactiveFormsModule per i form
+    FormsModule,
+    ReactiveFormsModule,
     
     // Material Modules
     MatCardModule,

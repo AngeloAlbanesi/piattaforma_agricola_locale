@@ -1,0 +1,90 @@
+.order-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  mat-card-header {
+    padding-bottom: 0;
+  }
+
+  mat-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  mat-card-subtitle {
+    color: #777;
+  }
+
+  mat-card-content {
+    flex-grow: 1;
+    padding-top: 16px;
+
+    .details p {
+      display: flex;
+      align-items: center;
+      margin: 4px 0;
+      font-size: 0.9rem;
+
+      mat-icon {
+        margin-right: 8px;
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+        color: #3498db;
+      }
+    }
+
+    .products-list {
+      margin-top: 16px;
+      padding-top: 8px;
+      border-top: 1px solid #eee;
+
+      h4 {
+        margin-top: 0;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+
+      .product-item {
+        font-size: 0.85rem;
+        color: #555;
+        margin-bottom: 4px;
+      }
+    }
+
+    .status-chips {
+      margin-top: 16px;
+    }
+  }
+
+  mat-card-actions {
+    padding: 8px 16px 16px;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+/* Colori per gli stati dell'ordine (Produttore) */
+.mat-chip.primary {
+  background-color: #e8f5e9; /* Delivered */
+  color: #27ae60;
+}
+
+.mat-chip.accent {
+  background-color: #e3f2fd; /* Shipped */
+  color: #1976d2;
+}
+
+.mat-chip.warn {
+  background-color: #fffde7; /* Processing */
+  color: #f39c12;
+}
+
+.mat-chip.basic {
+  background-color: #fce4ec; /* Paid/Ready */
+  color: #d81b60;
+}

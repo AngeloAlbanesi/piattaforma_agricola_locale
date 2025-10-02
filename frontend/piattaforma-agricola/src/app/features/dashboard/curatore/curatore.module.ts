@@ -32,21 +32,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { CuratoreRoutingModule } from './curatore-routing.module';
-import { CuratoreDashboardComponent } from './pages/curatore-dashboard/curatore-dashboard.component';
-
-// Componenti condivisi
-import { CuratoreStatsOverviewComponent } from './components/curatore-stats-overview/curatore-stats-overview.component';
-import { CuratoreQuickActionsComponent } from './components/curatore-quick-actions/curatore-quick-actions.component';
-import { ApprovazioniManagementComponent } from './components/approvazioni-management/approvazioni-management.component';
-import { ApprovazioneCardComponent } from './components/approvazione-card/approvazione-card.component';
 
 @NgModule({
   declarations: [
-    CuratoreDashboardComponent,
-    CuratoreStatsOverviewComponent,
-    CuratoreQuickActionsComponent,
-    ApprovazioniManagementComponent,
-    ApprovazioneCardComponent
+    // Tutti i componenti sono ora standalone
   ],
   imports: [
     CommonModule,

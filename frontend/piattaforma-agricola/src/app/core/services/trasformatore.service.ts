@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { PaginatedResponse } from '../models/common.models';
 import {
   ProcessoTrasformazioneSummaryDTO,
   ProcessoTrasformazioneDetailDTO,
@@ -31,7 +32,7 @@ export class TrasformatoreService {
 
   // === PROCESSI DI TRASFORMAZIONE ===
   
-  getMyProcesses(filters?: ProcessoFilters): Observable<ProcessoTrasformazioneSummaryDTO[]> {
+  getMyProcesses(filters?: ProcessoFilters & { pagina?: number, elementiPerPagina?: number }): Observable<PaginatedResponse<ProcessoTrasformazioneSummaryDTO>> {
     let params = new HttpParams();
     
     if (filters) {
@@ -52,7 +53,15 @@ export class TrasformatoreService {
       }
     }
     
-    return this.http.get<ProcessoTrasformazioneSummaryDTO[]>(`${this.apiUrl}/api/processi-trasformazione/miei-processi`, { params });
+    // Aggiungo i parametri di paginazione se presenti
+    if (filters?.pagina !== undefined) {
+      params = params.set('pagina', filters.pagina.toString());
+    }
+    if (filters?.elementiPerPagina !== undefined) {
+      params = params.set('elementiPerPagina', filters.elementiPerPagina.toString());
+    }
+
+    return this.http.get<PaginatedResponse<ProcessoTrasformazioneSummaryDTO>>(`${this.apiUrl}/api/processi-trasformazione/miei-processi`, { params });
   }
 
   getProcessById(id: number): Observable<ProcessoTrasformazioneDetailDTO> {

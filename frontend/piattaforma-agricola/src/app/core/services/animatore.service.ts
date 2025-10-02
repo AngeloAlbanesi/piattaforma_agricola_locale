@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { PaginatedResponse } from '../models/common.models';
 import {
   EventoDTO,
   AnimatoreStatsDTO,
@@ -28,10 +29,10 @@ export class AnimatoreService {
   
   // === GESTIONE EVENTI ===
   
-  getMyEvents(filters?: EventoFilters): Observable<EventoDTO[]> {
+  getMyEvents(filters?: EventoFilters): Observable<PaginatedResponse<EventoDTO>> {
     let params = this.buildParamsFromFilters(filters);
     
-    return this.http.get<EventoDTO[]>(`${this.apiUrl}/api/animatore/eventi`, { params });
+    return this.http.get<PaginatedResponse<EventoDTO>>(`${this.apiUrl}/api/animatore/eventi`, { params });
   }
   
   getEventById(eventId: number): Observable<EventoDTO> {

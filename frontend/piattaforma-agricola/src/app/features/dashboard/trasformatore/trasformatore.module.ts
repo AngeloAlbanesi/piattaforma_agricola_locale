@@ -27,29 +27,13 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatTimelineModule } from '@angular/material/timeline';
 
 // Feature Modules
 import { TrasformatoreRoutingModule } from './trasformatore-routing.module';
-import { TrasformatoreDashboardComponent } from './pages/trasformatore-dashboard/trasformatore-dashboard.component';
-
-// Components
-import { TrasformatoreStatsOverviewComponent } from './components/trasformatore-stats-overview/trasformatore-stats-overview.component';
-import { TrasformatoreQuickActionsComponent } from './components/trasformatore-quick-actions/trasformatore-quick-actions.component';
-import { ProcessiManagementComponent } from './components/processi-management/processi-management.component';
-import { FasiLavorazioneComponent } from './components/fasi-lavorazione/fasi-lavorazione.component';
-import { TracciabilitaComponent } from './components/tracciabilita/tracciabilita.component';
-import { CertificazioniTrasformatoreComponent } from './components/certificazioni-trasformatore/certificazioni-trasformatore.component';
 
 @NgModule({
   declarations: [
-    TrasformatoreDashboardComponent,
-    TrasformatoreStatsOverviewComponent,
-    TrasformatoreQuickActionsComponent,
-    ProcessiManagementComponent,
-    FasiLavorazioneComponent,
-    TracciabilitaComponent,
-    CertificazioniTrasformatoreComponent
+    // Tutti i componenti sono stati rimossi perché sono standalone
   ],
   imports: [
     CommonModule,
@@ -81,7 +65,6 @@ import { CertificazioniTrasformatoreComponent } from './components/certificazion
     MatGridListModule,
     MatStepperModule,
     MatProgressBarModule,
-    MatTimelineModule,
     
     // Feature Routing
     TrasformatoreRoutingModule

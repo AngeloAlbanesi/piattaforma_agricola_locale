@@ -44,7 +44,7 @@ const routes: Routes = [
   },
   {
     path: 'dashboard-admin',
-    loadChildren: () => import('./gestore/gestore.module').then(m => m.GestoreModule),
+    loadChildren: () => import('./gestore-platforma/gestore-platforma.module').then(m => m.GestorePlatformaModule),
     canActivate: [authGuard, roleGuard],
     data: { expectedRole: ROLES.GESTORE_PIATTAFORMA }
   }

@@ -32,21 +32,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { AnimatoreRoutingModule } from './animatore-routing.module';
-import { AnimatoreDashboardComponent } from './pages/animatore-dashboard/animatore-dashboard.component';
-
-// Componenti condivisi
-import { AnimatoreStatsOverviewComponent } from './components/animatore-stats-overview/animatore-stats-overview.component';
-import { AnimatoreQuickActionsComponent } from './components/animatore-quick-actions/animatore-quick-actions.component';
-import { EventiManagementComponent } from './components/eventi-management/eventi-management.component';
-import { EventoCardComponent } from './components/evento-card/evento-card.component';
 
 @NgModule({
   declarations: [
-    AnimatoreDashboardComponent,
-    AnimatoreStatsOverviewComponent,
-    AnimatoreQuickActionsComponent,
-    EventiManagementComponent,
-    EventoCardComponent
+    // AnimatoreDashboardComponent è ora standalone
   ],
   imports: [
     CommonModule,

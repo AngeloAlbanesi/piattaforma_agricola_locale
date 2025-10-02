@@ -1,0 +1,46 @@
+.controls-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-field {
+  width: 300px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.mat-table {
+  width: 100%;
+  min-width: 800px;
+}
+
+.mat-column-nomeCertificazione {
+  flex: 0 0 200px;
+}
+
+.mat-column-enteRilascio {
+  flex: 0 0 150px;
+}
+
+.mat-column-dataRilascio, .mat-column-dataScadenza {
+  flex: 0 0 120px;
+}
+
+.mat-column-processoAssociato {
+  flex: 0 0 120px;
+}
+
+.mat-column-azioni {
+  flex: 0 0 100px;
+  text-align: right;
+}
+
+.no-data-row {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}

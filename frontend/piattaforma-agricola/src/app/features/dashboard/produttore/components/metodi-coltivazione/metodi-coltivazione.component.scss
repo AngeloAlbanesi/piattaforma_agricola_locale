@@ -1,0 +1,54 @@
+.controls-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-field {
+  width: 300px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.mat-table {
+  width: 100%;
+  min-width: 900px;
+}
+
+.mat-column-nome {
+  flex: 0 0 250px;
+}
+
+.mat-column-periodoColtivazione {
+  flex: 0 0 120px;
+}
+
+.mat-column-superficie {
+  flex: 0 0 120px;
+}
+
+.mat-column-ubicazione {
+  flex: 0 0 150px;
+}
+
+.mat-column-tecniche {
+  flex: 0 0 200px;
+}
+
+.mat-column-azioni {
+  flex: 0 0 100px;
+  text-align: right;
+}
+
+.no-data-row {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}
+
+.mat-chip-listbox {
+  height: auto;
+}

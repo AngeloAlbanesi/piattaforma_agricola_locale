@@ -1,0 +1,56 @@
+.controls-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.mat-table {
+  width: 100%;
+  min-width: 800px;
+}
+
+.mat-column-durataPrevista {
+  flex: 0 0 120px;
+}
+
+.mat-column-stato {
+  flex: 0 0 150px;
+}
+
+.mat-column-azioni {
+  flex: 0 0 150px;
+  text-align: right;
+}
+
+.status-completed {
+  background-color: #e8f5e9; /* Light green */
+  color: #388e3c; /* Dark green */
+}
+
+.status-in-progress {
+  background-color: #fffde7; /* Light yellow */
+  color: #fbc02d; /* Dark yellow */
+}
+
+.status-pending {
+  background-color: #e3f2fd; /* Light blue */
+  color: #1976d2; /* Dark blue */
+}
+
+.mat-chip-listbox {
+  height: auto;
+}
+
+.mat-chip {
+  font-weight: 500;
+}
+
+.no-data-row {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}

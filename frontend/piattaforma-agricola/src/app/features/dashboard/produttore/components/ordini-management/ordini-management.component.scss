@@ -1,0 +1,98 @@
+.controls-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  width: 300px;
+}
+
+.status-select {
+  width: 200px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.mat-table {
+  width: 100%;
+  min-width: 900px;
+}
+
+.mat-column-dataOrdine {
+  flex: 0 0 120px;
+}
+
+.mat-column-acquirente {
+  flex: 0 0 200px;
+}
+
+.mat-column-totale {
+  flex: 0 0 120px;
+}
+
+.mat-column-stato {
+  flex: 0 0 180px;
+}
+
+.mat-column-actions {
+  flex: 0 0 120px;
+  text-align: right;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+}
+
+.no-data-row {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}
+
+/* Stili per gli stati dell'ordine */
+.status-delivered {
+  background-color: #e8f5e9; /* Light green */
+  color: #27ae60; /* Dark green */
+}
+
+.status-shipped {
+  background-color: #e3f2fd; /* Light blue */
+  color: #1976d2; /* Dark blue */
+}
+
+.status-processing {
+  background-color: #fffde7; /* Light yellow */
+  color: #f39c12; /* Dark yellow */
+}
+
+.status-paid {
+  background-color: #fce4ec; /* Light pink */
+  color: #d81b60; /* Dark pink */
+}
+
+.status-new {
+  background-color: #f3e5f5; /* Light purple */
+  color: #8e24aa; /* Dark purple */
+}
+
+.status-cancelled {
+  background-color: #fbe9e7; /* Light red */
+  color: #c0392b; /* Dark red */
+}
+
+.mat-chip-listbox {
+  height: auto;
+}
+
+.mat-chip {
+  font-weight: 500;
+}

@@ -1,0 +1,35 @@
+<mat-card appearance="outlined" class="stats-card">
+  <mat-card-header>
+    <mat-card-title>Panoramica Statistiche Eventi</mat-card-title>
+    <mat-card-subtitle>Dati aggregati sugli eventi organizzati</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <mat-icon class="stat-icon events">event</mat-icon>
+        <div class="stat-value">{{ eventiCreati | number }}</div>
+        <div class="stat-label">Eventi Creati</div>
+      </div>
+      <div class="stat-item">
+        <mat-icon class="stat-icon active">schedule</mat-icon>
+        <div class="stat-value">{{ eventiPubblicati | number }}</div>
+        <div class="stat-label">Eventi Pubblicati</div>
+      </div>
+      <div class="stat-item">
+        <mat-icon class="stat-icon registrations">how_to_reg</mat-icon>
+        <div class="stat-value">{{ partecipantiTotali | number }}</div>
+        <div class="stat-label">Partecipanti Totali</div>
+      </div>
+      <div class="stat-item">
+        <mat-icon class="stat-icon companies">business</mat-icon>
+        <div class="stat-value">{{ eventiInCorso | number }}</div>
+        <div class="stat-label">Eventi in Corso</div>
+      </div>
+      <div class="stat-item">
+        <mat-icon class="stat-icon revenue">paid</mat-icon>
+        <div class="stat-value">{{ mediaPartecipantiPerEvento | number:'1.1-1' }}</div>
+        <div class="stat-label">Media Partecipanti</div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

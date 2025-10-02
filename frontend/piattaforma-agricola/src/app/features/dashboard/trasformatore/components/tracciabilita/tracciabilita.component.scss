@@ -1,0 +1,50 @@
+.controls-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-field {
+  width: 300px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.mat-table {
+  width: 100%;
+  min-width: 800px;
+}
+
+.mat-column-codiceUnivoco {
+  flex: 0 0 150px;
+}
+
+.mat-column-processo {
+  flex: 0 0 200px;
+}
+
+.mat-column-dataCreazione {
+  flex: 0 0 120px;
+}
+
+.mat-column-certificazioni {
+  flex: 0 0 150px;
+}
+
+.mat-column-azioni {
+  flex: 0 0 100px;
+  text-align: right;
+}
+
+.mat-chip-listbox {
+  height: auto;
+}
+
+.no-data-row {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}

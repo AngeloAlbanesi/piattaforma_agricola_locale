@@ -32,21 +32,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { DistributoreRoutingModule } from './distributore-routing.module';
-import { DistributoreDashboardComponent } from './pages/distributore-dashboard/distributore-dashboard.component';
-
-// Componenti condivisi
-import { DistributoreStatsOverviewComponent } from './components/distributore-stats-overview/distributore-stats-overview.component';
-import { DistributoreQuickActionsComponent } from './components/distributore-quick-actions/distributore-quick-actions.component';
-import { PacchettiManagementComponent } from './components/pacchetti-management/pacchetti-management.component';
-import { PacchettoCardComponent } from './components/pacchetto-card/pacchetto-card.component';
 
 @NgModule({
   declarations: [
-    DistributoreDashboardComponent,
-    DistributoreStatsOverviewComponent,
-    DistributoreQuickActionsComponent,
-    PacchettiManagementComponent,
-    PacchettoCardComponent
+    // Tutti i componenti sono ora standalone
   ],
   imports: [
     CommonModule,

@@ -1,14 +1,40 @@
 import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject, takeUntil, catchError } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../../../core/services/auth.service';
 import { GestorePlatformaService } from '../../../../../core/services/gestore-platforma.service';
 import { GestorePlatformaStatsDTO } from '../../../../../core/models/gestore-platforma.models';
 
+// Import child components
+import { GestoreStatsOverviewComponent } from '../../components/gestore-stats-overview/gestore-stats-overview.component';
+import { GestoreQuickActionsComponent } from '../../components/gestore-quick-actions/gestore-quick-actions.component';
+import { UtentiManagementComponent } from '../../components/utenti-management/utenti-management.component';
+
 @Component({
   selector: 'app-gestore-platforma-dashboard',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatTabsModule,
+    MatTooltipModule,
+    MatSnackBarModule,
+    GestoreStatsOverviewComponent,
+    GestoreQuickActionsComponent,
+    UtentiManagementComponent
+  ],
   templateUrl: './gestore-platforma-dashboard.component.html',
   styleUrls: ['./gestore-platforma-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

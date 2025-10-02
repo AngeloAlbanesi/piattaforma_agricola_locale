@@ -3,6 +3,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  // Aggiungo un'interfaccia generica per la risposta paginata
+  PaginatedResponse
+} from '../models/common.models';
+import {
   GestorePlatformaStatsDTO,
   UtenteDTO,
   ProdottoDTO,
@@ -32,10 +36,10 @@ export class GestorePlatformaService {
   
   // === GESTIONE UTENTI ===
   
-  getUsers(filters?: UtentiFilters): Observable<UtenteDTO[]> {
+  getUsers(filters?: UtentiFilters): Observable<PaginatedResponse<UtenteDTO>> {
     let params = this.buildParamsFromFilters(filters);
     
-    return this.http.get<UtenteDTO[]>(`${this.apiUrl}/api/gestore/utenti`, { params });
+    return this.http.get<PaginatedResponse<UtenteDTO>>(`${this.apiUrl}/api/gestore/utenti`, { params });
   }
   
   getUserById(userId: number): Observable<UtenteDTO> {

@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CuratoreService } from '../../../../../core/services/curatore.service';
 import { ApprovazionePendingDTO, ApprovazioneFilters } from '../../../../../core/models/curatore.models';
 import { ApprovazioneCardComponent } from '../approvazione-card/approvazione-card.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-approvazioni-management',
@@ -19,7 +20,8 @@ import { ApprovazioneCardComponent } from '../approvazione-card/approvazione-car
         MatProgressSpinnerModule,
         MatIconModule,
         MatButtonModule,
-        ApprovazioneCardComponent
+        ApprovazioneCardComponent,
+        MatSnackBarModule
     ],
     templateUrl: './approvazioni-management.component.html',
     styleUrls: ['./approvazioni-management.component.scss'],
@@ -38,7 +40,10 @@ export class ApprovazioniManagementComponent implements OnInit {
         elementiPerPagina: 10
     };
 
-    constructor(private curatoreService: CuratoreService) { }
+    constructor(
+        private curatoreService: CuratoreService,
+        private snackBar: MatSnackBar
+    ) { }
 
     ngOnInit(): void {
         this.loadApprovazioni();
@@ -60,6 +65,7 @@ export class ApprovazioniManagementComponent implements OnInit {
                 error: (error) => {
                     console.error('Errore nel caricamento approvazioni:', error);
                     this.errorMessage = 'Impossibile caricare le approvazioni. Riprova più tardi.';
+                    this.snackBar.open(this.errorMessage, 'Chiudi', { duration: 3000, panelClass: 'error-snackbar' });
                     this.isLoading = false;
                 }
             });
@@ -91,32 +97,37 @@ export class ApprovazioniManagementComponent implements OnInit {
     }
 
     approveElement(elementId: number, tipo: string): void {
-        this.curatoreService.approveElement(elementId, tipo, { approvato: true })
+        this.isLoading = true;
+        this.curatoreService.approveElement(elementId, tipo, { motivazione: 'Approvato' })
             .subscribe({
                 next: () => {
-                    // Ricarica le approvazioni dopo l'approvazione
+                    this.snackBar.open('Elemento approvato con successo', 'Chiudi', { duration: 2500, panelClass: 'success-snackbar' });
                     this.loadApprovazioni();
                 },
                 error: (error) => {
                     console.error('Errore nell\'approvazione:', error);
-                    // Mostra un messaggio di errore all'utente
+                    this.snackBar.open('Errore durante l\'approvazione', 'Chiudi', { duration: 3000, panelClass: 'error-snackbar' });
+                    this.isLoading = false;
                 }
             });
     }
 
     rejectElement(elementId: number, tipo: string, event: { id: number, motivo: string }): void {
-        this.curatoreService.rejectElement(elementId, tipo, {
-            approvato: false,
-            motivoReiezione: event.motivo
-        })
+        if (!event.motivo || !event.motivo.trim()) {
+            this.snackBar.open('Inserisci una motivazione per il rifiuto', 'Chiudi', { duration: 3000, panelClass: 'warning-snackbar' });
+            return;
+        }
+        this.isLoading = true;
+        this.curatoreService.rejectElement(elementId, tipo, { motivazione: event.motivo.trim() })
             .subscribe({
                 next: () => {
-                    // Ricarica le approvazioni dopo il rifiuto
+                    this.snackBar.open('Elemento rifiutato', 'Chiudi', { duration: 2500, panelClass: 'success-snackbar' });
                     this.loadApprovazioni();
                 },
                 error: (error) => {
                     console.error('Errore nel rifiuto:', error);
-                    // Mostra un messaggio di errore all'utente
+                    this.snackBar.open('Errore durante il rifiuto', 'Chiudi', { duration: 3000, panelClass: 'error-snackbar' });
+                    this.isLoading = false;
                 }
             });
     }

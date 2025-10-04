@@ -1,11 +1,17 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
         loadChildren: () => import('./features/landing/landing.module').then(m => m.LandingModule),
+    },
+    {
+        path: 'profilo',
+        loadComponent: () => import('./features/profilo/pages/user-profile/user-profile.component').then(m => m.UserProfileComponent),
+        canActivate: [authGuard]
     },
     {
         path: 'auth',

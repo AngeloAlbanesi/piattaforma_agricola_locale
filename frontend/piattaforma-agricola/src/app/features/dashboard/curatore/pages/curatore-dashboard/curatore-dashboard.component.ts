@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, takeUntil, catchError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -12,7 +11,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuthService } from '../../../../../core/services/auth.service';
-import { CuratoreService } from '../../../../../core/services/curatore.service';
 import { CuratoreStatsDTO } from '../../../../../core/models/curatore.models';
 import { CuratoreStatsOverviewComponent } from '../../components/curatore-stats-overview/curatore-stats-overview.component';
 import { CuratoreQuickActionsComponent } from '../../components/curatore-quick-actions/curatore-quick-actions.component';
@@ -40,8 +38,7 @@ import { ApprovazioniManagementComponent } from '../../components/approvazioni-m
     styleUrls: ['./curatore-dashboard.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CuratoreDashboardComponent implements OnInit, OnDestroy {
-    private destroy$ = new Subject<void>();
+export class CuratoreDashboardComponent implements OnInit {
 
     // Dati utente
     userName: string = '';
@@ -56,19 +53,12 @@ export class CuratoreDashboardComponent implements OnInit, OnDestroy {
 
     constructor(
         private authService: AuthService,
-        private curatoreService: CuratoreService,
         private router: Router,
         private snackBar: MatSnackBar
     ) { }
 
     ngOnInit(): void {
         this.initializeUserData();
-        this.loadDashboardStats();
-    }
-
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
     }
 
     // === INIZIALIZZAZIONE ===
@@ -77,32 +67,6 @@ export class CuratoreDashboardComponent implements OnInit, OnDestroy {
         const authState = this.authService.authState();
         this.userName = authState.username || 'Curatore';
         this.userId = authState.userId || null;
-    }
-
-    private loadDashboardStats(): void {
-        this.isLoading = true;
-
-        this.curatoreService.getCuratoreStats()
-            .pipe(
-                takeUntil(this.destroy$),
-                catchError(error => {
-                    console.error('Errore nel caricamento statistiche:', error);
-                    this.snackBar.open('Impossibile caricare le statistiche', 'Chiudi', {
-                        duration: 3000,
-                        panelClass: 'error-snackbar'
-                    });
-                    return [];
-                })
-            )
-            .subscribe({
-                next: (stats) => {
-                    this.stats = stats;
-                    this.isLoading = false;
-                },
-                error: () => {
-                    this.isLoading = false;
-                }
-            });
     }
 
     // === NAVIGAZIONE ===
@@ -167,7 +131,9 @@ export class CuratoreDashboardComponent implements OnInit, OnDestroy {
     // === UTILITIES ===
 
     refreshData(): void {
-        this.loadDashboardStats();
+        // Nessuna statistica da ricaricare: rinfreschiamo solo i dati utente e notifichiamo l'utente.
+        this.initializeUserData();
+        this.snackBar.open('Dati aggiornati', 'OK', { duration: 2000 });
     }
 
     logout(): void {

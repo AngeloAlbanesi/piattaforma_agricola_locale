@@ -1,0 +1,45 @@
+<mat-card>
+    <h2>Il mio profilo</h2>
+
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="save()" *ngIf="!isLoading">
+        <div class="grid">
+            <mat-form-field appearance="outline">
+                <mat-label>Username</mat-label>
+                <input matInput formControlName="username" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" required type="email">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nome</mat-label>
+                <input matInput formControlName="nome">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Cognome</mat-label>
+                <input matInput formControlName="cognome">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Telefono</mat-label>
+                <input matInput formControlName="telefono">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Indirizzo</mat-label>
+                <input matInput formControlName="indirizzo">
+            </mat-form-field>
+        </div>
+
+        <div class="actions">
+            <button mat-raised-button color="primary" type="submit">Salva</button>
+        </div>
+    </form>
+</mat-card>

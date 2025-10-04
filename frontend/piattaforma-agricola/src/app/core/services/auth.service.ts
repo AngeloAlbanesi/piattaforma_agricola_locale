@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, tap, retry, delay } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { UserDetailDTO, UserUpdateDTO } from '../models/curatore.models';
 
 export interface AuthContext {
     token: string | null;
@@ -175,6 +176,16 @@ export class AuthService {
         }
 
         return `${prefix || ''}${sanitizedPath}` || sanitizedPath;
+    }
+
+    // === PROFILO (documentazione curatore) ===
+    getProfile(): Observable<UserDetailDTO> {
+        // La doc richiede Authorization anche su /auth/profile
+        return this.http.get<UserDetailDTO>(`${this.apiAuthUrl}/profile`);
+    }
+
+    updateProfile(update: UserUpdateDTO): Observable<UserDetailDTO> {
+        return this.http.put<UserDetailDTO>(`${this.apiAuthUrl}/profile`, update);
     }
 }
 

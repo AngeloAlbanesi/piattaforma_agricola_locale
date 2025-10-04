@@ -1,0 +1,180 @@
+<div class="update-order-status-dialog">
+    <div class="dialog-header" mat-dialog-title>
+        <div class="title-section">
+            <mat-icon>edit</mat-icon>
+            <h2>Aggiorna Stato Ordine</h2>
+        </div>
+    </div>
+
+    <form [formGroup]="statusForm" (ngSubmit)="onSubmit()" class="status-form">
+        <mat-dialog-content class="dialog-content">
+            <!-- Order Info -->
+            <div class="order-info">
+                <div class="order-header">
+                    <h3>{{ data.ordine.numeroOrdine }}</h3>
+                    <div class="current-status">
+                        <div class="status-badge" [style.background-color]="currentStatusColor">
+                            <mat-icon>{{ currentStatusIcon }}</mat-icon>
+                            {{ currentStatusLabel }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="order-details">
+                    <div class="detail-item">
+                        <span class="label">Cliente:</span>
+                        <span class="value">{{ data.ordine.acquirente.nome }} {{ data.ordine.acquirente.cognome }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Data Ordine:</span>
+                        <span class="value">{{ data.ordine.dataOrdine | date:'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Totale:</span>
+                        <span class="value total">{{ data.ordine.totale | currency:'EUR':'symbol':'1.2-2':'it' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Selection -->
+            <div class="status-selection">
+                <h4>Seleziona Nuovo Stato</h4>
+                
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Nuovo Stato</mat-label>
+                    <mat-select formControlName="nuovoStato">
+                        <mat-option 
+                            *ngFor="let stato of availableStates; trackBy: trackByStateValue" 
+                            [value]="stato">
+                            <div class="status-option">
+                                <div class="status-info">
+                                    <mat-icon [style.color]="getStatoColor(stato)">{{ getStatoIcon(stato) }}</mat-icon>
+                                    <span class="status-name">{{ getStatoLabel(stato) }}</span>
+                                </div>
+                            </div>
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matSuffix>swap_vert</mat-icon>
+                    <mat-error *ngIf="hasError('nuovoStato', 'required')">
+                        {{ getErrorMessage('nuovoStato') }}
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Status Preview -->
+                <div class="status-preview" *ngIf="hasSelectedStatus">
+                    <div class="preview-header">
+                        <mat-icon>preview</mat-icon>
+                        <span>Anteprima Nuovo Stato</span>
+                    </div>
+                    <div class="preview-content">
+                        <div class="new-status-badge" [style.background-color]="getStatoColor(selectedNewStatus!)">
+                            <mat-icon>{{ getStatoIcon(selectedNewStatus!) }}</mat-icon>
+                            {{ getStatoLabel(selectedNewStatus!) }}
+                        </div>
+                        <p class="status-description">
+                            {{ getStatusDescription(selectedNewStatus!) }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="notes-section">
+                <h4>Note Aggiuntive</h4>
+                
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Note (opzionale)</mat-label>
+                    <textarea 
+                        matInput 
+                        formControlName="note"
+                        placeholder="Aggiungi note o informazioni aggiuntive sul cambio di stato..."
+                        rows="4"
+                        [maxlength]="noteMaxLength">
+                    </textarea>
+                    <mat-icon matSuffix>note</mat-icon>
+                    <mat-hint>{{ noteCurrentLength }}/{{ noteMaxLength }}</mat-hint>
+                    <mat-error *ngIf="hasError('note', 'maxlength')">
+                        {{ getErrorMessage('note') }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- Status Transition Flow -->
+            <div class="transition-flow" *ngIf="hasSelectedStatus">
+                <h4>Flusso di Transizione</h4>
+                <div class="flow-diagram">
+                    <div class="flow-step current">
+                        <div class="step-status" [style.background-color]="currentStatusColor">
+                            <mat-icon>{{ currentStatusIcon }}</mat-icon>
+                        </div>
+                        <span class="step-label">{{ currentStatusLabel }}</span>
+                    </div>
+                    
+                    <div class="flow-arrow">
+                        <mat-icon>arrow_forward</mat-icon>
+                    </div>
+                    
+                    <div class="flow-step new">
+                        <div class="step-status" [style.background-color]="getStatoColor(selectedNewStatus!)">
+                            <mat-icon>{{ getStatoIcon(selectedNewStatus!) }}</mat-icon>
+                        </div>
+                        <span class="step-label">{{ getStatoLabel(selectedNewStatus!) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning Messages -->
+            <div class="warnings" *ngIf="hasSelectedStatus">
+                <div class="warning-item" 
+                     *ngIf="selectedNewStatus === 'ANNULLATO'"
+                     class="cancellation-warning">
+                    <mat-icon>warning</mat-icon>
+                    <div class="warning-content">
+                        <strong>Attenzione: Annullamento Ordine</strong>
+                        <p>L'annullamento dell'ordine è irreversibile. Assicurati di aver coordinato con il cliente.</p>
+                    </div>
+                </div>
+
+                <div class="warning-item" 
+                     *ngIf="selectedNewStatus === 'CONSEGNATO'"
+                     class="completion-warning">
+                    <mat-icon>info</mat-icon>
+                    <div class="warning-content">
+                        <strong>Completamento Ordine</strong>
+                        <p>Conferma che l'ordine è stato consegnato con successo al cliente.</p>
+                    </div>
+                </div>
+
+                <div class="warning-item" 
+                     *ngIf="selectedNewStatus === 'IN_CONSEGNA'"
+                     class="delivery-warning">
+                    <mat-icon>local_shipping</mat-icon>
+                    <div class="warning-content">
+                        <strong>Inizio Consegna</strong>
+                        <p>L'ordine verrà marcato come in consegna. Il cliente riceverà una notifica.</p>
+                    </div>
+                </div>
+            </div>
+        </mat-dialog-content>
+
+        <mat-dialog-actions class="dialog-actions">
+            <button 
+                mat-button 
+                type="button" 
+                (click)="onCancel()"
+                [disabled]="isLoading">
+                Annulla
+            </button>
+            
+            <button 
+                mat-raised-button 
+                color="primary" 
+                type="submit"
+                [disabled]="isLoading || statusForm.invalid">
+                <mat-icon *ngIf="!isLoading">save</mat-icon>
+                <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                Aggiorna Stato
+            </button>
+        </mat-dialog-actions>
+    </form>
+</div>

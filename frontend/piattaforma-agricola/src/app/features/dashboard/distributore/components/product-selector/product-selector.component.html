@@ -1,0 +1,279 @@
+<div class="product-selector">
+    <!-- Header con statistiche e toggle -->
+    <div class="selector-header">
+        <div class="header-info">
+            <h4>Selezione Prodotti</h4>
+            <span class="selected-count" *ngIf="selectedProductsCount > 0">
+                {{ selectedProductsCount }} prodotti selezionati
+            </span>
+        </div>
+        
+        <button 
+            mat-stroked-button 
+            (click)="toggleProductList()"
+            [disabled]="isLoading">
+            <mat-icon>{{ showProductList ? 'expand_less' : 'expand_more' }}</mat-icon>
+            {{ showProductList ? 'Nascondi' : 'Aggiungi' }} Prodotti
+        </button>
+    </div>
+
+    <!-- Lista prodotti espandibile -->
+    <div class="product-list-container" *ngIf="showProductList">
+        <!-- Filtri di ricerca -->
+        <div class="filters-section">
+            <h5>Filtra Prodotti</h5>
+            
+            <div class="filters-row">
+                <mat-form-field appearance="outline" class="search-field">
+                    <mat-label>Cerca prodotti</mat-label>
+                    <input matInput [formControl]="searchControl" placeholder="Nome, descrizione, produttore...">
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Categoria</mat-label>
+                    <mat-select [formControl]="categoriaControl">
+                        <mat-option value="">Tutte le categorie</mat-option>
+                        <mat-option *ngFor="let categoria of categories" [value]="categoria">
+                            {{ categoria }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Produttore</mat-label>
+                    <mat-select [formControl]="produttoreControl">
+                        <mat-option value="">Tutti i produttori</mat-option>
+                        <mat-option *ngFor="let produttore of producers" [value]="produttore">
+                            {{ produttore }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <button 
+                    mat-icon-button 
+                    (click)="clearFilters()"
+                    [disabled]="!hasFilters"
+                    matTooltip="Cancella filtri">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </div>
+
+            <div class="filter-results" *ngIf="!isLoading">
+                <span class="results-count">
+                    {{ filteredProductsCount }} prodotti trovati
+                </span>
+                
+                <div class="filter-chips" *ngIf="hasFilters">
+                    <mat-chip-set>
+                        <mat-chip *ngIf="searchControl.value" (removed)="searchControl.setValue('')">
+                            {{ searchControl.value }}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>
+                        <mat-chip *ngIf="categoriaControl.value" (removed)="categoriaControl.setValue('')">
+                            {{ categoriaControl.value }}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>
+                        <mat-chip *ngIf="produttoreControl.value" (removed)="produttoreControl.setValue('')">
+                            {{ produttoreControl.value }}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>
+                    </mat-chip-set>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading spinner -->
+        <div class="loading-container" *ngIf="isLoading">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Caricamento prodotti...</p>
+        </div>
+
+        <!-- Tabella prodotti -->
+        <div class="products-table-container" *ngIf="!isLoading && filteredProducts.length > 0">
+            <table mat-table [dataSource]="displayedProducts" class="products-table">
+                <!-- Colonna selezione -->
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef class="select-column">Selez.</th>
+                    <td mat-cell *matCellDef="let product" class="select-column">
+                        <mat-checkbox
+                            [checked]="isProductSelected(product.id)"
+                            (change)="onProductToggle(product, $event.checked)">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- Colonna nome -->
+                <ng-container matColumnDef="nome">
+                    <th mat-header-cell *matHeaderCellDef>Prodotto</th>
+                    <td mat-cell *matCellDef="let product" class="product-cell">
+                        <div class="product-info">
+                            <span class="product-name">{{ product.nome }}</span>
+                            <span class="product-description" *ngIf="product.descrizione">
+                                {{ product.descrizione | slice:0:50 }}{{ product.descrizione.length > 50 ? '...' : '' }}
+                            </span>
+                            <div class="product-badges" *ngIf="product.certificazioni?.length">
+                                <mat-chip-set>
+                                    <mat-chip *ngFor="let cert of product.certificazioni.slice(0, 2)" class="cert-chip">
+                                        {{ cert }}
+                                    </mat-chip>
+                                    <mat-chip *ngIf="product.certificazioni.length > 2" class="more-certs">
+                                        +{{ product.certificazioni.length - 2 }}
+                                    </mat-chip>
+                                </mat-chip-set>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Colonna produttore -->
+                <ng-container matColumnDef="produttore">
+                    <th mat-header-cell *matHeaderCellDef>Produttore</th>
+                    <td mat-cell *matCellDef="let product">
+                        <div class="producer-info">
+                            <span class="producer-name">{{ product.produttore?.nomeAzienda || 'N/A' }}</span>
+                            <span class="producer-location" *ngIf="product.luogoOrigine">
+                                <mat-icon>place</mat-icon>
+                                {{ product.luogoOrigine }}
+                            </span>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Colonna prezzo -->
+                <ng-container matColumnDef="prezzo">
+                    <th mat-header-cell *matHeaderCellDef>Prezzo</th>
+                    <td mat-cell *matCellDef="let product" class="price-cell">
+                        <span class="price">{{ formatCurrency(product.prezzo) }}</span>
+                        <span class="price-unit" *ngIf="product.unitaMisura">
+                            / {{ product.unitaMisura }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Colonna disponibilità -->
+                <ng-container matColumnDef="disponibilita">
+                    <th mat-header-cell *matHeaderCellDef>Disponibile</th>
+                    <td mat-cell *matCellDef="let product" class="availability-cell">
+                        <span class="quantity" [class.low-stock]="product.quantitaDisponibile < 10">
+                            {{ product.quantitaDisponibile || 0 }}
+                        </span>
+                        <span class="unit" *ngIf="product.unitaMisura">
+                            {{ product.unitaMisura }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Colonna azioni -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                    <td mat-cell *matCellDef="let product" class="actions-cell">
+                        <button 
+                            mat-icon-button 
+                            [color]="isProductSelected(product.id) ? 'warn' : 'primary'"
+                            (click)="onProductToggle(product, !isProductSelected(product.id))"
+                            [matTooltip]="isProductSelected(product.id) ? 'Rimuovi dal pacchetto' : 'Aggiungi al pacchetto'">
+                            <mat-icon>{{ isProductSelected(product.id) ? 'remove' : 'add' }}</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                    [class.selected-row]="isProductSelected(row.id)"></tr>
+            </table>
+
+            <!-- Paginazione -->
+            <div class="pagination-controls" *ngIf="canShowMore">
+                <div class="pagination-info">
+                    Pagina {{ currentPage + 1 }} di {{ totalPages }}
+                    ({{ filteredProductsCount }} prodotti totali)
+                </div>
+                
+                <div class="pagination-buttons">
+                    <button 
+                        mat-icon-button 
+                        [disabled]="!canGoToPreviousPage"
+                        (click)="previousPage()"
+                        matTooltip="Pagina precedente">
+                        <mat-icon>chevron_left</mat-icon>
+                    </button>
+                    
+                    <span class="page-indicator">
+                        {{ currentPage + 1 }} / {{ totalPages }}
+                    </span>
+                    
+                    <button 
+                        mat-icon-button 
+                        [disabled]="!canGoToNextPage"
+                        (click)="nextPage()"
+                        matTooltip="Pagina successiva">
+                        <mat-icon>chevron_right</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messaggio nessun prodotto trovato -->
+        <div class="no-products-message" *ngIf="!isLoading && filteredProducts.length === 0">
+            <mat-icon>inventory_2</mat-icon>
+            <h4>Nessun prodotto trovato</h4>
+            <p *ngIf="hasFilters">Prova a modificare i filtri di ricerca</p>
+            <p *ngIf="!hasFilters">Non ci sono prodotti disponibili al momento</p>
+            
+            <button mat-button (click)="clearFilters()" *ngIf="hasFilters">
+                <mat-icon>refresh</mat-icon>
+                Cancella filtri
+            </button>
+        </div>
+    </div>
+
+    <!-- Lista prodotti selezionati con controlli quantità -->
+    <div class="selected-products-section" *ngIf="selectedProducts.length > 0">
+        <h5>Prodotti Selezionati ({{ selectedProductsCount }})</h5>
+        
+        <div class="selected-products-list">
+            <div 
+                class="selected-product-item" 
+                *ngFor="let product of selectedProducts; trackBy: trackByProductId">
+                <div class="product-summary">
+                    <div class="product-basic-info">
+                        <span class="product-name">{{ product.nome }}</span>
+                        <span class="product-price">{{ formatCurrency(product.prezzo) }}</span>
+                    </div>
+                    
+                    <div class="quantity-controls">
+                        <mat-form-field appearance="outline" class="quantity-field">
+                            <mat-label>Quantità</mat-label>
+                            <input 
+                                matInput 
+                                type="number" 
+                                [value]="product.quantita"
+                                (change)="updateProductQuantity(product.id, +$any($event.target).value)"
+                                min="1"
+                                [max]="product.maxQuantita || 999">
+                            <span matSuffix *ngIf="product.maxQuantita">
+                                / {{ product.maxQuantita }}
+                            </span>
+                        </mat-form-field>
+                        
+                        <div class="product-total">
+                            <span class="total-label">Totale:</span>
+                            <span class="total-amount">
+                                {{ formatCurrency(product.prezzo * product.quantita) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button 
+                    mat-icon-button 
+                    color="warn"
+                    (click)="removeProduct(product.id)"
+                    matTooltip="Rimuovi prodotto">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

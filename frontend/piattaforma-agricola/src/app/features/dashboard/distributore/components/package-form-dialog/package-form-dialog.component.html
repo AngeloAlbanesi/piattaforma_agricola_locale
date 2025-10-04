@@ -1,0 +1,148 @@
+<div class="package-form-dialog">
+    <h2 mat-dialog-title class="dialog-title">
+        <mat-icon>{{ isEditMode ? 'edit' : 'add_box' }}</mat-icon>
+        {{ dialogTitle }}
+    </h2>
+
+    <form [formGroup]="packageForm" (ngSubmit)="onSubmit()" class="package-form">
+        <mat-dialog-content class="dialog-content">
+            <!-- Informazioni Base -->
+            <div class="form-section">
+                <h3 class="section-title">Informazioni Pacchetto</h3>
+                
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Nome Pacchetto</mat-label>
+                    <input 
+                        matInput 
+                        formControlName="nome"
+                        placeholder="Es. Pacchetto Sapori Tradizionali"
+                        maxlength="100">
+                    <mat-icon matSuffix>title</mat-icon>
+                    <mat-error *ngIf="hasError('nome', 'required')">
+                        {{ getErrorMessage('nome') }}
+                    </mat-error>
+                    <mat-error *ngIf="hasError('nome', 'minlength') || hasError('nome', 'maxlength')">
+                        {{ getErrorMessage('nome') }}
+                    </mat-error>
+                    <mat-hint>{{ packageForm.get('nome')?.value?.length || 0 }}/100</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Descrizione</mat-label>
+                    <textarea 
+                        matInput 
+                        formControlName="descrizione"
+                        placeholder="Descrivi il pacchetto, i suoi prodotti e le caratteristiche che lo rendono speciale..."
+                        rows="4"
+                        maxlength="500">
+                    </textarea>
+                    <mat-icon matSuffix>description</mat-icon>
+                    <mat-error *ngIf="hasError('descrizione', 'required')">
+                        {{ getErrorMessage('descrizione') }}
+                    </mat-error>
+                    <mat-error *ngIf="hasError('descrizione', 'minlength') || hasError('descrizione', 'maxlength')">
+                        {{ getErrorMessage('descrizione') }}
+                    </mat-error>
+                    <mat-hint>{{ packageForm.get('descrizione')?.value?.length || 0 }}/500</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Prezzo Pacchetto</mat-label>
+                    <input 
+                        matInput 
+                        type="number" 
+                        formControlName="prezzo"
+                        placeholder="0.00"
+                        step="0.01"
+                        min="0.01">
+                    <span matPrefix>€&nbsp;</span>
+                    <mat-icon matSuffix>euro</mat-icon>
+                    <mat-error *ngIf="hasError('prezzo', 'required') || hasError('prezzo', 'min')">
+                        {{ getErrorMessage('prezzo') }}
+                    </mat-error>
+                    <mat-hint *ngIf="estimatedProductsCost > 0">
+                        Costo prodotti: {{ formatCurrency(estimatedProductsCost) }}
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+
+            <!-- Selezione Prodotti -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <mat-icon>category</mat-icon>
+                    Prodotti del Pacchetto
+                </h3>
+                
+                <app-product-selector
+                    [selectedProducts]="selectedProducts"
+                    (productsSelected)="onProductsSelected($event)"
+                    (productQuantityChanged)="onProductQuantityChanged($event.productId, $event.quantity)"
+                    (productRemoved)="removeProduct($event)">
+                </app-product-selector>
+
+                <!-- Riepilogo Prodotti Selezionati -->
+                <div class="products-summary" *ngIf="selectedProducts.length > 0">
+                    <div class="summary-header">
+                        <h4>Riepilogo Prodotti ({{ totalProducts }})</h4>
+                        <div class="summary-stats">
+                            <span class="stat">
+                                <mat-icon>inventory</mat-icon>
+                                {{ totalQuantity }} unità
+                            </span>
+                            <span class="stat">
+                                <mat-icon>euro</mat-icon>
+                                {{ formatCurrency(estimatedProductsCost) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="selected-products">
+                        <div 
+                            class="product-chip" 
+                            *ngFor="let product of selectedProducts; let i = index; trackBy: trackByProductId">
+                            <div class="product-info">
+                                <span class="product-name">{{ product.nome }}</span>
+                                <span class="product-details">
+                                    {{ product.quantita }}x {{ formatCurrency(product.prezzo) }}
+                                </span>
+                            </div>
+                            <button 
+                                mat-icon-button 
+                                class="remove-btn"
+                                (click)="removeProduct(product.id)"
+                                matTooltip="Rimuovi prodotto">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messaggio quando nessun prodotto è selezionato -->
+                <div class="no-products-message" *ngIf="selectedProducts.length === 0">
+                    <mat-icon>info</mat-icon>
+                    <p>Seleziona almeno un prodotto per il pacchetto</p>
+                </div>
+            </div>
+        </mat-dialog-content>
+
+        <mat-dialog-actions class="dialog-actions">
+            <button 
+                mat-button 
+                type="button" 
+                (click)="onCancel()"
+                [disabled]="isLoading">
+                Annulla
+            </button>
+            
+            <button 
+                mat-raised-button 
+                color="primary" 
+                type="submit"
+                [disabled]="isLoading || packageForm.invalid || selectedProducts.length === 0">
+                <mat-icon *ngIf="!isLoading">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+                <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                {{ submitButtonText }}
+            </button>
+        </mat-dialog-actions>
+    </form>
+</div>

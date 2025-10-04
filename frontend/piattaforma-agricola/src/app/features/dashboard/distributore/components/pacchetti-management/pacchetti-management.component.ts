@@ -1,12 +1,17 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { DistributoreService } from '../../../../../core/services/distributore.service';
 import { PacchettoTipicitaDTO } from '../../../../../core/models/distributore.models';
 import { PacchettoCardComponent } from '../pacchetto-card/pacchetto-card.component';
+import { PackageFormDialogComponent, PackageFormDialogData } from '../package-form-dialog/package-form-dialog.component';
+import { PackageDetailsDialogComponent, PackageDetailsDialogData } from '../package-details-dialog/package-details-dialog.component';
+import { DeleteConfirmationDialogComponent, DeleteConfirmationDialogData } from '../delete-confirmation-dialog/delete-confirmation-dialog.component';
 
 @Component({
     selector: 'app-pacchetti-management',
@@ -17,6 +22,7 @@ import { PacchettoCardComponent } from '../pacchetto-card/pacchetto-card.compone
         MatCardModule,
         MatButtonModule,
         MatIconModule,
+        MatSnackBarModule,
         PacchettoCardComponent
     ],
     templateUrl: './pacchetti-management.component.html',
@@ -28,7 +34,12 @@ export class PacchettiManagementComponent implements OnInit {
     isLoading = false;
     errorMessage: string | null = null;
 
-    constructor(private distributoreService: DistributoreService) { }
+    constructor(
+        private distributoreService: DistributoreService,
+        private dialog: MatDialog,
+        private snackBar: MatSnackBar,
+        private cdr: ChangeDetectorRef
+    ) { }
 
     ngOnInit(): void {
         this.loadPacchetti();
@@ -56,23 +67,127 @@ export class PacchettiManagementComponent implements OnInit {
     }
 
     createNewPackage(): void {
-        // TODO: Implementare navigazione alla creazione pacchetto
-        console.log('Creazione nuovo pacchetto');
+        const dialogData: PackageFormDialogData = {
+            mode: 'create'
+        };
+
+        const dialogRef = this.dialog.open(PackageFormDialogComponent, {
+            width: '800px',
+            maxWidth: '90vw',
+            data: dialogData,
+            disableClose: true
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.snackBar.open('Pacchetto creato con successo!', 'Chiudi', {
+                    duration: 3000,
+                    panelClass: 'success-snackbar'
+                });
+                this.loadPacchetti(); // Ricarica la lista
+            }
+        });
     }
 
     editPackage(packageId: number): void {
-        // TODO: Implementare navigazione alla modifica pacchetto
-        console.log('Modifica pacchetto:', packageId);
+        const packageToEdit = this.pacchetti.find(p => p.id === packageId);
+        if (!packageToEdit) {
+            this.snackBar.open('Pacchetto non trovato', 'Chiudi', {
+                duration: 3000,
+                panelClass: 'error-snackbar'
+            });
+            return;
+        }
+
+        const dialogData: PackageFormDialogData = {
+            mode: 'edit',
+            package: packageToEdit
+        };
+
+        const dialogRef = this.dialog.open(PackageFormDialogComponent, {
+            width: '800px',
+            maxWidth: '90vw',
+            data: dialogData,
+            disableClose: true
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.snackBar.open('Pacchetto aggiornato con successo!', 'Chiudi', {
+                    duration: 3000,
+                    panelClass: 'success-snackbar'
+                });
+                this.loadPacchetti(); // Ricarica la lista
+            }
+        });
     }
 
     deletePackage(packageId: number): void {
-        // TODO: Implementare eliminazione pacchetto
-        console.log('Eliminazione pacchetto:', packageId);
+        const packageToDelete = this.pacchetti.find(p => p.id === packageId);
+        if (!packageToDelete) {
+            this.snackBar.open('Pacchetto non trovato', 'Chiudi', {
+                duration: 3000,
+                panelClass: 'error-snackbar'
+            });
+            return;
+        }
+
+        const dialogData: DeleteConfirmationDialogData = {
+            package: packageToDelete,
+            type: 'package'
+        };
+
+        const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+            width: '500px',
+            maxWidth: '90vw',
+            data: dialogData
+        });
+
+        dialogRef.afterClosed().subscribe(confirmed => {
+            if (confirmed) {
+                this.performDeletePackage(packageId);
+            }
+        });
+    }
+
+    private performDeletePackage(packageId: number): void {
+        this.distributoreService.deletePackage(packageId).subscribe({
+            next: () => {
+                this.snackBar.open('Pacchetto eliminato con successo', 'Chiudi', {
+                    duration: 3000,
+                    panelClass: 'success-snackbar'
+                });
+                this.loadPacchetti(); // Ricarica la lista
+            },
+            error: (error) => {
+                console.error('Errore nell\'eliminazione del pacchetto:', error);
+                this.snackBar.open('Errore nell\'eliminazione del pacchetto', 'Chiudi', {
+                    duration: 3000,
+                    panelClass: 'error-snackbar'
+                });
+            }
+        });
     }
 
     viewPackageDetails(packageId: number): void {
-        // TODO: Implementare navigazione ai dettagli pacchetto
-        console.log('Visualizza dettagli pacchetto:', packageId);
+        const dialogData: PackageDetailsDialogData = {
+            packageId: packageId
+        };
+
+        const dialogRef = this.dialog.open(PackageDetailsDialogComponent, {
+            width: '900px',
+            maxWidth: '95vw',
+            maxHeight: '90vh',
+            data: dialogData
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result?.action === 'edit') {
+                this.editPackage(packageId);
+            } else if (result?.action === 'delete') {
+                this.deletePackage(packageId);
+            }
+        });
     }
 
     formatCurrency(value: number): string {

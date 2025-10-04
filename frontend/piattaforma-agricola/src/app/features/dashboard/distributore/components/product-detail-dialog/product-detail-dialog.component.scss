@@ -1,0 +1,497 @@
+.product-detail-dialog {
+    min-width: 700px;
+    max-width: 900px;
+    max-height: 90vh;
+
+    .dialog-header {
+        padding: 20px 24px 0 24px;
+        margin-bottom: 0;
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            .title-section {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                mat-icon {
+                    color: #9b59b6;
+                    font-size: 28px;
+                    width: 28px;
+                    height: 28px;
+                }
+
+                h2 {
+                    margin: 0;
+                    font-size: 1.6rem;
+                    font-weight: 500;
+                    color: #333;
+                }
+            }
+
+            .status-section {
+                .availability-status {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 8px 12px;
+                    border-radius: 20px;
+                    background-color: rgba(0, 0, 0, 0.1);
+                    font-weight: 500;
+                    font-size: 0.9rem;
+
+                    mat-icon {
+                        font-size: 16px;
+                        width: 16px;
+                        height: 16px;
+                    }
+                }
+            }
+        }
+    }
+
+    .dialog-content {
+        padding: 20px 0;
+        overflow-y: auto;
+        max-height: calc(90vh - 160px);
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: #666;
+
+            p {
+                margin-top: 16px;
+                margin-bottom: 0;
+            }
+        }
+
+        .product-content {
+            padding: 0 24px;
+
+            .mat-tab-group {
+                .tab-content {
+                    padding: 20px 0;
+
+                    // Product Hero Section
+                    .product-hero {
+                        display: flex;
+                        gap: 24px;
+                        margin-bottom: 24px;
+
+                        .product-image {
+                            position: relative;
+                            width: 300px;
+                            height: 300px;
+                            border-radius: 12px;
+                            overflow: hidden;
+                            flex-shrink: 0;
+
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                            }
+
+                            .certifications-overlay {
+                                position: absolute;
+                                bottom: 12px;
+                                left: 12px;
+                                right: 12px;
+
+                                .cert-chip {
+                                    background-color: rgba(76, 175, 80, 0.9);
+                                    color: white;
+                                    font-size: 0.75rem;
+                                    margin-bottom: 4px;
+
+                                    mat-icon {
+                                        color: white;
+                                    }
+                                }
+                            }
+                        }
+
+                        .product-summary {
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 20px;
+
+                            .basic-info {
+                                h3 {
+                                    margin: 0 0 12px 0;
+                                    font-size: 1.4rem;
+                                    font-weight: 500;
+                                    color: #333;
+                                }
+
+                                .description {
+                                    color: #666;
+                                    line-height: 1.6;
+                                    margin: 0;
+                                }
+                            }
+
+                            .key-details {
+                                .detail-grid {
+                                    display: grid;
+                                    grid-template-columns: 1fr 1fr;
+                                    gap: 16px;
+
+                                    .detail-item {
+                                        display: flex;
+                                        flex-direction: column;
+                                        gap: 4px;
+
+                                        label {
+                                            font-weight: 500;
+                                            color: #666;
+                                            font-size: 0.9rem;
+                                        }
+
+                                        span {
+                                            color: #333;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 4px;
+
+                                            &.price {
+                                                font-weight: 600;
+                                                color: #27ae60;
+                                                font-size: 1.2rem;
+                                            }
+
+                                            .unit {
+                                                font-size: 0.9rem;
+                                                color: #666;
+                                                font-weight: normal;
+                                            }
+
+                                            mat-icon {
+                                                font-size: 16px;
+                                                width: 16px;
+                                                height: 16px;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            .producer-section {
+                                border-top: 1px solid #e0e0e0;
+                                padding-top: 16px;
+
+                                h4 {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    margin: 0 0 8px 0;
+                                    color: #555;
+                                    font-size: 1rem;
+
+                                    mat-icon {
+                                        color: #9b59b6;
+                                    }
+                                }
+
+                                .producer-info {
+                                    .producer-name {
+                                        font-weight: 500;
+                                        color: #333;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Info Cards
+                    .info-cards {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 20px;
+
+                        .info-card {
+                            .mat-card-header {
+                                .mat-card-title {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    font-size: 1.1rem;
+
+                                    mat-icon {
+                                        color: #9b59b6;
+                                    }
+                                }
+                            }
+
+                            .info-grid {
+                                display: flex;
+                                flex-direction: column;
+                                gap: 12px;
+
+                                .info-item {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+
+                                    label {
+                                        font-weight: 500;
+                                        color: #666;
+                                    }
+
+                                    span {
+                                        color: #333;
+                                    }
+                                }
+                            }
+
+                            p {
+                                margin: 0;
+                                line-height: 1.6;
+                                color: #666;
+                            }
+                        }
+                    }
+
+                    // Ingredients & Allergens
+                    .ingredients-card,
+                    .allergens-card {
+                        margin-bottom: 20px;
+
+                        .mat-card-header {
+                            .mat-card-title {
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+
+                                mat-icon {
+                                    color: #9b59b6;
+                                }
+                            }
+                        }
+
+                        .ingredients-list,
+                        .allergens-list {
+                            .ingredient-chip {
+                                background-color: #e8f5e8;
+                                color: #2e7d32;
+                                margin-bottom: 8px;
+                            }
+
+                            .allergen-chip {
+                                background-color: #fff3e0;
+                                color: #ef6c00;
+                                margin-bottom: 8px;
+
+                                mat-icon {
+                                    color: #ef6c00;
+                                }
+                            }
+                        }
+                    }
+
+                    // Nutrition
+                    .nutrition-card {
+                        .mat-card-header {
+                            .mat-card-title {
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+
+                                mat-icon {
+                                    color: #9b59b6;
+                                }
+                            }
+                        }
+
+                        .nutrition-grid {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                            gap: 16px;
+
+                            .nutrition-item {
+                                text-align: center;
+                                padding: 16px;
+                                background-color: #f8f9fa;
+                                border-radius: 8px;
+
+                                .nutrition-label {
+                                    font-size: 0.9rem;
+                                    color: #666;
+                                    margin-bottom: 4px;
+                                }
+
+                                .nutrition-value {
+                                    font-size: 1.2rem;
+                                    font-weight: 600;
+                                    color: #333;
+                                }
+                            }
+                        }
+                    }
+
+                    // Reviews
+                    .rating-summary-card {
+                        margin-bottom: 20px;
+
+                        .rating-summary {
+                            display: flex;
+                            justify-content: center;
+
+                            .average-rating {
+                                text-align: center;
+
+                                .rating-number {
+                                    font-size: 2.5rem;
+                                    font-weight: 600;
+                                    color: #333;
+                                    margin-bottom: 8px;
+                                }
+
+                                .stars-display {
+                                    display: flex;
+                                    justify-content: center;
+                                    gap: 4px;
+                                    margin-bottom: 8px;
+
+                                    .star {
+                                        font-size: 24px;
+                                        width: 24px;
+                                        height: 24px;
+                                        color: #ddd;
+
+                                        &.filled {
+                                            color: #ffc107;
+                                        }
+
+                                        &.half {
+                                            color: #ffc107;
+                                        }
+                                    }
+                                }
+
+                                .rating-count {
+                                    color: #666;
+                                    font-size: 0.9rem;
+                                }
+                            }
+                        }
+                    }
+
+                    .reviews-list {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 16px;
+
+                        .review-card {
+                            .review-header {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: flex-start;
+                                margin-bottom: 12px;
+
+                                .reviewer-info {
+                                    .reviewer-name {
+                                        font-weight: 500;
+                                        color: #333;
+                                        margin-bottom: 4px;
+                                    }
+
+                                    .review-date {
+                                        color: #666;
+                                        font-size: 0.9rem;
+                                    }
+                                }
+
+                                .review-rating {
+                                    display: flex;
+                                    gap: 2px;
+
+                                    .star {
+                                        font-size: 16px;
+                                        width: 16px;
+                                        height: 16px;
+                                        color: #ddd;
+
+                                        &.filled {
+                                            color: #ffc107;
+                                        }
+                                    }
+                                }
+                            }
+
+                            .review-comment {
+                                color: #333;
+                                line-height: 1.6;
+                                margin: 0;
+                                font-style: italic;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .dialog-actions {
+        padding: 16px 24px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        border-top: 1px solid #e0e0e0;
+
+        button {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .product-detail-dialog {
+        min-width: 100%;
+        max-width: 100%;
+
+        .dialog-header .header-content {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .product-content .tab-content {
+            .product-hero {
+                flex-direction: column;
+
+                .product-image {
+                    width: 100%;
+                    height: 250px;
+                }
+            }
+
+            .info-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .nutrition-card .nutrition-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .dialog-actions {
+            flex-direction: column;
+            gap: 8px;
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    }
+}

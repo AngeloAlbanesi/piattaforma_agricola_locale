@@ -77,29 +77,13 @@ export class DistributoreDashboardComponent implements OnInit, OnDestroy {
     }
 
     private loadDashboardStats(): void {
-        this.isLoading = true;
-
-        this.distributoreService.getDistributoreStats()
-            .pipe(
-                takeUntil(this.destroy$),
-                catchError(error => {
-                    console.error('Errore nel caricamento statistiche:', error);
-                    this.snackBar.open('Impossibile caricare le statistiche', 'Chiudi', {
-                        duration: 3000,
-                        panelClass: 'error-snackbar'
-                    });
-                    return [];
-                })
-            )
-            .subscribe({
-                next: (stats) => {
-                    this.stats = stats;
-                    this.isLoading = false;
-                },
-                error: () => {
-                    this.isLoading = false;
-                }
-            });
+        // Statistiche disabilitate temporaneamente: il backend per le statistiche distributore
+        // non è ancora implementato e la chiamata bloccava il rendering della pagina.
+        // Evitiamo la chiamata e mostriamo la dashboard senza dati statistici.
+        // Quando l'API sarà disponibile, ripristinare la chiamata a
+        // this.distributoreService.getDistributoreStats() e rimuovere queste righe.
+        this.stats = null;
+        this.isLoading = false;
     }
 
     // === NAVIGAZIONE ===
@@ -109,7 +93,7 @@ export class DistributoreDashboardComponent implements OnInit, OnDestroy {
     }
 
     navigateToProducts(): void {
-        this.router.navigate(['/prodotti']);
+        this.router.navigate(['/dashboard/distributore/prodotti-disponibili']);
     }
 
     navigateToOrders(): void {

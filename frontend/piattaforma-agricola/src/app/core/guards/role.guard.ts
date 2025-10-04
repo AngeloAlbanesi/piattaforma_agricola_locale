@@ -32,7 +32,7 @@ export const roleGuard: CanActivateFn = (route, state) => {
             case 'TRASFORMATORE':
                 router.navigate(['/dashboard/trasformatore']);
                 break;
-            case 'DISTRIBUTORE_TIPICITA':
+            case 'DISTRIBUTORE_DI_TIPICITA':
                 router.navigate(['/dashboard/distributore']);
                 break;
             case 'CURATORE':

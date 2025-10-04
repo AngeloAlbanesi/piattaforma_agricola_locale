@@ -1,0 +1,298 @@
+<div class="package-details-dialog">
+    <div class="dialog-header" mat-dialog-title>
+        <div class="header-content">
+            <div class="title-section">
+                <mat-icon>inventory_2</mat-icon>
+                <h2 *ngIf="hasPackage">{{ packageDetails!.nome }}</h2>
+                <h2 *ngIf="!hasPackage">Dettagli Pacchetto</h2>
+            </div>
+            
+            <div class="status-section" *ngIf="hasPackage">
+                <div class="status-badge" [style.background-color]="getStatoColor(packageDetails!.stato)">
+                    <mat-icon>{{ getStatoIcon(packageDetails!.stato) }}</mat-icon>
+                    {{ getStatoLabel(packageDetails!.stato) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <!-- Loading -->
+        <div class="loading-container" *ngIf="isLoading">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Caricamento dettagli...</p>
+        </div>
+
+        <!-- Content -->
+        <div class="package-content" *ngIf="!isLoading && hasPackage">
+            <mat-tab-group>
+                <!-- Tab Informazioni Generali -->
+                <mat-tab label="Informazioni Generali">
+                    <div class="tab-content">
+                        <!-- Info Base -->
+                        <mat-card class="info-card">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>info</mat-icon>
+                                    Informazioni Base
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label>Nome:</label>
+                                        <span>{{ packageDetails!.nome }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Prezzo:</label>
+                                        <span class="price">{{ formatCurrency(packageDetails!.prezzo) }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Data Creazione:</label>
+                                        <span>{{ formatDate(packageDetails!.dataCreazione) }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Ultima Modifica:</label>
+                                        <span>{{ formatDate(packageDetails!.dataUltimaModifica) }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="description-section">
+                                    <label>Descrizione:</label>
+                                    <p class="description">{{ packageDetails!.descrizione }}</p>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+
+                        <!-- Statistiche Economiche -->
+                        <mat-card class="stats-card">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>analytics</mat-icon>
+                                    Analisi Economica
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="economic-stats">
+                                    <div class="stat-item">
+                                        <div class="stat-value">{{ formatCurrency(totalProductsCost) }}</div>
+                                        <div class="stat-label">Costo Prodotti</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">{{ formatCurrency(packageDetails!.prezzo) }}</div>
+                                        <div class="stat-label">Prezzo Vendita</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value" [class.positive]="profitMargin > 0" [class.negative]="profitMargin < 0">
+                                            {{ profitMargin.toFixed(1) }}%
+                                        </div>
+                                        <div class="stat-label">Margine di Profitto</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">{{ totalProducts }}</div>
+                                        <div class="stat-label">Prodotti Inclusi</div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Prodotti -->
+                <mat-tab label="Prodotti ({{ totalProducts }})">
+                    <div class="tab-content">
+                        <mat-card class="products-card">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>category</mat-icon>
+                                    Prodotti del Pacchetto
+                                </mat-card-title>
+                                <mat-card-subtitle>
+                                    {{ totalQuantity }} unità totali
+                                </mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="products-list">
+                                    <div 
+                                        class="product-item" 
+                                        *ngFor="let product of packageDetails!.prodotti; trackBy: trackByProductId">
+                                        <div class="product-main-info">
+                                            <div class="product-details">
+                                                <h4 class="product-name">{{ product.nome }}</h4>
+                                                <p class="product-description" *ngIf="product.descrizione">
+                                                    {{ product.descrizione }}
+                                                </p>
+                                                <div class="product-producer">
+                                                    <mat-icon>business</mat-icon>
+                                                    {{ product.produttore.nomeAzienda }}
+                                                </div>
+                                                
+                                                <!-- Certificazioni prodotto -->
+                                                <div class="product-certifications" *ngIf="product.certificazioni?.length">
+                                                    <mat-chip-set>
+                                                        <mat-chip *ngFor="let cert of product.certificazioni" class="cert-chip">
+                                                            <mat-icon matChipAvatar>verified</mat-icon>
+                                                            {{ cert }}
+                                                        </mat-chip>
+                                                    </mat-chip-set>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="product-quantities">
+                                                <div class="quantity-info">
+                                                    <span class="quantity">{{ product.quantita }}</span>
+                                                    <span class="unit">unità</span>
+                                                </div>
+                                                <div class="price-info">
+                                                    <div class="unit-price">{{ formatCurrency(product.prezzo) }} /unità</div>
+                                                    <div class="total-price">{{ formatCurrency(product.prezzo * product.quantita) }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Certificazioni -->
+                <mat-tab label="Certificazioni" *ngIf="hasCertifications">
+                    <div class="tab-content">
+                        <mat-card class="certifications-card">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>verified</mat-icon>
+                                    Certificazioni del Pacchetto
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="certifications-list">
+                                    <div 
+                                        class="certification-item" 
+                                        *ngFor="let cert of packageDetails!.certificazioni; trackBy: trackByCertificationId">
+                                        <div class="cert-header">
+                                            <mat-icon>verified</mat-icon>
+                                            <h4>{{ cert.nomeCertificazione }}</h4>
+                                        </div>
+                                        <div class="cert-details">
+                                            <div class="cert-info">
+                                                <span class="label">Ente di Rilascio:</span>
+                                                <span class="value">{{ cert.enteRilascio }}</span>
+                                            </div>
+                                            <div class="cert-info">
+                                                <span class="label">Data Rilascio:</span>
+                                                <span class="value">{{ formatDate(cert.dataRilascio) }}</span>
+                                            </div>
+                                            <div class="cert-info">
+                                                <span class="label">Data Scadenza:</span>
+                                                <span class="value">{{ formatDate(cert.dataScadenza) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Vendite e Recensioni -->
+                <mat-tab label="Vendite & Recensioni" *ngIf="hasStats">
+                    <div class="tab-content">
+                        <!-- Statistiche Vendite -->
+                        <mat-card class="sales-stats-card">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>trending_up</mat-icon>
+                                    Statistiche Vendite
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="sales-grid">
+                                    <div class="sales-stat">
+                                        <div class="stat-value">{{ totalSales }}</div>
+                                        <div class="stat-label">Vendite Totali</div>
+                                    </div>
+                                    <div class="sales-stat">
+                                        <div class="stat-value rating-value">
+                                            {{ averageRating.toFixed(1) }}
+                                            <div class="stars">
+                                                <mat-icon *ngFor="let star of getRatingStars(averageRating)" 
+                                                         class="star" 
+                                                         [class.filled]="star === 'star'" 
+                                                         [class.half]="star === 'star_half'">
+                                                    {{ star }}
+                                                </mat-icon>
+                                            </div>
+                                        </div>
+                                        <div class="stat-label">Valutazione Media</div>
+                                    </div>
+                                    <div class="sales-stat">
+                                        <div class="stat-value">{{ reviewsCount }}</div>
+                                        <div class="stat-label">Recensioni</div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+
+                        <!-- Recensioni -->
+                        <mat-card class="reviews-card" *ngIf="hasReviews">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>rate_review</mat-icon>
+                                    Recensioni Clienti
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="reviews-list">
+                                    <div 
+                                        class="review-item" 
+                                        *ngFor="let review of packageDetails!.recensioni; trackBy: trackByReviewId">
+                                        <div class="review-header">
+                                            <div class="reviewer-info">
+                                                <span class="reviewer-name">
+                                                    {{ review.acquirente.nome }} {{ review.acquirente.cognome }}
+                                                </span>
+                                                <span class="review-date">
+                                                    {{ formatDate(review.dataRecensione) }}
+                                                </span>
+                                            </div>
+                                            <div class="rating">
+                                                <mat-icon *ngFor="let star of getRatingStars(review.valutazione)" 
+                                                         class="star" 
+                                                         [class.filled]="star === 'star'">
+                                                    {{ star }}
+                                                </mat-icon>
+                                            </div>
+                                        </div>
+                                        <p class="review-comment" *ngIf="review.commento">
+                                            {{ review.commento }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="dialog-actions">
+        <button mat-button (click)="onClose()">
+            Chiudi
+        </button>
+        
+        <div class="action-buttons" *ngIf="hasPackage">
+            <button mat-stroked-button color="warn" (click)="onDelete()">
+                <mat-icon>delete</mat-icon>
+                Elimina
+            </button>
+            
+            <button mat-raised-button color="primary" (click)="onEdit()">
+                <mat-icon>edit</mat-icon>
+                Modifica
+            </button>
+        </div>
+    </mat-dialog-actions>
+</div>

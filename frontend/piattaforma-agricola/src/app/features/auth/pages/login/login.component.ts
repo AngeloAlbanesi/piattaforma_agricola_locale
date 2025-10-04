@@ -99,7 +99,7 @@ export class LoginComponent {
             case 'TRASFORMATORE':
                 this.router.navigate(['/dashboard/trasformatore']);
                 break;
-            case 'DISTRIBUTORE_TIPICITA':
+            case 'DISTRIBUTORE_DI_TIPICITA':
                 this.router.navigate(['/dashboard/distributore']);
                 break;
             case 'CURATORE':

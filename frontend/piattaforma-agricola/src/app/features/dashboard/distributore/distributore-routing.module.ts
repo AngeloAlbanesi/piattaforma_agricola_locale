@@ -14,6 +14,24 @@ const routes: Routes = [
             expectedRole: ROLES.DISTRIBUTORE_TIPICITA,
             title: 'Dashboard Distributore'
         }
+    },
+    {
+        path: 'prodotti-disponibili',
+        loadComponent: () => import('./components/available-products/available-products.component').then(m => m.AvailableProductsComponent),
+        canActivate: [authGuard, roleGuard],
+        data: {
+            expectedRole: ROLES.DISTRIBUTORE_TIPICITA,
+            title: 'Prodotti Disponibili'
+        }
+    },
+    {
+        path: 'ordini',
+        loadComponent: () => import('./components/orders-management/orders-management.component').then(m => m.OrdersManagementComponent),
+        canActivate: [authGuard, roleGuard],
+        data: {
+            expectedRole: ROLES.DISTRIBUTORE_TIPICITA,
+            title: 'Gestione Ordini'
+        }
     }
 ];
 

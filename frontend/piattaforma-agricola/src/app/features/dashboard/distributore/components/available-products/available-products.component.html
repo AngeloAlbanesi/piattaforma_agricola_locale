@@ -1,0 +1,372 @@
+<div class="available-products">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <div class="title-section">
+                <h2>
+                    <mat-icon>store</mat-icon>
+                    Prodotti Disponibili
+                </h2>
+                <p class="subtitle">Esplora i prodotti locali disponibili per i tuoi pacchetti di tipicità</p>
+            </div>
+            
+            <div class="header-actions">
+                <button 
+                    mat-icon-button 
+                    (click)="toggleViewMode()"
+                    [matTooltip]="isGridView ? 'Vista lista' : 'Vista griglia'">
+                    <mat-icon>{{ isGridView ? 'view_list' : 'view_module' }}</mat-icon>
+                </button>
+                
+                <button 
+                    mat-icon-button 
+                    (click)="refreshProducts()"
+                    [disabled]="isLoading"
+                    matTooltip="Aggiorna">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <mat-card class="filters-card">
+        <mat-card-header>
+            <mat-card-title>
+                <mat-icon>filter_list</mat-icon>
+                Filtri di Ricerca
+            </mat-card-title>
+        </mat-card-header>
+        
+        <mat-card-content>
+            <div class="filters-grid">
+                <!-- Search -->
+                <mat-form-field appearance="outline" class="search-field">
+                    <mat-label>Cerca prodotti</mat-label>
+                    <input matInput [formControl]="searchControl" placeholder="Nome, descrizione...">
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                <!-- Categoria -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Categoria</mat-label>
+                    <mat-select [formControl]="categoriaControl">
+                        <mat-option value="">Tutte le categorie</mat-option>
+                        <mat-option *ngFor="let categoria of categories" [value]="categoria">
+                            {{ categoria }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matSuffix>category</mat-icon>
+                </mat-form-field>
+
+                <!-- Produttore -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Produttore</mat-label>
+                    <mat-select [formControl]="produttoreControl">
+                        <mat-option value="">Tutti i produttori</mat-option>
+                        <mat-option *ngFor="let produttore of producers" [value]="produttore">
+                            {{ produttore }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matSuffix>business</mat-icon>
+                </mat-form-field>
+
+                <!-- Luogo di Origine -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Luogo di Origine</mat-label>
+                    <mat-select [formControl]="luogoOrigineControl">
+                        <mat-option value="">Tutti i luoghi</mat-option>
+                        <mat-option *ngFor="let luogo of locations" [value]="luogo">
+                            {{ luogo }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matSuffix>place</mat-icon>
+                </mat-form-field>
+            </div>
+
+            <!-- Active Filters -->
+            <div class="active-filters" *ngIf="hasFilters">
+                <div class="filters-label">Filtri attivi:</div>
+                <mat-chip-set>
+                    <mat-chip *ngIf="searchControl.value" (removed)="searchControl.setValue('')">
+                        "{{ searchControl.value }}"
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <mat-chip *ngIf="categoriaControl.value" (removed)="categoriaControl.setValue('')">
+                        {{ categoriaControl.value }}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <mat-chip *ngIf="produttoreControl.value" (removed)="produttoreControl.setValue('')">
+                        {{ produttoreControl.value }}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <mat-chip *ngIf="luogoOrigineControl.value" (removed)="luogoOrigineControl.setValue('')">
+                        {{ luogoOrigineControl.value }}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                </mat-chip-set>
+                
+                <button mat-stroked-button (click)="clearFilters()" class="clear-filters-btn">
+                    <mat-icon>clear_all</mat-icon>
+                    Cancella Filtri
+                </button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Results Section -->
+    <div class="results-section">
+        <!-- Results Info -->
+        <div class="results-header">
+            <div class="results-info">
+                <span class="results-count">{{ filteredProductsText }}</span>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-container" *ngIf="isLoading">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p>Caricamento prodotti...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-container" *ngIf="errorMessage && !isLoading">
+            <mat-icon class="error-icon">error</mat-icon>
+            <h3>Errore nel caricamento</h3>
+            <p>{{ errorMessage }}</p>
+            <button mat-raised-button color="primary" (click)="refreshProducts()">
+                <mat-icon>refresh</mat-icon>
+                Riprova
+            </button>
+        </div>
+
+        <!-- Grid View -->
+        <div class="products-grid" *ngIf="isGridView && !isLoading && !errorMessage">
+            <div 
+                class="product-grid-item" 
+                *ngFor="let product of products; trackBy: trackByProductId">
+                <mat-card class="product-card">
+                    <!-- Product Image -->
+                    <div class="product-image">
+                        <img 
+                            [src]="product.immagineUrl || '/assets/images/product-placeholder.jpg'" 
+                            [alt]="product.nome"
+                            (error)="$event.target.src='/assets/images/product-placeholder.jpg'">
+                        
+                        <!-- Availability Badge -->
+                        <div class="availability-badge" [style.background-color]="getAvailabilityStatus(product.quantitaDisponibile).color">
+                            <mat-icon>{{ getAvailabilityStatus(product.quantitaDisponibile).icon }}</mat-icon>
+                        </div>
+
+                        <!-- Certifications Badge -->
+                        <div class="certifications-badge" *ngIf="product.certificazioni?.length">
+                            <mat-icon>verified</mat-icon>
+                            <span>{{ getCertificationsBadgeText(product.certificazioni) }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <mat-card-content class="product-content">
+                        <div class="product-header">
+                            <h3 class="product-name">{{ product.nome }}</h3>
+                            <div class="product-price">{{ formatCurrency(product.prezzo) }}</div>
+                        </div>
+
+                        <div class="product-details">
+                            <div class="detail-item" *ngIf="product.produttore">
+                                <mat-icon>business</mat-icon>
+                                <span>{{ product.produttore.nomeAzienda }}</span>
+                            </div>
+                            
+                            <div class="detail-item" *ngIf="product.categoria">
+                                <mat-icon>category</mat-icon>
+                                <span>{{ product.categoria }}</span>
+                            </div>
+                            
+                            <div class="detail-item" *ngIf="product.luogoOrigine">
+                                <mat-icon>place</mat-icon>
+                                <span>{{ product.luogoOrigine }}</span>
+                            </div>
+
+                            <div class="detail-item availability-info">
+                                <mat-icon [style.color]="getAvailabilityStatus(product.quantitaDisponibile).color">
+                                    {{ getAvailabilityStatus(product.quantitaDisponibile).icon }}
+                                </mat-icon>
+                                <span>{{ product.quantitaDisponibile }} {{ product.unitaMisura || 'unità' }}</span>
+                            </div>
+                        </div>
+
+                        <p class="product-description" *ngIf="product.descrizione">
+                            {{ product.descrizione | slice:0:100 }}{{ product.descrizione.length > 100 ? '...' : '' }}
+                        </p>
+                    </mat-card-content>
+
+                    <!-- Actions -->
+                    <mat-card-actions class="product-actions">
+                        <button mat-button (click)="viewProductDetails(product)">
+                            <mat-icon>info</mat-icon>
+                            Dettagli
+                        </button>
+                        
+                        <button 
+                            mat-raised-button 
+                            color="primary" 
+                            (click)="addToPackage(product)"
+                            [disabled]="product.quantitaDisponibile === 0">
+                            <mat-icon>add_box</mat-icon>
+                            Aggiungi a Pacchetto
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+
+        <!-- List View -->
+        <div class="products-list" *ngIf="isListView && !isLoading && !errorMessage">
+            <table mat-table [dataSource]="products" class="products-table">
+                <!-- Image Column -->
+                <ng-container matColumnDef="immagine">
+                    <th mat-header-cell *matHeaderCellDef class="image-column">Immagine</th>
+                    <td mat-cell *matCellDef="let product" class="image-column">
+                        <div class="table-product-image">
+                            <img 
+                                [src]="product.immagineUrl || '/assets/images/product-placeholder.jpg'" 
+                                [alt]="product.nome"
+                                (error)="$event.target.src='/assets/images/product-placeholder.jpg'">
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Nome Column -->
+                <ng-container matColumnDef="nome">
+                    <th mat-header-cell *matHeaderCellDef>Prodotto</th>
+                    <td mat-cell *matCellDef="let product">
+                        <div class="product-name-cell">
+                            <div class="name">{{ product.nome }}</div>
+                            <div class="description" *ngIf="product.descrizione">
+                                {{ product.descrizione | slice:0:60 }}{{ product.descrizione.length > 60 ? '...' : '' }}
+                            </div>
+                            <div class="certifications" *ngIf="product.certificazioni?.length">
+                                <mat-chip-set>
+                                    <mat-chip *ngFor="let cert of product.certificazioni.slice(0, 2)" class="cert-chip">
+                                        {{ cert }}
+                                    </mat-chip>
+                                    <mat-chip *ngIf="product.certificazioni.length > 2" class="more-certs">
+                                        +{{ product.certificazioni.length - 2 }}
+                                    </mat-chip>
+                                </mat-chip-set>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Produttore Column -->
+                <ng-container matColumnDef="produttore">
+                    <th mat-header-cell *matHeaderCellDef>Produttore</th>
+                    <td mat-cell *matCellDef="let product">
+                        {{ product.produttore?.nomeAzienda || 'N/A' }}
+                    </td>
+                </ng-container>
+
+                <!-- Categoria Column -->
+                <ng-container matColumnDef="categoria">
+                    <th mat-header-cell *matHeaderCellDef>Categoria</th>
+                    <td mat-cell *matCellDef="let product">
+                        {{ product.categoria || 'N/A' }}
+                    </td>
+                </ng-container>
+
+                <!-- Prezzo Column -->
+                <ng-container matColumnDef="prezzo">
+                    <th mat-header-cell *matHeaderCellDef>Prezzo</th>
+                    <td mat-cell *matCellDef="let product">
+                        <div class="price-cell">
+                            <span class="price">{{ formatCurrency(product.prezzo) }}</span>
+                            <span class="unit" *ngIf="product.unitaMisura">/ {{ product.unitaMisura }}</span>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Disponibilità Column -->
+                <ng-container matColumnDef="disponibilita">
+                    <th mat-header-cell *matHeaderCellDef>Disponibilità</th>
+                    <td mat-cell *matCellDef="let product">
+                        <div class="availability-cell">
+                            <span 
+                                class="availability-status"
+                                [style.color]="getAvailabilityStatus(product.quantitaDisponibile).color">
+                                {{ product.quantitaDisponibile }} {{ product.unitaMisura || 'unità' }}
+                            </span>
+                            <div class="status-label" [style.color]="getAvailabilityStatus(product.quantitaDisponibile).color">
+                                {{ getAvailabilityStatus(product.quantitaDisponibile).label }}
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Luogo Column -->
+                <ng-container matColumnDef="luogo">
+                    <th mat-header-cell *matHeaderCellDef>Origine</th>
+                    <td mat-cell *matCellDef="let product">
+                        <div class="location-cell" *ngIf="product.luogoOrigine">
+                            <mat-icon>place</mat-icon>
+                            {{ product.luogoOrigine }}
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                    <td mat-cell *matCellDef="let product">
+                        <div class="actions-cell">
+                            <button 
+                                mat-icon-button 
+                                (click)="viewProductDetails(product)"
+                                matTooltip="Visualizza dettagli">
+                                <mat-icon>info</mat-icon>
+                            </button>
+                            
+                            <button 
+                                mat-icon-button 
+                                color="primary"
+                                (click)="addToPackage(product)"
+                                [disabled]="product.quantitaDisponibile === 0"
+                                matTooltip="Aggiungi a pacchetto">
+                                <mat-icon>add_box</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!isLoading && !errorMessage && products.length === 0">
+            <mat-icon class="empty-icon">inventory_2</mat-icon>
+            <h3>Nessun prodotto trovato</h3>
+            <p *ngIf="hasFilters">Prova a modificare i criteri di ricerca</p>
+            <p *ngIf="!hasFilters">Non ci sono prodotti disponibili al momento</p>
+            
+            <button mat-raised-button color="primary" (click)="clearFilters()" *ngIf="hasFilters">
+                <mat-icon>clear_all</mat-icon>
+                Cancella Filtri
+            </button>
+        </div>
+
+        <!-- Pagination -->
+        <mat-paginator
+            *ngIf="!isLoading && !errorMessage && totalProducts > 0"
+            [length]="totalProducts"
+            [pageSize]="pageSize"
+            [pageIndex]="currentPage"
+            [pageSizeOptions]="pageSizeOptions"
+            [showFirstLastButtons]="true"
+            (page)="onPageChange($event)"
+            class="products-paginator">
+        </mat-paginator>
+    </div>
+</div>

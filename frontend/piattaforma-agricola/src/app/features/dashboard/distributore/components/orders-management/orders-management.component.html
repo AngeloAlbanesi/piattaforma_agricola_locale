@@ -1,0 +1,385 @@
+<div class="orders-management">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <div class="title-section">
+                <h2>
+                    <mat-icon>receipt_long</mat-icon>
+                    Gestione Ordini
+                </h2>
+                <p class="subtitle">Gestisci e monitora tutti gli ordini ricevuti</p>
+            </div>
+            
+            <div class="header-actions">
+                <button 
+                    mat-icon-button 
+                    (click)="toggleViewMode()"
+                    [matTooltip]="isTableView ? 'Vista schede' : 'Vista tabella'">
+                    <mat-icon>{{ isTableView ? 'view_module' : 'table_view' }}</mat-icon>
+                </button>
+                
+                <button 
+                    mat-icon-button 
+                    (click)="refreshOrdini()"
+                    [disabled]="isLoading"
+                    matTooltip="Aggiorna">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+                
+                <button 
+                    mat-stroked-button 
+                    (click)="exportOrders()"
+                    [disabled]="isLoading">
+                    <mat-icon>download</mat-icon>
+                    Esporta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="statistics-section" *ngIf="statistiche">
+        <div class="stats-grid">
+            <mat-card class="stat-card">
+                <mat-card-content>
+                    <div class="stat-content">
+                        <div class="stat-icon">
+                            <mat-icon>inbox</mat-icon>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ statistiche.ordiniRicevuti }}</div>
+                            <div class="stat-label">Ordini Ricevuti</div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="stat-card">
+                <mat-card-content>
+                    <div class="stat-content">
+                        <div class="stat-icon">
+                            <mat-icon>build</mat-icon>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ statistiche.ordiniInPreparazione }}</div>
+                            <div class="stat-label">In Preparazione</div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="stat-card">
+                <mat-card-content>
+                    <div class="stat-content">
+                        <div class="stat-icon">
+                            <mat-icon>done_all</mat-icon>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ statistiche.ordiniConsegnati }}</div>
+                            <div class="stat-label">Consegnati</div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="stat-card">
+                <mat-card-content>
+                    <div class="stat-content">
+                        <div class="stat-icon">
+                            <mat-icon>euro</mat-icon>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ formatCurrency(statistiche.fatturatoDiOggi) }}</div>
+                            <div class="stat-label">Fatturato Oggi</div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <mat-card class="filters-card">
+        <mat-card-header>
+            <mat-card-title>
+                <mat-icon>filter_list</mat-icon>
+                Filtri di Ricerca
+            </mat-card-title>
+        </mat-card-header>
+        
+        <mat-card-content>
+            <div class="filters-grid">
+                <!-- Search -->
+                <mat-form-field appearance="outline" class="search-field">
+                    <mat-label>Cerca ordini</mat-label>
+                    <input matInput [formControl]="searchControl" placeholder="Numero ordine o nome cliente...">
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                <!-- Status -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Stato</mat-label>
+                    <mat-select [formControl]="statoControl" multiple>
+                        <mat-option *ngFor="let stato of stati" [value]="stato">
+                            <div class="stato-option">
+                                <mat-icon [style.color]="getStatoColor(stato)">{{ getStatoIcon(stato) }}</mat-icon>
+                                {{ getStatoLabel(stato) }}
+                            </div>
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matSuffix>label</mat-icon>
+                </mat-form-field>
+
+                <!-- Date Range -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Data Inizio</mat-label>
+                    <input matInput [matDatepicker]="pickerInizio" [formControl]="dataInizioControl">
+                    <mat-datepicker-toggle matSuffix [for]="pickerInizio"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerInizio></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Data Fine</mat-label>
+                    <input matInput [matDatepicker]="pickerFine" [formControl]="dataFineControl">
+                    <mat-datepicker-toggle matSuffix [for]="pickerFine"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerFine></mat-datepicker>
+                </mat-form-field>
+
+                <!-- Amount Range -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Importo Min</mat-label>
+                    <input matInput type="number" [formControl]="importoMinControl" step="0.01" min="0">
+                    <span matPrefix>€&nbsp;</span>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Importo Max</mat-label>
+                    <input matInput type="number" [formControl]="importoMaxControl" step="0.01" min="0">
+                    <span matPrefix>€&nbsp;</span>
+                </mat-form-field>
+            </div>
+
+            <!-- Active Filters -->
+            <div class="active-filters" *ngIf="hasFilters">
+                <div class="filters-label">Filtri attivi:</div>
+                <mat-chip-set>
+                    <mat-chip *ngIf="searchControl.value" (removed)="searchControl.setValue('')">
+                        "{{ searchControl.value }}"
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <mat-chip *ngFor="let stato of statoControl.value || []" 
+                             (removed)="removeStatoFilter(stato)">
+                        {{ getStatoLabel(stato) }}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <mat-chip *ngIf="dataInizioControl.value" (removed)="dataInizioControl.setValue(null)">
+                        Da {{ formatDate(dataInizioControl.value!.toISOString()) }}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <mat-chip *ngIf="dataFineControl.value" (removed)="dataFineControl.setValue(null)">
+                        A {{ formatDate(dataFineControl.value!.toISOString()) }}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                </mat-chip-set>
+                
+                <button mat-stroked-button (click)="clearFilters()" class="clear-filters-btn">
+                    <mat-icon>clear_all</mat-icon>
+                    Cancella Filtri
+                </button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Results Section -->
+    <div class="results-section">
+        <!-- Results Header -->
+        <div class="results-header">
+            <div class="results-info">
+                <span class="results-count">{{ filteredOrdersText }}</span>
+            </div>
+            
+            <div class="bulk-actions" *ngIf="selectedOrdersCount > 0">
+                <span class="selection-info">{{ selectedOrdersCount }} ordini selezionati</span>
+                <button 
+                    mat-raised-button 
+                    color="primary"
+                    (click)="confirmSelectedOrders()"
+                    [disabled]="!canConfirmSelected">
+                    <mat-icon>check_circle</mat-icon>
+                    Conferma Selezionati
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-container" *ngIf="isLoading">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p>Caricamento ordini...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-container" *ngIf="errorMessage && !isLoading">
+            <mat-icon class="error-icon">error</mat-icon>
+            <h3>Errore nel caricamento</h3>
+            <p>{{ errorMessage }}</p>
+            <button mat-raised-button color="primary" (click)="refreshOrdini()">
+                <mat-icon>refresh</mat-icon>
+                Riprova
+            </button>
+        </div>
+
+        <!-- Table View -->
+        <div class="orders-table-container" *ngIf="isTableView && !isLoading && !errorMessage">
+            <table mat-table [dataSource]="ordini" class="orders-table">
+                <!-- Selection Column -->
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()"
+                            (change)="masterToggle()">
+                        </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let ordine">
+                        <mat-checkbox
+                            [checked]="selection.isSelected(ordine)"
+                            (change)="selection.toggle(ordine)">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- Order Number Column -->
+                <ng-container matColumnDef="numeroOrdine">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <button mat-button (click)="onSortChange('numeroOrdine')">
+                            Numero Ordine
+                            <mat-icon *ngIf="ordinamento === 'numeroOrdine'">
+                                {{ direzione === 'ASC' ? 'arrow_upward' : 'arrow_downward' }}
+                            </mat-icon>
+                        </button>
+                    </th>
+                    <td mat-cell *matCellDef="let ordine">
+                        <div class="order-number-cell">
+                            <span class="order-number">{{ ordine.numeroOrdine }}</span>
+                            <span class="order-time">{{ getTempoTrascorso(ordine.dataOrdine) }}</span>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Date Column -->
+                <ng-container matColumnDef="dataOrdine">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <button mat-button (click)="onSortChange('dataOrdine')">
+                            Data Ordine
+                            <mat-icon *ngIf="ordinamento === 'dataOrdine'">
+                                {{ direzione === 'ASC' ? 'arrow_upward' : 'arrow_downward' }}
+                            </mat-icon>
+                        </button>
+                    </th>
+                    <td mat-cell *matCellDef="let ordine">
+                        {{ formatDateTime(ordine.dataOrdine) }}
+                    </td>
+                </ng-container>
+
+                <!-- Customer Column -->
+                <ng-container matColumnDef="acquirente">
+                    <th mat-header-cell *matHeaderCellDef>Cliente</th>
+                    <td mat-cell *matCellDef="let ordine">
+                        <div class="customer-cell">
+                            <span class="customer-name">{{ ordine.acquirente.nome }} {{ ordine.acquirente.cognome }}</span>
+                            <span class="customer-email">{{ ordine.acquirente.email }}</span>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="stato">
+                    <th mat-header-cell *matHeaderCellDef>Stato</th>
+                    <td mat-cell *matCellDef="let ordine">
+                        <div class="status-badge" [style.background-color]="getStatoColor(ordine.stato)">
+                            <mat-icon>{{ getStatoIcon(ordine.stato) }}</mat-icon>
+                            {{ getStatoLabel(ordine.stato) }}
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Total Column -->
+                <ng-container matColumnDef="totale">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <button mat-button (click)="onSortChange('totale')">
+                            Totale
+                            <mat-icon *ngIf="ordinamento === 'totale'">
+                                {{ direzione === 'ASC' ? 'arrow_upward' : 'arrow_downward' }}
+                            </mat-icon>
+                        </button>
+                    </th>
+                    <td mat-cell *matCellDef="let ordine">
+                        <span class="total-amount">{{ formatCurrency(ordine.totale) }}</span>
+                    </td>
+                </ng-container>
+
+                <!-- Priority Column -->
+                <ng-container matColumnDef="priorita">
+                    <th mat-header-cell *matHeaderCellDef>Priorità</th>
+                    <td mat-cell *matCellDef="let ordine">
+                        <div class="priority-badge" [style.color]="getPrioritaColor(getPriorita(ordine))">
+                            {{ getPriorita(ordine) }}
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                    <td mat-cell *matCellDef="let ordine">
+                        <div class="actions-cell">
+                            <button 
+                                mat-icon-button 
+                                (click)="viewOrderDetails(ordine)"
+                                matTooltip="Visualizza dettagli">
+                                <mat-icon>visibility</mat-icon>
+                            </button>
+                            
+                            <button 
+                                mat-icon-button 
+                                color="primary"
+                                (click)="updateOrderStatus(ordine)"
+                                matTooltip="Aggiorna stato">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                    [class.selected-row]="selection.isSelected(row)"></tr>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!isLoading && !errorMessage && ordini.length === 0">
+            <mat-icon class="empty-icon">receipt_long</mat-icon>
+            <h3>Nessun ordine trovato</h3>
+            <p *ngIf="hasFilters">Prova a modificare i criteri di ricerca</p>
+            <p *ngIf="!hasFilters">Non hai ancora ricevuto ordini</p>
+            
+            <button mat-raised-button color="primary" (click)="clearFilters()" *ngIf="hasFilters">
+                <mat-icon>clear_all</mat-icon>
+                Cancella Filtri
+            </button>
+        </div>
+
+        <!-- Pagination -->
+        <mat-paginator
+            *ngIf="!isLoading && !errorMessage && totalOrdini > 0"
+            [length]="totalOrdini"
+            [pageSize]="pageSize"
+            [pageIndex]="currentPage"
+            [pageSizeOptions]="pageSizeOptions"
+            [showFirstLastButtons]="true"
+            (page)="onPageChange($event)"
+            class="orders-paginator">
+        </mat-paginator>
+    </div>
+</div>

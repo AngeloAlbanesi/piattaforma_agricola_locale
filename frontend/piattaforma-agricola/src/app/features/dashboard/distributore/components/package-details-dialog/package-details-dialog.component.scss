@@ -1,0 +1,546 @@
+.package-details-dialog {
+    min-width: 700px;
+    max-width: 900px;
+    max-height: 90vh;
+
+    .dialog-header {
+        padding: 20px 24px 0 24px;
+        margin-bottom: 0;
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            .title-section {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                mat-icon {
+                    color: #9b59b6;
+                    font-size: 28px;
+                    width: 28px;
+                    height: 28px;
+                }
+
+                h2 {
+                    margin: 0;
+                    font-size: 1.6rem;
+                    font-weight: 500;
+                    color: #333;
+                }
+            }
+
+            .status-section {
+                .status-badge {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 8px 12px;
+                    border-radius: 20px;
+                    color: white;
+                    font-weight: 500;
+                    font-size: 0.9rem;
+
+                    mat-icon {
+                        font-size: 16px;
+                        width: 16px;
+                        height: 16px;
+                    }
+                }
+            }
+        }
+    }
+
+    .dialog-content {
+        padding: 20px 0;
+        overflow-y: auto;
+        max-height: calc(90vh - 160px);
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: #666;
+
+            p {
+                margin-top: 16px;
+                margin-bottom: 0;
+            }
+        }
+
+        .package-content {
+            padding: 0 24px;
+
+            .mat-tab-group {
+                .mat-tab-header {
+                    .mat-tab-label {
+                        font-weight: 500;
+                    }
+                }
+
+                .tab-content {
+                    padding: 20px 0;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+
+                    .mat-card {
+                        .mat-card-header {
+                            .mat-card-title {
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+                                font-size: 1.2rem;
+                                font-weight: 500;
+
+                                mat-icon {
+                                    color: #9b59b6;
+                                }
+                            }
+
+                            .mat-card-subtitle {
+                                color: #666;
+                                margin-top: 4px;
+                            }
+                        }
+                    }
+
+                    // Info Card
+                    .info-card {
+                        .info-grid {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 16px;
+                            margin-bottom: 20px;
+
+                            .info-item {
+                                display: flex;
+                                flex-direction: column;
+                                gap: 4px;
+
+                                label {
+                                    font-weight: 500;
+                                    color: #555;
+                                    font-size: 0.9rem;
+                                }
+
+                                span {
+                                    color: #333;
+
+                                    &.price {
+                                        font-weight: 600;
+                                        color: #27ae60;
+                                        font-size: 1.1rem;
+                                    }
+                                }
+                            }
+                        }
+
+                        .description-section {
+                            border-top: 1px solid #e0e0e0;
+                            padding-top: 16px;
+
+                            label {
+                                font-weight: 500;
+                                color: #555;
+                                font-size: 0.9rem;
+                                display: block;
+                                margin-bottom: 8px;
+                            }
+
+                            .description {
+                                color: #333;
+                                line-height: 1.6;
+                                margin: 0;
+                            }
+                        }
+                    }
+
+                    // Stats Card
+                    .stats-card {
+                        .economic-stats {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                            gap: 20px;
+
+                            .stat-item {
+                                text-align: center;
+                                padding: 16px;
+                                background-color: #f8f9fa;
+                                border-radius: 8px;
+
+                                .stat-value {
+                                    font-size: 1.5rem;
+                                    font-weight: 600;
+                                    color: #333;
+
+                                    &.positive {
+                                        color: #27ae60;
+                                    }
+
+                                    &.negative {
+                                        color: #e74c3c;
+                                    }
+                                }
+
+                                .stat-label {
+                                    font-size: 0.9rem;
+                                    color: #666;
+                                    margin-top: 4px;
+                                }
+                            }
+                        }
+                    }
+
+                    // Products Card
+                    .products-card {
+                        .products-list {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 16px;
+
+                            .product-item {
+                                border: 1px solid #e0e0e0;
+                                border-radius: 8px;
+                                padding: 16px;
+
+                                .product-main-info {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: flex-start;
+                                    gap: 20px;
+
+                                    .product-details {
+                                        flex: 1;
+
+                                        .product-name {
+                                            margin: 0 0 8px 0;
+                                            font-size: 1.1rem;
+                                            font-weight: 500;
+                                            color: #333;
+                                        }
+
+                                        .product-description {
+                                            color: #666;
+                                            margin: 0 0 8px 0;
+                                            line-height: 1.5;
+                                        }
+
+                                        .product-producer {
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 6px;
+                                            color: #555;
+                                            font-size: 0.9rem;
+                                            margin-bottom: 12px;
+
+                                            mat-icon {
+                                                font-size: 16px;
+                                                width: 16px;
+                                                height: 16px;
+                                            }
+                                        }
+
+                                        .product-certifications {
+                                            .cert-chip {
+                                                font-size: 0.8rem;
+                                                height: 24px;
+                                                background-color: #e8f5e8;
+                                                color: #2e7d32;
+
+                                                mat-icon {
+                                                    font-size: 14px;
+                                                    width: 14px;
+                                                    height: 14px;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    .product-quantities {
+                                        text-align: right;
+                                        min-width: 120px;
+
+                                        .quantity-info {
+                                            margin-bottom: 8px;
+
+                                            .quantity {
+                                                font-size: 1.3rem;
+                                                font-weight: 600;
+                                                color: #333;
+                                            }
+
+                                            .unit {
+                                                color: #666;
+                                                font-size: 0.9rem;
+                                                margin-left: 4px;
+                                            }
+                                        }
+
+                                        .price-info {
+                                            .unit-price {
+                                                color: #666;
+                                                font-size: 0.9rem;
+                                            }
+
+                                            .total-price {
+                                                font-weight: 600;
+                                                color: #27ae60;
+                                                font-size: 1.1rem;
+                                                margin-top: 4px;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Certifications Card
+                    .certifications-card {
+                        .certifications-list {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 16px;
+
+                            .certification-item {
+                                border: 1px solid #e0e0e0;
+                                border-radius: 8px;
+                                padding: 16px;
+
+                                .cert-header {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    margin-bottom: 12px;
+
+                                    mat-icon {
+                                        color: #27ae60;
+                                    }
+
+                                    h4 {
+                                        margin: 0;
+                                        color: #333;
+                                        font-weight: 500;
+                                    }
+                                }
+
+                                .cert-details {
+                                    display: grid;
+                                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                                    gap: 12px;
+
+                                    .cert-info {
+                                        display: flex;
+                                        flex-direction: column;
+                                        gap: 2px;
+
+                                        .label {
+                                            font-size: 0.9rem;
+                                            color: #666;
+                                            font-weight: 500;
+                                        }
+
+                                        .value {
+                                            color: #333;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Sales Stats Card
+                    .sales-stats-card {
+                        .sales-grid {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                            gap: 20px;
+
+                            .sales-stat {
+                                text-align: center;
+                                padding: 20px;
+                                background-color: #f8f9fa;
+                                border-radius: 8px;
+
+                                .stat-value {
+                                    font-size: 1.8rem;
+                                    font-weight: 600;
+                                    color: #333;
+                                    margin-bottom: 8px;
+
+                                    &.rating-value {
+                                        display: flex;
+                                        flex-direction: column;
+                                        align-items: center;
+                                        gap: 4px;
+
+                                        .stars {
+                                            display: flex;
+                                            gap: 2px;
+
+                                            .star {
+                                                font-size: 16px;
+                                                width: 16px;
+                                                height: 16px;
+                                                color: #ddd;
+
+                                                &.filled {
+                                                    color: #ffc107;
+                                                }
+
+                                                &.half {
+                                                    color: #ffc107;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                .stat-label {
+                                    font-size: 0.9rem;
+                                    color: #666;
+                                }
+                            }
+                        }
+                    }
+
+                    // Reviews Card
+                    .reviews-card {
+                        .reviews-list {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 16px;
+
+                            .review-item {
+                                border: 1px solid #e0e0e0;
+                                border-radius: 8px;
+                                padding: 16px;
+
+                                .review-header {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: flex-start;
+                                    margin-bottom: 12px;
+
+                                    .reviewer-info {
+                                        .reviewer-name {
+                                            font-weight: 500;
+                                            color: #333;
+                                            display: block;
+                                        }
+
+                                        .review-date {
+                                            color: #666;
+                                            font-size: 0.9rem;
+                                        }
+                                    }
+
+                                    .rating {
+                                        display: flex;
+                                        gap: 2px;
+
+                                        .star {
+                                            font-size: 16px;
+                                            width: 16px;
+                                            height: 16px;
+                                            color: #ddd;
+
+                                            &.filled {
+                                                color: #ffc107;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                .review-comment {
+                                    color: #333;
+                                    line-height: 1.6;
+                                    margin: 0;
+                                    font-style: italic;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .dialog-actions {
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #e0e0e0;
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+
+            button {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .package-details-dialog {
+        min-width: 100%;
+        max-width: 100%;
+
+        .dialog-header .header-content {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .package-content .tab-content {
+            .info-card .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-card .economic-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .products-card .products-list .product-item .product-main-info {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+
+                .product-quantities {
+                    text-align: left;
+                }
+            }
+
+            .certifications-card .certifications-list .certification-item .cert-details {
+                grid-template-columns: 1fr;
+            }
+
+            .sales-stats-card .sales-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dialog-actions {
+            flex-direction: column;
+            gap: 12px;
+
+            .action-buttons {
+                width: 100%;
+                justify-content: stretch;
+
+                button {
+                    flex: 1;
+                }
+            }
+        }
+    }
+}

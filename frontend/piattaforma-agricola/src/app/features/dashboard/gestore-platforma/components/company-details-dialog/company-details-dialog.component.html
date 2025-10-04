@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Dettagli Azienda</h2>
+<div mat-dialog-content>
+    <div class="loading" *ngIf="isLoading">
+        <mat-progress-spinner diameter="36" mode="indeterminate"></mat-progress-spinner>
+    </div>
+    <mat-card *ngIf="!isLoading && dataAzienda">
+        <mat-card-title>{{ dataAzienda.nomeAzienda }}</mat-card-title>
+        <mat-card-content>
+            <p><strong>Partita IVA:</strong> {{ dataAzienda.partitaIva }}</p>
+            <p><strong>Indirizzo:</strong> {{ dataAzienda.indirizzo }}</p>
+            <p><strong>Telefono:</strong> {{ dataAzienda.telefono }}</p>
+            <p><strong>Email:</strong> {{ dataAzienda.email }}</p>
+            <p *ngIf="dataAzienda.sitoWeb"><strong>Sito:</strong> {{ dataAzienda.sitoWeb }}</p>
+            <p><strong>Stato verifica:</strong> {{ dataAzienda.statoVerifica }}</p>
+            <p *ngIf="dataAzienda.feedbackVerifica"><strong>Feedback:</strong> {{ dataAzienda.feedbackVerifica }}</p>
+        </mat-card-content>
+    </mat-card>
+    <div *ngIf="!isLoading && !dataAzienda" class="empty">Dati azienda non disponibili.</div>
+
+</div>
+<div mat-dialog-actions>
+    <button mat-stroked-button (click)="close()">Chiudi</button>
+
+</div>

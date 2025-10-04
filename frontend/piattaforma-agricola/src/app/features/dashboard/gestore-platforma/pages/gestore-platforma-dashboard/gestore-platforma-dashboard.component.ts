@@ -62,7 +62,9 @@ export class GestorePlatformaDashboardComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.initializeUserData();
-        this.loadDashboardStats();
+        // Statistiche disabilitate: backend non implementato
+        this.isLoading = false;
+        this.stats = null;
     }
 
     ngOnDestroy(): void {
@@ -107,27 +109,27 @@ export class GestorePlatformaDashboardComponent implements OnInit, OnDestroy {
     // === NAVIGAZIONE ===
 
     navigateToUsers(): void {
-        this.router.navigate(['/utenti']);
+        this.router.navigate(['/dashboard/admin/utenti']);
     }
 
     navigateToProducts(): void {
-        this.router.navigate(['/prodotti']);
+        this.router.navigate(['/dashboard/admin/prodotti']);
     }
 
     navigateToCompanies(): void {
-        this.router.navigate(['/aziende']);
+        this.router.navigate(['/dashboard/admin/aziende']);
     }
 
     navigateToEvents(): void {
-        this.router.navigate(['/']);
+        this.router.navigate(['/dashboard/admin/eventi']);
     }
 
     navigateToReports(): void {
-        this.router.navigate(['/report']);
+        this.router.navigate(['/dashboard/admin/report']);
     }
 
     navigateToSettings(): void {
-        this.router.navigate(['/impostazioni']);
+        this.router.navigate(['/dashboard/admin/impostazioni']);
     }
 
     navigateToProfile(): void {
@@ -173,7 +175,8 @@ export class GestorePlatformaDashboardComponent implements OnInit, OnDestroy {
     // === UTILITIES ===
 
     refreshData(): void {
-        this.loadDashboardStats();
+        // Statistiche disabilitate: evitiamo chiamate fallimentari
+        this.snackBar.open('Statistiche non disponibili al momento', 'Chiudi', { duration: 2500 });
     }
 
     logout(): void {

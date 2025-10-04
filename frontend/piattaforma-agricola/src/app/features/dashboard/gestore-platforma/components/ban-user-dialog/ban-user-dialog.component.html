@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Conferma Ban Utente</h2>
+<div mat-dialog-content>
+    <p>Stai per bannare: <strong>{{ data.displayName }}</strong></p>
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Motivazione</mat-label>
+        <textarea matInput [formControl]="motivo" rows="4" placeholder="Inserisci la motivazione del ban"></textarea>
+        <mat-error *ngIf="motivo.hasError('required')">La motivazione è obbligatoria</mat-error>
+        <mat-error *ngIf="motivo.hasError('minlength')">Minimo 5 caratteri</mat-error>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-stroked-button (click)="cancel()">Annulla</button>
+    <button mat-flat-button color="warn" (click)="confirm()" [disabled]="motivo.invalid">Conferma Ban</button>
+</div>

@@ -1,108 +1,111 @@
 <div class="utenti-management">
-  <mat-card appearance="outlined">
-    <mat-card-header>
-      <mat-card-title>Gestione Utenti</mat-card-title>
-      <mat-card-subtitle>Visualizza e gestisci gli utenti della piattaforma</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="filters-container">
-        <mat-form-field appearance="outline" class="search-field">
-          <mat-label>Cerca Utente</mat-label>
-          <input matInput (keyup)="applyFilter($event)" placeholder="Nome, Email, Ruolo..." #input>
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
+    <mat-card appearance="outlined">
+        <mat-card-header>
+            <mat-card-title>Gestione Utenti</mat-card-title>
+            <mat-card-subtitle>Visualizza e gestisci gli utenti della piattaforma</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="filters-container">
+                <mat-form-field appearance="outline" class="search-field">
+                    <mat-label>Cerca Utente</mat-label>
+                    <input matInput (keyup)="applyFilter($event)" placeholder="Nome, Email, Ruolo..." #input>
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+                <mat-slide-toggle (change)="onSoloAttiviToggle($event.source.checked)">Solo attivi</mat-slide-toggle>
+            </div>
 
-        <mat-form-field appearance="outline" class="status-select">
-          <mat-label>Stato Utente</mat-label>
-          <mat-select [(value)]="filters.stato" (selectionChange)="onStatusChange($event.value)">
-            <mat-option value="TUTTI">Tutti</mat-option>
-            <mat-option value="ATTIVO">Attivo</mat-option>
-            <mat-option value="INATTIVO">Inattivo</mat-option>
-            <mat-option value="SOSPESO">Sospeso</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+            <div class="table-container mat-elevation-z2">
+                <mat-spinner *ngIf="isLoading" diameter="50"></mat-spinner>
+                <table mat-table [dataSource]="dataSource" matSort *ngIf="!isLoading">
 
-      <div class="table-container mat-elevation-z2">
-        <mat-spinner *ngIf="isLoading" diameter="50"></mat-spinner>
-        <table mat-table [dataSource]="dataSource" matSort *ngIf="!isLoading">
+                    <!-- ID Column -->
+                    <ng-container matColumnDef="idUtente">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+                        <td mat-cell *matCellDef="let element"> {{element.idUtente}} </td>
+                    </ng-container>
 
-          <!-- ID Column -->
-          <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-          </ng-container>
+                    <!-- Nome Column -->
+                    <ng-container matColumnDef="nome">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
+                        <td mat-cell *matCellDef="let element"> {{element.nome}} </td>
+                    </ng-container>
 
-          <!-- Username Column -->
-          <ng-container matColumnDef="username">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Username </th>
-            <td mat-cell *matCellDef="let element"> {{element.username}} </td>
-          </ng-container>
+                    <!-- Cognome Column -->
+                    <ng-container matColumnDef="cognome">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Cognome </th>
+                        <td mat-cell *matCellDef="let element"> {{element.cognome}} </td>
+                    </ng-container>
 
-          <!-- Email Column -->
-          <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
-            <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-          </ng-container>
+                    <!-- Email Column -->
+                    <ng-container matColumnDef="email">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+                        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+                    </ng-container>
 
-          <!-- Ruolo Column -->
-          <ng-container matColumnDef="ruolo">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Ruolo </th>
-            <td mat-cell *matCellDef="let element"> {{element.ruolo}} </td>
-          </ng-container>
+                    <!-- Ruolo Column -->
+                    <ng-container matColumnDef="ruolo">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Ruolo </th>
+                        <td mat-cell *matCellDef="let element"> {{element.ruolo}} </td>
+                    </ng-container>
 
-          <!-- Stato Column -->
-          <ng-container matColumnDef="stato">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Stato </th>
-            <td mat-cell *matCellDef="let element">
-              <mat-chip-listbox>
-                <mat-chip [color]="element.stato === 'ATTIVO' ? 'primary' : (element.stato === 'SOSPESO' ? 'warn' : 'accent')" selected>
-                  {{element.stato}}
-                </mat-chip>
-              </mat-chip-listbox>
-            </td>
-          </ng-container>
+                    <!-- Accreditato Column -->
+                    <ng-container matColumnDef="accreditato">
+                        <th mat-header-cell *matHeaderCellDef>Accreditato</th>
+                        <td mat-cell *matCellDef="let element">
+                            <mat-chip-listbox>
+                                <mat-chip color="primary">{{ element.accreditato ? 'Sì' : 'No' }}</mat-chip>
+                            </mat-chip-listbox>
+                        </td>
+                    </ng-container>
 
-          <!-- Data Registrazione Column -->
-          <ng-container matColumnDef="dataRegistrazione">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Data Registrazione </th>
-            <td mat-cell *matCellDef="let element"> {{element.dataRegistrazione | date:'shortDate'}} </td>
-          </ng-container>
+                    <!-- Attivo Column -->
+                    <ng-container matColumnDef="attivo">
+                        <th mat-header-cell *matHeaderCellDef>Attivo</th>
+                        <td mat-cell *matCellDef="let element">
+                            <mat-chip-listbox>
+                                <mat-chip [color]="element.attivo ? 'primary' : 'warn'">{{ element.attivo ? 'Attivo' :
+                                    'Disattivo' }}</mat-chip>
+                            </mat-chip-listbox>
+                        </td>
+                    </ng-container>
 
-          <!-- Actions Column -->
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef> Azioni </th>
-            <td mat-cell *matCellDef="let element">
-              <button mat-icon-button color="primary" (click)="viewUserDetails(element)" matTooltip="Visualizza Dettagli">
-                <mat-icon>info</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" (click)="blockUser(element)" matTooltip="Blocca Utente" *ngIf="element.stato !== 'SOSPESO'">
-                <mat-icon>block</mat-icon>
-              </button>
-              <button mat-icon-button color="accent" (click)="suspendUser(element)" matTooltip="Sospendi Utente" *ngIf="element.stato === 'ATTIVO'">
-                <mat-icon>pause_circle_filled</mat-icon>
-              </button>
-              <button mat-icon-button color="primary" (click)="activateUser(element)" matTooltip="Attiva Utente" *ngIf="element.stato !== 'ATTIVO'">
-                <mat-icon>check_circle</mat-icon>
-              </button>
-            </td>
-          </ng-container>
+                    <!-- Data Registrazione Column -->
+                    <ng-container matColumnDef="dataRegistrazione">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Data Registrazione </th>
+                        <td mat-cell *matCellDef="let element"> {{element.dataRegistrazione | date:'short'}} </td>
+                    </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    <!-- Actions Column -->
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef> Azioni </th>
+                        <td mat-cell *matCellDef="let element">
+                            <button mat-icon-button color="primary" (click)="viewUserDetails(element)"
+                                matTooltip="Visualizza Dettagli">
+                                <mat-icon>info</mat-icon>
+                            </button>
+                            <button mat-icon-button color="warn" (click)="blockUser(element)" matTooltip="Banna Utente">
+                                <mat-icon>block</mat-icon>
+                            </button>
+                            <button mat-icon-button color="accent" (click)="toggleActivation(element)"
+                                matTooltip="Attiva/Disattiva">
+                                <mat-icon>{{ element.attivo ? 'pause_circle_filled' : 'check_circle' }}</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
 
-          <!-- Row shown when there is no matching data. -->
-          <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell" colspan="7">Nessun utente trovato corrispondente a "{{input.value}}"</td>
-          </tr>
-        </table>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-        <mat-paginator [length]="totalElements"
-                       [pageSize]="pageSize"
-                       [pageSizeOptions]="pageSizeOptions"
-                       aria-label="Seleziona pagina utenti">
-        </mat-paginator>
-      </div>
-    </mat-card-content>
-  </mat-card>
+                    <!-- Row shown when there is no matching data. -->
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell" colspan="9">Nessun utente trovato corrispondente a "{{input.value}}"</td>
+                    </tr>
+                </table>
+
+                <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                    aria-label="Seleziona pagina utenti">
+                </mat-paginator>
+            </div>
+        </mat-card-content>
+    </mat-card>
 </div>

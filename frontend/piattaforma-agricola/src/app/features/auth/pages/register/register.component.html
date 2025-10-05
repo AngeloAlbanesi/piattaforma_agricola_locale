@@ -52,15 +52,6 @@
           </mat-form-field>
         </div>
 
-        <mat-form-field appearance="outline" class="form-field">
-          <mat-label>Username</mat-label>
-          <input matInput
-                 formControlName="username"
-                 placeholder="Scegli un username"
-                 [errorStateMatcher]="errorStateMatcher">
-          <mat-icon matSuffix>alternate_email</mat-icon>
-          <mat-error>{{ getErrorMessage('username') }}</mat-error>
-        </mat-form-field>
 
         <mat-form-field appearance="outline" class="form-field">
           <mat-label>Email</mat-label>
@@ -102,26 +93,15 @@
           </mat-form-field>
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field half">
-            <mat-label>Telefono</mat-label>
-            <input matInput
-                   formControlName="telefono"
-                   placeholder="Il tuo numero di telefono"
-                   [errorStateMatcher]="errorStateMatcher">
-            <mat-icon matSuffix>phone</mat-icon>
-            <mat-error>{{ getErrorMessage('telefono') }}</mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="form-field half">
-            <mat-label>Indirizzo</mat-label>
-            <input matInput
-                   formControlName="indirizzo"
-                   placeholder="Il tuo indirizzo"
-                   [errorStateMatcher]="errorStateMatcher">
-            <mat-icon matSuffix>location_on</mat-icon>
-          </mat-form-field>
-        </div>
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Telefono</mat-label>
+          <input matInput
+                 formControlName="telefono"
+                 placeholder="Il tuo numero di telefono"
+                 [errorStateMatcher]="errorStateMatcher">
+          <mat-icon matSuffix>phone</mat-icon>
+          <mat-error>{{ getErrorMessage('telefono') }}</mat-error>
+        </mat-form-field>
       </div>
 
       <!-- Dati Aziendali (condizionali) -->

@@ -13,6 +13,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { AziendaService } from '../../../../../core/services/azienda.service';
 import { AziendaDetailDTO } from '../../../../../core/models/trasformatore.models';
 import { AuthService, ROLES } from '../../../../../core/services/auth.service';
+import { UserDetailDTO } from '../../../../../core/models/curatore.models';
 
 /**
  * Componente riutilizzabile per visualizzare i dati aziendali
@@ -39,6 +40,7 @@ export class CompanyDataCardComponent implements OnInit, OnDestroy {
 
     isLoading = false;
     company: AziendaDetailDTO | null = null;
+    userProfile: UserDetailDTO | null = null;
     hasError = false;
     isCompanyUser = false;
 
@@ -54,6 +56,7 @@ export class CompanyDataCardComponent implements OnInit, OnDestroy {
         this.checkUserRole();
         if (this.isCompanyUser) {
             this.loadCompanyData();
+            this.loadUserProfile();
         }
     }
 
@@ -92,6 +95,9 @@ export class CompanyDataCardComponent implements OnInit, OnDestroy {
                 takeUntil(this.destroy$),
                 catchError(error => {
                     console.error('❌ Errore caricamento dati azienda:', error);
+                    console.error('❌ Status:', error.status);
+                    console.error('❌ Error message:', error.message);
+                    console.error('❌ Error details:', error.error);
                     this.hasError = true;
 
                     // Non mostrare snackbar - l'errore è già visibile nella card
@@ -176,6 +182,81 @@ export class CompanyDataCardComponent implements OnInit, OnDestroy {
      */
     formatDate(date: string): string {
         return this.aziendaService.formatDate(date);
+    }
+
+    /**
+     * Carica i dati del profilo utente
+     */
+    private loadUserProfile(): void {
+        this.authService.getProfile()
+            .pipe(
+                takeUntil(this.destroy$),
+                catchError(error => {
+                    console.error('❌ Errore caricamento profilo utente:', error);
+                    return of(null);
+                })
+            )
+            .subscribe(profile => {
+                this.userProfile = profile;
+                console.log('👤 Dati profilo utente ricevuti:', profile);
+                this.cdr.markForCheck();
+            });
+    }
+
+    /**
+     * Restituisce l'etichetta formattata del ruolo
+     */
+    getRoleLabel(role?: string): string {
+        if (!role) return 'Non specificato';
+
+        const roleLabels: Record<string, string> = {
+            'PRODUTTORE': 'Produttore',
+            'TRASFORMATORE': 'Trasformatore',
+            'DISTRIBUTORE_DI_TIPICITA': 'Distributore di Tipicità',
+            'CURATORE': 'Curatore',
+            'ANIMATORE_DELLA_FILIERA': 'Animatore della Filiera',
+            'ACQUIRENTE': 'Acquirente',
+            'GESTORE_PIATTAFORMA': 'Gestore Piattaforma'
+        };
+
+        return roleLabels[role] || role;
+    }
+
+    /**
+     * Ottiene l'indirizzo azienda con fallback ai dati del profilo
+     */
+    getIndirizzoAzienda(): string {
+        // Prima prova dall'azienda
+        if (this.company?.indirizzo) {
+            const formatted = this.formatFullAddress(this.company);
+            if (formatted && formatted !== 'Non disponibile') {
+                return formatted;
+            }
+        }
+        
+        // Se i dati aziendali non sono disponibili, mostra un messaggio informativo
+        if (this.hasError) {
+            return 'Dati aziendali non disponibili - contatta il supporto';
+        }
+        
+        return 'Non specificato';
+    }
+
+    /**
+     * Ottiene la descrizione azienda con fallback
+     */
+    getDescrizioneAzienda(): string {
+        // Prima prova dall'azienda
+        if (this.hasValue(this.company?.descrizione)) {
+            return this.company!.descrizione!;
+        }
+        
+        // Se i dati aziendali non sono disponibili, mostra un messaggio informativo
+        if (this.hasError) {
+            return 'Dati aziendali non disponibili - contatta il supporto';
+        }
+        
+        return 'Non specificata';
     }
 
     /**

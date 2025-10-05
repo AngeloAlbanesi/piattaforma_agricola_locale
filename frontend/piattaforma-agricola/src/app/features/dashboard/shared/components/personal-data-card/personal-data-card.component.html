@@ -29,19 +29,16 @@
         <!-- Dati del profilo -->
         <div *ngIf="!isLoading && !hasError && profile" class="profile-data">
             <div class="data-grid">
-                <!-- Username -->
-                <div class="data-item">
-                    <span class="data-label">Username:</span>
-                    <span class="data-value">{{ profile.username }}</span>
-                </div>
-
-                <!-- Nome completo -->
+                <!-- Nome -->
                 <div class="data-item">
                     <span class="data-label">Nome:</span>
-                    <span class="data-value">
-                        {{ hasValue(profile.nome) ? profile.nome : 'Non specificato' }}
-                        {{ hasValue(profile.cognome) ? profile.cognome : '' }}
-                    </span>
+                    <span class="data-value">{{ hasValue(profile.nome) ? profile.nome : 'Non specificato' }}</span>
+                </div>
+
+                <!-- Cognome -->
+                <div class="data-item">
+                    <span class="data-label">Cognome:</span>
+                    <span class="data-value">{{ hasValue(profile.cognome) ? profile.cognome : 'Non specificato' }}</span>
                 </div>
 
                 <!-- Email -->
@@ -51,24 +48,16 @@
                 </div>
 
                 <!-- Telefono -->
-                <div class="data-item" *ngIf="hasValue(profile.telefono)">
-                    <span class="data-label">Telefono:</span>
-                    <span class="data-value">{{ profile.telefono }}</span>
-                </div>
-
-                <!-- Indirizzo -->
-                <div class="data-item" *ngIf="hasValue(profile.indirizzo)">
-                    <span class="data-label">Indirizzo:</span>
-                    <span class="data-value">{{ profile.indirizzo }}</span>
-                </div>
-
-                <!-- Ruolo -->
                 <div class="data-item">
-                    <span class="data-label">Ruolo:</span>
-                    <span class="data-value role-badge">{{ getRoleLabel(profile.ruoli[0]) }}</span>
+                    <span class="data-label">Numero di telefono:</span>
+                    <span class="data-value">{{ hasValue(profile.telefono) ? profile.telefono : 'Non specificato' }}</span>
                 </div>
 
-                <!-- Ultimo accesso -->
+                <!-- Tipo Ruolo -->
+                <div class="data-item">
+                    <span class="data-label">Tipo Ruolo:</span>
+                    <span class="data-value role-badge">{{ getRoleLabel(profile.ruoli && profile.ruoli.length > 0 ? profile.ruoli[0] : undefined) }}</span>
+                </div>
             </div>
         </div>
     </mat-card-content>

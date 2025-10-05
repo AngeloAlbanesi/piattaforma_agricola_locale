@@ -19,14 +19,12 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
-    username: string;
     email: string;
     password: string;
     nome: string;
     cognome: string;
     ruolo: string;
     telefono?: string;
-    indirizzo?: string;
     datiAzienda?: {
         nomeAzienda: string;
         partitaIva: string;

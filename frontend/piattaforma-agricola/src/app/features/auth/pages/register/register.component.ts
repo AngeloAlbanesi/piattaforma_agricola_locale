@@ -93,12 +93,10 @@ export class RegisterComponent {
             // Dati personali
             nome: ['', [Validators.required, Validators.minLength(2)]],
             cognome: ['', [Validators.required, Validators.minLength(2)]],
-            username: ['', [Validators.required, Validators.minLength(3), Validators.pattern('^[a-zA-Z0-9_]+$')]],
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$')]],
             confirmPassword: ['', [Validators.required]],
             telefono: ['', [Validators.pattern('^[0-9]{10}$')]],
-            indirizzo: [''],
             ruolo: ['', [Validators.required]],
 
             // Dati aziendali (condizionali)
@@ -180,12 +178,10 @@ export class RegisterComponent {
         const registerRequest: RegisterRequest = {
             nome: formValue.nome,
             cognome: formValue.cognome,
-            username: formValue.username,
             email: formValue.email,
             password: formValue.password,
             ruolo: formValue.ruolo,
-            telefono: formValue.telefono || undefined,
-            indirizzo: formValue.indirizzo || undefined
+            telefono: formValue.telefono || undefined
         };
 
         // Aggiungi dati aziendali se il ruolo li richiede
@@ -289,8 +285,6 @@ export class RegisterComponent {
 
         if (control.errors['pattern']) {
             switch (field) {
-                case 'username':
-                    return 'Solo lettere, numeri e underscore';
                 case 'password':
                     return 'Deve contenere almeno una maiuscola, una minuscola e un numero';
                 case 'telefono':

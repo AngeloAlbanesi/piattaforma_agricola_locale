@@ -48,49 +48,16 @@
           <span class="data-value">{{ company.partitaIva }}</span>
         </div>
 
-        <!-- Tipologia azienda -->
-        <div class="data-item">
-          <span class="data-label">Tipologia:</span>
-          <span class="data-value type-badge">{{ getCompanyTypeLabel(company.tipologiaAzienda) }}</span>
-        </div>
-
-        <!-- Indirizzo completo -->
+        <!-- Indirizzo azienda -->
         <div class="data-item full-width">
-          <span class="data-label">Indirizzo:</span>
-          <span class="data-value">{{ formatFullAddress(company) }}</span>
+          <span class="data-label">Indirizzo azienda:</span>
+          <span class="data-value">{{ getIndirizzoAzienda() }}</span>
         </div>
 
-        <!-- Email aziendale -->
-        <div class="data-item">
-          <span class="data-label">Email:</span>
-          <span class="data-value">{{ company.email }}</span>
-        </div>
-
-        <!-- Telefono aziendale -->
-        <div class="data-item">
-          <span class="data-label">Telefono:</span>
-          <span class="data-value">{{ company.telefono }}</span>
-        </div>
-
-        <!-- Sito web -->
-        <div class="data-item full-width" *ngIf="hasValue(company.sito)">
-          <span class="data-label">Sito web:</span>
-          <span class="data-value">
-            <a 
-              [href]="company.sito" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              class="website-link">
-              {{ company.sito }}
-              <mat-icon class="link-icon">open_in_new</mat-icon>
-            </a>
-          </span>
-        </div>
-
-        <!-- Descrizione -->
-        <div class="data-item full-width" *ngIf="hasValue(company.descrizione)">
-          <span class="data-label">Descrizione:</span>
-          <span class="data-value description">{{ company.descrizione }}</span>
+        <!-- Descrizione azienda -->
+        <div class="data-item full-width">
+          <span class="data-label">Descrizione azienda:</span>
+          <span class="data-value description">{{ getDescrizioneAzienda() }}</span>
         </div>
 
         <!-- Stato accreditamento -->
@@ -101,12 +68,6 @@
             class="status-chip">
             {{ getAccreditationStatusLabel(company.statoAccreditamento) }}
           </mat-chip>
-        </div>
-
-        <!-- Data registrazione -->
-        <div class="data-item">
-          <span class="data-label">Data registrazione:</span>
-          <span class="data-value">{{ formatDate(company.dataRegistrazione) }}</span>
         </div>
       </div>
     </div>

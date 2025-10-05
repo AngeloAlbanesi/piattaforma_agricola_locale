@@ -4,26 +4,29 @@
         <div class="header-content">
             <h1 class="page-title">Pacchetti Agricoli</h1>
             <p class="page-subtitle">Scopri le nostre selezioni speciali di prodotti agricoli a prezzi vantaggiosi</p>
-
+            
             <!-- Search Bar -->
             <div class="search-section">
                 <app-search-box placeholder="Cerca pacchetti per nome o categoria..." appearance="outline"
                     (search)="onSearch($event)">
                 </app-search-box>
-
+                
                 <button mat-stroked-button (click)="toggleFilters()" class="filters-toggle">
                     <mat-icon>filter_list</mat-icon>
                     Filtri
-                    <mat-chip *ngIf="getActiveFiltersCount() > 0" color="primary" class="filters-count">
+                    @if (getActiveFiltersCount() > 0) {
+                    <mat-chip color="primary" class="filters-count">
                         {{ getActiveFiltersCount() }}
                     </mat-chip>
+                    }
                 </button>
             </div>
         </div>
     </section>
 
     <!-- Filters Panel -->
-    <section class="filters-section" *ngIf="showFilters">
+    @if (showFilters) {
+    <section class="filters-section">
         <div class="filters-content">
             <app-filters-panel [categoryOptions]="getCategorieOptions()" [sortOptions]="ordinamentoOptions"
                 [priceRange]="{ min: 0, max: 1000 }" [checkboxOptions]="[
@@ -35,15 +38,17 @@
             </app-filters-panel>
         </div>
     </section>
+    }
 
+    @if (loading) {
     <!-- Loading State -->
-    <div class="loading-container" *ngIf="loading">
+    <div class="loading-container">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
         <p>Caricamento pacchetti...</p>
     </div>
-
+    } @else if (error) {
     <!-- Error State -->
-    <div class="error-container" *ngIf="error && !loading">
+    <div class="error-container">
         <mat-icon class="error-icon">error_outline</mat-icon>
         <h3>Oops! Qualcosa è andato storto</h3>
         <p>{{ error }}</p>
@@ -51,18 +56,20 @@
             Riprova
         </button>
     </div>
-
+    } @else {
     <!-- Results Section -->
-    <section class="results-section" *ngIf="!loading && !error">
+    <section class="results-section">
         <!-- Results Header -->
         <div class="results-header">
             <div class="results-info">
                 <h2 class="results-title">
                     {{ totalCount }} {{ totalCount === 1 ? 'Pacchetto' : 'Pacchetti' }} Trovati
                 </h2>
-                <p class="results-subtitle" *ngIf="filters.query">
+                @if (filters.query) {
+                <p class="results-subtitle">
                     Ricerca per: <strong>"{{ filters.query }}"</strong>
                 </p>
+                }
             </div>
 
             <!-- Quick Filters -->
@@ -71,9 +78,11 @@
                     <mat-label>Categoria</mat-label>
                     <mat-select (selectionChange)="onCategoriaChange($event.value)">
                         <mat-option value="">Tutte le categorie</mat-option>
-                        <mat-option *ngFor="let categoria of categorieOptions" [value]="categoria">
+                        @for (categoria of categorieOptions; track categoria) {
+                        <mat-option [value]="categoria">
                             {{ categoria }}
                         </mat-option>
+                        }
                     </mat-select>
                 </mat-form-field>
 
@@ -81,9 +90,11 @@
                     <mat-label>Ordina per</mat-label>
                     <mat-select (selectionChange)="onOrdinamentoChange($event.value)">
                         <mat-option value="">Rilevanza</mat-option>
-                        <mat-option *ngFor="let option of ordinamentoOptions" [value]="option.value">
+                        @for (option of ordinamentoOptions; track option.value) {
+                        <mat-option [value]="option.value">
                             {{ option.label }}
                         </mat-option>
+                        }
                     </mat-select>
                 </mat-form-field>
 
@@ -94,20 +105,23 @@
         </div>
 
         <!-- Packages Grid -->
-        <div class="packages-grid" *ngIf="pacchetti.length > 0">
-            <mat-card class="package-card" *ngFor="let pacchetto of pacchetti"
-                (click)="navigateToPacchettoDetail(pacchetto.id)">
+        @if (pacchetti.length > 0) {
+        <div class="packages-grid">
+            @for (pacchetto of pacchetti; track pacchetto.id) {
+            <mat-card class="package-card" (click)="navigateToPacchettoDetail(pacchetto.id)">
                 <div class="package-image-container">
                     <img [src]="pacchetto.immagineUrl || '/assets/images/placeholder-package.jpg'"
                         [alt]="pacchetto.nome" class="package-image">
 
                     <!-- Sconto Badge -->
-                    <div class="discount-badge" *ngIf="hasSconto(pacchetto.prezzo, pacchetto.prezzoScontato)">
+                    @if (hasSconto(pacchetto.prezzo, pacchetto.prezzoScontato)) {
+                    <div class="discount-badge">
                         -{{ calculateSconto(pacchetto.prezzo, pacchetto.prezzoScontato) }}%
                     </div>
+                    }
 
                     <!-- Availability Badge -->
-                    <div class="availability-badge" [ngClass]="getAvailabilityColor(pacchetto.quantitaDisponibile)">
+                    <div class="availability-badge" [class]="getAvailabilityColor(pacchetto.quantitaDisponibile)">
                         {{ getAvailabilityText(pacchetto.quantitaDisponibile) }}
                     </div>
                 </div>
@@ -125,34 +139,47 @@
                         > 120 ? '...' : '') : 'Nessuna descrizione disponibile' }}
                     </p>
 
-                    <ng-container *ngIf="(pacchetto.prodotti?.length || 0) > 0; else noProducts">
+                    @if ((pacchetto.prodotti?.length || 0) > 0) {
                         <div class="package-products">
                             <h4>Contenuto:</h4>
                             <div class="products-list">
-                                <ng-container
-                                    *ngFor="let elemento of (pacchetto.prodotti || []).slice(0, 3); let last = last">
-                                    <span class="product-item">{{ elemento.prodotto.nome }}{{ !last ? ',' : '' }}</span>
-                                </ng-container>
-                                <span class="more-products" *ngIf="(pacchetto.prodotti?.length || 0) > 3">
+                                @for (elemento of (pacchetto.prodotti || []).slice(0, 3); track $index) {
+                                    <span class="product-item">{{ elemento.prodotto.nome }}{{ !$last ? ',' : '' }}</span>
+                                }
+                                @if ((pacchetto.prodotti?.length || 0) > 3) {
+                                <span class="more-products">
                                     +{{ (pacchetto.prodotti?.length || 0) - 3 }} prodotti
                                 </span>
+                                }
                             </div>
                         </div>
-                    </ng-container>
-                    <ng-template #noProducts></ng-template>
+                    } @else {
+                        <div class="package-products no-products">
+                            <h4>Contenuto:</h4>
+                            <div class="products-list">
+                                <span>Nessun prodotto incluso</span>
+                            </div>
+                        </div>
+                    }
 
 
                     <div class="package-pricing">
                         <div class="price-container">
-                            <span class="current-price" *ngIf="hasSconto(pacchetto.prezzo, pacchetto.prezzoScontato)">
+                            @if (hasSconto(pacchetto.prezzo, pacchetto.prezzoScontato)) {
+                            <span class="current-price">
                                 {{ formatCurrency(pacchetto.prezzoScontato || pacchetto.prezzo) }}
                             </span>
-                            <span class="current-price" *ngIf="!hasSconto(pacchetto.prezzo, pacchetto.prezzoScontato)">
+                            }
+                            @if (!hasSconto(pacchetto.prezzo, pacchetto.prezzoScontato)) {
+                            <span class="current-price">
                                 {{ formatCurrency(pacchetto.prezzo) }}
                             </span>
-                            <span class="original-price" *ngIf="hasSconto(pacchetto.prezzo, pacchetto.prezzoScontato)">
+                            }
+                            @if (hasSconto(pacchetto.prezzo, pacchetto.prezzoScontato)) {
+                            <span class="original-price">
                                 {{ formatCurrency(pacchetto.prezzo) }}
                             </span>
+                            }
                         </div>
 
                         <div class="package-info">
@@ -168,44 +195,58 @@
                     </button>
                 </mat-card-actions>
             </mat-card>
+            }
         </div>
+        }
 
         <!-- Empty State -->
-        <div class="empty-state" *ngIf="pacchetti.length === 0 && !loading">
+        @if (pacchetti.length === 0 && !loading) {
+        <div class="empty-state">
             <mat-icon class="empty-icon">inventory_2</mat-icon>
             <h3>Nessun pacchetto trovato</h3>
-            <p *ngIf="getActiveFiltersCount() > 0">
+            @if (getActiveFiltersCount() > 0) {
+            <p>
                 Prova a modificare i filtri di ricerca o
                 <button mat-button color="primary" (click)="resetAllFilters()">rimuovi tutti i filtri</button>
             </p>
-            <p *ngIf="getActiveFiltersCount() === 0">
+            }
+            @if (getActiveFiltersCount() === 0) {
+            <p>
                 Non ci sono pacchetti disponibili al momento. Riprova più tardi.
             </p>
+            }
 
             <div class="empty-actions">
-                <button mat-raised-button color="primary" (click)="resetAllFilters()"
-                    *ngIf="getActiveFiltersCount() > 0">
+                @if (getActiveFiltersCount() > 0) {
+                <button mat-raised-button color="primary" (click)="resetAllFilters()">
                     Rimuovi Filtri
                 </button>
+                }
                 <button mat-stroked-button color="primary" routerLink="/">
                     <mat-icon>home</mat-icon>
                     Torna alla Home
                 </button>
             </div>
         </div>
+        }
 
         <!-- Pagination -->
-        <div class="pagination-container" *ngIf="totalCount > pageSize">
+        @if (totalCount > pageSize) {
+        <div class="pagination-container">
             <mat-paginator [length]="totalCount" [pageSize]="pageSize" [pageSizeOptions]="[6, 12, 24, 48]"
                 (page)="onPageChange($event)" showFirstLastButtons>
             </mat-paginator>
         </div>
+        }
     </section>
+    }
 
     <!-- Quick Actions (Floating) -->
-    <div class="quick-actions" *ngIf="!loading && !error && pacchetti.length > 0">
+    @if (!loading && !error && pacchetti.length > 0) {
+    <div class="quick-actions">
         <button mat-fab color="primary" class="scroll-to-top" (click)="scrollToTop()">
             <mat-icon>keyboard_arrow_up</mat-icon>
         </button>
     </div>
+    }
 </div>

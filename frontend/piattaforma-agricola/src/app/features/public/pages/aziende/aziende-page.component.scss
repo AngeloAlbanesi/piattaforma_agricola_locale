@@ -2,18 +2,6 @@
 @use '../../../../../styles/variables' as vars;
 @use 'sass:color' as color;
 
-// Animazioni
-@keyframes slideToggle {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 .aziende-container {
     max-width: 1400px;
@@ -110,7 +98,7 @@
     // Pannello filtri
     .filters-panel {
         margin-bottom: 24px;
-        animation: slideToggle 0.3s ease-in-out;
+        /* Animazione Angular rimossa. L'elemento è controllato da @if. */
 
         .filters-card {
             background-color: #f8f9fa;

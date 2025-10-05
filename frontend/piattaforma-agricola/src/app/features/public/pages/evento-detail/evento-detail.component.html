@@ -12,14 +12,15 @@
         </div>
     </div>
 
+@if (isLoading) {
     <!-- Stato di caricamento -->
-    <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-container">
         <mat-spinner diameter="50"></mat-spinner>
         <p>Caricamento dettagli evento...</p>
     </div>
-
+} @else if (error) {
     <!-- Messaggio di errore -->
-    <div class="error-container" *ngIf="error && !isLoading">
+    <div class="error-container">
         <mat-card class="error-card">
             <mat-card-content>
                 <div class="error-content">
@@ -34,22 +35,24 @@
             </mat-card-content>
         </mat-card>
     </div>
-
+} @else if (evento) {
     <!-- Contenuto principale dell'evento -->
-    <div class="evento-content" *ngIf="evento && !isLoading">
+    <div class="evento-content">
         <!-- Badge di stato -->
         <div class="status-badges">
             <mat-chip-listbox>
-                <mat-chip [ngClass]="'status-chip ' + getEventStatus().text.toLowerCase()"
+                <mat-chip [class]="'status-chip ' + getEventStatus().text.toLowerCase()"
                     [style.background-color]="getEventStatus().color">
                     <mat-icon>{{ getEventStatus().icon }}</mat-icon>
                     {{ getEventStatus().text }}
                 </mat-chip>
 
-                <mat-chip *ngIf="evento.costo !== undefined" [ngClass]="evento.costo === 0 ? 'free-chip' : 'paid-chip'">
+                @if (evento.costo !== undefined) {
+                <mat-chip [class.free-chip]="evento.costo === 0" [class.paid-chip]="evento.costo !== 0">
                     <mat-icon>{{ evento.costo === 0 ? 'card_giftcard' : 'euro' }}</mat-icon>
                     {{ evento.costo === 0 ? 'Gratuito' : '€' + evento.costo.toFixed(2) }}
                 </mat-chip>
+                }
             </mat-chip-listbox>
         </div>
 
@@ -66,9 +69,11 @@
             </mat-card-header>
 
             <!-- Immagine evento -->
-            <div class="event-image-container" *ngIf="evento.immagineUrl">
+            @if (evento.immagineUrl) {
+            <div class="event-image-container">
                 <img [src]="evento.immagineUrl" [alt]="evento.nome" class="event-image">
             </div>
+            }
 
             <mat-card-content class="event-content">
                 <!-- Informazioni principali -->
@@ -99,7 +104,8 @@
                         </div>
                     </div>
 
-                    <div class="info-item" *ngIf="hasLocation()">
+                    @if (hasLocation()) {
+                    <div class="info-item">
                         <mat-icon class="info-icon">location_on</mat-icon>
                         <div class="info-content">
                             <span class="info-label">Luogo</span>
@@ -110,28 +116,34 @@
                             </button>
                         </div>
                     </div>
+                    }
 
-                    <div class="info-item" *ngIf="hasOrganizer()">
+                    @if (hasOrganizer()) {
+                    <div class="info-item">
                         <mat-icon class="info-icon">business</mat-icon>
                         <div class="info-content">
                             <span class="info-label">Organizzatore</span>
                             <span class="info-value">{{ evento.organizzatore?.nomeAzienda }}</span>
                         </div>
                     </div>
+                    }
 
                     <div class="info-item">
                         <mat-icon class="info-icon">people</mat-icon>
                         <div class="info-content">
                             <span class="info-label">Partecipanti</span>
                             <span class="info-value">{{ evento.numeroPartecipanti || 0 }}
-                                <span *ngIf="evento.numeroMassimoPartecipanti">/ {{ evento.numeroMassimoPartecipanti
-                                    }}</span>
+                                @if (evento.numeroMassimoPartecipanti) {
+                                    / {{ evento.numeroMassimoPartecipanti }}
+                                }
                             </span>
-                            <div class="availability-bar" *ngIf="evento.numeroMassimoPartecipanti">
+                            @if (evento.numeroMassimoPartecipanti) {
+                            <div class="availability-bar">
                                 <div class="availability-fill" [style.width.%]="getAvailabilityPercentage()"
                                     [style.background-color]="getAvailabilityColor()">
                                 </div>
                             </div>
+                            }
                             <span class="availability-status" [style.color]="getAvailabilityStatus().color">
                                 {{ getAvailabilityStatus().text }}
                             </span>
@@ -140,105 +152,131 @@
                 </div>
 
                 <!-- Descrizione evento -->
-                <div class="event-description" *ngIf="hasDescription()">
+                @if (hasDescription()) {
+                <div class="event-description">
                     <mat-divider></mat-divider>
                     <h3>Descrizione</h3>
                     <div class="description-content" [innerHTML]="sanitizeHtml(evento.descrizione || '')"></div>
                 </div>
+                }
 
                 <!-- Informazioni di contatto -->
-                <div class="contact-info" *ngIf="hasContactInfo()">
+                @if (hasContactInfo()) {
+                <div class="contact-info">
                     <mat-divider></mat-divider>
                     <h3>Informazioni di contatto</h3>
                     <div class="contact-grid">
-                        <div class="contact-item" *ngFor="let contatto of evento.contatti || []"
-                            [ngSwitch]="contatto.tipo">
-
-                            <!-- Email -->
-                            <div *ngSwitchCase="'email'" class="contact-email">
-                                <mat-icon class="contact-icon">email</mat-icon>
-                                <span class="contact-value">{{ contatto.valore }}</span>
-                                <button mat-icon-button (click)="sendEmail()" aria-label="Invia email">
-                                    <mat-icon>send</mat-icon>
-                                </button>
-                            </div>
-
-                            <!-- Telefono -->
-                            <div *ngSwitchCase="'telefono'" class="contact-phone">
-                                <mat-icon class="contact-icon">phone</mat-icon>
-                                <span class="contact-value">{{ contatto.valore }}</span>
-                                <button mat-icon-button (click)="callPhone()" aria-label="Chiama">
-                                    <mat-icon>call</mat-icon>
-                                </button>
-                            </div>
-
-                            <!-- Sito web -->
-                            <div *ngSwitchCase="'sito'" class="contact-website">
-                                <mat-icon class="contact-icon">language</mat-icon>
-                                <span class="contact-value">{{ contatto.valore }}</span>
-                                <button mat-icon-button (click)="openExternalLink(contatto.valore)"
-                                    aria-label="Visita sito">
-                                    <mat-icon>open_in_new</mat-icon>
-                                </button>
-                            </div>
+                        @for (contatto of evento.contatti || []; track contatto.tipo) {
+                        <div class="contact-item">
+                            @switch (contatto.tipo) {
+                                @case ('email') {
+                                    <div class="contact-email">
+                                        <mat-icon class="contact-icon">email</mat-icon>
+                                        <span class="contact-value">{{ contatto.valore }}</span>
+                                        <button mat-icon-button (click)="sendEmail()" aria-label="Invia email">
+                                            <mat-icon>send</mat-icon>
+                                        </button>
+                                    </div>
+                                }
+                                @case ('telefono') {
+                                    <div class="contact-phone">
+                                        <mat-icon class="contact-icon">phone</mat-icon>
+                                        <span class="contact-value">{{ contatto.valore }}</span>
+                                        <button mat-icon-button (click)="callPhone()" aria-label="Chiama">
+                                            <mat-icon>call</mat-icon>
+                                        </button>
+                                    </div>
+                                }
+                                @case ('sito') {
+                                    <div class="contact-website">
+                                        <mat-icon class="contact-icon">language</mat-icon>
+                                        <span class="contact-value">{{ contatto.valore }}</span>
+                                        <button mat-icon-button (click)="openExternalLink(contatto.valore)"
+                                            aria-label="Visita sito">
+                                            <mat-icon>open_in_new</mat-icon>
+                                        </button>
+                                    </div>
+                                }
+                            }
                         </div>
+                        }
                     </div>
                 </div>
+                }
 
                 <!-- Requisiti di partecipazione -->
-                <div class="requirements"
-                    *ngIf="evento.requisitiPartecipazione && evento.requisitiPartecipazione.length > 0">
+                @if (evento.requisitiPartecipazione && evento.requisitiPartecipazione.length > 0) {
+                <div class="requirements">
                     <mat-divider></mat-divider>
                     <h3>Requisiti di partecipazione</h3>
                     <ul class="requirements-list">
-                        <li *ngFor="let requisito of evento.requisitiPartecipazione">
+                        @for (requisito of evento.requisitiPartecipazione; track $index) {
+                        <li>
                             {{ requisito }}
                         </li>
+                        }
                     </ul>
                 </div>
+                }
 
                 <!-- Materiali forniti -->
-                <div class="materials" *ngIf="evento.materialiForniti && evento.materialiForniti.length > 0">
+                @if (evento.materialiForniti && evento.materialiForniti.length > 0) {
+                <div class="materials">
                     <mat-divider></mat-divider>
                     <h3>Materiali forniti</h3>
                     <mat-chip-listbox>
-                        <mat-chip *ngFor="let materiale of evento.materialiForniti">
+                        @for (materiale of evento.materialiForniti; track $index) {
+                        <mat-chip>
                             {{ materiale }}
                         </mat-chip>
+                        }
                     </mat-chip-listbox>
                 </div>
+                }
 
                 <!-- Aziende partecipanti -->
-                <div class="participating-companies"
-                    *ngIf="evento.aziendePartecipanti && evento.aziendePartecipanti.length > 0">
+                @if (evento.aziendePartecipanti && evento.aziendePartecipanti.length > 0) {
+                <div class="participating-companies">
                     <mat-divider></mat-divider>
                     <h3>Aziende partecipanti</h3>
                     <div class="companies-grid">
-                        <mat-card class="company-card" *ngFor="let azienda of evento.aziendePartecipanti">
+                        @for (azienda of evento.aziendePartecipanti; track azienda.nomeAzienda) {
+                        <mat-card class="company-card">
                             <mat-card-content>
                                 <h4>{{ azienda.nomeAzienda }}</h4>
-                                <p *ngIf="azienda.descrizione">{{ azienda.descrizione }}</p>
-                                <mat-chip-listbox
-                                    *ngIf="azienda.tipologiaProdotti && azienda.tipologiaProdotti.length > 0">
-                                    <mat-chip *ngFor="let prodotto of azienda.tipologiaProdotti" size="small">
+                                @if (azienda.descrizione) {
+                                <p>{{ azienda.descrizione }}</p>
+                                }
+                                @if (azienda.tipologiaProdotti && azienda.tipologiaProdotti.length > 0) {
+                                <mat-chip-listbox>
+                                    @for (prodotto of azienda.tipologiaProdotti; track $index) {
+                                    <mat-chip size="small">
                                         {{ prodotto }}
                                     </mat-chip>
+                                    }
                                 </mat-chip-listbox>
-                                <span *ngIf="azienda.stand" class="stand-info">
+                                }
+                                @if (azienda.stand) {
+                                <span class="stand-info">
                                     <mat-icon>store</mat-icon>
                                     Stand: {{ azienda.stand }}
                                 </span>
+                                }
                             </mat-card-content>
                         </mat-card>
+                        }
                     </div>
                 </div>
+                }
 
                 <!-- Programma evento -->
-                <div class="event-program" *ngIf="evento.programma && evento.programma.length > 0">
+                @if (evento.programma && evento.programma.length > 0) {
+                <div class="event-program">
                     <mat-divider></mat-divider>
                     <h3>Programma dell'evento</h3>
                     <div class="program-timeline">
-                        <div class="program-item" *ngFor="let item of evento.programma">
+                        @for (item of evento.programma; track $index) {
+                        <div class="program-item">
                             <div class="program-time">
                                 <span class="time-start">{{ getFormattedTime(item.oraInizio) }}</span>
                                 <span class="time-separator">-</span>
@@ -246,43 +284,60 @@
                             </div>
                             <div class="program-content">
                                 <h4>{{ item.titolo }}</h4>
-                                <p *ngIf="item.descrizione">{{ item.descrizione }}</p>
-                                <div class="program-meta" *ngIf="item.relatore || item.luogo">
-                                    <span *ngIf="item.relatore" class="meta-item">
+                                @if (item.descrizione) {
+                                <p>{{ item.descrizione }}</p>
+                                }
+                                @if (item.relatore || item.luogo) {
+                                <div class="program-meta">
+                                    @if (item.relatore) {
+                                    <span class="meta-item">
                                         <mat-icon>person</mat-icon>
                                         {{ item.relatore }}
                                     </span>
-                                    <span *ngIf="item.luogo" class="meta-item">
+                                    }
+                                    @if (item.luogo) {
+                                    <span class="meta-item">
                                         <mat-icon>location_on</mat-icon>
                                         {{ item.luogo }}
                                     </span>
+                                    }
                                 </div>
+                                }
                             </div>
                         </div>
+                        }
                     </div>
                 </div>
+                }
 
                 <!-- Note aggiuntive -->
-                <div class="additional-notes" *ngIf="evento.note">
+                @if (evento.note) {
+                <div class="additional-notes">
                     <mat-divider></mat-divider>
                     <h3>Note aggiuntive</h3>
                     <div class="notes-content" [innerHTML]="sanitizeHtml(evento.note)"></div>
                 </div>
+                }
             </mat-card-content>
 
             <!-- Azioni principali -->
-            <mat-card-actions class="event-actions" *ngIf="hasRegistrationInfo()">
+            @if (hasRegistrationInfo()) {
+            <mat-card-actions class="event-actions">
                 <button mat-raised-button color="primary" (click)="registerToEvent()" [disabled]="!canRegister"
                     class="register-button">
                     <mat-icon>how_to_reg</mat-icon>
                     {{ isPast ? 'Evento concluso' : isFull ? 'Posti esauriti' : 'Iscriviti ora' }}
                 </button>
 
-                <span class="registration-info" *ngIf="canRegister && getRegistrationTimeLeft()">
+                @if (canRegister && getRegistrationTimeLeft()) {
+                <span class="registration-info">
                     <mat-icon>schedule</mat-icon>
                     {{ getRegistrationTimeLeft() }}
                 </span>
+                }
             </mat-card-actions>
+            }
         </mat-card>
     </div>
+}
 </div>

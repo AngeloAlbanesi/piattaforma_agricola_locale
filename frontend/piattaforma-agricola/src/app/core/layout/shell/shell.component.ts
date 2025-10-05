@@ -1,5 +1,13 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 interface NavItem {
     label: string;
@@ -12,7 +20,21 @@ interface NavItem {
     selector: 'app-shell',
     templateUrl: './shell.component.html',
     styleUrls: ['./shell.component.scss'],
-    standalone: false,
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatToolbarModule,
+        MatSidenavModule,
+        MatListModule,
+        MatIconModule,
+        MatSnackBarModule,
+        MatButtonModule,
+        MatChipsModule,
+        RouterOutlet,
+        RouterLink,
+        RouterLinkActive
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShellComponent {

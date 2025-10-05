@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -42,17 +41,6 @@ import { SearchBoxComponent } from '../../shared/components/search/search-box/se
   ],
   templateUrl: './aziende-page.component.html',
   styleUrls: ['./aziende-page.component.scss'],
-  animations: [
-    trigger('slideToggle', [
-      state('void', style({
-        opacity: 0,
-        transform: 'translateY(-10px)'
-      })),
-      transition('void <=> *', [
-        animate('300ms ease-in-out')
-      ])
-    ])
-  ]
 })
 export class AziendePageComponent implements OnInit, OnDestroy {
   aziende: PublicAziendaSummaryDTO[] = [];

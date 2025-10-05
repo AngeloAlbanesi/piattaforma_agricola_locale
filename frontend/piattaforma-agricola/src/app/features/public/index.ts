@@ -1,2 +1,1 @@
-export { PublicModule } from './public.module';
-export { PublicRoutingModule } from './public-routing.module';
+export { PUBLIC_ROUTES } from './public.routes';

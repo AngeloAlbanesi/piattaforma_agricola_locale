@@ -1,0 +1,224 @@
+<div class="eventi-page-container">
+  <!-- Header Section -->
+  <section class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Eventi Agricoli</h1>
+      <p class="page-subtitle">Scopri gli eventi, workshop e degustazioni organizzati dalle aziende agricole locali</p>
+      
+      <!-- Search Bar -->
+      <div class="search-section">
+        <app-search-box 
+          placeholder="Cerca eventi per nome, luogo o categoria..." 
+          appearance="outline"
+          (search)="onSearch($event)">
+        </app-search-box>
+        
+        <button mat-stroked-button (click)="toggleFilters()" class="filters-toggle">
+          <mat-icon>filter_list</mat-icon>
+          Filtri
+          <mat-chip *ngIf="getActiveFiltersCount() > 0" color="primary" class="filters-count">
+            {{ getActiveFiltersCount() }}
+          </mat-chip>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters Panel -->
+  <section class="filters-section" *ngIf="showFilters">
+    <div class="filters-content">
+      <div class="custom-filters">
+        <h3>Filtri Eventi</h3>
+        
+        <!-- Date Range Filter -->
+        <div class="date-range-filter">
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>Periodo</mat-label>
+            <mat-date-range-picker [formGroup]="dateRangeForm" (change)="onDataRangeChange()">
+              <input matStartDate formControlName="dataInizio" placeholder="Data inizio">
+              <input matEndDate formControlName="dataFine" placeholder="Data fine">
+            </mat-date-range-picker>
+          </mat-form-field>
+        </div>
+        
+        <!-- Location Filter -->
+        <mat-form-field appearance="outline" class="location-field">
+          <mat-label>Luogo</mat-label>
+          <input matInput 
+                 placeholder="Città o località" 
+                 (input)="onLuogoChange($event.target.value)">
+        </mat-form-field>
+        
+        <!-- Toggle Filters -->
+        <div class="toggle-filters">
+          <mat-slide-toggle 
+            (change)="onGratuitoChange($event.checked)"
+            class="filter-toggle">
+            Solo eventi gratuiti
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle 
+            (change)="onDisponibilitaChange($event.checked)"
+            class="filter-toggle">
+            Solo con disponibilità
+          </mat-slide-toggle>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    <p>Caricamento eventi...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !loading">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <h3>Oops! Qualcosa è andato storto</h3>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="retryLoad()">
+      Riprova
+    </button>
+  </div>
+
+  <!-- Results Section -->
+  <section class="results-section" *ngIf="!loading && !error">
+    <!-- Results Header -->
+    <div class="results-header">
+      <div class="results-info">
+        <h2 class="results-title">
+          {{ totalCount }} {{ totalCount === 1 ? 'Evento' : 'Eventi' }} Trovati
+        </h2>
+        <p class="results-subtitle" *ngIf="filters.query">
+          Ricerca per: <strong>"{{ filters.query }}"</strong>
+        </p>
+      </div>
+      
+      <!-- Quick Filters -->
+      <div class="quick-filters">
+        <mat-form-field appearance="outline" class="quick-filter">
+          <mat-label>Ordina per</mat-label>
+          <mat-select (selectionChange)="onOrdinamentoChange($event.value)">
+            <mat-option value="">Rilevanza</mat-option>
+            <mat-option *ngFor="let option of ordinamentoOptions" [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="events-grid" *ngIf="eventi.length > 0">
+      <mat-card class="event-card" 
+                *ngFor="let evento of eventi"
+                (click)="navigateToEventoDetail(evento.id)">
+        <div class="event-image-container">
+          <img [src]="evento.immagineUrl || '/assets/images/placeholder-event.jpg'" 
+               [alt]="evento.nome" 
+               class="event-image">
+          
+          <!-- Event Status Badge -->
+          <div class="event-status-badge" 
+               [ngClass]="getStatoColor(evento.stato)">
+            {{ getStatoEvento(evento.stato) }}
+          </div>
+          
+          <!-- Event Type Badge -->
+          <div class="event-type-badge" *ngIf="isEventoInCorso(evento.dataOraInizio, evento.dataOraFine)">
+            In corso
+          </div>
+        </div>
+        
+        <mat-card-header>
+          <mat-card-title>{{ evento.nome }}</mat-card-title>
+          <mat-card-subtitle>
+            <div class="event-meta">
+              <span class="event-location">
+                <mat-icon>location_on</mat-icon>
+                {{ evento.luogo }}
+              </span>
+            </div>
+          </mat-card-subtitle>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <p class="event-description">
+            {{ evento.descrizione ? (evento.descrizione | slice:0:120) + (evento.descrizione.length > 120 ? '...' : '') : 'Nessuna descrizione disponibile' }}
+          </p>
+          
+          <div class="event-dates">
+            <div class="event-date">
+              <mat-icon>event</mat-icon>
+              <span class="date-label">Inizio:</span>
+              <span class="date-value">{{ formatDate(evento.dataOraInizio) }}</span>
+              <span class="time-value">{{ formatTime(evento.dataOraInizio) }}</span>
+            </div>
+            
+            <div class="event-date" *ngIf="evento.dataOraFine">
+              <mat-icon>event_available</mat-icon>
+              <span class="date-label">Fine:</span>
+              <span class="date-value">{{ formatDate(evento.dataOraFine) }}</span>
+              <span class="time-value">{{ formatTime(evento.dataOraFine) }}</span>
+            </div>
+          </div>
+          
+          <div class="event-organizer" *ngIf="evento.organizzatore">
+            <mat-icon>business</mat-icon>
+            <span>Organizzato da: {{ evento.organizzatore.nomeAzienda }}</span>
+          </div>
+        </mat-card-content>
+        
+        <mat-card-actions>
+          <button mat-button color="primary" class="view-details-btn">
+            Visualizza dettagli
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="eventi.length === 0 && !loading">
+      <mat-icon class="empty-icon">event</mat-icon>
+      <h3>Nessun evento trovato</h3>
+      <p *ngIf="getActiveFiltersCount() > 0">
+        Prova a modificare i filtri di ricerca o 
+        <button mat-button color="primary" (click)="resetAllFilters()">rimuovi tutti i filtri</button>
+      </p>
+      <p *ngIf="getActiveFiltersCount() === 0">
+        Non ci sono eventi disponibili al momento. Riprova più tardi.
+      </p>
+      
+      <div class="empty-actions">
+        <button mat-raised-button color="primary" (click)="resetAllFilters()" *ngIf="getActiveFiltersCount() > 0">
+          Rimuovi Filtri
+        </button>
+        <button mat-stroked-button color="primary" routerLink="/">
+          <mat-icon>home</mat-icon>
+          Torna alla Home
+        </button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="totalCount > pageSize">
+      <mat-paginator
+        [length]="totalCount"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[6, 12, 24, 48]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </section>
+
+  <!-- Quick Actions (Floating) -->
+  <div class="quick-actions" *ngIf="!loading && !error && eventi.length > 0">
+    <button mat-fab color="primary" class="scroll-to-top" (click)="scrollToTop()">
+      <mat-icon>keyboard_arrow_up</mat-icon>
+    </button>
+  </div>
+</div>

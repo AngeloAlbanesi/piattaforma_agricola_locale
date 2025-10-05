@@ -1,0 +1,14 @@
+// File creato per risolvere gli import mancanti nelle build
+// Aggiunge variabili e mixin minimi usati da componenti legacy
+
+$notification-bg: #fffbe6;
+$notification-border: #ffecb3;
+$notification-text: #333;
+
+.notification {
+  background: $notification-bg;
+  border: 1px solid $notification-border;
+  color: $notification-text;
+  padding: 12px;
+  border-radius: 6px;
+}

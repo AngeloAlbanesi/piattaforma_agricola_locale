@@ -91,3 +91,5 @@ context-engineering-intro/
 data/piattaforma_agricola.mv.db
 data/piattaforma_agricola.trace.db
 data/piattaforma_agricola.mv.db
+Api pubbliche/api pubbliche.json
+frontend/piattaforma-agricola/ACCESSIBILITY_GUIDE.md

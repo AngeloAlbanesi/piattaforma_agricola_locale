@@ -1,0 +1,288 @@
+<div class="evento-detail-container">
+    <!-- Header con navigazione -->
+    <div class="page-header">
+        <button mat-icon-button (click)="goBack()" class="back-button" aria-label="Torna indietro">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <div class="header-actions">
+            <button mat-icon-button (click)="shareEvent()" class="share-button" aria-label="Condividi evento">
+                <mat-icon>share</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stato di caricamento -->
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Caricamento dettagli evento...</p>
+    </div>
+
+    <!-- Messaggio di errore -->
+    <div class="error-container" *ngIf="error && !isLoading">
+        <mat-card class="error-card">
+            <mat-card-content>
+                <div class="error-content">
+                    <mat-icon class="error-icon">error_outline</mat-icon>
+                    <h3>Errore nel caricamento</h3>
+                    <p>{{ error }}</p>
+                    <button mat-raised-button color="primary" (click)="retry()">
+                        <mat-icon>refresh</mat-icon>
+                        Riprova
+                    </button>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Contenuto principale dell'evento -->
+    <div class="evento-content" *ngIf="evento && !isLoading">
+        <!-- Badge di stato -->
+        <div class="status-badges">
+            <mat-chip-listbox>
+                <mat-chip [ngClass]="'status-chip ' + getEventStatus().text.toLowerCase()"
+                    [style.background-color]="getEventStatus().color">
+                    <mat-icon>{{ getEventStatus().icon }}</mat-icon>
+                    {{ getEventStatus().text }}
+                </mat-chip>
+
+                <mat-chip *ngIf="evento.costo !== undefined" [ngClass]="evento.costo === 0 ? 'free-chip' : 'paid-chip'">
+                    <mat-icon>{{ evento.costo === 0 ? 'card_giftcard' : 'euro' }}</mat-icon>
+                    {{ evento.costo === 0 ? 'Gratuito' : '€' + evento.costo.toFixed(2) }}
+                </mat-chip>
+            </mat-chip-listbox>
+        </div>
+
+        <!-- Card principale con immagine e informazioni base -->
+        <mat-card class="main-event-card">
+            <mat-card-header class="event-header">
+                <div mat-card-avatar class="event-avatar" [style.background-color]="getEventTypeColor()">
+                    <mat-icon>event</mat-icon>
+                </div>
+                <mat-card-title class="event-title">{{ evento.nome }}</mat-card-title>
+                <mat-card-subtitle class="event-subtitle">
+                    {{ getFormattedDate(evento.dataOraInizio) }}
+                </mat-card-subtitle>
+            </mat-card-header>
+
+            <!-- Immagine evento -->
+            <div class="event-image-container" *ngIf="evento.immagineUrl">
+                <img [src]="evento.immagineUrl" [alt]="evento.nome" class="event-image">
+            </div>
+
+            <mat-card-content class="event-content">
+                <!-- Informazioni principali -->
+                <div class="event-info-grid">
+                    <div class="info-item">
+                        <mat-icon class="info-icon">schedule</mat-icon>
+                        <div class="info-content">
+                            <span class="info-label">Inizio</span>
+                            <span class="info-value">{{ getFormattedDate(evento.dataOraInizio) }} alle {{
+                                getFormattedTime(evento.dataOraInizio) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <mat-icon class="info-icon">schedule</mat-icon>
+                        <div class="info-content">
+                            <span class="info-label">Fine</span>
+                            <span class="info-value">{{ getFormattedDate(evento.dataOraFine) }} alle {{
+                                getFormattedTime(evento.dataOraFine) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <mat-icon class="info-icon">hourglass_full</mat-icon>
+                        <div class="info-content">
+                            <span class="info-label">Durata</span>
+                            <span class="info-value">{{ getFormattedDuration() }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item" *ngIf="hasLocation()">
+                        <mat-icon class="info-icon">location_on</mat-icon>
+                        <div class="info-content">
+                            <span class="info-label">Luogo</span>
+                            <span class="info-value">{{ evento.luogo }}</span>
+                            <button mat-button color="primary" (click)="openGoogleMaps()" class="map-button">
+                                <mat-icon>map</mat-icon>
+                                Mappa
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="info-item" *ngIf="hasOrganizer()">
+                        <mat-icon class="info-icon">business</mat-icon>
+                        <div class="info-content">
+                            <span class="info-label">Organizzatore</span>
+                            <span class="info-value">{{ evento.organizzatore?.nomeAzienda }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <mat-icon class="info-icon">people</mat-icon>
+                        <div class="info-content">
+                            <span class="info-label">Partecipanti</span>
+                            <span class="info-value">{{ evento.numeroPartecipanti || 0 }}
+                                <span *ngIf="evento.numeroMassimoPartecipanti">/ {{ evento.numeroMassimoPartecipanti
+                                    }}</span>
+                            </span>
+                            <div class="availability-bar" *ngIf="evento.numeroMassimoPartecipanti">
+                                <div class="availability-fill" [style.width.%]="getAvailabilityPercentage()"
+                                    [style.background-color]="getAvailabilityColor()">
+                                </div>
+                            </div>
+                            <span class="availability-status" [style.color]="getAvailabilityStatus().color">
+                                {{ getAvailabilityStatus().text }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descrizione evento -->
+                <div class="event-description" *ngIf="hasDescription()">
+                    <mat-divider></mat-divider>
+                    <h3>Descrizione</h3>
+                    <div class="description-content" [innerHTML]="sanitizeHtml(evento.descrizione || '')"></div>
+                </div>
+
+                <!-- Informazioni di contatto -->
+                <div class="contact-info" *ngIf="hasContactInfo()">
+                    <mat-divider></mat-divider>
+                    <h3>Informazioni di contatto</h3>
+                    <div class="contact-grid">
+                        <div class="contact-item" *ngFor="let contatto of evento.contatti || []"
+                            [ngSwitch]="contatto.tipo">
+
+                            <!-- Email -->
+                            <div *ngSwitchCase="'email'" class="contact-email">
+                                <mat-icon class="contact-icon">email</mat-icon>
+                                <span class="contact-value">{{ contatto.valore }}</span>
+                                <button mat-icon-button (click)="sendEmail()" aria-label="Invia email">
+                                    <mat-icon>send</mat-icon>
+                                </button>
+                            </div>
+
+                            <!-- Telefono -->
+                            <div *ngSwitchCase="'telefono'" class="contact-phone">
+                                <mat-icon class="contact-icon">phone</mat-icon>
+                                <span class="contact-value">{{ contatto.valore }}</span>
+                                <button mat-icon-button (click)="callPhone()" aria-label="Chiama">
+                                    <mat-icon>call</mat-icon>
+                                </button>
+                            </div>
+
+                            <!-- Sito web -->
+                            <div *ngSwitchCase="'sito'" class="contact-website">
+                                <mat-icon class="contact-icon">language</mat-icon>
+                                <span class="contact-value">{{ contatto.valore }}</span>
+                                <button mat-icon-button (click)="openExternalLink(contatto.valore)"
+                                    aria-label="Visita sito">
+                                    <mat-icon>open_in_new</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requisiti di partecipazione -->
+                <div class="requirements"
+                    *ngIf="evento.requisitiPartecipazione && evento.requisitiPartecipazione.length > 0">
+                    <mat-divider></mat-divider>
+                    <h3>Requisiti di partecipazione</h3>
+                    <ul class="requirements-list">
+                        <li *ngFor="let requisito of evento.requisitiPartecipazione">
+                            {{ requisito }}
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Materiali forniti -->
+                <div class="materials" *ngIf="evento.materialiForniti && evento.materialiForniti.length > 0">
+                    <mat-divider></mat-divider>
+                    <h3>Materiali forniti</h3>
+                    <mat-chip-listbox>
+                        <mat-chip *ngFor="let materiale of evento.materialiForniti">
+                            {{ materiale }}
+                        </mat-chip>
+                    </mat-chip-listbox>
+                </div>
+
+                <!-- Aziende partecipanti -->
+                <div class="participating-companies"
+                    *ngIf="evento.aziendePartecipanti && evento.aziendePartecipanti.length > 0">
+                    <mat-divider></mat-divider>
+                    <h3>Aziende partecipanti</h3>
+                    <div class="companies-grid">
+                        <mat-card class="company-card" *ngFor="let azienda of evento.aziendePartecipanti">
+                            <mat-card-content>
+                                <h4>{{ azienda.nomeAzienda }}</h4>
+                                <p *ngIf="azienda.descrizione">{{ azienda.descrizione }}</p>
+                                <mat-chip-listbox
+                                    *ngIf="azienda.tipologiaProdotti && azienda.tipologiaProdotti.length > 0">
+                                    <mat-chip *ngFor="let prodotto of azienda.tipologiaProdotti" size="small">
+                                        {{ prodotto }}
+                                    </mat-chip>
+                                </mat-chip-listbox>
+                                <span *ngIf="azienda.stand" class="stand-info">
+                                    <mat-icon>store</mat-icon>
+                                    Stand: {{ azienda.stand }}
+                                </span>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>
+
+                <!-- Programma evento -->
+                <div class="event-program" *ngIf="evento.programma && evento.programma.length > 0">
+                    <mat-divider></mat-divider>
+                    <h3>Programma dell'evento</h3>
+                    <div class="program-timeline">
+                        <div class="program-item" *ngFor="let item of evento.programma">
+                            <div class="program-time">
+                                <span class="time-start">{{ getFormattedTime(item.oraInizio) }}</span>
+                                <span class="time-separator">-</span>
+                                <span class="time-end">{{ getFormattedTime(item.oraFine) }}</span>
+                            </div>
+                            <div class="program-content">
+                                <h4>{{ item.titolo }}</h4>
+                                <p *ngIf="item.descrizione">{{ item.descrizione }}</p>
+                                <div class="program-meta" *ngIf="item.relatore || item.luogo">
+                                    <span *ngIf="item.relatore" class="meta-item">
+                                        <mat-icon>person</mat-icon>
+                                        {{ item.relatore }}
+                                    </span>
+                                    <span *ngIf="item.luogo" class="meta-item">
+                                        <mat-icon>location_on</mat-icon>
+                                        {{ item.luogo }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Note aggiuntive -->
+                <div class="additional-notes" *ngIf="evento.note">
+                    <mat-divider></mat-divider>
+                    <h3>Note aggiuntive</h3>
+                    <div class="notes-content" [innerHTML]="sanitizeHtml(evento.note)"></div>
+                </div>
+            </mat-card-content>
+
+            <!-- Azioni principali -->
+            <mat-card-actions class="event-actions" *ngIf="hasRegistrationInfo()">
+                <button mat-raised-button color="primary" (click)="registerToEvent()" [disabled]="!canRegister"
+                    class="register-button">
+                    <mat-icon>how_to_reg</mat-icon>
+                    {{ isPast ? 'Evento concluso' : isFull ? 'Posti esauriti' : 'Iscriviti ora' }}
+                </button>
+
+                <span class="registration-info" *ngIf="canRegister && getRegistrationTimeLeft()">
+                    <mat-icon>schedule</mat-icon>
+                    {{ getRegistrationTimeLeft() }}
+                </span>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

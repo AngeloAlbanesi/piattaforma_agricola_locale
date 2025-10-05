@@ -1,0 +1,704 @@
+// Variabili e mixins
+@use '../../../../../styles/variables' as vars;
+@use 'sass:color' as color;
+
+// Animazioni
+@keyframes slideToggle {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.aziende-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px;
+    min-height: 100vh;
+
+    // Header della pagina
+    .page-header {
+        text-align: center;
+        margin-bottom: 32px;
+        padding: 24px 0;
+        background: linear-gradient(135deg, vars.$primary-color, vars.$accent-color);
+        border-radius: 12px;
+        color: white;
+
+        .header-content {
+            margin-bottom: 24px;
+
+            .page-title {
+                font-size: 32px;
+                font-weight: 700;
+                margin: 0 0 8px 0;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            .page-subtitle {
+                font-size: 18px;
+                margin: 0;
+                opacity: 0.9;
+            }
+        }
+
+        .search-section {
+            max-width: 600px;
+            margin: 0 auto;
+
+            .search-box {
+                width: 100%;
+            }
+        }
+    }
+
+    // Controlli filtri e ordinamento
+    .controls-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+
+        .controls-left {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+
+            .filter-toggle-button {
+                position: relative;
+
+                .active-filters-chip {
+                    position: absolute;
+                    top: -8px;
+                    right: -8px;
+                    font-size: 12px;
+                    height: 20px;
+                    min-width: 20px;
+                    padding: 0 4px;
+                }
+            }
+
+            .reset-filters-button {
+                border-color: vars.$primary-color;
+                color: vars.$primary-color;
+
+                &:hover {
+                    background-color: rgba(vars.$primary-color, 0.1);
+                }
+            }
+        }
+
+        .controls-right {
+            .sort-field {
+                min-width: 200px;
+
+                @media (max-width: 768px) {
+                    width: 100%;
+                    min-width: unset;
+                }
+            }
+        }
+    }
+
+    // Pannello filtri
+    .filters-panel {
+        margin-bottom: 24px;
+        animation: slideToggle 0.3s ease-in-out;
+
+        .filters-card {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+
+            .filters-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 16px;
+
+                .filter-field {
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+    // Stato di caricamento
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+
+        mat-spinner {
+            margin-bottom: 16px;
+        }
+
+        p {
+            color: vars.$text-secondary;
+            font-size: 16px;
+            margin: 0;
+        }
+    }
+
+    // Messaggio di errore
+    .error-container {
+        padding: 20px 0;
+
+        .error-card {
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 8px;
+
+            .error-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 20px;
+
+                .error-icon {
+                    font-size: 48px;
+                    color: #e53e3e;
+                    margin-bottom: 16px;
+                }
+
+                h3 {
+                    color: #e53e3e;
+                    margin: 0 0 8px 0;
+                }
+
+                p {
+                    color: vars.$text-secondary;
+                    margin: 0 0 20px 0;
+                }
+
+                button {
+                    min-width: 120px;
+                }
+            }
+        }
+    }
+
+    // Risultati della ricerca
+    .results-section {
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+
+            .results-title {
+                font-size: 24px;
+                font-weight: 600;
+                color: vars.$text-primary;
+                margin: 0;
+            }
+
+            .active-filters-badges {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+
+                .filter-badge {
+                    background-color: #e3f2fd;
+                    color: #1976d2;
+                    font-size: 13px;
+                    cursor: pointer;
+
+                    .remove-icon {
+                        font-size: 16px;
+                        height: 16px;
+                        width: 16px;
+                        margin-left: 4px;
+                    }
+
+                    &:hover {
+                        background-color: #bbdefb;
+                    }
+                }
+            }
+        }
+
+        // Grid aziende
+        .aziende-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+
+            .azienda-card {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                border-radius: 12px;
+                overflow: hidden;
+
+                &:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+                }
+
+                .azienda-header {
+                    .azienda-avatar {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 56px;
+                        height: 56px;
+                        border-radius: 50%;
+                        color: white;
+
+                        mat-icon {
+                            font-size: 28px;
+                            height: 28px;
+                            width: 28px;
+                        }
+                    }
+
+                    .azienda-title {
+                        font-size: 20px;
+                        font-weight: 600;
+                        color: vars.$text-primary;
+                        margin: 0;
+                        line-height: 1.3;
+                    }
+
+                    .azienda-subtitle {
+                        font-size: 14px;
+                        color: vars.$text-secondary;
+                        margin: 4px 0 0 0;
+                        font-weight: 500;
+                    }
+                }
+
+                // Logo azienda
+                .azienda-logo-container {
+                    width: 100%;
+                    height: 160px;
+                    overflow: hidden;
+                    position: relative;
+                    background-color: #f8f9fa;
+
+                    .azienda-logo {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                        padding: 16px;
+                        transition: transform 0.3s ease;
+
+                        &:hover {
+                            transform: scale(1.05);
+                        }
+                    }
+                }
+
+                .azienda-content {
+                    flex: 1;
+                    padding: 20px;
+
+                    // Rating
+                    .azienda-rating {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        margin-bottom: 12px;
+
+                        .rating-stars {
+                            display: flex;
+                            gap: 2px;
+
+                            .rating-star {
+                                font-size: 18px;
+                                height: 18px;
+                                width: 18px;
+                            }
+                        }
+
+                        .rating-value {
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: vars.$text-primary;
+                        }
+                    }
+
+                    // Descrizione
+                    .azienda-description {
+                        margin-bottom: 16px;
+
+                        p {
+                            font-size: 14px;
+                            line-height: 1.5;
+                            color: vars.$text-secondary;
+                            margin: 0;
+                        }
+                    }
+
+                    // Indirizzo
+                    .azienda-address {
+                        display: flex;
+                        align-items: flex-start;
+                        gap: 8px;
+                        margin-bottom: 16px;
+
+                        .address-icon {
+                            color: vars.$primary-color;
+                            font-size: 18px;
+                            height: 18px;
+                            width: 18px;
+                            margin-top: 2px;
+                            flex-shrink: 0;
+                        }
+
+                        .address-text {
+                            font-size: 13px;
+                            color: vars.$text-secondary;
+                            line-height: 1.4;
+                        }
+                    }
+
+                    // Statistiche
+                    .azienda-stats {
+                        .stat-item {
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+                            margin-bottom: 8px;
+
+                            .stat-icon {
+                                color: vars.$accent-color;
+                                font-size: 16px;
+                                height: 16px;
+                                width: 16px;
+                            }
+
+                            .stat-value {
+                                font-size: 13px;
+                                color: vars.$text-primary;
+                                font-weight: 500;
+                            }
+                        }
+                    }
+                }
+
+                .azienda-actions {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 16px 20px;
+                    background-color: #f8f9fa;
+                    border-top: 1px solid #e9ecef;
+
+                    .view-details-button {
+                        flex: 1;
+                        margin-right: 8px;
+
+                        mat-icon {
+                            margin-right: 6px;
+                        }
+                    }
+
+                    .share-button {
+                        color: vars.$primary-color;
+
+                        &:hover {
+                            background-color: rgba(vars.$primary-color, 0.1);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Stato vuoto
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+
+            .empty-icon {
+                font-size: 64px;
+                color: #cbd5e0;
+                margin-bottom: 16px;
+            }
+
+            h3 {
+                font-size: 24px;
+                color: vars.$text-primary;
+                margin: 0 0 8px 0;
+            }
+
+            p {
+                font-size: 16px;
+                color: vars.$text-secondary;
+                margin: 0 0 24px 0;
+                max-width: 500px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        // Paginazione
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 32px;
+        }
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .aziende-container {
+        padding: 12px;
+
+        .page-header {
+            margin-bottom: 24px;
+            padding: 20px 16px;
+
+            .header-content {
+                .page-title {
+                    font-size: 28px;
+                }
+
+                .page-subtitle {
+                    font-size: 16px;
+                }
+            }
+
+            .search-section {
+                padding: 0 8px;
+            }
+        }
+
+        .controls-section {
+            flex-direction: column;
+            align-items: stretch;
+
+            .controls-left {
+                justify-content: center;
+            }
+
+            .controls-right {
+                .sort-field {
+                    margin: 0 auto;
+                }
+            }
+        }
+
+        .filters-panel {
+            .filters-card {
+                .filters-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        }
+
+        .results-section {
+            .results-header {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+
+                .active-filters-badges {
+                    justify-content: center;
+                }
+            }
+
+            .aziende-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+
+                .azienda-card {
+                    .azienda-header {
+                        .azienda-title {
+                            font-size: 18px;
+                        }
+                    }
+
+                    .azienda-content {
+                        padding: 16px;
+                    }
+
+                    .azienda-actions {
+                        padding: 12px 16px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .aziende-container {
+        padding: 8px;
+
+        .page-header {
+            padding: 16px 12px;
+
+            .header-content {
+                .page-title {
+                    font-size: 24px;
+                }
+
+                .page-subtitle {
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .controls-section {
+            .controls-left {
+                flex-direction: column;
+                gap: 8px;
+
+                .filter-toggle-button {
+                    width: 100%;
+                }
+            }
+        }
+
+        .results-section {
+            .aziende-grid {
+                .azienda-card {
+                    .azienda-logo-container {
+                        height: 120px;
+                    }
+
+                    .azienda-content {
+                        padding: 12px;
+
+                        .azienda-description {
+                            margin-bottom: 12px;
+
+                            p {
+                                font-size: 13px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+    .aziende-container {
+        .page-header {
+            background: linear-gradient(135deg, color.adjust(vars.$primary-color, $lightness: -20%), color.adjust(vars.$accent-color, $lightness: -20%));
+        }
+
+        .filters-panel {
+            .filters-card {
+                background-color: #4a5568;
+                border-color: #718096;
+            }
+        }
+
+        .results-section {
+            .aziende-grid {
+                .azienda-card {
+                    background-color: #2d3748;
+                    color: #e2e8f0;
+
+                    .azienda-header {
+                        .azienda-title {
+                            color: #f7fafc;
+                        }
+
+                        .azienda-subtitle {
+                            color: #cbd5e0;
+                        }
+                    }
+
+                    .azienda-logo-container {
+                        background-color: #4a5568;
+                    }
+
+                    .azienda-content {
+                        .azienda-description {
+                            p {
+                                color: #e2e8f0;
+                            }
+                        }
+
+                        .azienda-address {
+                            .address-text {
+                                color: #cbd5e0;
+                            }
+                        }
+
+                        .azienda-stats {
+                            .stat-item {
+                                .stat-value {
+                                    color: #e2e8f0;
+                                }
+                            }
+                        }
+                    }
+
+                    .azienda-actions {
+                        background-color: #4a5568;
+                        border-color: #718096;
+                    }
+                }
+            }
+        }
+
+        .error-container {
+            .error-card {
+                background-color: #742a2a;
+                border-color: #fc8181;
+            }
+        }
+    }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+    .aziende-container {
+        .azienda-card {
+            border: 2px solid currentColor;
+        }
+
+        .filters-card {
+            border: 2px solid currentColor;
+        }
+    }
+}
+
+// Print styles
+@media print {
+    .aziende-container {
+
+        .page-header,
+        .controls-section,
+        .filters-panel,
+        .pagination-container {
+            display: none;
+        }
+
+        .aziende-grid {
+            .azienda-card {
+                box-shadow: none;
+                border: 1px solid #000;
+                break-inside: avoid;
+                margin-bottom: 16px;
+
+                .azienda-actions {
+                    display: none;
+                }
+            }
+        }
+    }
+}

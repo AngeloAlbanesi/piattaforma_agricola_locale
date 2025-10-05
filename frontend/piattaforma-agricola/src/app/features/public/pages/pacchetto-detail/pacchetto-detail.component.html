@@ -1,0 +1,318 @@
+<div class="pacchetto-detail-container">
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="loading">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <p>Caricamento dettagli pacchetto...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !loading">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <h3>Oops! Qualcosa è andato storto</h3>
+        <p>{{ error }}</p>
+        <div class="error-actions">
+            <button mat-raised-button color="primary" (click)="retryLoad()">
+                Riprova
+            </button>
+            <button mat-stroked-button (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon>
+                Torna ai pacchetti
+            </button>
+        </div>
+    </div>
+
+    <!-- Package Detail Content -->
+    <div class="package-content" *ngIf="pacchetto && !loading">
+        <!-- Header with Back Button -->
+        <div class="content-header">
+            <button mat-icon-button (click)="goBack()" class="back-button">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h1 class="page-title">{{ pacchetto.nome }}</h1>
+        </div>
+
+        <!-- Main Package Info -->
+        <div class="package-main">
+            <div class="package-image-section">
+                <div class="package-image-container">
+                    <img [src]="getMainImage()" [alt]="pacchetto.nome" class="package-image">
+
+                    <!-- Sconto Badge -->
+                    <div class="discount-badge" *ngIf="hasSconto()">
+                        -{{ getSavingsPercentage() }}%
+                    </div>
+
+                    <!-- Availability Badge -->
+                    <div class="availability-badge" [ngClass]="getAvailabilityColor(pacchetto.quantitaDisponibile)">
+                        {{ getAvailabilityText(pacchetto.quantitaDisponibile) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="package-info-section">
+                <div class="package-header">
+                    <h1 class="package-name">{{ pacchetto.nome }}</h1>
+                    <div class="package-meta">
+                        <span class="category">{{ pacchetto.categoria || 'Senza categoria' }}</span>
+                        <span class="separator">•</span>
+                        <span class="products-count">{{ getTotalProducts() }} prodotti</span>
+                    </div>
+                </div>
+
+                <div class="package-pricing">
+                    <div class="price-container">
+                        <span class="current-price" *ngIf="hasSconto()">
+                            {{ formatCurrency(pacchetto.prezzoScontato || 0) }}
+                        </span>
+                        <span class="current-price" *ngIf="!hasSconto()">
+                            {{ formatCurrency(pacchetto.prezzo || 0) }}
+                        </span>
+                        <span class="original-price" *ngIf="hasSconto()">
+                            {{ formatCurrency(pacchetto.prezzo || 0) }}
+                        </span>
+                    </div>
+
+                    <div class="savings-info" *ngIf="hasSconto()">
+                        <span class="savings-amount">Risparmi: {{ formatCurrency(getSavingsAmount() || 0) }}</span>
+                        <span class="savings-percentage">({{ getSavingsPercentage() }}%)</span>
+                    </div>
+                </div>
+
+                <div class="package-description">
+                    <p>{{ pacchetto.descrizione || 'Nessuna descrizione disponibile' }}</p>
+                </div>
+
+                <div class="package-stats">
+                    <div class="stat-item">
+                        <mat-icon>inventory_2</mat-icon>
+                        <span>Disponibilità: {{ pacchetto.quantitaDisponibile }} pezzi</span>
+                    </div>
+                    <div class="stat-item" *ngIf="pacchetto.dataCreazione">
+                        <mat-icon>calendar_today</mat-icon>
+                        <span>Creato: {{ pacchetto.dataCreazione | date:'short' }}</span>
+                    </div>
+                    <div class="stat-item" *ngIf="pacchetto.valutazioneMedia">
+                        <mat-icon>star</mat-icon>
+                        <span>Valutazione: {{ pacchetto.valutazioneMedia }}/5 ({{ pacchetto.numeroRecensioni || 0 }}
+                            recensioni)</span>
+                    </div>
+                </div>
+
+                <div class="distributor-info" *ngIf="pacchetto.distributore">
+                    <h4>Distributore</h4>
+                    <div class="distributor-card">
+                        <div class="distributor-avatar">
+                            <mat-icon>local_shipping</mat-icon>
+                        </div>
+                        <div class="distributor-details">
+                            <span class="distributor-name">{{ pacchetto.distributore.nomeAzienda }}</span>
+                            <button mat-button color="primary" (click)="navigateToAzienda(pacchetto.distributore.id)">
+                                Visualizza azienda
+                                <mat-icon>arrow_forward</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="package-actions">
+                    <button mat-raised-button color="primary" size="large" (click)="addToCart()"
+                        [disabled]="!isAvailable(pacchetto.quantitaDisponibile)">
+                        <mat-icon>shopping_cart</mat-icon>
+                        Aggiungi al carrello
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Package Details Tabs -->
+        <div class="package-details">
+            <mat-tab-group>
+                <!-- Contenuto Pacchetto -->
+                <mat-tab label="Contenuto">
+                    <div class="tab-content">
+                        <div class="package-overview">
+                            <h3>Riepilogo Pacchetto</h3>
+                            <div class="overview-stats">
+                                <div class="overview-stat">
+                                    <span class="stat-label">Valore Totale:</span>
+                                    <span class="stat-value">{{ formatCurrency(getTotalValue() || 0) }}</span>
+                                </div>
+                                <div class="overview-stat" *ngIf="hasSconto()">
+                                    <span class="stat-label">Risparmio:</span>
+                                    <span class="stat-value savings">{{ formatCurrency(getSavingsAmount() || 0)
+                                        }}</span>
+                                </div>
+                                <div class="overview-stat">
+                                    <span class="stat-label">Prodotti:</span>
+                                    <span class="stat-value">{{ getTotalProducts() }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="products-list">
+                            <h3>Prodotti Inclusi</h3>
+                            <mat-list class="products-list-container">
+                                <mat-list-item *ngFor="let elemento of pacchetto.prodotti; let last = last"
+                                    class="product-item" [ngClass]="{'last-item': last}">
+                                    <div matListItemAvatar class="product-avatar">
+                                        <img [src]="getProductImage(elemento.prodotto)" [alt]="elemento.prodotto.nome"
+                                            class="product-avatar-img">
+                                    </div>
+                                    <div matListItemTitle class="product-name">
+                                        {{ elemento.prodotto.nome }}
+                                    </div>
+                                    <div matListItemLine class="product-details">
+                                        <span class="product-producer">{{ elemento.prodotto.produttore?.nomeAzienda
+                                            }}</span>
+                                        <span class="product-separator">•</span>
+                                        <span class="product-quantity">{{ elemento.quantita }} {{ elemento.unitaMisura
+                                            }}</span>
+                                    </div>
+                                    <div matListItemLine class="product-price">
+                                        <span class="price-label">Prezzo:</span>
+                                        <span class="price-value">{{ formatCurrency(elemento.prodotto.prezzo || 0)
+                                            }}</span>
+                                        <span class="price-total">({{ formatCurrency(getProductTotal(elemento.prodotto)
+                                            || 0) }} totale)</span>
+                                    </div>
+                                    <button mat-icon-button matListItemMeta
+                                        (click)="navigateToProdotto(elemento.prodotto.id)" class="view-product-btn">
+                                        <mat-icon>visibility</mat-icon>
+                                    </button>
+                                </mat-list-item>
+                            </mat-list>
+                        </div>
+
+                        <!-- Composizione Pacchetto -->
+                        <div class="package-composition"
+                            *ngIf="pacchetto.composizione && pacchetto.composizione.length > 0">
+                            <h3>Composizione Dettagliata</h3>
+                            <mat-expansion-panel class="composition-panel"
+                                *ngFor="let composizione of pacchetto.composizione">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ composizione.nome }}
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                        {{ composizione.percentuale }}% del pacchetto
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+
+                                <div class="composition-details">
+                                    <p *ngIf="composizione.descrizione">{{ composizione.descrizione }}</p>
+
+                                    <div class="composition-products">
+                                        <h5>Prodotti in questa composizione:</h5>
+                                        <mat-chip-listbox>
+                                            <mat-chip-option *ngFor="let prodotto of composizione.prodotti">
+                                                {{ prodotto.prodotto.nome }} ({{ prodotto.quantita }} {{
+                                                prodotto.unitaMisura }})
+                                            </mat-chip-option>
+                                        </mat-chip-listbox>
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Certificazioni -->
+                <mat-tab label="Certificazioni" *ngIf="pacchetto.certificazioni && pacchetto.certificazioni.length > 0">
+                    <div class="tab-content">
+                        <div class="certifications-grid">
+                            <mat-card class="certification-card" *ngFor="let cert of pacchetto.certificazioni">
+                                <mat-card-header>
+                                    <mat-card-title>{{ cert.tipoCertificazione }}</mat-card-title>
+                                    <mat-card-subtitle>{{ cert.enteRilascio }}</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <div class="cert-info">
+                                        <p><strong>Numero:</strong> {{ cert.numeroRiferimento }}</p>
+                                        <p><strong>Rilasciata:</strong> {{ cert.dataRilascio | date:'short' }}</p>
+                                        <p><strong>Scadenza:</strong> {{ cert.dataScadenza | date:'short' }}</p>
+                                    </div>
+
+                                    <button mat-stroked-button *ngIf="cert.documentoUrl" class="view-cert-btn">
+                                        <mat-icon>description</mat-icon>
+                                        Visualizza certificato
+                                    </button>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Informazioni Aggiuntive -->
+                <mat-tab label="Informazioni">
+                    <div class="tab-content">
+                        <div class="info-grid">
+                            <div class="info-item" *ngIf="pacchetto.dataCreazione">
+                                <h4>Data Creazione</h4>
+                                <p>{{ pacchetto.dataCreazione | date:'long' }}</p>
+                            </div>
+
+                            <div class="info-item" *ngIf="pacchetto.dataScadenza">
+                                <h4>Data Scadenza</h4>
+                                <p>{{ pacchetto.dataScadenza | date:'long' }}</p>
+                            </div>
+
+                            <div class="info-item">
+                                <h4>Quantità Disponibile</h4>
+                                <p>{{ pacchetto.quantitaDisponibile }} pezzi</p>
+                            </div>
+
+                            <div class="info-item">
+                                <h4>Numero Prodotti</h4>
+                                <p>{{ getTotalProducts() }} prodotti inclusi</p>
+                            </div>
+
+                            <div class="info-item" *ngIf="pacchetto.valutazioneMedia">
+                                <h4>Valutazione Media</h4>
+                                <div class="rating">
+                                    <mat-icon>star</mat-icon>
+                                    <span>{{ pacchetto.valutazioneMedia }}/5</span>
+                                    <span class="rating-count">({{ pacchetto.numeroRecensioni || 0 }} recensioni)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+
+        <!-- Related Packages -->
+        <div class="related-packages" *ngIf="pacchettiCorrelati.length > 0">
+            <h2>Pacchetti Correlati</h2>
+            <div class="related-grid">
+                <mat-card class="related-package-card" *ngFor="let pacchetto of pacchettiCorrelati"
+                    (click)="navigateToPacchetto(pacchetto.id)">
+                    <mat-card-header>
+                        <div mat-card-avatar class="related-avatar">
+                            <mat-icon>inventory_2</mat-icon>
+                        </div>
+                        <mat-card-title>{{ pacchetto.nome }}</mat-card-title>
+                        <mat-card-subtitle>{{ pacchetto.distributore?.nomeAzienda }}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p class="related-description">{{ pacchetto.descrizione | slice:0:100 }}...</p>
+                        <div class="related-price">
+                            <span *ngIf="pacchetto.prezzoScontato && pacchetto.prezzoScontato < pacchetto.prezzo">
+                                {{ formatCurrency(pacchetto.prezzoScontato) }}
+                                <span class="original-price">{{ formatCurrency(pacchetto.prezzo) }}</span>
+                            </span>
+                            <span *ngIf="!pacchetto.prezzoScontato || pacchetto.prezzoScontato >= pacchetto.prezzo">
+                                {{ formatCurrency(pacchetto.prezzo) }}
+                            </span>
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-button color="primary">
+                            Visualizza
+                            <mat-icon>arrow_forward</mat-icon>
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

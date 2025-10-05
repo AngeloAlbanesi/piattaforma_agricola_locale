@@ -1,0 +1,80 @@
+<mat-card class="product-card" [class.compact]="compact" (click)="onCardClick()">
+    <!-- Product Image -->
+    <div class="product-image-container" [class.compact]="compact">
+        <img [src]="getProdottoImageUrl()" [alt]="prodotto.nome" class="product-image" (error)="onImageError($event)">
+
+        <!-- Quick Actions Overlay -->
+        <div class="quick-actions" *ngIf="showActions && !compact">
+            <button mat-icon-button class="quick-view-btn" (click)="onQuickView($event)">
+                <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button class="add-to-cart-btn" [disabled]="!isDisponibile()" (click)="onAddToCart($event)">
+                <mat-icon>add_shopping_cart</mat-icon>
+            </button>
+        </div>
+
+        <!-- Availability Badge -->
+        <div class="availability-badge" *ngIf="!isDisponibile()">
+            <span class="badge-text">Non disponibile</span>
+        </div>
+    </div>
+
+    <!-- Product Content -->
+    <mat-card-content class="product-content">
+        <!-- Product Title and Producer -->
+        <div class="product-header">
+            <h3 class="product-title" [class.compact]="compact">{{ prodotto.nome }}</h3>
+            <div class="product-producer" *ngIf="prodotto.produttore && !compact">
+                <span class="producer-name">{{ prodotto.produttore.nomeAzienda }}</span>
+            </div>
+        </div>
+
+        <!-- Product Description -->
+        <p class="product-description" *ngIf="prodotto.descrizione && !compact">
+            {{ prodotto.descrizione | slice:0:80 }}{{ prodotto.descrizione.length > 80 ? '...' : '' }}
+        </p>
+
+        <!-- Product Info -->
+        <div class="product-info">
+            <div class="price-container">
+                <span class="price">{{ formatPrezzo() }}</span>
+                <span class="unit">{{ prodotto.unitaMisura }}</span>
+            </div>
+            <div class="quantity-container" *ngIf="!compact">
+                <span class="quantity-label">Disponibilità:</span>
+                <span class="quantity-value" [class.low-stock]="prodotto.quantitaDisponibile < 10">
+                    {{ prodotto.quantitaDisponibile }} {{ prodotto.unitaMisura }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Certifications -->
+        <div class="certifications" *ngIf="hasCertificazioni()">
+            <div class="certification-chips">
+                <span *ngFor="let cert of getCertificazioniVisibili()" class="certification-chip">
+                    {{ cert }}
+                </span>
+                <span *ngIf="(prodotto.certificazioni?.length || 0) > (compact ? 1 : 2)"
+                    class="more-certifications-chip">
+                    +{{ (prodotto.certificazioni?.length || 0) - (compact ? 1 : 2) }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Origin -->
+        <div class="product-origin" *ngIf="prodotto.luogoOrigine && !compact">
+            <mat-icon class="origin-icon">location_on</mat-icon>
+            <span class="origin-text">{{ prodotto.luogoOrigine }}</span>
+        </div>
+    </mat-card-content>
+
+    <!-- Card Actions -->
+    <mat-card-actions class="product-actions" *ngIf="showActions && !compact">
+        <button mat-button color="primary" (click)="onQuickView($event)">
+            Dettagli
+        </button>
+        <button mat-button color="accent" [disabled]="!isDisponibile()" (click)="onAddToCart($event)">
+            Aggiungi
+        </button>
+    </mat-card-actions>
+</mat-card>

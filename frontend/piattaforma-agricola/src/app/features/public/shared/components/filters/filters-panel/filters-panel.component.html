@@ -1,0 +1,98 @@
+<mat-expansion-panel [expanded]="expanded" [disabled]="!collapsible" class="filters-panel">
+    <mat-expansion-panel-header>
+        <div class="panel-header">
+            <div class="panel-title">
+                <mat-icon class="panel-icon">filter_list</mat-icon>
+                <span>{{ title }}</span>
+                <span class="active-filters-count" *ngIf="isAnyFilterActive()">
+                    ({{ getActiveFiltersCount() }})
+                </span>
+            </div>
+            <div class="panel-actions">
+                <button mat-button color="accent" *ngIf="showReset && isAnyFilterActive()" (click)="onReset()"
+                    class="reset-button">
+                    <mat-icon>refresh</mat-icon>
+                    Reset
+                </button>
+            </div>
+        </div>
+    </mat-expansion-panel-header>
+
+    <div class="filters-content">
+        <form [formGroup]="filtersForm" class="filters-form">
+            <!-- Search Filter -->
+            <div class="filter-section">
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>{{ searchLabel }}</mat-label>
+                    <input matInput formControlName="search" [placeholder]="searchPlaceholder"
+                        (input)="onSearchChange()">
+                </mat-form-field>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="filter-section" *ngIf="categoryOptions.length > 0">
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>{{ categoryLabel }}</mat-label>
+                    <mat-select formControlName="category" (selectionChange)="onCategoryChange()">
+                        <mat-option value="">{{ categoryPlaceholder }}</mat-option>
+                        <mat-option *ngFor="let option of categoryOptions" [value]="option.value">
+                            {{ option.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <!-- Sort Filter -->
+            <div class="filter-section" *ngIf="sortOptions.length > 0">
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>{{ sortLabel }}</mat-label>
+                    <mat-select formControlName="sortBy" (selectionChange)="onSortChange()">
+                        <mat-option value="">{{ sortPlaceholder }}</mat-option>
+                        <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+                            {{ option.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div class="filter-section">
+                <div class="range-filter-header">
+                    <span class="range-label">{{ priceRangeLabel }}</span>
+                    <span class="range-value">{{ getFormattedPriceRange() }}</span>
+                </div>
+                <div class="range-slider-container">
+                    <mat-slider formControlName="priceMin" [min]="priceRange.min" [max]="priceRange.max"
+                        [step]="priceRangeStep" class="range-slider" (input)="onPriceRangeChange()">
+                    </mat-slider>
+                    <mat-slider formControlName="priceMax" [min]="priceRange.min" [max]="priceRange.max"
+                        [step]="priceRangeStep" class="range-slider" (input)="onPriceRangeChange()">
+                    </mat-slider>
+                </div>
+                <div class="range-inputs">
+                    <mat-form-field appearance="outline" class="range-input">
+                        <mat-label>Min</mat-label>
+                        <input matInput type="number" formControlName="priceMin" [min]="priceRange.min"
+                            [max]="priceRange.max" (input)="onPriceRangeChange()">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="range-input">
+                        <mat-label>Max</mat-label>
+                        <input matInput type="number" formControlName="priceMax" [min]="priceRange.min"
+                            [max]="priceRange.max" (input)="onPriceRangeChange()">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Checkbox Filters -->
+            <div class="filter-section" *ngIf="checkboxOptions.length > 0">
+                <div class="checkbox-filters">
+                    <mat-checkbox *ngFor="let option of checkboxOptions"
+                        [formControlName]="'checkboxes.' + option.value" (change)="onCheckboxChange()"
+                        class="filter-checkbox">
+                        {{ option.label }}
+                    </mat-checkbox>
+                </div>
+            </div>
+        </form>
+    </div>
+</mat-expansion-panel>

@@ -1,0 +1,36 @@
+<div class="search-box-container">
+  <mat-form-field [appearance]="appearance" class="search-form-field">
+    <mat-label *ngIf="label">{{ label }}</mat-label>
+    <input matInput 
+           #searchInput
+           [formControl]="searchControl"
+           [placeholder]="placeholder"
+           [disabled]="disabled"
+           (focus)="onFocus()"
+           (blur)="onBlur()"
+           (keydown)="onKeydown($event)">
+    
+    <!-- Clear button inside input -->
+    <button matSuffix mat-icon-button 
+            *ngIf="clearable && searchControl.value"
+            (click)="onClear()"
+            class="clear-button"
+            matTooltip="Cancella ricerca">
+      <mat-icon>clear</mat-icon>
+    </button>
+    
+    <!-- Search icon at the beginning -->
+    <mat-icon matPrefix *ngIf="!showButton" class="search-icon">search</mat-icon>
+  </mat-form-field>
+  
+  <!-- Search button outside input -->
+  <button mat-raised-button 
+          *ngIf="showButton"
+          [color]="buttonColor"
+          (click)="onSearch()"
+          class="search-button"
+          [disabled]="disabled || !searchControl.value">
+    <mat-icon>{{ buttonIcon }}</mat-icon>
+    <span *ngIf="buttonLabel">{{ buttonLabel }}</span>
+  </button>
+</div>

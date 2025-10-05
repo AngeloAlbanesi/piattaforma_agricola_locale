@@ -6,7 +6,7 @@ const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        loadChildren: () => import('./features/landing/landing.module').then(m => m.LandingModule),
+        loadChildren: () => import('./features/public/public.module').then(m => m.PublicModule),
     },
     {
         path: 'profilo',

@@ -1,0 +1,155 @@
+<div class="prodotti-page-container">
+  <!-- Header Section -->
+  <section class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Catalogo Prodotti</h1>
+      <p class="page-subtitle">Scopri i prodotti freschi e genuini delle aziende agricole locali</p>
+      
+      <!-- Search Bar -->
+      <div class="search-section">
+        <app-search-box 
+          placeholder="Cerca prodotti per nome, categoria o produttore..." 
+          appearance="outline"
+          (search)="onSearch($event)">
+        </app-search-box>
+        
+        <button mat-stroked-button (click)="toggleFilters()" class="filters-toggle">
+          <mat-icon>filter_list</mat-icon>
+          Filtri
+          <mat-chip *ngIf="getActiveFiltersCount() > 0" color="primary" class="filters-count">
+            {{ getActiveFiltersCount() }}
+          </mat-chip>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters Panel -->
+  <section class="filters-section" *ngIf="showFilters">
+    <div class="filters-content">
+      <app-filters-panel
+        [categoryOptions]="getCategorieOptions()"
+        [sortOptions]="ordinamentoOptions"
+        [priceRange]="{ min: 0, max: 500 }"
+        [checkboxOptions]="[
+          { value: 'bio', label: 'Biologico' },
+          { value: 'km0', label: 'Km0' },
+          { value: 'glutenfree', label: 'Senza glutine' },
+          { value: 'vegan', label: 'Vegano' }
+        ]"
+        (filtersChange)="onFiltersChange($event)"
+        (reset)="onFiltersReset()">
+      </app-filters-panel>
+    </div>
+  </section>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    <p>Caricamento prodotti...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !loading">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <h3>Oops! Qualcosa è andato storto</h3>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="retryLoad()">
+      Riprova
+    </button>
+  </div>
+
+  <!-- Results Section -->
+  <section class="results-section" *ngIf="!loading && !error">
+    <!-- Results Header -->
+    <div class="results-header">
+      <div class="results-info">
+        <h2 class="results-title">
+          {{ totalCount }} {{ totalCount === 1 ? 'Prodotto' : 'Prodotti' }} Trovati
+        </h2>
+        <p class="results-subtitle" *ngIf="filters.query">
+          Ricerca per: <strong>"{{ filters.query }}"</strong>
+        </p>
+      </div>
+      
+      <!-- Quick Filters -->
+      <div class="quick-filters">
+        <mat-form-field appearance="outline" class="quick-filter">
+          <mat-label>Categoria</mat-label>
+          <mat-select (selectionChange)="onCategoriaChange($event.value)">
+            <mat-option value="">Tutte le categorie</mat-option>
+            <mat-option *ngFor="let categoria of categorieOptions" [value]="categoria">
+              {{ categoria }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="quick-filter">
+          <mat-label>Ordina per</mat-label>
+          <mat-select (selectionChange)="onOrdinamentoChange($event.value)">
+            <mat-option value="">Rilevanza</mat-option>
+            <mat-option *ngFor="let option of ordinamentoOptions" [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+        <mat-slide-toggle 
+          (change)="onDisponibilitaChange($event.checked)"
+          class="availability-toggle">
+          Solo disponibili
+        </mat-slide-toggle>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" *ngIf="prodotti.length > 0">
+      <app-product-card 
+        *ngFor="let prodotto of prodotti"
+        [prodotto]="prodotto"
+        (viewDetails)="navigateToProdottoDetail(prodotto.id)">
+      </app-product-card>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="prodotti.length === 0 && !loading">
+      <mat-icon class="empty-icon">shopping_basket</mat-icon>
+      <h3>Nessun prodotto trovato</h3>
+      <p *ngIf="getActiveFiltersCount() > 0">
+        Prova a modificare i filtri di ricerca o 
+        <button mat-button color="primary" (click)="resetAllFilters()">rimuovi tutti i filtri</button>
+      </p>
+      <p *ngIf="getActiveFiltersCount() === 0">
+        Non ci sono prodotti disponibili al momento. Riprova più tardi.
+      </p>
+      
+      <div class="empty-actions">
+        <button mat-raised-button color="primary" (click)="resetAllFilters()" *ngIf="getActiveFiltersCount() > 0">
+          Rimuovi Filtri
+        </button>
+        <button mat-stroked-button color="primary" routerLink="/">
+          <mat-icon>home</mat-icon>
+          Torna alla Home
+        </button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="totalCount > pageSize">
+      <mat-paginator
+        [length]="totalCount"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[6, 12, 24, 48]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </section>
+
+  <!-- Quick Actions (Floating) -->
+  <div class="quick-actions" *ngIf="!loading && !error && prodotti.length > 0">
+    <button mat-fab color="primary" class="scroll-to-top" (click)="scrollToTop()">
+      <mat-icon>keyboard_arrow_up</mat-icon>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,793 @@
+// Variabili e mixins
+@use '../../../../../styles/variables' as vars;
+@use 'sass:color' as color;
+
+.evento-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+    min-height: 100vh;
+
+    // Header con navigazione
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding: 8px 0;
+
+        .back-button {
+            background-color: vars.$primary-color;
+            color: white;
+
+            &:hover {
+                background-color: color.adjust(vars.$primary-color, $lightness: -10%);
+            }
+        }
+
+        .share-button {
+            background-color: vars.$accent-color;
+            color: white;
+
+            &:hover {
+                background-color: color.adjust(vars.$accent-color, $lightness: -10%);
+            }
+        }
+    }
+
+    // Stato di caricamento
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+
+        mat-spinner {
+            margin-bottom: 16px;
+        }
+
+        p {
+            color: vars.$text-secondary;
+            font-size: 16px;
+            margin: 0;
+        }
+    }
+
+    // Messaggio di errore
+    .error-container {
+        padding: 20px 0;
+
+        .error-card {
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 8px;
+
+            .error-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 20px;
+
+                .error-icon {
+                    font-size: 48px;
+                    color: #e53e3e;
+                    margin-bottom: 16px;
+                }
+
+                h3 {
+                    color: #e53e3e;
+                    margin: 0 0 8px 0;
+                }
+
+                p {
+                    color: vars.$text-secondary;
+                    margin: 0 0 20px 0;
+                }
+
+                button {
+                    min-width: 120px;
+                }
+            }
+        }
+    }
+
+    // Contenuto principale
+    .evento-content {
+
+        // Badge di stato
+        .status-badges {
+            margin-bottom: 20px;
+
+            mat-chip-list {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+
+                mat-chip {
+                    color: white;
+                    font-weight: 500;
+                    padding: 8px 12px;
+                    border-radius: 20px;
+
+                    mat-icon {
+                        margin-right: 4px;
+                        font-size: 18px;
+                        height: 18px;
+                        width: 18px;
+                    }
+
+                    // Badge di stato
+                    &.in-corso {
+                        background-color: #4caf50;
+                    }
+
+                    &.prossimo {
+                        background-color: #2196f3;
+                    }
+
+                    &.concluso {
+                        background-color: #9e9e9e;
+                    }
+
+                    // Badge di costo
+                    &.free-chip {
+                        background-color: #4caf50;
+                    }
+
+                    &.paid-chip {
+                        background-color: #ff9800;
+                    }
+                }
+            }
+        }
+
+        // Card principale
+        .main-event-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+
+            .event-header {
+                .event-avatar {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 50%;
+                    color: white;
+
+                    mat-icon {
+                        font-size: 28px;
+                        height: 28px;
+                        width: 28px;
+                    }
+                }
+
+                .event-title {
+                    font-size: 24px;
+                    font-weight: 600;
+                    color: vars.$text-primary;
+                    margin: 0;
+                    line-height: 1.3;
+                }
+
+                .event-subtitle {
+                    font-size: 16px;
+                    color: vars.$text-secondary;
+                    margin: 4px 0 0 0;
+                }
+            }
+
+            // Immagine evento
+            .event-image-container {
+                width: 100%;
+                height: 300px;
+                overflow: hidden;
+                position: relative;
+
+                .event-image {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    transition: transform 0.3s ease;
+
+                    &:hover {
+                        transform: scale(1.05);
+                    }
+                }
+            }
+
+            .event-content {
+                padding: 24px;
+
+                // Grid informazioni
+                .event-info-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                    gap: 20px;
+                    margin-bottom: 24px;
+
+                    .info-item {
+                        display: flex;
+                        align-items: flex-start;
+                        gap: 12px;
+                        padding: 16px;
+                        background-color: #f8f9fa;
+                        border-radius: 8px;
+                        border-left: 4px solid vars.$primary-color;
+
+                        .info-icon {
+                            color: vars.$primary-color;
+                            font-size: 20px;
+                            height: 20px;
+                            width: 20px;
+                            margin-top: 2px;
+                        }
+
+                        .info-content {
+                            flex: 1;
+
+                            .info-label {
+                                display: block;
+                                font-size: 12px;
+                                font-weight: 600;
+                                color: vars.$text-secondary;
+                                text-transform: uppercase;
+                                letter-spacing: 0.5px;
+                                margin-bottom: 4px;
+                            }
+
+                            .info-value {
+                                display: block;
+                                font-size: 14px;
+                                color: vars.$text-primary;
+                                font-weight: 500;
+                                line-height: 1.4;
+                            }
+
+                            .map-button {
+                                margin-top: 8px;
+                                padding: 4px 8px;
+                                font-size: 12px;
+                                min-height: 32px;
+
+                                mat-icon {
+                                    font-size: 16px;
+                                    height: 16px;
+                                    width: 16px;
+                                    margin-right: 4px;
+                                }
+                            }
+
+                            // Barra di disponibilità
+                            .availability-bar {
+                                width: 100%;
+                                height: 6px;
+                                background-color: #e0e0e0;
+                                border-radius: 3px;
+                                margin: 8px 0;
+                                overflow: hidden;
+
+                                .availability-fill {
+                                    height: 100%;
+                                    border-radius: 3px;
+                                    transition: width 0.3s ease;
+                                }
+                            }
+
+                            .availability-status {
+                                font-size: 12px;
+                                font-weight: 600;
+                                display: block;
+                                margin-top: 4px;
+                            }
+                        }
+                    }
+                }
+
+                // Sezioni generiche
+                .event-description,
+                .contact-info,
+                .requirements,
+                .materials,
+                .participating-companies,
+                .event-program,
+                .additional-notes {
+                    margin: 32px 0;
+
+                    h3 {
+                        font-size: 18px;
+                        font-weight: 600;
+                        color: vars.$text-primary;
+                        margin: 0 0 16px 0;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+
+                        &::before {
+                            content: '';
+                            width: 4px;
+                            height: 20px;
+                            background-color: vars.$primary-color;
+                            border-radius: 2px;
+                        }
+                    }
+
+                    .description-content,
+                    .notes-content {
+                        line-height: 1.6;
+                        color: vars.$text-primary;
+                        font-size: 15px;
+
+                        // Stili per contenuto HTML
+                        p {
+                            margin: 0 0 12px 0;
+
+                            &:last-child {
+                                margin-bottom: 0;
+                            }
+                        }
+
+                        ul,
+                        ol {
+                            margin: 12px 0;
+                            padding-left: 20px;
+
+                            li {
+                                margin-bottom: 6px;
+                            }
+                        }
+                    }
+                }
+
+                // Informazioni di contatto
+                .contact-info {
+                    .contact-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                        gap: 12px;
+
+                        .contact-item {
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                            padding: 12px;
+                            background-color: #f8f9fa;
+                            border-radius: 8px;
+                            border: 1px solid #e9ecef;
+
+                            .contact-icon {
+                                color: vars.$primary-color;
+                                font-size: 18px;
+                                height: 18px;
+                                width: 18px;
+                            }
+
+                            .contact-value {
+                                flex: 1;
+                                font-size: 14px;
+                                color: vars.$text-primary;
+                                word-break: break-all;
+                            }
+
+                            button {
+                                color: vars.$primary-color;
+
+                                &:hover {
+                                    background-color: rgba(vars.$primary-color, 0.1);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Requisiti
+                .requirements {
+                    .requirements-list {
+                        margin: 0;
+                        padding-left: 20px;
+
+                        li {
+                            margin-bottom: 8px;
+                            color: vars.$text-primary;
+                            line-height: 1.5;
+
+                            &:last-child {
+                                margin-bottom: 0;
+                            }
+                        }
+                    }
+                }
+
+                // Materiali
+                .materials {
+                    mat-chip-list {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 8px;
+
+                        mat-chip {
+                            background-color: #e3f2fd;
+                            color: #1976d2;
+                            font-size: 13px;
+                        }
+                    }
+                }
+
+                // Aziende partecipanti
+                .participating-companies {
+                    .companies-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                        gap: 16px;
+
+                        .company-card {
+                            background-color: #f8f9fa;
+                            border: 1px solid #e9ecef;
+                            border-radius: 8px;
+
+                            mat-card-content {
+                                padding: 16px;
+
+                                h4 {
+                                    font-size: 16px;
+                                    font-weight: 600;
+                                    color: vars.$text-primary;
+                                    margin: 0 0 8px 0;
+                                }
+
+                                p {
+                                    font-size: 14px;
+                                    color: vars.$text-secondary;
+                                    margin: 0 0 12px 0;
+                                    line-height: 1.4;
+                                }
+
+                                mat-chip-list {
+                                    margin-bottom: 8px;
+
+                                    mat-chip {
+                                        font-size: 11px;
+                                        height: 24px;
+                                    }
+                                }
+
+                                .stand-info {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 4px;
+                                    font-size: 12px;
+                                    color: vars.$text-secondary;
+                                    font-weight: 500;
+
+                                    mat-icon {
+                                        font-size: 14px;
+                                        height: 14px;
+                                        width: 14px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Programma evento
+                .event-program {
+                    .program-timeline {
+                        .program-item {
+                            display: flex;
+                            gap: 16px;
+                            margin-bottom: 20px;
+                            padding-bottom: 20px;
+                            border-bottom: 1px solid #e9ecef;
+
+                            &:last-child {
+                                margin-bottom: 0;
+                                padding-bottom: 0;
+                                border-bottom: none;
+                            }
+
+                            .program-time {
+                                flex-shrink: 0;
+                                width: 120px;
+                                text-align: right;
+                                padding-top: 4px;
+
+                                .time-start,
+                                .time-end {
+                                    display: block;
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    color: vars.$primary-color;
+                                }
+
+                                .time-separator {
+                                    display: block;
+                                    font-size: 12px;
+                                    color: vars.$text-secondary;
+                                    margin: 2px 0;
+                                }
+                            }
+
+                            .program-content {
+                                flex: 1;
+
+                                h4 {
+                                    font-size: 16px;
+                                    font-weight: 600;
+                                    color: vars.$text-primary;
+                                    margin: 0 0 8px 0;
+                                }
+
+                                p {
+                                    font-size: 14px;
+                                    color: vars.$text-secondary;
+                                    margin: 0 0 12px 0;
+                                    line-height: 1.4;
+                                }
+
+                                .program-meta {
+                                    display: flex;
+                                    flex-wrap: wrap;
+                                    gap: 16px;
+
+                                    .meta-item {
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 4px;
+                                        font-size: 12px;
+                                        color: vars.$text-secondary;
+
+                                        mat-icon {
+                                            font-size: 14px;
+                                            height: 14px;
+                                            width: 14px;
+                                            color: vars.$primary-color;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Azioni
+                .event-actions {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 20px 24px;
+                    background-color: #f8f9fa;
+                    border-top: 1px solid #e9ecef;
+
+                    .register-button {
+                        min-width: 200px;
+                        padding: 12px 24px;
+                        font-size: 16px;
+                        font-weight: 600;
+
+                        mat-icon {
+                            margin-right: 8px;
+                        }
+
+                        &:disabled {
+                            background-color: #ccc;
+                            color: #666;
+                        }
+                    }
+
+                    .registration-info {
+                        display: flex;
+                        align-items: center;
+                        gap: 4px;
+                        font-size: 14px;
+                        color: vars.$text-secondary;
+                        font-weight: 500;
+
+                        mat-icon {
+                            font-size: 16px;
+                            height: 16px;
+                            width: 16px;
+                            color: vars.$primary-color;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .evento-detail-container {
+        padding: 12px;
+
+        .page-header {
+            margin-bottom: 16px;
+        }
+
+        .evento-content {
+            .status-badges {
+                mat-chip-list {
+                    justify-content: center;
+                }
+            }
+
+            .main-event-card {
+                .event-header {
+                    .event-title {
+                        font-size: 20px;
+                    }
+
+                    .event-subtitle {
+                        font-size: 14px;
+                    }
+                }
+
+                .event-image-container {
+                    height: 200px;
+                }
+
+                .event-content {
+                    padding: 16px;
+
+                    .event-info-grid {
+                        grid-template-columns: 1fr;
+                        gap: 12px;
+
+                        .info-item {
+                            padding: 12px;
+                        }
+                    }
+
+                    .contact-info {
+                        .contact-grid {
+                            grid-template-columns: 1fr;
+                        }
+                    }
+
+                    .participating-companies {
+                        .companies-grid {
+                            grid-template-columns: 1fr;
+                        }
+                    }
+
+                    .event-program {
+                        .program-timeline {
+                            .program-item {
+                                flex-direction: column;
+                                gap: 8px;
+
+                                .program-time {
+                                    width: auto;
+                                    text-align: left;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .evento-detail-container {
+        padding: 8px;
+
+        .main-event-card {
+            .event-content {
+                padding: 12px;
+
+                .event-info-grid {
+                    .info-item {
+                        padding: 8px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+    .evento-detail-container {
+        .main-event-card {
+            background-color: #2d3748;
+            color: #e2e8f0;
+
+            .event-header {
+                .event-title {
+                    color: #f7fafc;
+                }
+
+                .event-subtitle {
+                    color: #cbd5e0;
+                }
+            }
+
+            .event-content {
+                .event-info-grid {
+                    .info-item {
+                        background-color: #4a5568;
+                        color: #e2e8f0;
+                    }
+                }
+
+                .contact-info {
+                    .contact-grid {
+                        .contact-item {
+                            background-color: #4a5568;
+                            border-color: #718096;
+                        }
+                    }
+                }
+
+                .participating-companies {
+                    .companies-grid {
+                        .company-card {
+                            background-color: #4a5568;
+                            border-color: #718096;
+                        }
+                    }
+                }
+            }
+
+            .event-actions {
+                background-color: #4a5568;
+                border-color: #718096;
+            }
+        }
+
+        .error-container {
+            .error-card {
+                background-color: #742a2a;
+                border-color: #fc8181;
+            }
+        }
+    }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+    .evento-detail-container {
+        .main-event-card {
+            border: 2px solid currentColor;
+        }
+
+        .status-badges {
+            mat-chip {
+                border: 1px solid currentColor;
+            }
+        }
+    }
+}
+
+// Print styles
+@media print {
+    .evento-detail-container {
+
+        .page-header,
+        .event-actions {
+            display: none;
+        }
+
+        .main-event-card {
+            box-shadow: none;
+            border: 1px solid #000;
+
+            .event-content {
+                .event-info-grid {
+                    .info-item {
+                        border: 1px solid #ccc;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,540 @@
+// Stili globali per accessibilità e responsive design
+
+// Import variabili e mixins
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Skip Links per navigazione da tastiera
+.skip-links {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+
+    a {
+        @include skip-link;
+    }
+}
+
+// Focus styles migliorati
+* {
+    @include focus-visible;
+}
+
+// Screen reader only content
+.sr-only {
+    @include sr-only;
+}
+
+.visually-hidden {
+    @include visually-hidden;
+}
+
+// High contrast mode improvements
+@include high-contrast {
+    .mat-card {
+        border: 2px solid $text-primary;
+    }
+
+    .mat-button,
+    .mat-raised-button,
+    .mat-stroked-button,
+    .mat-flat-button {
+        border: 2px solid $text-primary;
+    }
+
+    .mat-form-field-appearance-outline .mat-form-field-outline {
+        border-color: $text-primary;
+        border-width: 2px;
+    }
+
+    .mat-input-element {
+        color: $text-primary;
+    }
+}
+
+// Reduced motion preferences
+@include reduced-motion {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .mat-sidenav-container {
+        transition: none !important;
+    }
+
+    .mat-expansion-panel-body {
+        transition: none !important;
+    }
+}
+
+// Dark mode improvements
+@include dark-mode {
+    body {
+        background-color: #121212;
+        color: #ffffff;
+    }
+
+    .mat-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+    }
+
+    .mat-card-title,
+    .mat-card-subtitle {
+        color: #ffffff;
+    }
+
+    .mat-form-field-appearance-outline .mat-form-field-outline {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .mat-input-element {
+        color: #ffffff;
+    }
+
+    .mat-select-value {
+        color: #ffffff;
+    }
+
+    .mat-paginator {
+        background: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+    }
+
+    .mat-chip {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+    }
+}
+
+// Responsive typography
+html {
+    font-size: 16px;
+
+    @include mobile-only {
+        font-size: 14px;
+    }
+
+    @include tablet-only {
+        font-size: 15px;
+    }
+
+    @include wide-and-up {
+        font-size: 18px;
+    }
+}
+
+// Responsive spacing
+.responsive-spacing {
+    padding: $spacing-lg;
+
+    @include mobile-only {
+        padding: $spacing-md;
+    }
+
+    @include tablet-only {
+        padding: $spacing-lg;
+    }
+
+    @include desktop-and-up {
+        padding: $spacing-xl;
+    }
+}
+
+// Responsive grid system
+.responsive-grid {
+    display: grid;
+    gap: $spacing-md;
+    grid-template-columns: 1fr;
+
+    @include tablet-only {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include desktop-only {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    @include wide-and-up {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+// Responsive containers
+.container {
+    @include container;
+}
+
+.container-fluid {
+    width: 100%;
+    padding: 0 $spacing-md;
+
+    @include mobile-only {
+        padding: 0 $spacing-sm;
+    }
+}
+
+// Accessible buttons
+.btn-accessible {
+    min-height: 44px; // Touch target size
+    min-width: 44px;
+    @include button-base;
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+.btn-primary {
+    @include button-primary;
+}
+
+// Accessible form elements
+.form-group {
+    margin-bottom: $spacing-md;
+
+    label {
+        display: block;
+        margin-bottom: $spacing-xs;
+        font-weight: 500;
+        color: $text-primary;
+    }
+
+    .required-indicator {
+        color: $warn-color;
+        margin-left: $spacing-xs;
+    }
+
+    .error-message {
+        color: $warn-color;
+        font-size: 0.875rem;
+        margin-top: $spacing-xs;
+    }
+}
+
+// Accessible tables
+.table-accessible {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+        padding: $spacing-sm;
+        text-align: left;
+        border-bottom: 1px solid $border-color;
+    }
+
+    th {
+        font-weight: 600;
+        background-color: $background-color-light;
+    }
+
+    @include mobile-only {
+
+        th,
+        td {
+            padding: $spacing-xs;
+            font-size: 0.875rem;
+        }
+    }
+}
+
+// Accessible images
+.img-accessible {
+    max-width: 100%;
+    height: auto;
+
+    &.img-thumbnail {
+        border-radius: $border-radius-sm;
+        box-shadow: $shadow-sm;
+    }
+}
+
+// Loading states with accessibility
+.loading-accessible {
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: inherit;
+        @include loading-skeleton;
+    }
+
+    .loading-text {
+        @include sr-only;
+    }
+}
+
+// Progress indicators
+.progress-accessible {
+    width: 100%;
+    height: 4px;
+    background-color: $background-color-light;
+    border-radius: 2px;
+    overflow: hidden;
+
+    .progress-bar {
+        height: 100%;
+        background-color: $primary-color;
+        transition: width $transition-normal;
+
+        @include reduced-motion {
+            transition: none;
+        }
+    }
+}
+
+// Toast notifications accessibili
+.toast-accessible {
+    position: fixed;
+    top: $spacing-md;
+    right: $spacing-md;
+    z-index: 1000;
+    max-width: 300px;
+    padding: $spacing-md;
+    border-radius: $border-radius-md;
+    box-shadow: $shadow-lg;
+    color: white;
+
+    @include mobile-only {
+        top: auto;
+        bottom: $spacing-md;
+        left: $spacing-md;
+        right: $spacing-md;
+        max-width: none;
+    }
+
+    &.toast-success {
+        background-color: $success-color;
+    }
+
+    &.toast-error {
+        background-color: $warn-color;
+    }
+
+    &.toast-warning {
+        background-color: #ff9800;
+    }
+
+    &.toast-info {
+        background-color: $info-color;
+    }
+}
+
+// Modal accessibili
+.modal-accessible {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    @include flex-center;
+    z-index: 1000;
+    padding: $spacing-md;
+
+    .modal-content {
+        background: $card-background;
+        border-radius: $border-radius-lg;
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: $spacing-lg;
+
+        @include mobile-only {
+            padding: $spacing-md;
+            max-height: 95vh;
+        }
+    }
+
+    .modal-header {
+        @include flex-between;
+        margin-bottom: $spacing-md;
+
+        .modal-title {
+            margin: 0;
+            @include heading-2;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: $spacing-xs;
+            @include focus-visible;
+        }
+    }
+}
+
+// Responsive navigation
+.nav-accessible {
+    .nav-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        @include flex-center;
+
+        @include mobile-only {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+
+    .nav-item {
+        margin: 0 $spacing-sm;
+
+        @include mobile-only {
+            margin: $spacing-xs 0;
+        }
+    }
+
+    .nav-link {
+        display: block;
+        padding: $spacing-sm $spacing-md;
+        text-decoration: none;
+        color: $text-primary;
+        border-radius: $border-radius-sm;
+        transition: $transition-fast;
+
+        &:hover,
+        &:focus {
+            background-color: $hover-background;
+            color: $primary-color;
+        }
+
+        @include focus-visible;
+    }
+}
+
+// Accessible carousel/slider
+.carousel-accessible {
+    position: relative;
+    overflow: hidden;
+
+    .carousel-container {
+        display: flex;
+        transition: transform $transition-normal;
+
+        @include reduced-motion {
+            transition: none;
+        }
+    }
+
+    .carousel-slide {
+        min-width: 100%;
+        @include flex-center;
+    }
+
+    .carousel-controls {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        @include flex-between;
+        padding: 0 $spacing-md;
+
+        .carousel-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            @include button-base;
+            @include flex-center;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.7);
+            }
+        }
+    }
+
+    .carousel-indicators {
+        @include flex-center;
+        gap: $spacing-xs;
+        margin-top: $spacing-md;
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: $border-color;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+
+            &.active {
+                background-color: $primary-color;
+            }
+
+            @include focus-visible;
+        }
+    }
+}
+
+// Print styles migliorati
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    body {
+        font-size: 12pt;
+        line-height: 1.4;
+        color: black;
+        background: white;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        page-break-after: avoid;
+        color: black;
+    }
+
+    p,
+    ul,
+    ol {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+        page-break-inside: avoid;
+    }
+
+    a {
+        text-decoration: underline;
+        color: black;
+
+        &[href^="http"]:after {
+            content: " (" attr(href) ")";
+            font-size: 0.8em;
+        }
+    }
+
+    .mat-card {
+        border: 1px solid #ccc;
+        break-inside: avoid;
+        box-shadow: none;
+    }
+}

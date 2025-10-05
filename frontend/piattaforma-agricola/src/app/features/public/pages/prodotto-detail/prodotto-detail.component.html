@@ -1,0 +1,274 @@
+<div class="prodotto-detail-container">
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="loading">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <p>Caricamento dettagli prodotto...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !loading">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <h3>Oops! Qualcosa è andato storto</h3>
+        <p>{{ error }}</p>
+        <div class="error-actions">
+            <button mat-raised-button color="primary" (click)="retryLoad()">
+                Riprova
+            </button>
+            <button mat-stroked-button (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon>
+                Torna ai prodotti
+            </button>
+        </div>
+    </div>
+
+    <!-- Product Detail Content -->
+    <div class="product-content" *ngIf="prodotto && !loading">
+        <!-- Header with Back Button -->
+        <div class="content-header">
+            <button mat-icon-button (click)="goBack()" class="back-button">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h1 class="page-title">{{ prodotto.nome }}</h1>
+        </div>
+
+        <!-- Main Product Info -->
+        <div class="product-main">
+            <div class="product-image-section">
+                <div class="product-image-container">
+                    <img [src]="getMainImage()" [alt]="prodotto.nome" class="product-image">
+                    <div class="availability-badge" [ngClass]="getAvailabilityColor(prodotto.quantitaDisponibile)">
+                        {{ getAvailabilityText(prodotto.quantitaDisponibile) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-info-section">
+                <div class="product-header">
+                    <h1 class="product-name">{{ prodotto.nome }}</h1>
+                    <div class="product-meta">
+                        <span class="category">{{ prodotto.categoria || 'Senza categoria' }}</span>
+                        <span class="separator">•</span>
+                        <span class="unit">{{ prodotto.unitaMisura || 'pz' }}</span>
+                    </div>
+                </div>
+
+                <div class="product-price">
+                    <span class="current-price">{{ formatCurrency(prodotto.prezzo) }}</span>
+                    <span class="price-unit">/ {{ prodotto.unitaMisura || 'pz' }}</span>
+                </div>
+
+                <div class="product-description">
+                    <p>{{ prodotto.descrizione || 'Nessuna descrizione disponibile' }}</p>
+                </div>
+
+                <div class="product-origin" *ngIf="prodotto.luogoOrigine">
+                    <mat-icon>location_on</mat-icon>
+                    <span>Origine: {{ prodotto.luogoOrigine }}</span>
+                </div>
+
+                <div class="producer-info" *ngIf="prodotto.produttore">
+                    <h4>Produttore</h4>
+                    <div class="producer-card">
+                        <div class="producer-avatar">
+                            <mat-icon>agriculture</mat-icon>
+                        </div>
+                        <div class="producer-details">
+                            <span class="producer-name">{{ prodotto.produttore.nomeAzienda }}</span>
+                            <button mat-button color="primary" (click)="navigateToAzienda(prodotto.produttore.id)">
+                                Visualizza azienda
+                                <mat-icon>arrow_forward</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-actions">
+                    <button mat-raised-button color="primary" size="large" (click)="addToCart()"
+                        [disabled]="!isAvailable(prodotto.quantitaDisponibile)">
+                        <mat-icon>shopping_cart</mat-icon>
+                        Aggiungi al carrello
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details Tabs -->
+        <div class="product-details">
+            <mat-tab-group>
+                <!-- Informazioni Generali -->
+                <mat-tab label="Informazioni">
+                    <div class="tab-content">
+                        <div class="info-grid">
+                            <div class="info-item" *ngIf="prodotto.dataRaccolta">
+                                <h4>Data Raccolta</h4>
+                                <p>{{ formatDate(prodotto.dataRaccolta) }}</p>
+                            </div>
+
+                            <div class="info-item" *ngIf="prodotto.dataDisponibilita">
+                                <h4>Disponibilità</h4>
+                                <p>Dal {{ formatDate(prodotto.dataDisponibilita) }}</p>
+                            </div>
+
+                            <div class="info-item" *ngIf="prodotto.valutazioneMedia">
+                                <h4>Valutazione</h4>
+                                <div class="rating">
+                                    <mat-icon>star</mat-icon>
+                                    <span>{{ prodotto.valutazioneMedia }}/5</span>
+                                    <span class="rating-count">({{ prodotto.numeroRecensioni || 0 }} recensioni)</span>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <h4>Quantità Disponibile</h4>
+                                <p>{{ prodotto.quantitaDisponibile }} {{ prodotto.unitaMisura || 'pezzi' }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Metodo di Coltivazione -->
+                        <div class="cultivation-method" *ngIf="hasMetodoColtivazione()">
+                            <h3>Metodo di Coltivazione</h3>
+                            <mat-card class="method-card">
+                                <mat-card-header>
+                                    <mat-card-title>{{ prodotto.metodoColtivazione?.nome }}</mat-card-title>
+                                    <mat-card-subtitle>{{ prodotto.metodoColtivazione?.tipo }}</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <p>{{ prodotto.metodoColtivazione?.descrizione }}</p>
+
+                                    <div class="method-principles"
+                                        *ngIf="(prodotto.metodoColtivazione?.principi?.length || 0) > 0">
+                                        <h4>Principi</h4>
+                                        <mat-chip-listbox>
+                                            <mat-chip-option
+                                                *ngFor="let principio of prodotto.metodoColtivazione?.principi">
+                                                {{ principio }}
+                                            </mat-chip-option>
+                                        </mat-chip-listbox>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Certificazioni -->
+                <mat-tab label="Certificazioni" *ngIf="hasCertificazioni()">
+                    <div class="tab-content">
+                        <div class="certifications-grid">
+                            <mat-card class="certification-card" *ngFor="let cert of prodotto.certificazioniDettagli"
+                                [ngClass]="getStatoCertificazione(cert.dataScadenza)">
+                                <mat-card-header>
+                                    <mat-card-title>{{ cert.tipoCertificazione }}</mat-card-title>
+                                    <mat-card-subtitle>{{ cert.enteRilascio }}</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <div class="cert-info">
+                                        <p><strong>Numero:</strong> {{ cert.numeroRiferimento }}</p>
+                                        <p><strong>Rilasciata:</strong> {{ formatDate(cert.dataRilascio) }}</p>
+                                        <p><strong>Scadenza:</strong> {{ formatDate(cert.dataScadenza) }}</p>
+                                    </div>
+
+                                    <div class="cert-status">
+                                        <mat-chip [color]="getStatoCertificazioneColor(cert.dataScadenza)">
+                                            {{ getStatoCertificazioneText(cert.dataScadenza) }}
+                                        </mat-chip>
+                                    </div>
+
+                                    <button mat-stroked-button *ngIf="cert.documentoUrl" class="view-cert-btn">
+                                        <mat-icon>description</mat-icon>
+                                        Visualizza certificato
+                                    </button>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Tracciabilità -->
+                <mat-tab label="Tracciabilità" *ngIf="hasTracciabilita()">
+                    <div class="tab-content">
+                        <div class="traceability-info">
+                            <h3>Catena di Tracciabilità</h3>
+
+                            <mat-expansion-panel class="trace-panel">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Prodotto Finale
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                        {{ prodotto.tracciabilita?.prodottoFinale?.nome }}
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+
+                                <div class="trace-details">
+                                    <p><strong>Codice Tracciabilità:</strong> {{ prodotto.tracciabilita?.catenaCompleta
+                                        ? 'Completa' : 'Parziale' }}</p>
+                                </div>
+                            </mat-expansion-panel>
+
+                            <mat-expansion-panel class="trace-panel"
+                                *ngFor="let processo of prodotto.tracciabilita?.processiTrasformazione || []">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Processo di Trasformazione
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                        {{ processo?.nome }} - {{ processo?.data ? formatDate(processo.data) : '' }}
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+                            </mat-expansion-panel>
+
+                            <mat-expansion-panel class="trace-panel">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Prodotti di Origine
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                        {{ prodotto.tracciabilita?.prodottiOrigine?.length || 0 }} materie prime
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+
+                                <div class="origin-products">
+                                    <div class="origin-product"
+                                        *ngFor="let origine of prodotto.tracciabilita?.prodottiOrigine || []">
+                                        <h4>{{ origine?.nome }}</h4>
+                                        <p><strong>Produttore:</strong> {{ origine?.produttore }}</p>
+                                        <p><strong>Quantità:</strong> {{ origine?.quantita }} {{ origine?.unitaMisura }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+
+        <!-- Related Products -->
+        <div class="related-products" *ngIf="prodottiCorrelati.length > 0">
+            <h2>Prodotti Correlati</h2>
+            <div class="related-grid">
+                <mat-card class="related-product-card" *ngFor="let prodotto of prodottiCorrelati"
+                    (click)="navigateToProdotto(prodotto.id)">
+                    <mat-card-header>
+                        <div mat-card-avatar class="related-avatar">
+                            <mat-icon>shopping_basket</mat-icon>
+                        </div>
+                        <mat-card-title>{{ prodotto.nome }}</mat-card-title>
+                        <mat-card-subtitle>{{ prodotto.produttore?.nomeAzienda }}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p class="related-description">{{ prodotto.descrizione | slice:0:100 }}...</p>
+                        <div class="related-price">{{ formatCurrency(prodotto.prezzo) }}</div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-button color="primary">
+                            Visualizza
+                            <mat-icon>arrow_forward</mat-icon>
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,303 @@
+<div class="aziende-container">
+  <!-- Header della pagina -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Aziende Agricole</h1>
+      <p class="page-subtitle">Scopri le aziende agricole della nostra filiera</p>
+    </div>
+    
+    <!-- Box di ricerca -->
+    <div class="search-section">
+      <app-search-box 
+        (search)="onSearch($event)"
+        placeholder="Cerca aziende per nome..."
+        class="search-box">
+      </app-search-box>
+    </div>
+  </div>
+
+  <!-- Controlli filtri e ordinamento -->
+  <div class="controls-section">
+    <div class="controls-left">
+      <button 
+        mat-raised-button 
+        (click)="toggleFilters()"
+        class="filter-toggle-button"
+        [color]="showFilters ? 'primary' : 'accent'">
+        <mat-icon>filter_list</mat-icon>
+        Filtri
+        <mat-chip 
+          *ngIf="activeFiltersCount > 0" 
+          class="active-filters-chip"
+          color="primary">
+          {{ activeFiltersCount }}
+        </mat-chip>
+      </button>
+
+      <button 
+        mat-stroked-button 
+        (click)="resetFilters()"
+        [disabled]="activeFiltersCount === 0"
+        class="reset-filters-button">
+        <mat-icon>refresh</mat-icon>
+        Reset
+      </button>
+    </div>
+
+    <div class="controls-right">
+      <mat-form-field appearance="outline" class="sort-field">
+        <mat-label>Ordina per</mat-label>
+        <mat-select 
+          [(ngModel)]="filters.sortBy" 
+          (selectionChange)="onFilterChange()">
+          <mat-option 
+            *ngFor="let option of opzioniOrdinamento" 
+            [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Pannello filtri -->
+  <div class="filters-panel" [@slideToggle]="showFilters">
+    <mat-card class="filters-card">
+      <mat-card-content>
+        <div class="filters-grid">
+          <!-- Filtri per tipologia -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Tipologia</mat-label>
+            <mat-select 
+              [(ngModel)]="filters.tipologia" 
+              (selectionChange)="onFilterChange()">
+              <mat-option value="">Tutte le tipologie</mat-option>
+              <mat-option 
+                *ngFor="let tipologia of tipologieAzienda" 
+                [value]="tipologia.value">
+                {{ tipologia.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Filtro per città -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Città</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="filters.citta" 
+              (ngModelChange)="onFilterChange()"
+              placeholder="Cerca città...">
+          </mat-form-field>
+
+          <!-- Filtro per provincia -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Provincia</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="filters.provincia" 
+              (ngModelChange)="onFilterChange()"
+              placeholder="Es. RM, MI, TO...">
+          </mat-form-field>
+
+          <!-- Filtro per certificazione -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Certificazione</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="filters.certificazione" 
+              (ngModelChange)="onFilterChange()"
+              placeholder="Es. Bio, DOP, IGP...">
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Stato di caricamento -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Caricamento aziende...</p>
+  </div>
+
+  <!-- Messaggio di errore -->
+  <div class="error-container" *ngIf="error && !isLoading">
+    <mat-card class="error-card">
+      <mat-card-content>
+        <div class="error-content">
+          <mat-icon class="error-icon">error_outline</mat-icon>
+          <h3>Errore nel caricamento</h3>
+          <p>{{ error }}</p>
+          <button mat-raised-button color="primary" (click)="retry()">
+            <mat-icon>refresh</mat-icon>
+            Riprova
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Risultati della ricerca -->
+  <div class="results-section" *ngIf="!isLoading && !error">
+    <!-- Header risultati -->
+    <div class="results-header">
+      <h2 class="results-title">
+        {{ totalElements }} aziend{{ totalElements === 1 ? 'a' : 'e' }} trovate
+      </h2>
+      
+      <!-- Badge filtri attivi -->
+      <div class="active-filters-badges" *ngIf="activeFiltersCount > 0">
+        <mat-chip 
+          *ngIf="filters.query" 
+          class="filter-badge"
+          (removed)="filters.query = undefined; onFilterChange()">
+          Ricerca: {{ filters.query }}
+          <mat-icon class="remove-icon">close</mat-icon>
+        </mat-chip>
+        
+        <mat-chip 
+          *ngIf="filters.tipologia" 
+          class="filter-badge"
+          (removed)="filters.tipologia = undefined; onFilterChange()">
+          Tipologia: {{ getTipologiaLabel(filters.tipologia) }}
+          <mat-icon class="remove-icon">close</mat-icon>
+        </mat-chip>
+        
+        <mat-chip 
+          *ngIf="filters.citta" 
+          class="filter-badge"
+          (removed)="filters.citta = undefined; onFilterChange()">
+          Città: {{ filters.citta }}
+          <mat-icon class="remove-icon">close</mat-icon>
+        </mat-chip>
+        
+        <mat-chip 
+          *ngIf="filters.provincia" 
+          class="filter-badge"
+          (removed)="filters.provincia = undefined; onFilterChange()">
+          Provincia: {{ filters.provincia }}
+          <mat-icon class="remove-icon">close</mat-icon>
+        </mat-chip>
+        
+        <mat-chip 
+          *ngIf="filters.certificazione" 
+          class="filter-badge"
+          (removed)="filters.certificazione = undefined; onFilterChange()">
+          Certificazione: {{ filters.certificazione }}
+          <mat-icon class="remove-icon">close</mat-icon>
+        </mat-chip>
+      </div>
+    </div>
+
+    <!-- Grid aziende -->
+    <div class="aziende-grid" *ngIf="aziende.length > 0">
+      <mat-card 
+        class="azienda-card" 
+        *ngFor="let azienda of aziende"
+        [attr.aria-label]="getAriaLabelForAzienda(azienda)">
+        <mat-card-header class="azienda-header">
+          <div mat-card-avatar 
+               class="azienda-avatar"
+               [style.background-color]="getTipologiaColor(azienda.tipologia)">
+            <mat-icon>{{ getTipologiaIcon(azienda.tipologia) }}</mat-icon>
+          </div>
+          
+          <mat-card-title class="azienda-title">{{ azienda.nomeAzienda }}</mat-card-title>
+          <mat-card-subtitle class="azienda-subtitle">
+            {{ getTipologiaLabel(azienda.tipologia) }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <!-- Logo azienda -->
+        <div class="azienda-logo-container" *ngIf="azienda.logo">
+          <img [src]="azienda.logo" [alt]="azienda.nomeAzienda" class="azienda-logo">
+        </div>
+
+        <mat-card-content class="azienda-content">
+          <!-- Rating -->
+          <div class="azienda-rating" *ngIf="azienda.rating">
+            <div class="rating-stars">
+              <mat-icon 
+                *ngFor="let star of getRatingStars(azienda.rating); let i = index"
+                [color]="getRatingColor(azienda.rating)"
+                class="rating-star">
+                {{ star === 1 ? 'star' : star === 0.5 ? 'star_half' : 'star_border' }}
+              </mat-icon>
+            </div>
+            <span class="rating-value">{{ azienda.rating.toFixed(1) }}</span>
+          </div>
+
+          <!-- Descrizione -->
+          <div class="azienda-description" *ngIf="azienda.descrizione">
+            <p>{{ azienda.descrizione | slice:0:150 }}{{ azienda.descrizione.length > 150 ? '...' : '' }}</p>
+          </div>
+
+          <!-- Indirizzo -->
+          <div class="azienda-address">
+            <mat-icon class="address-icon">location_on</mat-icon>
+            <span class="address-text">{{ getFormattedAddress(azienda.indirizzo) }}</span>
+          </div>
+
+          <!-- Statistiche -->
+          <div class="azienda-stats">
+            <div class="stat-item" *ngIf="azienda.numeroProdotti">
+              <mat-icon class="stat-icon">inventory_2</mat-icon>
+              <span class="stat-value">{{ azienda.numeroProdotti }} prodotti</span>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions class="azienda-actions">
+          <button 
+            mat-raised-button 
+            color="primary"
+            (click)="viewAziendaDetail(azienda.id)"
+            class="view-details-button">
+            <mat-icon>visibility</mat-icon>
+            Dettagli
+          </button>
+
+          <button 
+            mat-icon-button 
+            (click)="shareAzienda(azienda)"
+            matTooltip="Condividi azienda"
+            class="share-button">
+            <mat-icon>share</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- Stato vuoto -->
+    <div class="empty-state" *ngIf="aziende.length === 0">
+      <mat-icon class="empty-icon">business</mat-icon>
+      <h3>Nessuna azienda trovata</h3>
+      <p>
+        {{ activeFiltersCount > 0 
+           ? 'Prova a modificare i filtri di ricerca per trovare altre aziende.' 
+           : 'Al momento non sono presenti aziende nel sistema.' }}
+      </p>
+      <button 
+        mat-raised-button 
+        color="primary"
+        (click)="resetFilters()"
+        *ngIf="activeFiltersCount > 0">
+        <mat-icon>refresh</mat-icon>
+        Resetta filtri
+      </button>
+    </div>
+
+    <!-- Paginazione -->
+    <div class="pagination-container" *ngIf="totalElements > pageSize">
+      <mat-paginator
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        [pageIndex]="currentPage"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+        aria-label="Paginazione aziende">
+      </mat-paginator>
+    </div>
+  </div>
+</div>

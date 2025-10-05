@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -11,8 +12,8 @@ import { ShellComponent } from './layout/shell/shell.component';
 
 @NgModule({
     declarations: [ShellComponent],
-    imports: [CommonModule, RouterModule, MatToolbarModule, MatSidenavModule, MatListModule, MatIconModule, MatSnackBarModule, MatButtonModule],
-    exports: [ShellComponent],
+    imports: [CommonModule, RouterModule, MatToolbarModule, MatSidenavModule, MatListModule, MatIconModule, MatSnackBarModule, MatButtonModule, MatChipsModule],
+    exports: [ShellComponent, MatChipsModule, MatIconModule],
     providers: [
         {
             provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,

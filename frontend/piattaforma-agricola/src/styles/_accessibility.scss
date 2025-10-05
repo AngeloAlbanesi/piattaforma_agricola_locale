@@ -341,8 +341,11 @@ html {
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
     @include flex-center;
-    z-index: 1000;
-    padding: $spacing-md;
+
+    & {
+        z-index: 1000;
+        padding: $spacing-md;
+    }
 
     .modal-content {
         background: $card-background;
@@ -463,8 +466,11 @@ html {
 
     .carousel-indicators {
         @include flex-center;
-        gap: $spacing-xs;
-        margin-top: $spacing-md;
+
+        & {
+            gap: $spacing-xs;
+            margin-top: $spacing-md;
+        }
 
         .indicator {
             width: 12px;

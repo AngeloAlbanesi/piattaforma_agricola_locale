@@ -133,7 +133,11 @@ h4 {
 /* Stili per le card migliorati con mixin */
 .card {
     @include card;
-    margin-bottom: $spacing-lg;
+
+    & {
+        margin-bottom: $spacing-lg;
+        transform: translateY(0);
+    }
 
     &:hover {
         transform: translateY(-2px);
@@ -143,8 +147,11 @@ h4 {
 /* Stili per i form migliorati */
 .form-container {
     @include card;
-    padding: $spacing-lg;
-    margin-bottom: $spacing-lg;
+
+    & {
+        padding: $spacing-lg;
+        margin-bottom: $spacing-lg;
+    }
 
     @include mobile-only {
         padding: $spacing-md;
@@ -164,7 +171,10 @@ h4 {
 
     button {
         @include button-base;
-        min-height: 44px; // Touch target size
+
+        & {
+            min-height: 44px; // Touch target size
+        }
 
         @include mobile-only {
             width: 100%;
@@ -190,7 +200,10 @@ h4 {
 /* Stili per il loading accessibile */
 .loading-spinner {
     @include flex-center;
-    height: 200px;
+
+    & {
+        height: 200px;
+    }
 
     .loading-text {
         @include sr-only;
@@ -235,13 +248,19 @@ h4 {
 
     .section-title {
         @include heading-2;
-        margin-bottom: $spacing-lg;
+
+        & {
+            margin-bottom: $spacing-lg;
+        }
     }
 
     .section-subtitle {
         @include heading-3;
-        margin-bottom: $spacing-md;
-        color: $text-secondary;
+
+        & {
+            margin-bottom: $spacing-md;
+            color: $text-secondary;
+        }
     }
 }
 
@@ -527,7 +546,10 @@ h4 {
 .mat-stroked-button,
 .mat-flat-button {
     @include button-base;
-    min-height: 44px; // Touch target size
+
+    & {
+        min-height: 44px; // Touch target size
+    }
 }
 
 .mat-form-field-appearance-outline {

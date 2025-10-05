@@ -1,18 +1,17 @@
-<div class="produttore-dashboard">
+<div class="produttore-dashboard" role="main" aria-label="Dashboard Produttore">
     <!-- Header Dashboard -->
-    <header class="dashboard-header">
+    <header class="dashboard-header" role="banner">
         <div class="header-content">
             <div class="welcome-section">
-                <h1 class="welcome-title">{{ welcomeMessage }}</h1>
-                <p class="welcome-subtitle">Gestisci i tuoi prodotti e monitora le performance della tua azienda
-                    agricola</p>
+                <h1 class="welcome-title" aria-level="1">{{ welcomeMessage }}</h1>
+                <p class="welcome-subtitle">Gestisci i tuoi prodotti e monitora le performance della tua azienda agricola</p>
             </div>
 
-            <div class="header-actions">
-                <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati">
+            <div class="header-actions" role="toolbar" aria-label="Azioni rapide">
+                <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati" aria-label="Aggiorna dati">
                     <mat-icon>refresh</mat-icon>
                 </button>
-                <button mat-icon-button (click)="logout()" matTooltip="Logout">
+                <button mat-icon-button (click)="logout()" matTooltip="Logout" aria-label="Esci dal sistema">
                     <mat-icon>logout</mat-icon>
                 </button>
             </div>
@@ -20,15 +19,16 @@
     </header>
 
     <!-- Loading State -->
-    <div class="loading-container" *ngIf="isLoading">
-        <mat-spinner></mat-spinner>
+    <div class="loading-container" *ngIf="isLoading" role="status" aria-live="polite">
+        <mat-spinner aria-label="Caricamento in corso"></mat-spinner>
         <p>Caricamento dashboard...</p>
     </div>
 
     <!-- Main Content -->
-    <main class="dashboard-content" *ngIf="!isLoading">
+    <main class="dashboard-content" *ngIf="!isLoading" role="main" aria-label="Contenuto principale">
         <!-- Statistiche Overview -->
-        <section class="stats-section" *ngIf="hasStats">
+        <section class="stats-section" *ngIf="hasStats" aria-labelledby="stats-heading">
+            <h2 id="stats-heading" class="sr-only">Statistiche panoramiche</h2>
             <app-produttore-stats-overview [totalProducts]="totalProducts" [approvedProducts]="approvedProducts"
                 [pendingProducts]="pendingProducts" [rejectedProducts]="rejectedProducts" [totalOrders]="totalOrders"
                 [completedOrders]="completedOrders" [totalRevenue]="totalRevenue" [productsSold]="productsSold"
@@ -38,36 +38,38 @@
         </section>
 
         <!-- Quick Actions -->
-        <section class="quick-actions-section">
+        <section class="quick-actions-section" aria-labelledby="quick-actions-heading">
+            <h2 id="quick-actions-heading" class="sr-only">Azioni rapide</h2>
             <app-produttore-quick-actions (action)="onQuickAction($event)"></app-produttore-quick-actions>
         </section>
 
         <!-- Tab Navigation -->
-        <section class="tabs-section">
-            <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event.index)">
+        <section class="tabs-section" aria-labelledby="tabs-heading">
+            <h2 id="tabs-heading" class="sr-only">Navigazione a schede</h2>
+            <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event.index)" role="tablist">
                 <!-- Tab Gestione Prodotti -->
-                <mat-tab label="Gestione Prodotti">
+                <mat-tab label="Gestione Prodotti" role="tabpanel">
                     <div class="tab-content">
                         <app-prodotti-management></app-prodotti-management>
                     </div>
                 </mat-tab>
 
                 <!-- Tab Ordini -->
-                <mat-tab label="Ordini">
+                <mat-tab label="Ordini" role="tabpanel">
                     <div class="tab-content">
                         <app-ordini-management></app-ordini-management>
                     </div>
                 </mat-tab>
 
                 <!-- Tab Certificazioni -->
-                <mat-tab label="Certificazioni">
+                <mat-tab label="Certificazioni" role="tabpanel">
                     <div class="tab-content">
                         <app-certificazioni-management></app-certificazioni-management>
                     </div>
                 </mat-tab>
 
                 <!-- Tab Metodi di Coltivazione -->
-                <mat-tab label="Metodi di Coltivazione">
+                <mat-tab label="Metodi di Coltivazione" role="tabpanel">
                     <div class="tab-content">
                         <app-metodi-coltivazione></app-metodi-coltivazione>
                     </div>
@@ -76,17 +78,18 @@
         </section>
 
         <!-- Sezione Riepilogo -->
-        <section class="summary-section" *ngIf="hasStats">
+        <section class="summary-section" *ngIf="hasStats" aria-labelledby="summary-heading">
+            <h2 id="summary-heading" class="sr-only">Riepilogo attività</h2>
             <div class="summary-grid">
                 <!-- Card Ordini Recenti -->
-                <mat-card class="summary-card" appearance="outlined">
+                <mat-card class="summary-card" appearance="outlined" role="article" aria-labelledby="orders-title">
                     <mat-card-header>
-                        <mat-card-title>Ordini Recenti</mat-card-title>
+                        <mat-card-title id="orders-title">Ordini Recenti</mat-card-title>
                         <mat-card-subtitle>{{ recentOrdersCount }} ordini</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
                         <div class="card-action">
-                            <button mat-raised-button color="primary" (click)="navigateToOrdersManagement()">
+                            <button mat-raised-button color="primary" (click)="navigateToOrdersManagement()" aria-label="Gestisci gli ordini recenti">
                                 Gestisci Ordini
                                 <mat-icon>receipt_long</mat-icon>
                             </button>
@@ -95,14 +98,14 @@
                 </mat-card>
 
                 <!-- Card Prodotti Popolari -->
-                <mat-card class="summary-card" appearance="outlined">
+                <mat-card class="summary-card" appearance="outlined" role="article" aria-labelledby="products-title">
                     <mat-card-header>
-                        <mat-card-title>Prodotti Popolari</mat-card-title>
+                        <mat-card-title id="products-title">Prodotti Popolari</mat-card-title>
                         <mat-card-subtitle>{{ popularProductsCount }} prodotti</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
                         <div class="card-action">
-                            <button mat-raised-button color="accent" (click)="navigateToProductsManagement()">
+                            <button mat-raised-button color="accent" (click)="navigateToProductsManagement()" aria-label="Visualizza i prodotti popolari">
                                 Visualizza Prodotti
                                 <mat-icon>trending_up</mat-icon>
                             </button>
@@ -111,18 +114,18 @@
                 </mat-card>
 
                 <!-- Card Performance -->
-                <mat-card class="summary-card" appearance="outlined">
+                <mat-card class="summary-card" appearance="outlined" role="article" aria-labelledby="performance-title">
                     <mat-card-header>
-                        <mat-card-title>Performance Vendite</mat-card-title>
+                        <mat-card-title id="performance-title">Performance Vendite</mat-card-title>
                         <mat-card-subtitle>Tasso completamento: {{ getCompletionRate() }}%</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
-                        <div class="performance-metrics">
-                            <div class="metric">
+                        <div class="performance-metrics" role="list" aria-label="Metriche di performance">
+                            <div class="metric" role="listitem">
                                 <span class="metric-label">Fatturato:</span>
                                 <span class="metric-value">{{ formatCurrency(totalRevenue) }}</span>
                             </div>
-                            <div class="metric">
+                            <div class="metric" role="listitem">
                                 <span class="metric-label">Prodotti Venduti:</span>
                                 <span class="metric-value">{{ formatNumber(productsSold) }}</span>
                             </div>
@@ -134,14 +137,14 @@
     </main>
 
     <!-- Footer Dashboard -->
-    <footer class="dashboard-footer">
+    <footer class="dashboard-footer" role="contentinfo">
         <div class="footer-content">
             <p>&copy; 2024 Piattaforma Agricola Locale. Tutti i diritti riservati.</p>
-            <div class="footer-links">
-                <a mat-button color="primary" href="/help">Aiuto</a>
-                <a mat-button color="primary" href="/terms">Termini</a>
-                <a mat-button color="primary" href="/privacy">Privacy</a>
-            </div>
+            <nav class="footer-links" aria-label="Navigazione secondaria">
+                <a mat-button color="primary" href="/help" aria-label="Visita la pagina di aiuto">Aiuto</a>
+                <a mat-button color="primary" href="/terms" aria-label="Visualizza i termini di servizio">Termini</a>
+                <a mat-button color="primary" href="/privacy" aria-label="Visualizza l'informativa sulla privacy">Privacy</a>
+            </nav>
         </div>
     </footer>
 </div>

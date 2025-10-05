@@ -1,17 +1,17 @@
-<div class="curatore-dashboard">
+<div class="curatore-dashboard" role="main" aria-label="Dashboard Curatore">
     <!-- Header Dashboard -->
-    <header class="dashboard-header">
+    <header class="dashboard-header" role="banner">
         <div class="header-content">
             <div class="welcome-section">
-                <h1 class="welcome-title">{{ welcomeMessage }}</h1>
+                <h1 class="welcome-title" aria-level="1">{{ welcomeMessage }}</h1>
                 <p class="welcome-subtitle">La tua dashboard per la gestione delle approvazioni</p>
             </div>
 
-            <div class="header-actions">
-                <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati">
+            <div class="header-actions" role="toolbar" aria-label="Azioni rapide">
+                <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati" aria-label="Aggiorna dati">
                     <mat-icon>refresh</mat-icon>
                 </button>
-                <button mat-icon-button (click)="logout()" matTooltip="Logout">
+                <button mat-icon-button (click)="logout()" matTooltip="Logout" aria-label="Esci dal sistema">
                     <mat-icon>logout</mat-icon>
                 </button>
             </div>
@@ -19,13 +19,13 @@
     </header>
 
     <!-- Loading State -->
-    <div class="loading-container" *ngIf="isLoading">
-        <mat-spinner></mat-spinner>
+    <div class="loading-container" *ngIf="isLoading" role="status" aria-live="polite">
+        <mat-spinner aria-label="Caricamento in corso"></mat-spinner>
         <p>Caricamento dashboard...</p>
     </div>
 
     <!-- Main Content -->
-    <main class="dashboard-content" *ngIf="!isLoading">
+    <main class="dashboard-content" *ngIf="!isLoading" role="main" aria-label="Contenuto principale">
         <!-- Statistiche Overview / Placeholder N/D -->
         <section class="stats-section">
             <ng-container *ngIf="hasStats; else statsPlaceholder">

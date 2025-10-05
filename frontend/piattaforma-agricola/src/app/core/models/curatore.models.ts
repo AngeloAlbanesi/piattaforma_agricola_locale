@@ -177,7 +177,7 @@ export interface UserDetailDTO {
     email: string;
     nome?: string;
     cognome?: string;
-    telefono?: string;
+    numeroTelefono?: string;
     indirizzo?: string;
     ruoli: string[];
 }

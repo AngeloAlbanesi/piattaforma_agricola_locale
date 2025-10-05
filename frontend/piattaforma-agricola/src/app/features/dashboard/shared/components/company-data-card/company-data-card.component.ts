@@ -233,12 +233,12 @@ export class CompanyDataCardComponent implements OnInit, OnDestroy {
                 return formatted;
             }
         }
-        
+
         // Se i dati aziendali non sono disponibili, mostra un messaggio informativo
         if (this.hasError) {
             return 'Dati aziendali non disponibili - contatta il supporto';
         }
-        
+
         return 'Non specificato';
     }
 
@@ -250,12 +250,12 @@ export class CompanyDataCardComponent implements OnInit, OnDestroy {
         if (this.hasValue(this.company?.descrizione)) {
             return this.company!.descrizione!;
         }
-        
+
         // Se i dati aziendali non sono disponibili, mostra un messaggio informativo
         if (this.hasError) {
             return 'Dati aziendali non disponibili - contatta il supporto';
         }
-        
+
         return 'Non specificata';
     }
 

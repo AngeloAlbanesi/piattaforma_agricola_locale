@@ -38,7 +38,8 @@
                 <!-- Cognome -->
                 <div class="data-item">
                     <span class="data-label">Cognome:</span>
-                    <span class="data-value">{{ hasValue(profile.cognome) ? profile.cognome : 'Non specificato' }}</span>
+                    <span class="data-value">{{ hasValue(profile.cognome) ? profile.cognome : 'Non specificato'
+                        }}</span>
                 </div>
 
                 <!-- Email -->
@@ -50,13 +51,15 @@
                 <!-- Telefono -->
                 <div class="data-item">
                     <span class="data-label">Numero di telefono:</span>
-                    <span class="data-value">{{ hasValue(profile.telefono) ? profile.telefono : 'Non specificato' }}</span>
+                    <span class="data-value">{{ hasValue(profile.numeroTelefono) ? profile.numeroTelefono : 'Non
+                        specificato' }}</span>
                 </div>
 
                 <!-- Tipo Ruolo -->
                 <div class="data-item">
                     <span class="data-label">Tipo Ruolo:</span>
-                    <span class="data-value role-badge">{{ getRoleLabel(profile.ruoli && profile.ruoli.length > 0 ? profile.ruoli[0] : undefined) }}</span>
+                    <span class="data-value role-badge">{{ getRoleLabel(profile.ruoli && profile.ruoli.length > 0 ?
+                        profile.ruoli[0] : undefined) }}</span>
                 </div>
             </div>
         </div>

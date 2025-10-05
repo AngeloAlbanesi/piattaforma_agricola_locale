@@ -100,7 +100,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
             nome: profile.nome,
             cognome: profile.cognome,
             email: profile.email,
-            telefono: profile.telefono || '',
+            telefono: profile.numeroTelefono || '',
             indirizzo: profile.indirizzo || ''
         });
     }

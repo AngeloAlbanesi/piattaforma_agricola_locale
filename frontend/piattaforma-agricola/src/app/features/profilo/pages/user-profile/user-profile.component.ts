@@ -62,7 +62,7 @@ export class UserProfileComponent implements OnInit {
                     email: p.email,
                     nome: p.nome || '',
                     cognome: p.cognome || '',
-                    telefono: p.telefono || '',
+                    telefono: p.numeroTelefono || '',
                     indirizzo: p.indirizzo || ''
                 });
                 this.isLoading = false;

@@ -1,9 +1,11 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.azienda.AziendaDetailDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IUtenteService;
+import it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper.AziendaMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AziendeController {
 
     private final IUtenteService utenteService;
+    private final AziendaMapper aziendaMapper;
 
     /**
      * Get the company data for the authenticated user.
@@ -35,7 +38,7 @@ public class AziendeController {
      */
     @GetMapping("/mia-azienda")
     @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_DI_TIPICITA')")
-    public ResponseEntity<DatiAzienda> getMyCompanyData(Authentication authentication) {
+    public ResponseEntity<AziendaDetailDTO> getMyCompanyData(Authentication authentication) {
         // Get the authenticated user
         String username = authentication.getName();
         Utente utente = utenteService.findByUsername(username)
@@ -48,7 +51,7 @@ public class AziendeController {
         }
 
         Venditore venditore = (Venditore) utente;
-        
+
         // Check if the vendor has company data
         DatiAzienda datiAzienda = venditore.getDatiAzienda();
         if (datiAzienda == null) {
@@ -56,7 +59,10 @@ public class AziendeController {
             return ResponseEntity.notFound().build();
         }
 
-        log.info("Retrieved company data for user: {}", username);
-        return ResponseEntity.ok(datiAzienda);
+        // Convert to DTO with proper structure
+        AziendaDetailDTO aziendaDTO = aziendaMapper.toDetailDTO(datiAzienda, venditore);
+
+        log.info("Retrieved company data for user: {} - Company: {}", username, aziendaDTO.getNomeAzienda());
+        return ResponseEntity.ok(aziendaDTO);
     }
 }

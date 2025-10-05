@@ -67,6 +67,20 @@
             margin-bottom: 24px;
         }
 
+        .data-section {
+            .data-cards-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 24px;
+                margin-bottom: 24px;
+                
+                @media (max-width: 768px) {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+            }
+        }
+
         .stats-section,
         .quick-actions-section,
         .tabs-section,

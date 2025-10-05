@@ -21,8 +21,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OrdineRiepilogoDTO, StatoOrdineProduttore } from '../../../../../core/models/produttore.models';
 import { ProduttoreService } from '../../../../../core/services/produttore.service';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
@@ -93,20 +93,26 @@ export class OrdiniManagementComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadOrdini();
+
+        // Gestione ricerca con debounce
         this.searchTerms.pipe(
             debounceTime(300),
             distinctUntilChanged(),
             switchMap((term: string) => {
                 this.filters.search = term;
                 this.filters.pagina = 0;
+                this.isLoading = true;
                 return this.produttoreService.getMyOrders();
+            }),
+            catchError((error: any) => {
+                console.error('Errore durante la ricerca degli ordini:', error);
+                this.isLoading = false;
+                // Non mostrare snackbar per ogni ricerca fallita, solo loggare
+                return of([]);
             })
         ).subscribe((data: OrdineRiepilogoDTO[]) => {
             this.dataSource.data = data;
-            this.totalElements = data.length; // Se non paginato, totalElements è la lunghezza dell'array
-            this.isLoading = false;
-        }, (error: any) => {
-            this.snackBar.open('Errore durante il caricamento degli ordini.', 'Chiudi', { duration: 3000 });
+            this.totalElements = data.length;
             this.isLoading = false;
         });
     }
@@ -130,14 +136,23 @@ export class OrdiniManagementComponent implements OnInit {
 
     loadOrdini(): void {
         this.isLoading = true;
-        this.produttoreService.getMyOrders().subscribe((data: OrdineRiepilogoDTO[]) => {
-            this.dataSource.data = data;
-            this.totalElements = data.length;
-            this.isLoading = false;
-        }, (error: any) => {
-            this.snackBar.open('Errore durante il caricamento degli ordini.', 'Chiudi', { duration: 3000 });
-            this.isLoading = false;
-        });
+        this.produttoreService.getMyOrders()
+            .pipe(
+                catchError((error: any) => {
+                    console.error('Errore durante il caricamento degli ordini:', error);
+
+                    // Non mostrare snackbar - evita notifiche bloccate
+                    // L'errore viene loggato in console per il debug
+
+                    this.isLoading = false;
+                    return of([]);
+                })
+            )
+            .subscribe((data: OrdineRiepilogoDTO[]) => {
+                this.dataSource.data = data;
+                this.totalElements = data.length;
+                this.isLoading = false;
+            });
     }
 
     applyFilter(event: Event): void {

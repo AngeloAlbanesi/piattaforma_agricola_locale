@@ -18,6 +18,7 @@ import { GestorePlatformaStatsDTO } from '../../../../../core/models/gestore-pla
 import { GestoreStatsOverviewComponent } from '../../components/gestore-stats-overview/gestore-stats-overview.component';
 import { GestoreQuickActionsComponent } from '../../components/gestore-quick-actions/gestore-quick-actions.component';
 import { UtentiManagementComponent } from '../../components/utenti-management/utenti-management.component';
+import { PersonalDataCardComponent } from '../../../shared/components';
 
 @Component({
     selector: 'app-gestore-platforma-dashboard',
@@ -33,7 +34,8 @@ import { UtentiManagementComponent } from '../../components/utenti-management/ut
         MatSnackBarModule,
         GestoreStatsOverviewComponent,
         GestoreQuickActionsComponent,
-        UtentiManagementComponent
+        UtentiManagementComponent,
+        PersonalDataCardComponent
     ],
     templateUrl: './gestore-platforma-dashboard.component.html',
     styleUrls: ['./gestore-platforma-dashboard.component.scss'],

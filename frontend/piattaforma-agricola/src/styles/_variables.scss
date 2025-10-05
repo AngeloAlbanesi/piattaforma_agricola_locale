@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // Colori primari
 $primary-color: #3f51b5;
 $primary-color-light: rgba(63, 81, 181, 0.1);
@@ -82,3 +84,67 @@ $shadow-elevation-3: 0 3px 3px -2px rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0
 $transition-fast: 150ms ease-in-out;
 $transition-normal: 300ms ease-in-out;
 $transition-slow: 500ms ease-in-out;
+
+// -------------------------------------------------------------------
+// Aliases e token aggiuntivi per compatibilità con gli SCSS dei componenti
+// -------------------------------------------------------------------
+
+// Colori principali (alias)
+$color-primary: $primary-color;
+$color-primary-light: $primary-color-light;
+$color-primary-dark: $primary-color-dark;
+$color-accent: $accent-color;
+$color-secondary: $secondary-color;
+$color-warn: $warn-color;
+$color-error: $warn-color;
+$color-success: $success-color;
+$color-info: $info-color;
+
+// Testo (alias)
+$color-text-primary: $text-color-primary;
+$color-text-secondary: $text-color-secondary;
+$color-text-tertiary: $text-color-tertiary;
+$color-text-disabled: $text-disabled;
+
+// Variante scura (token aggiuntivi usati dai componenti)
+$color-text-primary-dark: rgba(255, 255, 255, 0.87);
+$color-text-secondary-dark: rgba(255, 255, 255, 0.6);
+
+// Divider/bordi
+$color-divider: $border-color;
+$color-divider-light: $border-color-light;
+
+// Background (alias più espliciti)
+$color-background: $background-color;
+$color-background-light: $background-color-light;
+$color-card-background: $card-background-color;
+
+// Raggi bordo (alias)
+$border-radius-xs: 2px;
+$border-radius-sm: $border-radius-sm;
+$border-radius-md: $border-radius-md;
+$border-radius-lg: $border-radius-lg;
+
+// Tipografia base (aggiunta)
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-md: 16px; // alias di base
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// Breakpoint (alias usati nei componenti)
+$breakpoint-sm: $mobile;
+$breakpoint-md: $tablet;
+$breakpoint-lg: $desktop;
+$breakpoint-xl: $wide;
+
+// Derivati utili
+$color-secondary-light: color.adjust($color-secondary, $lightness: 10%);
+$color-secondary-dark: color.adjust($color-secondary, $lightness: -10%);
+$color-primary-contrast: #fff;

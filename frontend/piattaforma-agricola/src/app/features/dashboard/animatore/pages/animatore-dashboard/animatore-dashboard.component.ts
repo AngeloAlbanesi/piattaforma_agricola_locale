@@ -16,6 +16,7 @@ import { AnimatoreStatsDTO } from '../../../../../core/models/animatore.models';
 import { AnimatoreStatsOverviewComponent } from '../../components/animatore-stats-overview/animatore-stats-overview.component';
 import { AnimatoreQuickActionsComponent } from '../../components/animatore-quick-actions/animatore-quick-actions.component';
 import { EventiManagementComponent } from '../../components/eventi-management/eventi-management.component';
+import { PersonalDataCardComponent } from '../../../shared/components';
 
 @Component({
     selector: 'app-animatore-dashboard',
@@ -30,7 +31,8 @@ import { EventiManagementComponent } from '../../components/eventi-management/ev
         MatTooltipModule,
         AnimatoreStatsOverviewComponent,
         AnimatoreQuickActionsComponent,
-        EventiManagementComponent
+        EventiManagementComponent,
+        PersonalDataCardComponent
     ],
     templateUrl: './animatore-dashboard.component.html',
     styleUrls: ['./animatore-dashboard.component.scss'],

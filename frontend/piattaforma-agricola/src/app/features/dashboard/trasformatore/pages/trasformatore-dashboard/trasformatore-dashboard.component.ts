@@ -21,6 +21,7 @@ import { FasiLavorazioneComponent } from '../../components/fasi-lavorazione/fasi
 import { TracciabilitaComponent } from '../../components/tracciabilita/tracciabilita.component';
 import { CertificazioniTrasformatoreComponent } from '../../components/certificazioni-trasformatore/certificazioni-trasformatore.component';
 import { Router } from '@angular/router';
+import { PersonalDataCardComponent, CompanyDataCardComponent } from '../../../shared/components';
 
 @Component({
     selector: 'app-trasformatore-dashboard',
@@ -43,7 +44,9 @@ import { Router } from '@angular/router';
         OrdiniManagementComponent,
         FasiLavorazioneComponent,
         TracciabilitaComponent,
-        CertificazioniTrasformatoreComponent
+        CertificazioniTrasformatoreComponent,
+        PersonalDataCardComponent,
+        CompanyDataCardComponent
     ],
     templateUrl: './trasformatore-dashboard.component.html',
     styleUrls: ['./trasformatore-dashboard.component.scss'],

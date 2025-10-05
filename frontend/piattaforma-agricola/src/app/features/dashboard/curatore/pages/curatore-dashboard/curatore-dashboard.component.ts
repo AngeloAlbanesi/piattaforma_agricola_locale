@@ -15,6 +15,7 @@ import { CuratoreStatsDTO } from '../../../../../core/models/curatore.models';
 import { CuratoreStatsOverviewComponent } from '../../components/curatore-stats-overview/curatore-stats-overview.component';
 import { CuratoreQuickActionsComponent } from '../../components/curatore-quick-actions/curatore-quick-actions.component';
 import { ApprovazioniManagementComponent } from '../../components/approvazioni-management/approvazioni-management.component';
+import { PersonalDataCardComponent } from '../../../shared/components';
 
 @Component({
     selector: 'app-curatore-dashboard',
@@ -32,7 +33,8 @@ import { ApprovazioniManagementComponent } from '../../components/approvazioni-m
         // Child components
         CuratoreStatsOverviewComponent,
         CuratoreQuickActionsComponent,
-        ApprovazioniManagementComponent
+        ApprovazioniManagementComponent,
+        PersonalDataCardComponent
     ],
     templateUrl: './curatore-dashboard.component.html',
     styleUrls: ['./curatore-dashboard.component.scss'],

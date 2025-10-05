@@ -16,6 +16,7 @@ import { DistributoreStatsDTO } from '../../../../../core/models/distributore.mo
 import { DistributoreStatsOverviewComponent } from '../../components/distributore-stats-overview/distributore-stats-overview.component';
 import { DistributoreQuickActionsComponent } from '../../components/distributore-quick-actions/distributore-quick-actions.component';
 import { PacchettiManagementComponent } from '../../components/pacchetti-management/pacchetti-management.component';
+import { PersonalDataCardComponent, CompanyDataCardComponent } from '../../../shared/components';
 
 @Component({
     selector: 'app-distributore-dashboard',
@@ -31,7 +32,9 @@ import { PacchettiManagementComponent } from '../../components/pacchetti-managem
         MatSnackBarModule,
         DistributoreStatsOverviewComponent,
         DistributoreQuickActionsComponent,
-        PacchettiManagementComponent
+        PacchettiManagementComponent,
+        PersonalDataCardComponent,
+        CompanyDataCardComponent
     ],
     templateUrl: './distributore-dashboard.component.html',
     styleUrls: ['./distributore-dashboard.component.scss'],

@@ -26,6 +26,11 @@
 
     <!-- Main Content -->
     <main class="dashboard-content" *ngIf="!isLoading">
+        <!-- Dati Personali Section -->
+        <section class="personal-data-section">
+            <app-personal-data-card></app-personal-data-card>
+        </section>
+
         <!-- Statistiche Overview -->
         <section class="stats-section" *ngIf="hasStats">
             <app-gestore-stats-overview [totalUsers]="totalUsers" [activeUsers]="activeUsers"

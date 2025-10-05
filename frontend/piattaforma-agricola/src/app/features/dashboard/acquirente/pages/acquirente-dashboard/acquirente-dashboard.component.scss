@@ -100,6 +100,21 @@
     margin-bottom: 2rem;
 }
 
+// Personal Data Section
+.personal-data-section {
+    margin-bottom: 2rem;
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+
+        @media (min-width: 768px) {
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+    }
+}
+
 // Tabs Section
 .tabs-section {
     margin-bottom: 2rem;

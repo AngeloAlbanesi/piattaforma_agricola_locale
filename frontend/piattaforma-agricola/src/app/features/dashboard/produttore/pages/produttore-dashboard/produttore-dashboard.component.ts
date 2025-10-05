@@ -21,6 +21,7 @@ import { ProdottiManagementComponent } from '../../components/prodotti-managemen
 import { OrdiniManagementComponent } from '../../components/ordini-management/ordini-management.component';
 import { CertificazioniManagementComponent } from '../../components/certificazioni-management/certificazioni-management.component';
 import { MetodiColtivazioneComponent } from '../../components/metodi-coltivazione/metodi-coltivazione.component';
+import { PersonalDataCardComponent, CompanyDataCardComponent } from '../../../shared/components';
 
 @Component({
     selector: 'app-produttore-dashboard',
@@ -39,7 +40,9 @@ import { MetodiColtivazioneComponent } from '../../components/metodi-coltivazion
         ProdottiManagementComponent,
         OrdiniManagementComponent,
         CertificazioniManagementComponent,
-        MetodiColtivazioneComponent
+        MetodiColtivazioneComponent,
+        PersonalDataCardComponent,
+        CompanyDataCardComponent
     ],
     templateUrl: './produttore-dashboard.component.html',
     styleUrls: ['./produttore-dashboard.component.scss'],

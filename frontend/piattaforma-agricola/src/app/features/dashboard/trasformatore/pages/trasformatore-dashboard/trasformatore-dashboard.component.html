@@ -26,6 +26,14 @@
 
     <!-- Main Content -->
     <main class="dashboard-content" *ngIf="!isLoading">
+        <!-- Dati Personali e Aziendali Section -->
+        <section class="data-section">
+            <div class="data-cards-container">
+                <app-personal-data-card></app-personal-data-card>
+                <app-company-data-card></app-company-data-card>
+            </div>
+        </section>
+
         <!-- Statistiche Overview -->
         <section class="stats-section" *ngIf="hasStats">
             <app-trasformatore-stats-overview [processiTotali]="stats!.processiTotali"

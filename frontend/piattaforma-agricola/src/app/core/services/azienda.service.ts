@@ -12,7 +12,8 @@ import { AziendaDetailDTO, UpdateAziendaRequestDTO } from '../models/trasformato
     providedIn: 'root'
 })
 export class AziendaService {
-    private readonly apiUrl = this.buildApiUrl('');
+    // Normalizziamo rimuovendo lo slash finale per evitare doppio slash
+    private readonly apiUrl = this.buildApiUrl('').replace(/\/$/, '');
 
     constructor(private http: HttpClient) { }
 
@@ -22,14 +23,14 @@ export class AziendaService {
      * Ottiene i dati dell'azienda dell'utente corrente
      */
     getMyCompany(): Observable<AziendaDetailDTO> {
-        return this.http.get<AziendaDetailDTO>(`${this.apiUrl}/api/aziende/mia-azienda`);
+        return this.http.get<AziendaDetailDTO>(`${this.apiUrl}/aziende/mia-azienda`);
     }
 
     /**
      * Aggiorna i dati dell'azienda
      */
     updateCompany(id: number, request: UpdateAziendaRequestDTO): Observable<AziendaDetailDTO> {
-        return this.http.put<AziendaDetailDTO>(`${this.apiUrl}/api/aziende/${id}`, request);
+        return this.http.put<AziendaDetailDTO>(`${this.apiUrl}/aziende/${id}`, request);
     }
 
     // === UTILITIES ===

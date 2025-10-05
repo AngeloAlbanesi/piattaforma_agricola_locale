@@ -26,6 +26,15 @@
 
     <!-- Main Content -->
     <main class="dashboard-content" *ngIf="!isLoading" role="main" aria-label="Contenuto principale">
+        <!-- Dati Personali e Aziendali Section -->
+        <section class="data-section" aria-labelledby="data-heading">
+            <h2 id="data-heading" class="sr-only">Dati personali e aziendali</h2>
+            <div class="data-cards-container">
+                <app-personal-data-card></app-personal-data-card>
+                <app-company-data-card></app-company-data-card>
+            </div>
+        </section>
+
         <!-- Statistiche Overview -->
         <section class="stats-section" *ngIf="hasStats" aria-labelledby="stats-heading">
             <h2 id="stats-heading" class="sr-only">Statistiche panoramiche</h2>

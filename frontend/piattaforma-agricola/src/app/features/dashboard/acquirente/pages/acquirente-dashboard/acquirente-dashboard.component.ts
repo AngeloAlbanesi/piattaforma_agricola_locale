@@ -19,6 +19,7 @@ import { ProductCatalogComponent } from '../../components/product-catalog/produc
 import { CartSummaryComponent } from '../../components/cart-summary/cart-summary.component';
 import { RecentOrdersComponent } from '../../components/recent-orders/recent-orders.component';
 import { UpcomingEventsComponent } from '../../components/upcoming-events/upcoming-events.component';
+import { PersonalDataCardComponent } from '../../../shared/components';
 
 @Component({
     selector: 'app-acquirente-dashboard',
@@ -36,7 +37,8 @@ import { UpcomingEventsComponent } from '../../components/upcoming-events/upcomi
         ProductCatalogComponent,
         CartSummaryComponent,
         RecentOrdersComponent,
-        UpcomingEventsComponent
+        UpcomingEventsComponent,
+        PersonalDataCardComponent
     ],
     templateUrl: './acquirente-dashboard.component.html',
     styleUrls: ['./acquirente-dashboard.component.scss'],

@@ -8,12 +8,11 @@ export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
     const token = authService.authState().token;
 
     const isApiRequest = req.url.startsWith(environment.apiBaseUrl) || req.url.startsWith(environment.apiPrefix);
-    const isAuthRequest = req.url.startsWith(`${environment.apiPrefix}/auth`) ||
-        req.url.startsWith(`${environment.apiBaseUrl}${environment.apiPrefix}/auth`);
     const isLoginOrRegister = req.url.endsWith('/auth/login') || req.url.endsWith('/auth/register');
 
     // Aggiungi token a tutte le richieste API tranne login/register
-    if (token && isApiRequest && (!isAuthRequest || (isAuthRequest && !isLoginOrRegister))) {
+    // NOTA: /auth/profile richiede autenticazione, quindi non escludiamo tutte le richieste /auth
+    if (token && isApiRequest && !isLoginOrRegister) {
         const authReq = req.clone({
             setHeaders: {
                 Authorization: `Bearer ${token}`,

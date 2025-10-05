@@ -3,8 +3,24 @@
   display: flex;
   flex-direction: column;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+}
 
-  // === HEADER ===
+// Personal Data Section
+.personal-data-section {
+  margin-bottom: 2rem;
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+  }
+}
+
+// === HEADER ===
   .dashboard-header {
     background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
     color: white;
@@ -208,7 +224,7 @@
       }
     }
   }
-}
+
 
 // === RESPONSIVE ===
 @media (max-width: 768px) {

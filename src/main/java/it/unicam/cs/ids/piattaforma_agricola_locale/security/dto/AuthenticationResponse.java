@@ -13,17 +13,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class AuthenticationResponse {
     @JsonProperty("token")
     private String accessToken;
-    
+
     @JsonProperty("id")
     private Long idUtente;
-    
+
     @JsonProperty("username")
     private String username;
-    
+
     private String email;
-    
+
+    private String nome;
+
     private String[] roles;
-    
+
     @JsonProperty("type")
     private String tokenType;
 

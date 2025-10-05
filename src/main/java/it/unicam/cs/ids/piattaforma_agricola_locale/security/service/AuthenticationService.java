@@ -28,8 +28,7 @@ public class AuthenticationService {
                 request.getEmail(),
                 request.getPassword(),
                 request.getNumeroTelefono(),
-                request.getDatiAzienda()
-        );
+                request.getDatiAzienda());
 
         var jwtToken = jwtService.generateToken(utente);
 
@@ -38,7 +37,8 @@ public class AuthenticationService {
                 .idUtente(utente.getIdUtente())
                 .username(request.getUsername() != null ? request.getUsername() : request.getEmail())
                 .email(request.getEmail())
-                .roles(new String[]{request.getTipoRuolo().toString()})
+                .nome(request.getNome())
+                .roles(new String[] { request.getTipoRuolo().toString() })
                 .tokenType("Bearer")
                 .build();
     }
@@ -47,21 +47,27 @@ public class AuthenticationService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
-                        request.getPassword()
-                )
-        );
+                        request.getPassword()));
 
         var utente = utenteRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalStateException("Utente non trovato dopo autenticazione riuscita."));
 
         var jwtToken = jwtService.generateToken(utente);
 
+        // Fornire un fallback se il nome è null o vuoto
+        String nome = utente.getNome();
+        if (nome == null || nome.trim().isEmpty()) {
+            // Come fallback, usiamo la prima parte dell'email o il tipo di ruolo
+            nome = utente.getEmail().split("@")[0];
+        }
+
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .idUtente(utente.getIdUtente())
                 .username(utente.getUsername() != null ? utente.getUsername() : utente.getEmail())
                 .email(utente.getEmail())
-                .roles(new String[]{utente.getTipoRuolo().toString()})
+                .nome(nome)
+                .roles(new String[] { utente.getTipoRuolo().toString() })
                 .tokenType("Bearer")
                 .build();
     }

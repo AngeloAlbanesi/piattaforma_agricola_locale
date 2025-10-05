@@ -9,6 +9,7 @@ export interface AuthContext {
     token: string | null;
     roles: string[];
     username: string | null;
+    nome?: string | null;
     userId?: number;
     role?: string;
 }
@@ -39,6 +40,7 @@ export interface AuthenticationResponse {
     id: number;
     username: string;
     email: string;
+    nome: string;
     roles: string[];
 }
 
@@ -60,12 +62,13 @@ export class AuthService {
     private restoreAuthState(): void {
         const token = localStorage.getItem('auth_token');
         const username = localStorage.getItem('auth_username');
+        const nome = localStorage.getItem('auth_nome');
         const roles = JSON.parse(localStorage.getItem('auth_roles') || '[]');
         const userId = parseInt(localStorage.getItem('auth_user_id') || '0');
         const role = localStorage.getItem('auth_role') || undefined;
 
         if (token) {
-            this.ctx.set({ token, roles, username, userId, role });
+            this.ctx.set({ token, roles, username, nome, userId, role });
         }
     }
 
@@ -74,6 +77,7 @@ export class AuthService {
             token: response.token,
             roles: response.roles,
             username: response.username,
+            nome: response.nome,
             userId: response.id,
             role: response.roles[0] // Primo ruolo come ruolo principale
         };
@@ -84,6 +88,7 @@ export class AuthService {
         // Salva nel localStorage
         localStorage.setItem('auth_token', response.token);
         localStorage.setItem('auth_username', response.username);
+        localStorage.setItem('auth_nome', response.nome);
         localStorage.setItem('auth_roles', JSON.stringify(response.roles));
         localStorage.setItem('auth_user_id', response.id.toString());
         localStorage.setItem('auth_role', response.roles[0]);
@@ -110,6 +115,10 @@ export class AuthService {
         return this.ctx().userId || null;
     }
 
+    getNome(): string | null {
+        return this.ctx().nome || null;
+    }
+
     login(credentials: LoginRequest): Observable<AuthenticationResponse> {
         return this.http.post<AuthenticationResponse>(`${this.apiAuthUrl}/login`, credentials).pipe(
             retry({ count: 2, delay: 1000 }),
@@ -129,11 +138,12 @@ export class AuthService {
     }
 
     logout(): void {
-        this.ctx.set({ token: null, roles: [], username: null });
+        this.ctx.set({ token: null, roles: [], username: null, nome: null });
 
         // Rimuovi dal localStorage
         localStorage.removeItem('auth_token');
         localStorage.removeItem('auth_username');
+        localStorage.removeItem('auth_nome');
         localStorage.removeItem('auth_roles');
         localStorage.removeItem('auth_user_id');
         localStorage.removeItem('auth_role');

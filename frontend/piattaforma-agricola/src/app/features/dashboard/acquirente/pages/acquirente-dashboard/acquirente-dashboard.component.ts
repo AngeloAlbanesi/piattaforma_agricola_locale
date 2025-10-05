@@ -79,7 +79,7 @@ export class AcquirenteDashboardComponent implements OnInit, OnDestroy {
 
     private initializeUserData(): void {
         const authState = this.authService.authState();
-        this.userName = authState.username || 'Acquirente';
+        this.userName = authState.nome || 'Acquirente';
         this.userId = authState.userId || null;
     }
 

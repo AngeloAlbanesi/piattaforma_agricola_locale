@@ -75,7 +75,7 @@ export class AnimatoreDashboardComponent implements OnInit, OnDestroy {
 
     private initializeUserData(): void {
         const authState = this.authService.authState();
-        this.userName = authState.username || 'Animatore';
+        this.userName = authState.nome || 'Animatore';
         this.userId = authState.userId || null;
     }
 

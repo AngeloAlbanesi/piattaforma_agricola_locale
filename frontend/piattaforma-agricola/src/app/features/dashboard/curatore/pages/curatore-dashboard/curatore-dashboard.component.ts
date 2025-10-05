@@ -67,7 +67,7 @@ export class CuratoreDashboardComponent implements OnInit {
 
     private initializeUserData(): void {
         const authState = this.authService.authState();
-        this.userName = authState.username || 'Curatore';
+        this.userName = authState.nome || 'Curatore';
         this.userId = authState.userId || null;
     }
 

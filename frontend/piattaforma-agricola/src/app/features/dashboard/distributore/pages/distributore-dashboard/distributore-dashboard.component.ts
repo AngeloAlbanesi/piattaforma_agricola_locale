@@ -75,7 +75,7 @@ export class DistributoreDashboardComponent implements OnInit, OnDestroy {
 
     private initializeUserData(): void {
         const authState = this.authService.authState();
-        this.userName = authState.username || 'Distributore';
+        this.userName = authState.nome || 'Distributore';
         this.userId = authState.userId || null;
     }
 

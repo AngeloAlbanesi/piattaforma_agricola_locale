@@ -135,6 +135,41 @@ export class PersonalDataCardComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * Ottiene il ruolo dell'utente gestendo diversi formati DTO
+     */
+    getUserRole(): string {
+        console.log('🔍 getUserRole - profile:', this.profile);
+
+        if (!this.profile) return 'Non specificato';
+
+        // Gestisce il caso di ruoli array (es. curatore.models.ts)
+        if ((this.profile as any).ruoli && Array.isArray((this.profile as any).ruoli)) {
+            const ruoli = (this.profile as any).ruoli as string[];
+            console.log('📋 Ruoli array trovati:', ruoli);
+            if (ruoli.length > 0) {
+                return this.getRoleLabel(ruoli[0]);
+            }
+        }
+
+        // Gestisce il caso di ruolo singolo (es. acquirente.models.ts)
+        if ((this.profile as any).ruolo) {
+            const ruolo = (this.profile as any).ruolo;
+            console.log('👤 Ruolo singolo trovato:', ruolo);
+            return this.getRoleLabel(ruolo);
+        }
+
+        // Fallback: usa il ruolo dall'AuthService
+        const authRole = this.authService.getRole();
+        console.log('🔑 AuthService role fallback:', authRole);
+        if (authRole) {
+            return this.getRoleLabel(authRole);
+        }
+
+        console.log('❌ Nessun ruolo trovato');
+        return 'Non specificato';
+    }
+
+    /**
      * Verifica se un campo opzionale è valorizzato
      */
     hasValue(value?: string): boolean {

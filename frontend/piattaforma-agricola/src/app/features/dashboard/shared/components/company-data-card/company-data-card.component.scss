@@ -18,7 +18,7 @@
             align-items: center;
             font-size: vars.$font-size-lg;
             font-weight: vars.$font-weight-semibold;
-            color: vars.$color-text-primary;
+            color: #212121 !important;
 
             .title-icon {
                 margin-right: 8px;
@@ -28,7 +28,7 @@
         }
 
         .card-subtitle {
-            color: vars.$color-text-secondary;
+            color: #666666 !important;
             font-size: vars.$font-size-sm;
             margin-top: 4px;
         }

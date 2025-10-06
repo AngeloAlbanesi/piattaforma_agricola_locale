@@ -53,7 +53,7 @@ export class ProductDetailDialogComponent implements OnInit, OnDestroy {
         private produttoreService: ProduttoreService,
         private snackBar: MatSnackBar,
         private cdr: ChangeDetectorRef
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.loadProductDetails();
@@ -71,22 +71,17 @@ export class ProductDetailDialogComponent implements OnInit, OnDestroy {
         console.log('Caricamento dettagli prodotto con ID:', this.data.productId);
         console.log('Dati summary disponibili:', this.data.productSummary);
 
-        // Se abbiamo i dati di summary, li usiamo come fallback
-        if (this.data.productSummary) {
-            console.log('Uso dati di summary come fallback');
-            this.createProductDetailFromSummary(this.data.productSummary);
-            this.isLoading = false;
-            this.cdr.markForCheck();
-            return;
-        }
-
-        // Altrimenti proviamo a caricare i dati completi dall'API
+        // Carichiamo sempre i dati completi dall'API per avere le certificazioni
         this.produttoreService.getProductById(this.data.productId)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (product) => {
                     console.log('Dati prodotto ricevuti:', product);
-                    this.product = product;
+                    // Map certificazioni from backend to certificazioniDettagli
+                    this.product = {
+                        ...product,
+                        certificazioniDettagli: (product as any).certificazioni || []
+                    };
                     this.isLoading = false;
                     this.cdr.markForCheck();
                 },
@@ -95,11 +90,16 @@ export class ProductDetailDialogComponent implements OnInit, OnDestroy {
                     console.error('Status:', error.status);
                     console.error('Message:', error.message);
                     console.error('Error details:', error.error);
-                    
-                    // Come ultimo fallback, proviamo a usare i dati minimi disponibili
-                    console.log('Tentativo di creare dati minimi per il prodotto');
-                    this.createMinimalProductDetail();
-                    
+
+                    // Come fallback, usiamo i dati di summary se disponibili
+                    if (this.data.productSummary) {
+                        console.log('Fallback: uso dati di summary disponibili');
+                        this.createProductDetailFromSummary(this.data.productSummary);
+                    } else {
+                        console.log('Tentativo di creare dati minimi per il prodotto');
+                        this.createMinimalProductDetail();
+                    }
+
                     this.error = `Attenzione: Alcuni dettagli potrebbero non essere disponibili (${error.status || 'Errore API'})`;
                     this.isLoading = false;
                     this.cdr.markForCheck();

@@ -28,7 +28,7 @@
 
     <!-- Content -->
     <div mat-dialog-content class="dialog-content" *ngIf="product && !isLoading && !error">
-        
+
         <!-- Informazioni Base Prodotto -->
         <mat-card class="product-overview-card" appearance="outlined">
             <mat-card-header>
@@ -37,8 +37,7 @@
                         <h3 class="product-name">{{ product.nome }}</h3>
                         <div class="product-meta">
                             <span class="product-id">ID: {{ product.idProdotto }}</span>
-                            <mat-chip 
-                                [class]="getStatoClass(product.statoVerifica)" 
+                            <mat-chip [class]="getStatoClass(product.statoVerifica)"
                                 [attr.aria-label]="'Stato verifica: ' + product.statoVerifica">
                                 <mat-icon>{{ getStatoIcon(product.statoVerifica) }}</mat-icon>
                                 {{ product.statoVerifica }}
@@ -50,7 +49,7 @@
                     </div>
                 </div>
             </mat-card-header>
-            
+
             <mat-card-content>
                 <div class="product-key-info">
                     <div class="info-grid">
@@ -61,7 +60,7 @@
                                 <span class="info-value price">{{ formatCurrency(product.prezzo) }}</span>
                             </div>
                         </div>
-                        
+
                         <div class="info-item">
                             <mat-icon class="info-icon">inventory_2</mat-icon>
                             <div class="info-content">
@@ -69,7 +68,7 @@
                                 <span class="info-value">{{ product.quantitaDisponibile }}</span>
                             </div>
                         </div>
-                        
+
                         <div class="info-item">
                             <mat-icon class="info-icon">{{ getOriginIcon(product.tipoOrigine) }}</mat-icon>
                             <div class="info-content">
@@ -77,7 +76,7 @@
                                 <span class="info-value">{{ product.tipoOrigine }}</span>
                             </div>
                         </div>
-                        
+
                         <div class="info-item">
                             <mat-icon class="info-icon">visibility</mat-icon>
                             <div class="info-content">
@@ -87,9 +86,9 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <mat-divider class="section-divider"></mat-divider>
-                
+
                 <div class="product-description">
                     <h4 class="section-title">Descrizione</h4>
                     <p class="description-text">{{ product.descrizione }}</p>
@@ -99,15 +98,15 @@
 
         <!-- Tab Navigation -->
         <mat-tab-group class="detail-tabs" dynamicHeight>
-            
+
             <!-- Tab Certificazioni -->
-            <mat-tab label="Certificazioni" [disabled]="!product.certificazioniDettagli || !product.certificazioniDettagli.length">
+            <mat-tab label="Certificazioni"
+                [disabled]="!product.certificazioniDettagli || !product.certificazioniDettagli.length">
                 <div class="tab-content">
-                    <div class="certifications-section" *ngIf="product.certificazioniDettagli?.length; else noCertifications">
+                    <div class="certifications-section"
+                        *ngIf="product.certificazioniDettagli?.length; else noCertifications">
                         <div class="certifications-grid">
-                            <mat-card 
-                                class="certification-card" 
-                                appearance="outlined" 
+                            <mat-card class="certification-card" appearance="outlined"
                                 *ngFor="let cert of product.certificazioniDettagli">
                                 <mat-card-header>
                                     <mat-card-title class="cert-name">{{ cert.nomeCertificazione }}</mat-card-title>
@@ -128,7 +127,7 @@
                             </mat-card>
                         </div>
                     </div>
-                    
+
                     <ng-template #noCertifications>
                         <div class="empty-state">
                             <mat-icon class="empty-icon">verified</mat-icon>
@@ -152,8 +151,9 @@
                                     <h4>Descrizione</h4>
                                     <p>{{ product.metodoDiColtivazione.descrizione }}</p>
                                 </div>
-                                
-                                <div class="cultivation-techniques" *ngIf="product.metodoDiColtivazione.tecniche?.length">
+
+                                <div class="cultivation-techniques"
+                                    *ngIf="product.metodoDiColtivazione.tecniche?.length">
                                     <h4>Tecniche Utilizzate</h4>
                                     <mat-chip-listbox>
                                         <mat-chip *ngFor="let tecnica of product.metodoDiColtivazione.tecniche">
@@ -164,7 +164,7 @@
                             </mat-card-content>
                         </mat-card>
                     </div>
-                    
+
                     <ng-template #noCultivation>
                         <div class="empty-state">
                             <mat-icon class="empty-icon">eco</mat-icon>
@@ -179,7 +179,7 @@
             <mat-tab label="Statistiche Vendite">
                 <div class="tab-content">
                     <div class="stats-section">
-                        
+
                         <!-- Riepilogo Vendite -->
                         <mat-card class="stats-summary-card" appearance="outlined">
                             <mat-card-header>
@@ -191,10 +191,11 @@
                                         <mat-icon class="stat-icon">receipt_long</mat-icon>
                                         <div class="stat-content">
                                             <span class="stat-label">Ordini Totali</span>
-                                            <span class="stat-value">{{ product.ordiniRicevuti ? product.ordiniRicevuti.length : 0 }}</span>
+                                            <span class="stat-value">{{ product.ordiniRicevuti ?
+                                                product.ordiniRicevuti.length : 0 }}</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="stat-item">
                                         <mat-icon class="stat-icon">shopping_cart</mat-icon>
                                         <div class="stat-content">
@@ -202,7 +203,7 @@
                                             <span class="stat-value">{{ getTotalProductsSold() }}</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="stat-item">
                                         <mat-icon class="stat-icon">euro</mat-icon>
                                         <div class="stat-content">
@@ -221,7 +222,8 @@
                             </mat-card-header>
                             <mat-card-content>
                                 <mat-list class="orders-list">
-                                    <mat-list-item *ngFor="let ordine of product.ordiniRicevuti; trackBy: trackByOrderId; let last = last">
+                                    <mat-list-item
+                                        *ngFor="let ordine of product.ordiniRicevuti; trackBy: trackByOrderId; let last = last">
                                         <div class="order-item">
                                             <div class="order-header">
                                                 <span class="order-id">Ordine #{{ ordine.id }}</span>
@@ -232,7 +234,8 @@
                                             <div class="order-details">
                                                 <div class="order-info">
                                                     <mat-icon>person</mat-icon>
-                                                    <span>{{ ordine.acquirente.nome }} {{ ordine.acquirente.cognome }}</span>
+                                                    <span>{{ ordine.acquirente.nome }} {{ ordine.acquirente.cognome
+                                                        }}</span>
                                                 </div>
                                                 <div class="order-info">
                                                     <mat-icon>event</mat-icon>
@@ -275,7 +278,7 @@
                                         <span class="detail-value">{{ product.venditore.nomeAzienda }}</span>
                                     </div>
                                 </div>
-                                
+
                                 <div class="company-detail">
                                     <mat-icon>assignment_ind</mat-icon>
                                     <div class="detail-content">
@@ -283,7 +286,7 @@
                                         <span class="detail-value">{{ product.venditore.partitaIva }}</span>
                                     </div>
                                 </div>
-                                
+
                                 <div class="company-detail">
                                     <mat-icon>location_on</mat-icon>
                                     <div class="detail-content">
@@ -311,7 +314,7 @@
                 <span>Modificato: {{ product && formatDateTime(product.dataUltimaModifica) }}</span>
             </div>
         </div>
-        
+
         <div class="action-buttons">
             <button mat-button (click)="onClose()">
                 <mat-icon>close</mat-icon>

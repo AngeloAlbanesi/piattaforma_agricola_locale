@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
@@ -9,8 +9,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { Subject, interval, takeUntil } from 'rxjs';
 
 import { AuthService } from '../../../../../core/services/auth.service';
+import { CuratoreService } from '../../../../../core/services/curatore.service';
 import { CuratoreStatsDTO } from '../../../../../core/models/curatore.models';
 import { CuratoreStatsOverviewComponent } from '../../components/curatore-stats-overview/curatore-stats-overview.component';
 import { CuratoreQuickActionsComponent } from '../../components/curatore-quick-actions/curatore-quick-actions.component';
@@ -40,7 +42,8 @@ import { PersonalDataCardComponent } from '../../../shared/components';
     styleUrls: ['./curatore-dashboard.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CuratoreDashboardComponent implements OnInit {
+export class CuratoreDashboardComponent implements OnInit, OnDestroy {
+    private destroy$ = new Subject<void>();
 
     // Dati utente
     userName: string = '';
@@ -49,18 +52,31 @@ export class CuratoreDashboardComponent implements OnInit {
     // Statistiche dashboard
     stats: CuratoreStatsDTO | null = null;
     isLoading = false;
+    statsError = false;
 
     // Tab selezionata
     selectedTab = 0;
 
+    // Auto-refresh interval (5 minutes)
+    private readonly REFRESH_INTERVAL = 5 * 60 * 1000;
+
     constructor(
         private authService: AuthService,
         private router: Router,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private curatoreService: CuratoreService,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
         this.initializeUserData();
+        this.loadStats();
+        this.setupAutoRefresh();
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     // === INIZIALIZZAZIONE ===
@@ -130,11 +146,50 @@ export class CuratoreDashboardComponent implements OnInit {
         }
     }
 
+    // === CARICAMENTO STATISTICHE ===
+
+    private loadStats(): void {
+        this.isLoading = true;
+        this.statsError = false;
+
+        // Chiamiamo il nuovo endpoint dedicato per le statistiche
+        this.curatoreService.getCuratorStatsFromBackend()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (stats) => {
+                    this.stats = {
+                        ...stats,
+                        andamentoApprovazioni: []
+                    };
+
+                    console.log('Statistiche ricevute dal backend:', this.stats);
+
+                    this.isLoading = false;
+                    this.cdr.markForCheck();
+                },
+                error: (error) => {
+                    console.error('Errore caricamento statistiche:', error);
+                    this.statsError = true;
+                    this.isLoading = false;
+                    this.cdr.markForCheck();
+                }
+            });
+    }
+
+    private setupAutoRefresh(): void {
+        // Auto-refresh statistics every 5 minutes
+        interval(this.REFRESH_INTERVAL)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+                this.loadStats();
+            });
+    }
+
     // === UTILITIES ===
 
     refreshData(): void {
-        // Nessuna statistica da ricaricare: rinfreschiamo solo i dati utente e notifichiamo l'utente.
         this.initializeUserData();
+        this.loadStats();
         this.snackBar.open('Dati aggiornati', 'OK', { duration: 2000 });
     }
 

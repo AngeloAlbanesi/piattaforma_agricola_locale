@@ -94,33 +94,39 @@ export class CuratoreService {
         });
     }
 
-    approveElement(elementId: number, tipo: string, request: ApprovazioneRequestDTO | ModerationDecisionDTO): Observable<void> {
+    approveElement(elementId: number, tipo: string, request: ApprovazioneRequestDTO | ModerationDecisionDTO): Observable<any> {
         if (tipo === 'PRODOTTO') {
             const body: ModerationDecisionDTO = toDecision(request, true);
-            return this.http.put<void>(`/api/admin/prodotti/${elementId}/approva`, body);
+            return this.http.put(`/api/admin/prodotti/${elementId}/approva`, body, { responseType: 'text' });
         }
         if (tipo === 'AZIENDA') {
             const body: ModerationDecisionDTO = toDecision(request, true);
-            return this.http.put<void>(`/api/admin/aziende/${elementId}/approva`, body);
+            return this.http.put(`/api/admin/aziende/${elementId}/approva`, body, { responseType: 'text' });
         }
         // Altri tipi non documentati
-        return new Observable<void>(subscriber => {
+        return new Observable<any>(subscriber => {
             subscriber.error(new Error('Tipo non supportato per approvazione'));
         });
     }
 
-    rejectElement(elementId: number, tipo: string, request: ApprovazioneRequestDTO | ModerationDecisionDTO): Observable<void> {
+    rejectElement(elementId: number, tipo: string, request: ApprovazioneRequestDTO | ModerationDecisionDTO): Observable<any> {
         if (tipo === 'PRODOTTO') {
             const body: ModerationDecisionDTO = toDecision(request, false);
-            return this.http.put<void>(`/api/admin/prodotti/${elementId}/rifiuta`, body);
+            return this.http.put(`/api/admin/prodotti/${elementId}/rifiuta`, body, { responseType: 'text' });
         }
         if (tipo === 'AZIENDA') {
             const body: ModerationDecisionDTO = toDecision(request, false);
-            return this.http.put<void>(`/api/admin/aziende/${elementId}/rifiuta`, body);
+            return this.http.put(`/api/admin/aziende/${elementId}/rifiuta`, body, { responseType: 'text' });
         }
-        return new Observable<void>(subscriber => {
+        return new Observable<any>(subscriber => {
             subscriber.error(new Error('Tipo non supportato per rifiuto'));
         });
+    }
+
+    // === STATISTICHE COMPLETE ===
+
+    getCuratorStatsFromBackend(): Observable<CuratoreStatsDTO> {
+        return this.http.get<CuratoreStatsDTO>(`/api/admin/stats`);
     }
 
     // === DETTAGLI ELEMENTI DA APPROVARE ===
@@ -135,6 +141,30 @@ export class CuratoreService {
 
     getContentDetails(contentId: number): Observable<ContenutoApprovazioneDTO> {
         return this.http.get<ContenutoApprovazioneDTO>(`${this.apiUrl}/curatore/contenuti/${contentId}/dettagli`);
+    }
+
+    // === DETTAGLI PER APPROVAZIONE (endpoint pubblici) ===
+
+    getProductDetailsForApproval(productId: number): Observable<any> {
+        return this.http.get<any>(`/api/prodotti/${productId}`);
+    }
+
+    getCompanyDetailsForApproval(companyId: number): Observable<CompanyModerationDTO> {
+        // Utilizziamo l'endpoint che ritorna tutte le aziende pending e filtriamo
+        return new Observable<CompanyModerationDTO>(subscriber => {
+            this.http.get<CompanyModerationDTO[]>(`/api/admin/aziende/pending`).subscribe({
+                next: (companies) => {
+                    const company = companies.find(c => c.id === companyId);
+                    if (company) {
+                        subscriber.next(company);
+                        subscriber.complete();
+                    } else {
+                        subscriber.error(new Error('Azienda non trovata'));
+                    }
+                },
+                error: (err) => subscriber.error(err)
+            });
+        });
     }
 
     // === STORICO APPROVAZIONI ===

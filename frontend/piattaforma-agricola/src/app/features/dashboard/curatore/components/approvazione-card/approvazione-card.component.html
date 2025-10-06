@@ -1,79 +1,88 @@
 <mat-card class="approvazione-card" appearance="outlined" *ngIf="approvazione">
-  <!-- Header della card -->
-  <div class="card-header">
-    <div class="card-type" [ngStyle]="{ 'background-color': getStatoColor(approvazione.stato) }">
-      <mat-icon>{{ getTipoIcon(approvazione.tipo) }}</mat-icon>
-    </div>
-    <div class="card-info">
-      <h3 class="card-title">{{ approvazione.elementoNome }}</h3>
-      <p class="card-subtitle">{{ getTipoLabel(approvazione.tipo) }} - {{ getStatoLabel(approvazione.stato) }}</p>
-    </div>
-  </div>
-
-  <!-- Contenuto della card -->
-  <mat-card-content>
-    <div class="card-content">
-      <!-- Descrizione -->
-      <div class="card-description">
-        <p class="description-text">{{ approvazione.descrizione }}</p>
-      </div>
-
-      <!-- Informazioni aggiuntive -->
-      <div class="card-details">
-        <div class="detail-item">
-          <mat-icon class="detail-icon">person</mat-icon>
-          <div class="detail-text">
-            <p class="detail-label">Richiedente</p>
-            <p class="detail-value">{{ approvazione.richiedente.nome }}</p>
-            <p class="detail-email">{{ approvazione.richiedente.email }}</p>
-          </div>
+    <!-- Header della card -->
+    <div class="card-header">
+        <!-- Product image if available -->
+        <div class="card-image" *ngIf="hasImage()">
+            <img [src]="getImageUrl()" [alt]="approvazione.elementoNome" />
         </div>
-        
-        <div class="detail-item">
-          <mat-icon class="detail-icon">calendar_today</mat-icon>
-          <div class="detail-text">
-            <p class="detail-label">Data richiesta</p>
-            <p class="detail-value">{{ formatDateTime(approvazione.dataRichiesta) }}</p>
-          </div>
+        <div class="card-type" *ngIf="!hasImage()"
+            [ngStyle]="{ 'background-color': getStatoColor(approvazione.stato) }">
+            <mat-icon>{{ getTipoIcon(approvazione.tipo) }}</mat-icon>
         </div>
-      </div>
+        <div class="card-info">
+            <h3 class="card-title">{{ approvazione.elementoNome }}</h3>
+            <p class="card-subtitle">
+                <mat-chip class="status-chip" [style.background-color]="getStatoColor(approvazione.stato)">
+                    {{ getTipoLabel(approvazione.tipo) }}
+                </mat-chip>
+                <mat-chip class="type-chip">
+                    {{ getStatoLabel(approvazione.stato) }}
+                </mat-chip>
+            </p>
+        </div>
     </div>
-  </mat-card-content>
 
-  <!-- Azioni -->
-  <mat-card-actions class="card-actions" *ngIf="approvazione.stato === 'IN_ATTESA'">
-    <button mat-button color="primary" (click)="onViewDetails()">
-      Dettagli
-    </button>
-    <button mat-button color="accent" (click)="onApprove()">
-      Approva
-    </button>
-    <button mat-button color="warn" (click)="onReject()">
-      Rifiuta
-    </button>
-  </mat-card-actions>
+    <!-- Contenuto della card -->
+    <mat-card-content>
+        <div class="card-content">
+            <!-- Descrizione -->
+            <div class="card-description">
+                <p class="description-text">{{ approvazione.descrizione }}</p>
+            </div>
+
+            <!-- Informazioni aggiuntive -->
+            <div class="card-details">
+                <div class="detail-item">
+                    <mat-icon class="detail-icon">person</mat-icon>
+                    <div class="detail-text">
+                        <p class="detail-label">Richiedente</p>
+                        <p class="detail-value">{{ approvazione.richiedente.nome }}</p>
+                        <p class="detail-email">{{ approvazione.richiedente.email }}</p>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <mat-icon class="detail-icon">calendar_today</mat-icon>
+                    <div class="detail-text">
+                        <p class="detail-label">Data richiesta</p>
+                        <p class="detail-value">{{ formatDateTime(approvazione.dataRichiesta) }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+
+    <!-- Azioni -->
+    <mat-card-actions class="card-actions" *ngIf="approvazione.stato === 'IN_ATTESA'">
+        <button mat-button color="primary" (click)="onViewDetails()">
+            Dettagli
+        </button>
+        <button mat-button color="accent" (click)="onApprove()">
+            Approva
+        </button>
+        <button mat-button color="warn" (click)="onReject()">
+            Rifiuta
+        </button>
+    </mat-card-actions>
 </mat-card>
 
 <!-- Dialog per il rifiuto -->
 <div class="reject-dialog-overlay" *ngIf="showRejectDialog" (click)="cancelReject()">
-  <div class="reject-dialog" (click)="$event.stopPropagation()">
-    <h3 class="dialog-title">Motivo del rifiuto</h3>
-    <mat-form-field appearance="outline">
-      <mat-label>Motivo</mat-label>
-      <textarea matInput 
-        placeholder="Inserisci il motivo del rifiuto..." 
-        [(ngModel)]="rejectReason" 
-        rows="4"
-        [maxLength]="500">
+    <div class="reject-dialog" (click)="$event.stopPropagation()">
+        <h3 class="dialog-title">Motivo del rifiuto</h3>
+        <mat-form-field appearance="outline">
+            <mat-label>Motivo</mat-label>
+            <textarea matInput placeholder="Inserisci il motivo del rifiuto..." [(ngModel)]="rejectReason" rows="4"
+                [maxLength]="500">
       </textarea>
-      <mat-hint>{{ rejectReason.length }}/500</mat-hint>
-    </mat-form-field>
-    
-    <div class="dialog-actions">
-      <button mat-stroked-button (click)="cancelReject()">Annulla</button>
-      <button mat-raised-button color="warn" (click)="confirmReject()" [disabled]="!rejectReason.trim()">
-        Rifiuta
-      </button>
+            <mat-hint>{{ rejectReason.length }}/500</mat-hint>
+        </mat-form-field>
+
+        <div class="dialog-actions">
+            <button mat-stroked-button (click)="cancelReject()">Annulla</button>
+            <button mat-raised-button color="warn" (click)="confirmReject()" [disabled]="!rejectReason.trim()">
+                Rifiuta
+            </button>
+        </div>
     </div>
-  </div>
 </div>

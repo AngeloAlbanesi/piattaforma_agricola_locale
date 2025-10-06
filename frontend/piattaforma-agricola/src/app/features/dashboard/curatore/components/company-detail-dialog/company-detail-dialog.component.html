@@ -1,0 +1,172 @@
+<div class="company-detail-dialog">
+    <div class="dialog-header">
+        <h2 mat-dialog-title>
+            <mat-icon>business</mat-icon>
+            Dettagli Azienda
+        </h2>
+        <button mat-icon-button (click)="onClose()" aria-label="Chiudi">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Caricamento dettagli...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !isLoading">
+        <mat-icon class="error-icon">error</mat-icon>
+        <p>{{ error }}</p>
+        <button mat-stroked-button color="primary" (click)="onClose()">Chiudi</button>
+    </div>
+
+    <!-- Content -->
+    <mat-dialog-content *ngIf="company && !isLoading">
+        <div class="company-content">
+            <!-- Company Header -->
+            <div class="company-header">
+                <div class="company-icon">
+                    <mat-icon>business_center</mat-icon>
+                </div>
+                <div class="company-title">
+                    <h3>{{ company.nomeAzienda }}</h3>
+                    <mat-chip [style.background-color]="getStatoColor(company.statoVerifica)" class="status-chip">
+                        {{ getStatoLabel(company.statoVerifica) }}
+                    </mat-chip>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <!-- Company Details -->
+            <div class="info-section">
+                <h4><mat-icon>info</mat-icon> Informazioni Generali</h4>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <mat-icon>numbers</mat-icon>
+                        <div>
+                            <p class="detail-label">Partita IVA</p>
+                            <p class="detail-value">{{ company.partitaIva }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <mat-icon>location_on</mat-icon>
+                        <div>
+                            <p class="detail-label">Indirizzo</p>
+                            <p class="detail-value">{{ company.indirizzo }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <mat-icon>phone</mat-icon>
+                        <div>
+                            <p class="detail-label">Telefono</p>
+                            <p class="detail-value">{{ company.telefono }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <mat-icon>email</mat-icon>
+                        <div>
+                            <p class="detail-label">Email</p>
+                            <p class="detail-value">{{ company.email }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-item" *ngIf="company.sitoWeb">
+                        <mat-icon>language</mat-icon>
+                        <div>
+                            <p class="detail-label">Sito Web</p>
+                            <p class="detail-value">
+                                <a [href]="company.sitoWeb" target="_blank" rel="noopener">
+                                    {{ company.sitoWeb }}
+                                    <mat-icon class="external-link">open_in_new</mat-icon>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <!-- Verification Feedback -->
+            <div class="info-section" *ngIf="company.feedbackVerifica">
+                <h4><mat-icon>feedback</mat-icon> Feedback Verifica</h4>
+                <mat-card appearance="outlined" class="feedback-card">
+                    <mat-card-content>
+                        <p>{{ company.feedbackVerifica }}</p>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+            <!-- Quick Summary -->
+            <div class="info-section summary-section">
+                <h4><mat-icon>summarize</mat-icon> Riepilogo</h4>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <mat-icon class="summary-icon">verified_user</mat-icon>
+                        <div>
+                            <p class="summary-label">Stato</p>
+                            <p class="summary-value" [style.color]="getStatoColor(company.statoVerifica)">
+                                {{ getStatoLabel(company.statoVerifica) }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <mat-icon class="summary-icon">badge</mat-icon>
+                        <div>
+                            <p class="summary-label">P.IVA Valida</p>
+                            <p class="summary-value">{{ company.partitaIva ? 'Sì' : 'No' }}</p>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <mat-icon class="summary-icon">contact_mail</mat-icon>
+                        <div>
+                            <p class="summary-label">Contatti Completi</p>
+                            <p class="summary-value">{{ company.email && company.telefono ? 'Sì' : 'No' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <!-- Actions -->
+    <mat-dialog-actions *ngIf="company && !isLoading" align="end">
+        <button mat-button (click)="onClose()">Chiudi</button>
+        <button mat-raised-button color="warn" (click)="onReject()" [disabled]="isLoading">
+            <mat-icon>cancel</mat-icon>
+            Rifiuta
+        </button>
+        <button mat-raised-button color="primary" (click)="onApprove()" [disabled]="isLoading">
+            <mat-icon>check_circle</mat-icon>
+            Approva
+        </button>
+    </mat-dialog-actions>
+</div>
+
+<!-- Reject Dialog Overlay -->
+<div class="reject-overlay" *ngIf="showRejectDialog" (click)="cancelReject()">
+    <div class="reject-dialog" (click)="$event.stopPropagation()">
+        <h3>Motivo del Rifiuto</h3>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Motivazione</mat-label>
+            <textarea matInput [(ngModel)]="rejectReason"
+                placeholder="Inserisci il motivo del rifiuto (es: Visura camerale scaduta, P.IVA non verificabile)..."
+                rows="5" maxlength="500">
+      </textarea>
+            <mat-hint>{{ rejectReason.length }}/500 caratteri</mat-hint>
+        </mat-form-field>
+
+        <div class="reject-actions">
+            <button mat-stroked-button (click)="cancelReject()">Annulla</button>
+            <button mat-raised-button color="warn" (click)="confirmReject()" [disabled]="!rejectReason.trim()">
+                Conferma Rifiuto
+            </button>
+        </div>
+    </div>
+</div>

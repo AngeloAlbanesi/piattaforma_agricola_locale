@@ -28,6 +28,7 @@ import { ApprovazionePendingDTO } from '../../../../../core/models/curatore.mode
 })
 export class ApprovazioneCardComponent {
     @Input() approvazione: ApprovazionePendingDTO | null = null;
+    @Input() productImages: string[] = [];
     @Output() approve = new EventEmitter<number>();
     @Output() reject = new EventEmitter<{ id: number, motivo: string }>();
     @Output() viewDetails = new EventEmitter<number>();
@@ -35,6 +36,16 @@ export class ApprovazioneCardComponent {
     // Stato per il dialogo di rifiuto
     showRejectDialog = false;
     rejectReason = '';
+
+    hasImage(): boolean {
+        return this.productImages && this.productImages.length > 0;
+    }
+
+    getImageUrl(): string {
+        return this.productImages && this.productImages.length > 0
+            ? this.productImages[0]
+            : '/assets/placeholder-product.png';
+    }
 
     onApprove(): void {
         if (this.approvazione) {

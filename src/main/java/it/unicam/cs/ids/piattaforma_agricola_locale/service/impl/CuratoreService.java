@@ -101,6 +101,46 @@ public class CuratoreService implements ICuratoreService {
             org.springframework.data.domain.Pageable.unpaged()
         ).getContent();
     }
+
+    @Override
+    public List<Prodotto> getProdottiApprovati() {
+        return prodottoRepository.findByStatoVerifica(
+            StatoVerificaValori.APPROVATO, 
+            org.springframework.data.domain.Pageable.unpaged()
+        ).getContent();
+    }
+
+    @Override
+    public List<Prodotto> getProdottiRifiutati() {
+        return prodottoRepository.findByStatoVerifica(
+            StatoVerificaValori.RESPINTO, 
+            org.springframework.data.domain.Pageable.unpaged()
+        ).getContent();
+    }
+
+    @Override
+    public List<DatiAzienda> getDatiAziendaApprovati() {
+        List<DatiAzienda> datiAziendaApprovati = new ArrayList<>();
+        for (Venditore venditore : venditoreRepository.findAll()) {
+            if (venditore.getDatiAzienda() != null && 
+                venditore.getDatiAzienda().getStatoVerifica() == StatoVerificaValori.APPROVATO) {
+                datiAziendaApprovati.add(venditore.getDatiAzienda());
+            }
+        }
+        return datiAziendaApprovati;
+    }
+
+    @Override
+    public List<DatiAzienda> getDatiAziendaRifiutati() {
+        List<DatiAzienda> datiAziendaRifiutati = new ArrayList<>();
+        for (Venditore venditore : venditoreRepository.findAll()) {
+            if (venditore.getDatiAzienda() != null && 
+                venditore.getDatiAzienda().getStatoVerifica() == StatoVerificaValori.RESPINTO) {
+                datiAziendaRifiutati.add(venditore.getDatiAzienda());
+            }
+        }
+        return datiAziendaRifiutati;
+    }
     
     /**
      * Aggiunge un prodotto alla coda di revisione interna.

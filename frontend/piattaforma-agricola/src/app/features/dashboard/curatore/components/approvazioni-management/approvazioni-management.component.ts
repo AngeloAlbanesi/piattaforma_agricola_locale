@@ -1,14 +1,18 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { CuratoreService } from '../../../../../core/services/curatore.service';
 import { ApprovazionePendingDTO, ApprovazioneFilters } from '../../../../../core/models/curatore.models';
 import { ApprovazioneCardComponent } from '../approvazione-card/approvazione-card.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ApprovalFiltersComponent } from '../approval-filters/approval-filters.component';
+import { ProductDetailDialogComponent } from '../product-detail-dialog/product-detail-dialog.component';
+import { CompanyDetailDialogComponent } from '../company-detail-dialog/company-detail-dialog.component';
 
 @Component({
     selector: 'app-approvazioni-management',
@@ -21,7 +25,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
         MatIconModule,
         MatButtonModule,
         ApprovazioneCardComponent,
-        MatSnackBarModule
+        MatSnackBarModule,
+        ApprovalFiltersComponent
     ],
     templateUrl: './approvazioni-management.component.html',
     styleUrls: ['./approvazioni-management.component.scss'],
@@ -42,7 +47,9 @@ export class ApprovazioniManagementComponent implements OnInit {
 
     constructor(
         private curatoreService: CuratoreService,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private dialog: MatDialog,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -61,12 +68,14 @@ export class ApprovazioniManagementComponent implements OnInit {
                 next: (approvazioni) => {
                     this.approvazioni = approvazioni;
                     this.isLoading = false;
+                    this.cdr.markForCheck();
                 },
                 error: (error) => {
                     console.error('Errore nel caricamento approvazioni:', error);
                     this.errorMessage = 'Impossibile caricare le approvazioni. Riprova più tardi.';
                     this.snackBar.open(this.errorMessage, 'Chiudi', { duration: 3000, panelClass: 'error-snackbar' });
                     this.isLoading = false;
+                    this.cdr.markForCheck();
                 }
             });
     }
@@ -108,6 +117,7 @@ export class ApprovazioniManagementComponent implements OnInit {
                     console.error('Errore nell\'approvazione:', error);
                     this.snackBar.open('Errore durante l\'approvazione', 'Chiudi', { duration: 3000, panelClass: 'error-snackbar' });
                     this.isLoading = false;
+                    this.cdr.markForCheck();
                 }
             });
     }
@@ -128,13 +138,79 @@ export class ApprovazioniManagementComponent implements OnInit {
                     console.error('Errore nel rifiuto:', error);
                     this.snackBar.open('Errore durante il rifiuto', 'Chiudi', { duration: 3000, panelClass: 'error-snackbar' });
                     this.isLoading = false;
+                    this.cdr.markForCheck();
                 }
             });
     }
 
     viewElementDetails(elementId: number, tipo: string): void {
-        // TODO: Implementare navigazione ai dettagli dell'elemento
-        console.log('Visualizza dettagli elemento:', elementId, tipo);
+        if (tipo === 'PRODOTTO') {
+            this.openProductDetailDialog(elementId);
+        } else if (tipo === 'AZIENDA') {
+            this.openCompanyDetailDialog(elementId);
+        } else {
+            console.log('Dettagli contenuto non ancora implementati:', elementId);
+        }
+    }
+
+    private openProductDetailDialog(productId: number): void {
+        const approvazione = this.approvazioni.find(a => a.elementoId === productId && a.tipo === 'PRODOTTO');
+
+        const dialogRef = this.dialog.open(ProductDetailDialogComponent, {
+            width: '800px',
+            maxWidth: '95vw',
+            maxHeight: '90vh',
+            data: {
+                productId: productId,
+                productName: approvazione?.elementoNome || 'Prodotto'
+            },
+            disableClose: false,
+            panelClass: 'product-detail-dialog-container'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result && (result.action === 'approved' || result.action === 'rejected')) {
+                // Refresh the list after approval/rejection
+                this.loadApprovazioni();
+            }
+        });
+    }
+
+    private openCompanyDetailDialog(companyId: number): void {
+        const approvazione = this.approvazioni.find(a => a.elementoId === companyId && a.tipo === 'AZIENDA');
+
+        const dialogRef = this.dialog.open(CompanyDetailDialogComponent, {
+            width: '700px',
+            maxWidth: '95vw',
+            maxHeight: '90vh',
+            data: {
+                companyId: companyId,
+                companyName: approvazione?.elementoNome || 'Azienda'
+            },
+            disableClose: false,
+            panelClass: 'company-detail-dialog-container'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result && (result.action === 'approved' || result.action === 'rejected')) {
+                // Refresh the list after approval/rejection
+                this.loadApprovazioni();
+            }
+        });
+    }
+
+    onFiltersChanged(newFilters: ApprovazioneFilters): void {
+        this.filters = { ...this.filters, ...newFilters };
+        this.loadApprovazioni();
+    }
+
+    onFiltersReset(): void {
+        this.filters = {
+            stato: 'IN_ATTESA',
+            pagina: 1,
+            elementiPerPagina: 10
+        };
+        this.loadApprovazioni();
     }
 
     formatDate(date: string): string {

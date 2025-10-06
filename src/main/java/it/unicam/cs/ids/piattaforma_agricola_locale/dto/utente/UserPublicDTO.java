@@ -4,6 +4,7 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.StatoAccreditamento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.TipoRuolo;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,9 @@ public class UserPublicDTO {
     private String nome;
     private String cognome;
     private TipoRuolo tipoRuolo;
+    
+    @JsonProperty("isAttivo")
     private boolean isAttivo;
+    
     private StatoAccreditamento statoAccreditamento;
 }

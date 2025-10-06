@@ -130,14 +130,16 @@ export class UtentiManagementComponent implements OnInit {
         this.getFilteredUsers()
             .subscribe({
                 next: (data: PaginatedResponse<UserPublicDTO>) => {
-                    this.dataSource.data = data.content;
+                    // Normalizza gli utenti prima di assegnarli al dataSource
+                    const normalizedUsers = this.normalizeUserActivationStates(data.content);
+
+                    // Assegna i dati normalizzati al dataSource
+                    this.dataSource.data = normalizedUsers;
                     this.totalElements = data.totalElements;
                     this.isLoading = false;
 
-                    // Verifica che tutti gli utenti abbiano lo stato di attivazione corretto
-                    this.verifyUserActivationStates(data.content);
-
-                    this.cdr.markForCheck();
+                    // Forza il change detection
+                    this.cdr.detectChanges();
                 },
                 error: (error: any) => {
                     this.snackBar.open('Errore durante il caricamento degli utenti.', 'Chiudi', { duration: 3000 });
@@ -148,15 +150,32 @@ export class UtentiManagementComponent implements OnInit {
     }
 
     /**
-     * Verifica che tutti gli utenti abbiano lo stato di attivazione corretto.
+     * Normalizza lo stato di attivazione di tutti gli utenti.
      * Questo metodo assicura che il toggle rifletta lo stato reale dal backend.
+     * Converte esplicitamente isAttivo a boolean e gestisce valori undefined/null/stringa.
      */
-    private verifyUserActivationStates(users: UserPublicDTO[]): void {
-        // Verifica che tutti gli utenti abbiano il campo isAttivo popolato
-        const usersWithUndefinedStatus = users.filter(user => user.isAttivo === undefined);
-        if (usersWithUndefinedStatus.length > 0) {
-            console.warn('Alcuni utenti hanno isAttivo undefined:', usersWithUndefinedStatus);
-        }
+    private normalizeUserActivationStates(users: UserPublicDTO[]): UserPublicDTO[] {
+        return users.map(user => {
+            // Converti esplicitamente isAttivo a boolean, gestendo anche stringhe
+            let isAttivoBoolean: boolean;
+
+            if (typeof user.isAttivo === 'string') {
+                isAttivoBoolean = user.isAttivo === 'true';
+            } else if (typeof user.isAttivo === 'boolean') {
+                isAttivoBoolean = user.isAttivo;
+            } else {
+                isAttivoBoolean = false; // Default per undefined/null
+            }
+
+            // Log per debug: mostra lo stato PRIMA e DOPO la conversione
+            console.log(`User ID ${user.idUtente} (${user.nome} ${user.cognome}): isAttivo originale = ${user.isAttivo} (tipo: ${typeof user.isAttivo}), convertito = ${isAttivoBoolean}`);
+
+            // Crea un nuovo oggetto con isAttivo normalizzato
+            return {
+                ...user,
+                isAttivo: isAttivoBoolean
+            };
+        });
     }
 
     private getFilteredUsers() {
@@ -216,10 +235,9 @@ export class UtentiManagementComponent implements OnInit {
         });
     }
 
-    toggleActivation(user: UserPublicDTO, desiredActive?: boolean): void {
-        // Gestisce il caso in cui isAttivo è undefined (default: false)
-        const currentState = user.isAttivo === true;
-        const attivo = typeof desiredActive === 'boolean' ? desiredActive : !currentState;
+    toggleActivation(user: UserPublicDTO, desiredActive: boolean): void {
+        // Usa il valore desiderato passato dal template
+        const attivo = desiredActive;
 
         // Mappa il tipoRuolo al tipo richiesto dall'API
         const tipo = this.mapTipoRuoloToApiType(user.tipoRuolo);
@@ -255,13 +273,14 @@ export class UtentiManagementComponent implements OnInit {
                     user.isAttivo = attivo;
                     this.cdr.markForCheck();
 
-                    // Ricarica la lista per sincronizzare con il backend (se il backend restituisce il campo)
+                    // Ricarica la lista per sincronizzare con il backend
                     setTimeout(() => this.loadUsers(), 1000);
                 },
                 error: (error) => {
                     console.error('Errore durante l\'aggiornamento dello stato:', error);
                     this.snackBar.open('Errore durante l\'aggiornamento dello stato', 'Chiudi', { duration: 3000 });
-                    this.cdr.markForCheck();
+                    // Ricarica la lista per ripristinare lo stato corretto dal backend
+                    this.loadUsers();
                 }
             });
         });

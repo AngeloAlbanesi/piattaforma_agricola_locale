@@ -24,8 +24,10 @@
                             <mat-icon class="warning-icon">warning</mat-icon>
                             <div class="warning-text">
                                 <strong>Prodotto non disponibile per gestione metodi</strong>
-                                <p>Il prodotto "{{ selectedProductName }}" ha stato: <strong>{{ selectedProduct.statoVerifica }}</strong></p>
-                                <p>I metodi di coltivazione possono essere gestiti solo per prodotti con stato "APPROVATO" o "IN_REVISIONE".</p>
+                                <p>Il prodotto "{{ selectedProductName }}" ha stato: <strong>{{
+                                        selectedProduct.statoVerifica }}</strong></p>
+                                <p>I metodi di coltivazione possono essere gestiti solo per prodotti con stato
+                                    "APPROVATO" o "IN_REVISIONE".</p>
                             </div>
                         </div>
                     </mat-card-content>
@@ -78,11 +80,6 @@
                     <mat-divider></mat-divider>
 
                     <div class="detail-grid">
-                        <div class="detail-item">
-                            <strong>Periodo:</strong>
-                            <span>{{ cultivationMethod.periodoColtivazione }}</span>
-                        </div>
-
                         <div class="detail-item" *ngIf="cultivationMethod.superficie">
                             <strong>Superficie:</strong>
                             <span>{{ cultivationMethod.superficie }} ha</span>
@@ -107,19 +104,14 @@
                     </div>
                 </mat-card-content>
                 <mat-card-actions align="end">
-                    <button mat-button 
-                            color="primary" 
-                            (click)="modificaMetodo()" 
-                            [disabled]="!canManageCultivationMethod"
-                            [matTooltip]="canManageCultivationMethod ? 'Modifica Metodo' : 'Disponibile solo per prodotti approvati o IN_REVISIONE'">
+                    <button mat-button color="primary" (click)="modificaMetodo()"
+                        [disabled]="!canManageCultivationMethod"
+                        [matTooltip]="canManageCultivationMethod ? 'Modifica Metodo' : 'Disponibile solo per prodotti approvati o IN_REVISIONE'">
                         <mat-icon>edit</mat-icon>
                         Modifica
                     </button>
-                    <button mat-button 
-                            color="warn" 
-                            (click)="eliminaMetodo()" 
-                            [disabled]="!canManageCultivationMethod"
-                            [matTooltip]="canManageCultivationMethod ? 'Elimina Metodo' : 'Disponibile solo per prodotti approvati o IN_REVISIONE'">
+                    <button mat-button color="warn" (click)="eliminaMetodo()" [disabled]="!canManageCultivationMethod"
+                        [matTooltip]="canManageCultivationMethod ? 'Elimina Metodo' : 'Disponibile solo per prodotti approvati o IN_REVISIONE'">
                         <mat-icon>delete</mat-icon>
                         Elimina
                     </button>

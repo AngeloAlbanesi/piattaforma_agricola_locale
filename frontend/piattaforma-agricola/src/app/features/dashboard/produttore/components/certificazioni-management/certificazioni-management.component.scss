@@ -44,3 +44,54 @@
   font-style: italic;
   color: #777;
 }
+
+// Stili per il selettore del prodotto
+.product-selector-container {
+  margin-bottom: 20px;
+}
+
+.product-select {
+  width: 100%;
+  min-width: 300px;
+}
+
+// Stili per i container di caricamento
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+// Stili per le card
+mat-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+mat-card-header {
+  padding-bottom: 8px;
+}
+
+mat-card-content {
+  padding: 16px 24px;
+}
+
+// Stili per i pulsanti
+[mat-raised-button] {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}

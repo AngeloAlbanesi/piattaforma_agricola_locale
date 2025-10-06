@@ -22,11 +22,11 @@ import { PaginatedResponse } from '../../../../../core/models/common.models';
 import { ProduttoreService } from '../../../../../core/services/produttore.service';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { Router } from '@angular/router';
 import { CreateProductDialogComponent } from './create-product-dialog.component';
 import { EditProductDialogComponent } from './edit-product-dialog.component';
 import { DeleteProductDialogComponent } from './delete-product-dialog.component';
 import { UpdateQuantityDialogComponent } from './update-quantity-dialog.component';
+import { ProductDetailDialogComponent } from './product-detail-dialog.component';
 
 @Component({
     selector: 'app-prodotti-management',
@@ -93,7 +93,6 @@ export class ProdottiManagementComponent implements OnInit {
         private produttoreService: ProduttoreService,
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
-        private router: Router,
         private cdr: ChangeDetectorRef
     ) { }
 
@@ -172,7 +171,22 @@ export class ProdottiManagementComponent implements OnInit {
     }
 
     viewProductDetails(prodotto: ProduttoreProductSummaryDTO): void {
-        this.router.navigate(['/dashboard/produttore/prodotti', prodotto.idProdotto]);
+        const dialogRef = this.dialog.open(ProductDetailDialogComponent, {
+            width: '900px',
+            maxWidth: '95vw',
+            maxHeight: '90vh',
+            data: { 
+                productId: prodotto.idProdotto,
+                productSummary: prodotto // Passiamo i dati di summary come fallback
+            },
+            panelClass: 'product-detail-dialog-container'
+        });
+
+        // Optional: Handle dialog close if needed
+        dialogRef.afterClosed().subscribe(() => {
+            // Dialog closed, no specific action needed
+            console.log('Product detail dialog closed');
+        });
     }
 
     editProduct(prodotto: ProduttoreProductSummaryDTO): void {

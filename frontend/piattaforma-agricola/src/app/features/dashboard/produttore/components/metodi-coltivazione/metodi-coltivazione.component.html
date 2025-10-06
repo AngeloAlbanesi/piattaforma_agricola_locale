@@ -10,11 +10,27 @@
                 <mat-label>Seleziona Prodotto</mat-label>
                 <mat-select [(ngModel)]="selectedProductId" (ngModelChange)="onProductSelected($event)">
                     <mat-option *ngFor="let product of products" [value]="product.idProdotto">
-                        {{ product.nome }} (ID: {{ product.idProdotto }})
+                        {{ product.nome }} ({{ product.statoVerifica }})
                     </mat-option>
                 </mat-select>
                 <mat-hint>Seleziona un prodotto per visualizzare il suo metodo di coltivazione</mat-hint>
             </mat-form-field>
+
+            <!-- Product Status Alert -->
+            <div class="product-status-alert" *ngIf="selectedProduct && !isProductApproved">
+                <mat-card appearance="outlined" class="warning-card">
+                    <mat-card-content>
+                        <div class="warning-content">
+                            <mat-icon class="warning-icon">warning</mat-icon>
+                            <div class="warning-text">
+                                <strong>Prodotto non approvato</strong>
+                                <p>Il prodotto "{{ selectedProductName }}" ha stato: <strong>{{ selectedProduct.statoVerifica }}</strong></p>
+                                <p>I metodi di coltivazione possono essere gestiti solo per prodotti con stato "APPROVATO".</p>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
         </div>
 
         <!-- Loading Products -->
@@ -36,7 +52,7 @@
         </div>
 
         <!-- No Method Found -->
-        <div class="empty-state" *ngIf="!isLoading && selectedProductId && !hasMethod">
+        <div class="empty-state" *ngIf="!isLoading && selectedProductId && !hasMethod && isProductApproved">
             <mat-icon>info</mat-icon>
             <p>Nessun metodo di coltivazione associato a questo prodotto</p>
             <button mat-raised-button color="primary" (click)="aggiungiMetodo()">
@@ -90,11 +106,19 @@
                     </div>
                 </mat-card-content>
                 <mat-card-actions align="end">
-                    <button mat-button color="primary" (click)="modificaMetodo()" matTooltip="Modifica Metodo">
+                    <button mat-button 
+                            color="primary" 
+                            (click)="modificaMetodo()" 
+                            [disabled]="!canManageCultivationMethod"
+                            [matTooltip]="isProductApproved ? 'Modifica Metodo' : 'Disponibile solo per prodotti approvati'">
                         <mat-icon>edit</mat-icon>
                         Modifica
                     </button>
-                    <button mat-button color="warn" (click)="eliminaMetodo()" matTooltip="Elimina Metodo">
+                    <button mat-button 
+                            color="warn" 
+                            (click)="eliminaMetodo()" 
+                            [disabled]="!canManageCultivationMethod"
+                            [matTooltip]="isProductApproved ? 'Elimina Metodo' : 'Disponibile solo per prodotti approvati'">
                         <mat-icon>delete</mat-icon>
                         Elimina
                     </button>

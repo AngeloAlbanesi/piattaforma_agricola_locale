@@ -48,6 +48,18 @@ export class MetodiColtivazioneComponent implements OnInit {
     isLoadingProducts = true;
     hasMethod = false;
 
+    get isProductApproved(): boolean {
+        return this.selectedProduct?.statoVerifica === 'APPROVATO';
+    }
+
+    get selectedProductName(): string {
+        return this.selectedProduct?.nome || '';
+    }
+
+    get canManageCultivationMethod(): boolean {
+        return this.selectedProductId !== null && this.isProductApproved;
+    }
+
     constructor(
         private produttoreService: ProduttoreService,
         private dialog: MatDialog,
@@ -111,6 +123,16 @@ export class MetodiColtivazioneComponent implements OnInit {
             return;
         }
 
+        // Controllo stato di approvazione del prodotto
+        if (this.selectedProduct.statoVerifica !== 'APPROVATO') {
+            this.snackBar.open(
+                'Il metodo di coltivazione può essere creato solo per prodotti approvati. Stato attuale: ' + this.selectedProduct.statoVerifica, 
+                'Chiudi', 
+                { duration: 5000 }
+            );
+            return;
+        }
+
         if (this.hasMethod) {
             this.snackBar.open('Questo prodotto ha già un metodo di coltivazione', 'Chiudi', { duration: 3000 });
             return;
@@ -146,7 +168,17 @@ export class MetodiColtivazioneComponent implements OnInit {
     }
 
     modificaMetodo(): void {
-        if (!this.selectedProductId || !this.cultivationMethod) {
+        if (!this.selectedProductId || !this.cultivationMethod || !this.selectedProduct) {
+            return;
+        }
+
+        // Controllo stato di approvazione del prodotto
+        if (this.selectedProduct.statoVerifica !== 'APPROVATO') {
+            this.snackBar.open(
+                'Il metodo di coltivazione può essere modificato solo per prodotti approvati. Stato attuale: ' + this.selectedProduct.statoVerifica, 
+                'Chiudi', 
+                { duration: 5000 }
+            );
             return;
         }
 
@@ -177,7 +209,17 @@ export class MetodiColtivazioneComponent implements OnInit {
     }
 
     eliminaMetodo(): void {
-        if (!this.selectedProductId) {
+        if (!this.selectedProductId || !this.selectedProduct) {
+            return;
+        }
+
+        // Controllo stato di approvazione del prodotto
+        if (this.selectedProduct.statoVerifica !== 'APPROVATO') {
+            this.snackBar.open(
+                'Il metodo di coltivazione può essere eliminato solo per prodotti approvati. Stato attuale: ' + this.selectedProduct.statoVerifica, 
+                'Chiudi', 
+                { duration: 5000 }
+            );
             return;
         }
 

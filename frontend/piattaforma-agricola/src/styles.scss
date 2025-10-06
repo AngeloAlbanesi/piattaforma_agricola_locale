@@ -640,3 +640,17 @@ h4 {
         transition: none;
     }
 }
+
+// Stili globali per i dialog di dettaglio prodotto
+.product-detail-dialog-container {
+    .mat-mdc-dialog-container {
+        --mdc-dialog-container-shape: 12px;
+        padding: 0;
+    }
+    
+    .mat-mdc-dialog-content {
+        padding: 0;
+        margin: 0;
+        max-height: none;
+    }
+}

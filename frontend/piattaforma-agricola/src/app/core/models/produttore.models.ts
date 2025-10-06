@@ -33,6 +33,12 @@ export interface ProduttoreProductDetailDTO extends ProduttoreProductSummaryDTO 
     certificazioniDettagli: CertificationDTO[];
     ordiniRicevuti: OrdineRiepilogoDTO[];
     visualizzazioni: number;
+    // Campi aggiuntivi che potrebbero essere presenti
+    ingredienti?: string[];
+    allergeni?: string[];
+    metodiConservazione?: string;
+    numeroLotto?: string;
+    dataScadenza?: string;
 }
 
 // === CERTIFICAZIONI ===

@@ -33,7 +33,7 @@ export class ProdottiService {
      */
     getMyProducts(filters?: ProdottoFilters): Observable<PaginatedResponse<ProdottoDTO>> {
         let params = this.buildParamsFromFilters(filters);
-        return this.http.get<PaginatedResponse<ProdottoDTO>>(`${this.apiUrl}/api/prodotti/miei-prodotti`, { params });
+        return this.http.get<PaginatedResponse<ProdottoDTO>>(`${this.apiUrl}/prodotti/miei-prodotti`, { params });
     }
 
     /**
@@ -70,35 +70,35 @@ export class ProdottiService {
             }
         }
         
-        return this.http.get<PaginatedResponse<ProdottoSummaryDTO>>(`${this.apiUrl}/api/prodotti`, { params });
+        return this.http.get<PaginatedResponse<ProdottoSummaryDTO>>(`${this.apiUrl}/prodotti`, { params });
     }
 
     /**
      * Ottiene i dettagli di un prodotto specifico
      */
     getProductById(id: number): Observable<ProdottoDetailDTO> {
-        return this.http.get<ProdottoDetailDTO>(`${this.apiUrl}/api/prodotti/${id}`);
+        return this.http.get<ProdottoDetailDTO>(`${this.apiUrl}/prodotti/${id}`);
     }
 
     /**
      * Crea un nuovo prodotto trasformato
      */
     createProduct(request: CreateProdottoRequestDTO): Observable<ProdottoDetailDTO> {
-        return this.http.post<ProdottoDetailDTO>(`${this.apiUrl}/api/prodotti`, request);
+        return this.http.post<ProdottoDetailDTO>(`${this.apiUrl}/prodotti`, request);
     }
 
     /**
      * Aggiorna un prodotto esistente
      */
     updateProduct(id: number, request: UpdateProdottoRequestDTO): Observable<ProdottoDetailDTO> {
-        return this.http.put<ProdottoDetailDTO>(`${this.apiUrl}/api/prodotti/${id}`, request);
+        return this.http.put<ProdottoDetailDTO>(`${this.apiUrl}/prodotti/${id}`, request);
     }
 
     /**
      * Elimina un prodotto
      */
     deleteProduct(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/api/prodotti/${id}`);
+        return this.http.delete<void>(`${this.apiUrl}/prodotti/${id}`);
     }
 
     // === CERTIFICAZIONI PRODOTTO ===
@@ -107,14 +107,14 @@ export class ProdottiService {
      * Aggiunge una certificazione a un prodotto
      */
     addCertification(productId: number, request: AddCertificazioneRequestDTO): Observable<ProdottoDetailDTO> {
-        return this.http.post<ProdottoDetailDTO>(`${this.apiUrl}/api/prodotti/${productId}/certificazioni`, request);
+        return this.http.post<ProdottoDetailDTO>(`${this.apiUrl}/prodotti/${productId}/certificazioni`, request);
     }
 
     /**
      * Rimuove una certificazione da un prodotto
      */
     removeCertification(productId: number, certificationId: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/api/prodotti/${productId}/certificazioni/${certificationId}`);
+        return this.http.delete<void>(`${this.apiUrl}/prodotti/${productId}/certificazioni/${certificationId}`);
     }
 
     // === TRACCIABILITÀ PRODOTTO ===
@@ -123,7 +123,7 @@ export class ProdottiService {
      * Ottiene la tracciabilità completa di un prodotto
      */
     getProductTraceability(productId: number): Observable<TracciabilitaProdottoDTO> {
-        return this.http.get<TracciabilitaProdottoDTO>(`${this.apiUrl}/api/prodotti/${productId}/tracciabilita`);
+        return this.http.get<TracciabilitaProdottoDTO>(`${this.apiUrl}/prodotti/${productId}/tracciabilita`);
     }
 
     // === UTILITIES ===

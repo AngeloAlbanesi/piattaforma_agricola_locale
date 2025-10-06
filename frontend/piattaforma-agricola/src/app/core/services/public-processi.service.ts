@@ -29,21 +29,21 @@ export class PublicProcessiService {
    */
   getProcessi(filters?: PublicProcessoFilters): Observable<PublicProcessiResponse> {
     const params = this.buildParamsFromFilters(filters);
-    return this.http.get<PublicProcessiResponse>(`${this.apiUrl}/api/processi-trasformazione`, { params });
+    return this.http.get<PublicProcessiResponse>(`${this.apiUrl}/processi-trasformazione`, { params });
   }
 
   /**
    * Ottiene i dettagli di un processo di trasformazione specifico
    */
   getProcessoById(id: number): Observable<PublicProcessoDetailDTO> {
-    return this.http.get<PublicProcessoDetailDTO>(`${this.apiUrl}/api/processi-trasformazione/${id}`);
+    return this.http.get<PublicProcessoDetailDTO>(`${this.apiUrl}/processi-trasformazione/${id}`);
   }
 
   /**
    * Ottiene la tracciabilità completa di un processo di trasformazione
    */
   getTracciabilitaProcesso(processoId: number): Observable<TracciabilitaProcessoDTO> {
-    return this.http.get<TracciabilitaProcessoDTO>(`${this.apiUrl}/api/processi-trasformazione/${processoId}/tracciabilita`);
+    return this.http.get<TracciabilitaProcessoDTO>(`${this.apiUrl}/processi-trasformazione/${processoId}/tracciabilita`);
   }
 
   // === METODI UTILITARI ===

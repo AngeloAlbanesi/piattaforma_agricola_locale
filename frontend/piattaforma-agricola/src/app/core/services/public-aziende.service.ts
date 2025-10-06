@@ -33,14 +33,14 @@ export class PublicAziendeService {
    */
   getAziende(filters?: PublicAziendaFilters): Observable<PublicAziendeResponse> {
     const params = this.buildParamsFromFilters(filters);
-    return this.http.get<PublicAziendeResponse>(`${this.apiUrl}/api/azienda/tutteLeAziende`, { params });
+    return this.http.get<PublicAziendeResponse>(`${this.apiUrl}/azienda/tutteLeAziende`, { params });
   }
 
   /**
    * Ottiene i dettagli di un'azienda specifica
    */
   getAziendaById(id: number): Observable<PublicAziendaDetailDTO> {
-    return this.http.get<PublicAziendaDetailDTO>(`${this.apiUrl}/api/azienda/${id}`);
+    return this.http.get<PublicAziendaDetailDTO>(`${this.apiUrl}/azienda/${id}`);
   }
 
   /**
@@ -48,14 +48,14 @@ export class PublicAziendeService {
    */
   cercaAziende(query: string, filters?: Omit<PublicAziendaFilters, 'query'>): Observable<PublicAziendeResponse> {
     const params = this.buildParamsFromFilters({ ...filters, query });
-    return this.http.get<PublicAziendeResponse>(`${this.apiUrl}/api/azienda/cercaAzienda`, { params });
+    return this.http.get<PublicAziendeResponse>(`${this.apiUrl}/azienda/cercaAzienda`, { params });
   }
 
   /**
    * Ottiene le certificazioni di un'azienda specifica
    */
   getCertificazioniAzienda(aziendaId: number): Observable<CertificazioneAziendaDTO[]> {
-    return this.http.get<CertificazioneAziendaDTO[]>(`${this.apiUrl}/api/azienda/${aziendaId}/certificazioni`);
+    return this.http.get<CertificazioneAziendaDTO[]>(`${this.apiUrl}/azienda/${aziendaId}/certificazioni`);
   }
 
   /**
@@ -73,14 +73,14 @@ export class PublicAziendeService {
       }
     }
     
-    return this.http.get<{ content: PublicProdottoSummaryDTO[] }>(`${this.apiUrl}/api/azienda/${aziendaId}/prodotti`, { params });
+    return this.http.get<{ content: PublicProdottoSummaryDTO[] }>(`${this.apiUrl}/azienda/${aziendaId}/prodotti`, { params });
   }
 
   /**
    * Ottiene le coordinate geografiche di un'azienda
    */
   getGeocodeAzienda(aziendaId: number): Observable<CoordinateDTO> {
-    return this.http.get<CoordinateDTO>(`${this.apiUrl}/api/azienda/${aziendaId}/geocode`);
+    return this.http.get<CoordinateDTO>(`${this.apiUrl}/azienda/${aziendaId}/geocode`);
   }
 
   /**
@@ -88,7 +88,7 @@ export class PublicAziendeService {
    */
   calcolaDistanza(aziendaId: number, indirizzoPartenza: string): Observable<DistanzaDTO> {
     const params = new HttpParams().set('partenza', indirizzoPartenza);
-    return this.http.get<DistanzaDTO>(`${this.apiUrl}/api/azienda/${aziendaId}/distanza`, { params });
+    return this.http.get<DistanzaDTO>(`${this.apiUrl}/azienda/${aziendaId}/distanza`, { params });
   }
 
   // === METODI UTILITARI ===

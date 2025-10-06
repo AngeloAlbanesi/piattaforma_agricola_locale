@@ -31,7 +31,7 @@ export class OrdiniVenditoreService {
     getReceivedOrders(filters?: OrdineFilters): Observable<PaginatedResponse<OrdineVenditoreDTO>> {
         let params = this.buildParamsFromFilters(filters);
         return this.http.get<PaginatedResponse<OrdineVenditoreDTO>>(
-            `${this.apiUrl}/api/ordini-venditore/ricevuti`,
+            `${this.apiUrl}/ordini-venditore/ricevuti`,
             { params }
         );
     }
@@ -40,14 +40,14 @@ export class OrdiniVenditoreService {
      * Ottiene i dettagli di un ordine specifico
      */
     getOrderById(id: number): Observable<OrdineVenditoreDetailDTO> {
-        return this.http.get<OrdineVenditoreDetailDTO>(`${this.apiUrl}/api/ordini-venditore/${id}`);
+        return this.http.get<OrdineVenditoreDetailDTO>(`${this.apiUrl}/ordini-venditore/${id}`);
     }
 
     /**
      * Accetta un ordine ricevuto
      */
     acceptOrder(id: number): Observable<OrdineVenditoreDTO> {
-        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/api/ordini-venditore/${id}/accetta`, {});
+        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini-venditore/${id}/accetta`, {});
     }
 
     /**
@@ -55,7 +55,7 @@ export class OrdiniVenditoreService {
      */
     markAsReadyForShipment(id: number): Observable<OrdineVenditoreDTO> {
         return this.http.put<OrdineVenditoreDTO>(
-            `${this.apiUrl}/api/ordini-venditore/${id}/pronto-spedizione`,
+            `${this.apiUrl}/ordini-venditore/${id}/pronto-spedizione`,
             {}
         );
     }
@@ -64,21 +64,21 @@ export class OrdiniVenditoreService {
      * Spedisce un ordine
      */
     shipOrder(id: number, request: SpedizioneRequestDTO): Observable<OrdineVenditoreDTO> {
-        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/api/ordini-venditore/${id}/spedisci`, request);
+        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini-venditore/${id}/spedisci`, request);
     }
 
     /**
      * Conferma la consegna di un ordine
      */
     confirmDelivery(id: number): Observable<OrdineVenditoreDTO> {
-        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/api/ordini-venditore/${id}/consegna`, {});
+        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini-venditore/${id}/consegna`, {});
     }
 
     /**
      * Annulla un ordine
      */
     cancelOrder(id: number, request: AnnullaOrdineRequestDTO): Observable<OrdineVenditoreDTO> {
-        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/api/ordini-venditore/${id}/annulla`, request);
+        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini-venditore/${id}/annulla`, request);
     }
 
     // === UTILITIES ===

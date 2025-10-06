@@ -31,14 +31,14 @@ export class PublicEventiService {
    */
   getEventi(filters?: PublicEventoFilters): Observable<PublicEventiResponse> {
     const params = this.buildParamsFromFilters(filters);
-    return this.http.get<PublicEventiResponse>(`${this.apiUrl}/api/eventi`, { params });
+    return this.http.get<PublicEventiResponse>(`${this.apiUrl}/eventi`, { params });
   }
 
   /**
    * Ottiene i dettagli di un evento specifico
    */
   getEventoById(id: number): Observable<PublicEventoDetailDTO> {
-    return this.http.get<PublicEventoDetailDTO>(`${this.apiUrl}/api/eventi/${id}`);
+    return this.http.get<PublicEventoDetailDTO>(`${this.apiUrl}/eventi/${id}`);
   }
 
   /**
@@ -46,7 +46,7 @@ export class PublicEventiService {
    */
   cercaEventi(query: string, filters?: Omit<PublicEventoFilters, 'query'>): Observable<PublicEventiResponse> {
     const params = this.buildParamsFromFilters({ ...filters, query });
-    return this.http.get<PublicEventiResponse>(`${this.apiUrl}/api/eventi/cercaEventi`, { params });
+    return this.http.get<PublicEventiResponse>(`${this.apiUrl}/eventi/cercaEventi`, { params });
   }
 
   /**
@@ -54,7 +54,7 @@ export class PublicEventiService {
    */
   getEventiByOrganizzatore(organizzatoreId: number, filters?: Omit<PublicEventoFilters, 'organizzatoreId'>): Observable<PublicEventiResponse> {
     const params = this.buildParamsFromFilters({ ...filters, organizzatoreId });
-    return this.http.get<PublicEventiResponse>(`${this.apiUrl}/api/eventi/organizzatori/${organizzatoreId}`, { params });
+    return this.http.get<PublicEventiResponse>(`${this.apiUrl}/eventi/organizzatori/${organizzatoreId}`, { params });
   }
 
   // === METODI UTILITARI ===

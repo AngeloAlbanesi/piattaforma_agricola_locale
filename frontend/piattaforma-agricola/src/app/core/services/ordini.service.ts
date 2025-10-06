@@ -70,28 +70,28 @@ export class OrdiniService {
             }
         }
 
-        return this.http.get<PaginatedResponse<OrdineDTO>>(`${this.apiUrl}/api/ordini/distributore`, { params });
+        return this.http.get<PaginatedResponse<OrdineDTO>>(`${this.apiUrl}/ordini/distributore`, { params });
     }
 
     /**
      * Ottiene i dettagli completi di un ordine
      */
     getDettaglioOrdine(ordineId: number): Observable<DettaglioOrdineDTO> {
-        return this.http.get<DettaglioOrdineDTO>(`${this.apiUrl}/api/ordini/${ordineId}`);
+        return this.http.get<DettaglioOrdineDTO>(`${this.apiUrl}/ordini/${ordineId}`);
     }
 
     /**
      * Aggiorna lo stato di un ordine
      */
     updateStatoOrdine(ordineId: number, request: UpdateStatoOrdineRequest): Observable<DettaglioOrdineDTO> {
-        return this.http.patch<DettaglioOrdineDTO>(`${this.apiUrl}/api/ordini/${ordineId}/stato`, request);
+        return this.http.patch<DettaglioOrdineDTO>(`${this.apiUrl}/ordini/${ordineId}/stato`, request);
     }
 
     /**
      * Aggiunge una comunicazione a un ordine
      */
     aggiungiComunicazione(ordineId: number, request: AggiungiComunicazioneRequest): Observable<void> {
-        return this.http.post<void>(`${this.apiUrl}/api/ordini/${ordineId}/comunicazioni`, request);
+        return this.http.post<void>(`${this.apiUrl}/ordini/${ordineId}/comunicazioni`, request);
     }
 
     /**
@@ -102,28 +102,28 @@ export class OrdiniService {
         formData.append('file', file);
         formData.append('tipo', tipo);
 
-        return this.http.post<void>(`${this.apiUrl}/api/ordini/${ordineId}/documenti`, formData);
+        return this.http.post<void>(`${this.apiUrl}/ordini/${ordineId}/documenti`, formData);
     }
 
     /**
      * Ottiene le statistiche degli ordini
      */
     getStatisticheOrdini(): Observable<StatisticheOrdiniDTO> {
-        return this.http.get<StatisticheOrdiniDTO>(`${this.apiUrl}/api/ordini/distributore/statistiche`);
+        return this.http.get<StatisticheOrdiniDTO>(`${this.apiUrl}/ordini/distributore/statistiche`);
     }
 
     /**
      * Ottiene gli ordini che richiedono attenzione immediata
      */
     getOrdiniUrgenti(): Observable<OrdineDTO[]> {
-        return this.http.get<OrdineDTO[]>(`${this.apiUrl}/api/ordini/distributore/urgenti`);
+        return this.http.get<OrdineDTO[]>(`${this.apiUrl}/ordini/distributore/urgenti`);
     }
 
     /**
      * Conferma multipli ordini
      */
     confermaOrdiniMultipli(ordiniIds: number[]): Observable<void> {
-        return this.http.post<void>(`${this.apiUrl}/api/ordini/distributore/conferma-multipla`, { ordiniIds });
+        return this.http.post<void>(`${this.apiUrl}/ordini/distributore/conferma-multipla`, { ordiniIds });
     }
 
     /**
@@ -148,7 +148,7 @@ export class OrdiniService {
             }
         }
 
-        return this.http.get(`${this.apiUrl}/api/ordini/distributore/esporta`, { 
+        return this.http.get(`${this.apiUrl}/ordini/distributore/esporta`, { 
             params, 
             responseType: 'blob' 
         });
@@ -172,14 +172,14 @@ export class OrdiniService {
      * Marca una comunicazione come letta
      */
     marcaComunicazioneLetta(ordineId: number, comunicazioneId: number): Observable<void> {
-        return this.http.patch<void>(`${this.apiUrl}/api/ordini/${ordineId}/comunicazioni/${comunicazioneId}/letta`, {});
+        return this.http.patch<void>(`${this.apiUrl}/ordini/${ordineId}/comunicazioni/${comunicazioneId}/letta`, {});
     }
 
     /**
      * Ottiene il conteggio di ordini per stato
      */
     getConteggioPerStato(): Observable<Record<StatoOrdine, number>> {
-        return this.http.get<Record<StatoOrdine, number>>(`${this.apiUrl}/api/ordini/distributore/conteggio-stati`);
+        return this.http.get<Record<StatoOrdine, number>>(`${this.apiUrl}/ordini/distributore/conteggio-stati`);
     }
 
     // Metodi di utilità

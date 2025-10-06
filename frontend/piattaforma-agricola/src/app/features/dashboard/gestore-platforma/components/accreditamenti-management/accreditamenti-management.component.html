@@ -1,0 +1,227 @@
+<mat-card class="accreditamenti-card" appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>
+            <mat-icon>assignment_turned_in</mat-icon>
+            Gestione Accreditamenti
+        </mat-card-title>
+        <div class="header-actions">
+            <button mat-icon-button (click)="refreshAll()" matTooltip="Aggiorna tutto">
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </div>
+    </mat-card-header>
+
+    <mat-card-content>
+        <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="300ms">
+            <!-- Tab Venditori -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>store</mat-icon>
+                    Venditori
+                    <span class="tab-badge" *ngIf="hasVenditori">{{ venditori().length }}</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <!-- Loading State -->
+                    <div class="loading-container" *ngIf="isLoadingVenditori()">
+                        <mat-spinner diameter="40"></mat-spinner>
+                        <p>Caricamento venditori in attesa...</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="empty-state" *ngIf="!isLoadingVenditori() && !hasVenditori">
+                        <mat-icon>check_circle</mat-icon>
+                        <h3>Nessun venditore in attesa di accreditamento</h3>
+                        <p>Tutti i venditori sono stati processati.</p>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="table-container" *ngIf="!isLoadingVenditori() && hasVenditori">
+                        <table mat-table [dataSource]="venditori()" class="full-width-table">
+                            <!-- Nome Column -->
+                            <ng-container matColumnDef="nome">
+                                <th mat-header-cell *matHeaderCellDef>Nome</th>
+                                <td mat-cell *matCellDef="let user">{{ user.nome }}</td>
+                            </ng-container>
+
+                            <!-- Cognome Column -->
+                            <ng-container matColumnDef="cognome">
+                                <th mat-header-cell *matHeaderCellDef>Cognome</th>
+                                <td mat-cell *matCellDef="let user">{{ user.cognome }}</td>
+                            </ng-container>
+
+                            <!-- Stato Column -->
+                            <ng-container matColumnDef="statoAccreditamento">
+                                <th mat-header-cell *matHeaderCellDef>Stato</th>
+                                <td mat-cell *matCellDef="let user">
+                                    <mat-chip
+                                        [class]="'status-chip status-' + getStatoChipColor(user.statoAccreditamento)">
+                                        <mat-icon>{{ getStatoIcon(user.statoAccreditamento) }}</mat-icon>
+                                        {{ getStatoDisplayName(user.statoAccreditamento) }}
+                                    </mat-chip>
+                                </td>
+                            </ng-container>
+
+                            <!-- Azienda Column -->
+                            <ng-container matColumnDef="azienda">
+                                <th mat-header-cell *matHeaderCellDef>Azienda</th>
+                                <td mat-cell *matCellDef="let user">
+                                    <button mat-icon-button color="primary" (click)="viewCompanyDetails(user.idUtente)"
+                                        matTooltip="Visualizza dati azienda">
+                                        <mat-icon>business</mat-icon>
+                                    </button>
+                                </td>
+                            </ng-container>
+
+                            <!-- Actions Column -->
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                                <td mat-cell *matCellDef="let user">
+                                    <button mat-raised-button color="primary"
+                                        (click)="openAccreditamentoDialog(user, 'venditore')"
+                                        aria-label="Gestisci accreditamento">
+                                        <mat-icon>assignment_turned_in</mat-icon>
+                                        Gestisci
+                                    </button>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumnsVenditori"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumnsVenditori;"></tr>
+                        </table>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Tab Curatori -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>verified</mat-icon>
+                    Curatori
+                    <span class="tab-badge" *ngIf="hasCuratori">{{ curatori().length }}</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <!-- Loading State -->
+                    <div class="loading-container" *ngIf="isLoadingCuratori()">
+                        <mat-spinner diameter="40"></mat-spinner>
+                        <p>Caricamento curatori in attesa...</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="empty-state" *ngIf="!isLoadingCuratori() && !hasCuratori">
+                        <mat-icon>check_circle</mat-icon>
+                        <h3>Nessun curatore in attesa di accreditamento</h3>
+                        <p>Tutti i curatori sono stati processati.</p>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="table-container" *ngIf="!isLoadingCuratori() && hasCuratori">
+                        <table mat-table [dataSource]="curatori()" class="full-width-table">
+                            <ng-container matColumnDef="nome">
+                                <th mat-header-cell *matHeaderCellDef>Nome</th>
+                                <td mat-cell *matCellDef="let user">{{ user.nome }}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="cognome">
+                                <th mat-header-cell *matHeaderCellDef>Cognome</th>
+                                <td mat-cell *matCellDef="let user">{{ user.cognome }}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="statoAccreditamento">
+                                <th mat-header-cell *matHeaderCellDef>Stato</th>
+                                <td mat-cell *matCellDef="let user">
+                                    <mat-chip
+                                        [class]="'status-chip status-' + getStatoChipColor(user.statoAccreditamento)">
+                                        <mat-icon>{{ getStatoIcon(user.statoAccreditamento) }}</mat-icon>
+                                        {{ getStatoDisplayName(user.statoAccreditamento) }}
+                                    </mat-chip>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                                <td mat-cell *matCellDef="let user">
+                                    <button mat-raised-button color="primary"
+                                        (click)="openAccreditamentoDialog(user, 'curatore')"
+                                        aria-label="Gestisci accreditamento">
+                                        <mat-icon>assignment_turned_in</mat-icon>
+                                        Gestisci
+                                    </button>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        </table>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Tab Animatori -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>event</mat-icon>
+                    Animatori
+                    <span class="tab-badge" *ngIf="hasAnimatori">{{ animatori().length }}</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <!-- Loading State -->
+                    <div class="loading-container" *ngIf="isLoadingAnimatori()">
+                        <mat-spinner diameter="40"></mat-spinner>
+                        <p>Caricamento animatori in attesa...</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="empty-state" *ngIf="!isLoadingAnimatori() && !hasAnimatori">
+                        <mat-icon>check_circle</mat-icon>
+                        <h3>Nessun animatore in attesa di accreditamento</h3>
+                        <p>Tutti gli animatori sono stati processati.</p>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="table-container" *ngIf="!isLoadingAnimatori() && hasAnimatori">
+                        <table mat-table [dataSource]="animatori()" class="full-width-table">
+                            <ng-container matColumnDef="nome">
+                                <th mat-header-cell *matHeaderCellDef>Nome</th>
+                                <td mat-cell *matCellDef="let user">{{ user.nome }}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="cognome">
+                                <th mat-header-cell *matHeaderCellDef>Cognome</th>
+                                <td mat-cell *matCellDef="let user">{{ user.cognome }}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="statoAccreditamento">
+                                <th mat-header-cell *matHeaderCellDef>Stato</th>
+                                <td mat-cell *matCellDef="let user">
+                                    <mat-chip
+                                        [class]="'status-chip status-' + getStatoChipColor(user.statoAccreditamento)">
+                                        <mat-icon>{{ getStatoIcon(user.statoAccreditamento) }}</mat-icon>
+                                        {{ getStatoDisplayName(user.statoAccreditamento) }}
+                                    </mat-chip>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                                <td mat-cell *matCellDef="let user">
+                                    <button mat-raised-button color="primary"
+                                        (click)="openAccreditamentoDialog(user, 'animatore')"
+                                        aria-label="Gestisci accreditamento">
+                                        <mat-icon>assignment_turned_in</mat-icon>
+                                        Gestisci
+                                    </button>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        </table>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card-content>
+</mat-card>

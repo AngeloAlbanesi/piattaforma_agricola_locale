@@ -93,3 +93,4 @@ data/piattaforma_agricola.trace.db
 data/piattaforma_agricola.mv.db
 Api pubbliche/api pubbliche.json
 frontend/piattaforma-agricola/ACCESSIBILITY_GUIDE.md
+frontend/piattaforma-agricola/GESTORE_IMPLEMENTATION_SUMMARY.md

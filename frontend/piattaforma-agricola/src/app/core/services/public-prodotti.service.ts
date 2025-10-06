@@ -31,14 +31,14 @@ export class PublicProdottiService {
    */
   getProdotti(filters?: PublicProdottoFilters): Observable<PublicProdottiResponse> {
     const params = this.buildParamsFromFilters(filters);
-    return this.http.get<PublicProdottiResponse>(`${this.apiUrl}/api/prodotti`, { params });
+    return this.http.get<PublicProdottiResponse>(`${this.apiUrl}/prodotti`, { params });
   }
 
   /**
    * Ottiene i dettagli di un prodotto specifico
    */
   getProdottoById(id: number): Observable<PublicProdottoDetailDTO> {
-    return this.http.get<PublicProdottoDetailDTO>(`${this.apiUrl}/api/prodotti/${id}`);
+    return this.http.get<PublicProdottoDetailDTO>(`${this.apiUrl}/prodotti/${id}`);
   }
 
   /**
@@ -46,7 +46,7 @@ export class PublicProdottiService {
    */
   cercaProdotti(query: string, filters?: Omit<PublicProdottoFilters, 'query'>): Observable<PublicProdottiResponse> {
     const params = this.buildParamsFromFilters({ ...filters, query });
-    return this.http.get<PublicProdottiResponse>(`${this.apiUrl}/api/prodotti/cercaProdotti`, { params });
+    return this.http.get<PublicProdottiResponse>(`${this.apiUrl}/prodotti/cercaProdotti`, { params });
   }
 
   /**
@@ -54,7 +54,7 @@ export class PublicProdottiService {
    */
   getProdottiByVenditore(venditoreId: number, filters?: Omit<PublicProdottoFilters, 'produttoreId'>): Observable<PublicProdottiResponse> {
     const params = this.buildParamsFromFilters({ ...filters, produttoreId: venditoreId });
-    return this.http.get<PublicProdottiResponse>(`${this.apiUrl}/api/prodotti/venditori/${venditoreId}`, { params });
+    return this.http.get<PublicProdottiResponse>(`${this.apiUrl}/prodotti/venditori/${venditoreId}`, { params });
   }
 
   // === METODI PER CERTIFICAZIONI E TRACCIABILITÀ ===
@@ -63,21 +63,21 @@ export class PublicProdottiService {
    * Ottiene le certificazioni di un prodotto specifico
    */
   getCertificazioniProdotto(prodottoId: number): Observable<CertificazioneProdottoDTO[]> {
-    return this.http.get<CertificazioneProdottoDTO[]>(`${this.apiUrl}/api/prodotti/${prodottoId}/certificazioni`);
+    return this.http.get<CertificazioneProdottoDTO[]>(`${this.apiUrl}/prodotti/${prodottoId}/certificazioni`);
   }
 
   /**
    * Ottiene il metodo di coltivazione di un prodotto specifico
    */
   getMetodoColtivazione(prodottoId: number): Observable<MetodoColtivazioneDTO> {
-    return this.http.get<MetodoColtivazioneDTO>(`${this.apiUrl}/api/prodotti/${prodottoId}/metodi-coltivazione`);
+    return this.http.get<MetodoColtivazioneDTO>(`${this.apiUrl}/prodotti/${prodottoId}/metodi-coltivazione`);
   }
 
   /**
    * Ottiene la tracciabilità completa di un prodotto
    */
   getTracciabilitaProdotto(prodottoId: number): Observable<TracciabilitaProdottoDTO> {
-    return this.http.get<TracciabilitaProdottoDTO>(`${this.apiUrl}/api/prodotti/${prodottoId}/tracciabilita`);
+    return this.http.get<TracciabilitaProdottoDTO>(`${this.apiUrl}/prodotti/${prodottoId}/tracciabilita`);
   }
 
   // === METODI UTILITARI ===

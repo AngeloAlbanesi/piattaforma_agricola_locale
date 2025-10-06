@@ -30,14 +30,14 @@ export class PublicPacchettiService {
    */
   getPacchetti(filters?: PublicPacchettoFilters): Observable<PublicPacchettiResponse> {
     const params = this.buildParamsFromFilters(filters);
-    return this.http.get<PublicPacchettiResponse>(`${this.apiUrl}/api/pacchetti`, { params });
+    return this.http.get<PublicPacchettiResponse>(`${this.apiUrl}/pacchetti`, { params });
   }
 
   /**
    * Ottiene i dettagli di un pacchetto specifico
    */
   getPacchettoById(id: number): Observable<PublicPacchettoDetailDTO> {
-    return this.http.get<PublicPacchettoDetailDTO>(`${this.apiUrl}/api/pacchetti/${id}`);
+    return this.http.get<PublicPacchettoDetailDTO>(`${this.apiUrl}/pacchetti/${id}`);
   }
 
   /**
@@ -45,7 +45,7 @@ export class PublicPacchettiService {
    */
   cercaPacchetti(query: string, filters?: Omit<PublicPacchettoFilters, 'query'>): Observable<PublicPacchettiResponse> {
     const params = this.buildParamsFromFilters({ ...filters, query });
-    return this.http.get<PublicPacchettiResponse>(`${this.apiUrl}/api/pacchetti/cercaPacchetti`, { params });
+    return this.http.get<PublicPacchettiResponse>(`${this.apiUrl}/pacchetti/cercaPacchetti`, { params });
   }
 
   /**
@@ -53,14 +53,14 @@ export class PublicPacchettiService {
    */
   getPacchettiByDistributore(distributoreId: number, filters?: Omit<PublicPacchettoFilters, 'distributoreId'>): Observable<PublicPacchettiResponse> {
     const params = this.buildParamsFromFilters({ ...filters, distributoreId });
-    return this.http.get<PublicPacchettiResponse>(`${this.apiUrl}/api/pacchetti/distributori/${distributoreId}`, { params });
+    return this.http.get<PublicPacchettiResponse>(`${this.apiUrl}/pacchetti/distributori/${distributoreId}`, { params });
   }
 
   /**
    * Ottiene la composizione dettagliata di un pacchetto
    */
   getComposizionePacchetto(pacchettoId: number): Observable<ComposizionePacchettoDTO[]> {
-    return this.http.get<ComposizionePacchettoDTO[]>(`${this.apiUrl}/api/pacchetti/${pacchettoId}/composizione`);
+    return this.http.get<ComposizionePacchettoDTO[]>(`${this.apiUrl}/pacchetti/${pacchettoId}/composizione`);
   }
 
   // === METODI UTILITARI ===

@@ -46,7 +46,7 @@ export class AcquirenteService {
    * @returns Observable<UserDetailDTO> - Dettagli del profilo utente
    */
   getProfile(): Observable<UserDetailDTO> {
-    return this.http.get<UserDetailDTO>(`${this.apiUrl}/api/auth/profile`).pipe(
+    return this.http.get<UserDetailDTO>(`${this.apiUrl}/auth/profile`).pipe(
       catchError(this.handleError)
     );
   }
@@ -57,7 +57,7 @@ export class AcquirenteService {
    * @returns Observable<UserDetailDTO> - Profilo aggiornato
    */
   updateProfile(profileData: UserUpdateDTO): Observable<UserDetailDTO> {
-    return this.http.put<UserDetailDTO>(`${this.apiUrl}/api/auth/profile`, profileData).pipe(
+    return this.http.put<UserDetailDTO>(`${this.apiUrl}/auth/profile`, profileData).pipe(
       catchError(this.handleError)
     );
   }
@@ -90,17 +90,17 @@ export class AcquirenteService {
       params = params.set('categoria', filters.categoria);
     }
     
-    return this.http.get<PaginatedResponse<ProductSummaryDTO>>(`${this.apiUrl}/api/prodotti`, { params });
+    return this.http.get<PaginatedResponse<ProductSummaryDTO>>(`${this.apiUrl}/prodotti`, { params });
   }
 
   getProductById(id: number): Observable<ProductDetailDTO> {
-    return this.http.get<ProductDetailDTO>(`${this.apiUrl}/api/prodotti/${id}`).pipe(
+    return this.http.get<ProductDetailDTO>(`${this.apiUrl}/prodotti/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
   searchProducts(query: string): Observable<ProductSummaryDTO[]> {
-    return this.http.get<ProductSummaryDTO[]>(`${this.apiUrl}/api/prodotti/cercaProdotti`, {
+    return this.http.get<ProductSummaryDTO[]>(`${this.apiUrl}/prodotti/cercaProdotti`, {
       params: { query }
     }).pipe(
       catchError(this.handleError)
@@ -108,7 +108,7 @@ export class AcquirenteService {
   }
 
   getProductsByVendor(vendorId: number): Observable<ProductSummaryDTO[]> {
-    return this.http.get<ProductSummaryDTO[]>(`${this.apiUrl}/api/prodotti/venditori/${vendorId}`).pipe(
+    return this.http.get<ProductSummaryDTO[]>(`${this.apiUrl}/prodotti/venditori/${vendorId}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -120,7 +120,7 @@ export class AcquirenteService {
    * @returns Observable<CarrelloDTO> - Contenuto del carrello
    */
   getCart(): Observable<CarrelloDTO> {
-    return this.http.get<CarrelloDTO>(`${this.apiUrl}/api/carrello`).pipe(
+    return this.http.get<CarrelloDTO>(`${this.apiUrl}/carrello`).pipe(
       catchError(this.handleError)
     );
   }
@@ -132,7 +132,7 @@ export class AcquirenteService {
    * @returns Observable<CarrelloDTO> - Carrello aggiornato
    */
   addProductToCart(prodottoId: number, request: AddToCartRequestDTO): Observable<CarrelloDTO> {
-    return this.http.post<CarrelloDTO>(`${this.apiUrl}/api/carrello/prodotti/${prodottoId}`, request).pipe(
+    return this.http.post<CarrelloDTO>(`${this.apiUrl}/carrello/prodotti/${prodottoId}`, request).pipe(
       catchError(this.handleError)
     );
   }
@@ -144,7 +144,7 @@ export class AcquirenteService {
    * @returns Observable<CarrelloDTO> - Carrello aggiornato
    */
   addPackageToCart(pacchettoId: number, request: AddToCartRequestDTO): Observable<CarrelloDTO> {
-    return this.http.post<CarrelloDTO>(`${this.apiUrl}/api/carrello/pacchetti/${pacchettoId}`, request).pipe(
+    return this.http.post<CarrelloDTO>(`${this.apiUrl}/carrello/pacchetti/${pacchettoId}`, request).pipe(
       catchError(this.handleError)
     );
   }
@@ -156,7 +156,7 @@ export class AcquirenteService {
    * @returns Observable<CarrelloDTO> - Carrello aggiornato
    */
   updateCartItemQuantity(rigaId: number, request: UpdateCartItemRequestDTO): Observable<CarrelloDTO> {
-    return this.http.put<CarrelloDTO>(`${this.apiUrl}/api/carrello/righe/${rigaId}`, request).pipe(
+    return this.http.put<CarrelloDTO>(`${this.apiUrl}/carrello/righe/${rigaId}`, request).pipe(
       catchError(this.handleError)
     );
   }
@@ -167,7 +167,7 @@ export class AcquirenteService {
    * @returns Observable<CarrelloDTO> - Carrello aggiornato
    */
   removeCartItem(rigaId: number): Observable<CarrelloDTO> {
-    return this.http.delete<CarrelloDTO>(`${this.apiUrl}/api/carrello/righe/${rigaId}`).pipe(
+    return this.http.delete<CarrelloDTO>(`${this.apiUrl}/carrello/righe/${rigaId}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -177,7 +177,7 @@ export class AcquirenteService {
    * @returns Observable<void> - Operazione completata
    */
   clearCart(): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/api/carrello`).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/carrello`).pipe(
       catchError(this.handleError)
     );
   }
@@ -191,7 +191,7 @@ export class AcquirenteService {
       totalElementi: number;
       totale: number;
       ultimaModifica: string;
-    }>(`${this.apiUrl}/api/carrello/sommario`).pipe(
+    }>(`${this.apiUrl}/carrello/sommario`).pipe(
       catchError(this.handleError)
     );
   }
@@ -217,7 +217,7 @@ export class AcquirenteService {
       }
     }
     
-    return this.http.get<PaginatedResponse<OrdineExtendedSummaryDTO>>(`${this.apiUrl}/api/ordini`, { params }).pipe(
+    return this.http.get<PaginatedResponse<OrdineExtendedSummaryDTO>>(`${this.apiUrl}/ordini`, { params }).pipe(
       catchError(this.handleError)
     );
   }
@@ -228,7 +228,7 @@ export class AcquirenteService {
    * @returns Observable<OrdineDetailDTO> - Dettagli ordine
    */
   getOrderById(id: number): Observable<OrdineDetailDTO> {
-    return this.http.get<OrdineDetailDTO>(`${this.apiUrl}/api/ordini/${id}`).pipe(
+    return this.http.get<OrdineDetailDTO>(`${this.apiUrl}/ordini/${id}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -239,7 +239,7 @@ export class AcquirenteService {
    * @returns Observable<OrdineDetailDTO[]> - Lista ordini creati
    */
   createOrderFromCart(request: CreateOrdineRequestDTO): Observable<OrdineDetailDTO[]> {
-    return this.http.post<OrdineDetailDTO[]>(`${this.apiUrl}/api/ordini`, request).pipe(
+    return this.http.post<OrdineDetailDTO[]>(`${this.apiUrl}/ordini`, request).pipe(
       catchError(this.handleError)
     );
   }
@@ -251,7 +251,7 @@ export class AcquirenteService {
    * @returns Observable<OrdineDetailDTO> - Ordine aggiornato
    */
   confirmOrderPayment(id: number, request: PagamentoRequestDTO): Observable<OrdineDetailDTO> {
-    return this.http.put<OrdineDetailDTO>(`${this.apiUrl}/api/ordini/${id}/pagamento`, request).pipe(
+    return this.http.put<OrdineDetailDTO>(`${this.apiUrl}/ordini/${id}/pagamento`, request).pipe(
       catchError(this.handleError)
     );
   }
@@ -262,7 +262,7 @@ export class AcquirenteService {
    * @returns Observable<OrderStatusDTO> - Stato ordine
    */
   getOrderStatus(id: number): Observable<OrderStatusDTO> {
-    return this.http.get<OrderStatusDTO>(`${this.apiUrl}/api/ordini/${id}/stato`).pipe(
+    return this.http.get<OrderStatusDTO>(`${this.apiUrl}/ordini/${id}/stato`).pipe(
       catchError(this.handleError)
     );
   }
@@ -274,7 +274,7 @@ export class AcquirenteService {
    * @returns Observable<OrdineDetailDTO> - Ordine aggiornato
    */
   cancelOrderWithReason(id: number, request: CancelOrderRequestDTO): Observable<OrdineDetailDTO> {
-    return this.http.put<OrdineDetailDTO>(`${this.apiUrl}/api/ordini/${id}/annulla`, request).pipe(
+    return this.http.put<OrdineDetailDTO>(`${this.apiUrl}/ordini/${id}/annulla`, request).pipe(
       catchError(this.handleError)
     );
   }
@@ -295,19 +295,19 @@ export class AcquirenteService {
       }
     }
     
-    return this.http.get<PaginatedResponse<EventoSummaryDTO>>(`${this.apiUrl}/api/eventi`, { params }).pipe(
+    return this.http.get<PaginatedResponse<EventoSummaryDTO>>(`${this.apiUrl}/eventi`, { params }).pipe(
       catchError(this.handleError)
     );
   }
 
   getEventById(id: number): Observable<EventoDetailDTO> {
-    return this.http.get<EventoDetailDTO>(`${this.apiUrl}/api/eventi/${id}`).pipe(
+    return this.http.get<EventoDetailDTO>(`${this.apiUrl}/eventi/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
   searchEvents(query: string): Observable<EventoSummaryDTO[]> {
-    return this.http.get<EventoSummaryDTO[]>(`${this.apiUrl}/api/eventi/cercaEventi`, {
+    return this.http.get<EventoSummaryDTO[]>(`${this.apiUrl}/eventi/cercaEventi`, {
       params: { query }
     }).pipe(
       catchError(this.handleError)
@@ -315,13 +315,13 @@ export class AcquirenteService {
   }
 
   registerForEvent(eventId: number, request: EventoRegistrazioneRequestDTO): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/api/eventi/${eventId}/registra`, request).pipe(
+    return this.http.post<void>(`${this.apiUrl}/eventi/${eventId}/registra`, request).pipe(
       catchError(this.handleError)
     );
   }
 
   cancelEventRegistration(eventId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/api/eventi/${eventId}/registra`).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/eventi/${eventId}/registra`).pipe(
       catchError(this.handleError)
     );
   }
@@ -342,19 +342,19 @@ export class AcquirenteService {
       }
     }
     
-    return this.http.get<PaginatedResponse<PacchettoSummaryDTO>>(`${this.apiUrl}/api/pacchetti`, { params }).pipe(
+    return this.http.get<PaginatedResponse<PacchettoSummaryDTO>>(`${this.apiUrl}/pacchetti`, { params }).pipe(
       catchError(this.handleError)
     );
   }
 
   getPackageById(id: number): Observable<PacchettoDetailDTO> {
-    return this.http.get<PacchettoDetailDTO>(`${this.apiUrl}/api/pacchetti/${id}`).pipe(
+    return this.http.get<PacchettoDetailDTO>(`${this.apiUrl}/pacchetti/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
   searchPackages(query: string): Observable<PacchettoSummaryDTO[]> {
-    return this.http.get<PacchettoSummaryDTO[]>(`${this.apiUrl}/api/pacchetti/cercaPacchetti`, {
+    return this.http.get<PacchettoSummaryDTO[]>(`${this.apiUrl}/pacchetti/cercaPacchetti`, {
       params: { query }
     }).pipe(
       catchError(this.handleError)
@@ -362,7 +362,7 @@ export class AcquirenteService {
   }
 
   getPackageComposition(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/pacchetti/${id}/composizione`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/pacchetti/${id}/composizione`).pipe(
       catchError(this.handleError)
     );
   }
@@ -370,7 +370,7 @@ export class AcquirenteService {
   // === STATISTICHE ACQUIRENTE ===
   
   getAcquirenteStats(): Observable<AcquirenteStatsDTO> {
-    return this.http.get<AcquirenteStatsDTO>(`${this.apiUrl}/api/acquirente/stats`).pipe(
+    return this.http.get<AcquirenteStatsDTO>(`${this.apiUrl}/acquirente/stats`).pipe(
       catchError(this.handleError)
     );
   }
@@ -384,7 +384,7 @@ export class AcquirenteService {
    * @returns Observable<ShareResponseDTO> - Risultato della condivisione
    */
   shareProductOnSocial(productId: number, request: ShareRequestDTO): Observable<ShareResponseDTO> {
-    return this.http.post<ShareResponseDTO>(`${this.apiUrl}/api/prodotti/${productId}/share`, request).pipe(
+    return this.http.post<ShareResponseDTO>(`${this.apiUrl}/prodotti/${productId}/share`, request).pipe(
       catchError(this.handleError)
     );
   }

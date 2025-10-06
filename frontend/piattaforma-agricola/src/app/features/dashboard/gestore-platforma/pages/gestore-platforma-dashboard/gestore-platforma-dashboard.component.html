@@ -63,14 +63,33 @@
         <section class="tabs-section">
             <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event.index)">
                 <!-- Tab Utenti -->
-                <mat-tab label="Utenti">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>people</mat-icon>
+                        Utenti
+                    </ng-template>
                     <div class="tab-content">
                         <app-utenti-management></app-utenti-management>
                     </div>
                 </mat-tab>
 
+                <!-- Tab Accreditamenti -->
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>assignment_turned_in</mat-icon>
+                        Accreditamenti
+                    </ng-template>
+                    <div class="tab-content">
+                        <app-accreditamenti-management></app-accreditamenti-management>
+                    </div>
+                </mat-tab>
+
                 <!-- Tab Prodotti -->
-                <mat-tab label="Prodotti">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>inventory_2</mat-icon>
+                        Prodotti
+                    </ng-template>
                     <div class="tab-content">
                         <div class="placeholder-section">
                             <mat-card appearance="outlined">
@@ -86,7 +105,11 @@
                 </mat-tab>
 
                 <!-- Tab Aziende -->
-                <mat-tab label="Aziende">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>business</mat-icon>
+                        Aziende
+                    </ng-template>
                     <div class="tab-content">
                         <div class="placeholder-section">
                             <mat-card appearance="outlined">
@@ -102,7 +125,11 @@
                 </mat-tab>
 
                 <!-- Tab Eventi -->
-                <mat-tab label="Eventi">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>event</mat-icon>
+                        Eventi
+                    </ng-template>
                     <div class="tab-content">
                         <div class="placeholder-section">
                             <mat-card appearance="outlined">
@@ -118,7 +145,11 @@
                 </mat-tab>
 
                 <!-- Tab Report -->
-                <mat-tab label="Report">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>analytics</mat-icon>
+                        Report
+                    </ng-template>
                     <div class="tab-content">
                         <div class="placeholder-section">
                             <mat-card appearance="outlined">

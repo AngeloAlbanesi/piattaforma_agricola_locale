@@ -8,10 +8,27 @@
             <div class="filters-container">
                 <mat-form-field appearance="outline" class="search-field">
                     <mat-label>Cerca Utente</mat-label>
-                    <input matInput (keyup)="applyFilter($event)" placeholder="Nome, Email, Ruolo..." #input>
+                    <input matInput (keyup)="applyFilter($event)" placeholder="Nome, Cognome..." #input>
                     <mat-icon matSuffix>search</mat-icon>
                 </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                    <mat-label>Filtra per Ruolo</mat-label>
+                    <mat-select [(value)]="selectedTipoRuolo" (selectionChange)="onTipoRuoloChange($event.value)">
+                        <mat-option [value]="null">Tutti i ruoli</mat-option>
+                        <mat-option *ngFor="let tipo of tipiRuolo" [value]="tipo">
+                            {{ getTipoRuoloDisplayName(tipo) }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matSuffix>filter_list</mat-icon>
+                </mat-form-field>
+
                 <mat-slide-toggle (change)="onSoloAttiviToggle($event.source.checked)">Solo attivi</mat-slide-toggle>
+
+                <button mat-stroked-button (click)="clearFilters()" matTooltip="Pulisci filtri">
+                    <mat-icon>clear_all</mat-icon>
+                    Pulisci
+                </button>
             </div>
 
             <div class="table-container mat-elevation-z2">
@@ -36,43 +53,38 @@
                         <td mat-cell *matCellDef="let element"> {{element.cognome}} </td>
                     </ng-container>
 
-                    <!-- Email Column -->
-                    <ng-container matColumnDef="email">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
-                        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-                    </ng-container>
-
-                    <!-- Ruolo Column -->
-                    <ng-container matColumnDef="ruolo">
+                    <!-- Tipo Ruolo Column -->
+                    <ng-container matColumnDef="tipoRuolo">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> Ruolo </th>
-                        <td mat-cell *matCellDef="let element"> {{element.ruolo}} </td>
+                        <td mat-cell *matCellDef="let element">
+                            <mat-chip [class]="'role-chip role-' + getTipoRuoloColor(element.tipoRuolo)">
+                                <mat-icon>{{ getTipoRuoloIcon(element.tipoRuolo) }}</mat-icon>
+                                {{ getTipoRuoloDisplayName(element.tipoRuolo) }}
+                            </mat-chip>
+                        </td>
                     </ng-container>
 
-                    <!-- Accreditato Column -->
-                    <ng-container matColumnDef="accreditato">
-                        <th mat-header-cell *matHeaderCellDef>Accreditato</th>
+                    <!-- Stato Accreditamento Column -->
+                    <ng-container matColumnDef="statoAccreditamento">
+                        <th mat-header-cell *matHeaderCellDef>Accreditamento</th>
                         <td mat-cell *matCellDef="let element">
-                            <mat-chip-listbox>
-                                <mat-chip color="primary">{{ element.accreditato ? 'Sì' : 'No' }}</mat-chip>
-                            </mat-chip-listbox>
+                            <mat-chip [class]="'status-chip status-' + getStatoChipColor(element.statoAccreditamento)">
+                                <mat-icon>{{ getStatoIcon(element.statoAccreditamento) }}</mat-icon>
+                                {{ getStatoDisplayName(element.statoAccreditamento) }}
+                            </mat-chip>
                         </td>
                     </ng-container>
 
                     <!-- Attivo Column -->
-                    <ng-container matColumnDef="attivo">
+                    <ng-container matColumnDef="isAttivo">
                         <th mat-header-cell *matHeaderCellDef>Attivo</th>
                         <td mat-cell *matCellDef="let element">
-                            <mat-chip-listbox>
-                                <mat-chip [color]="element.attivo ? 'primary' : 'warn'">{{ element.attivo ? 'Attivo' :
-                                    'Disattivo' }}</mat-chip>
-                            </mat-chip-listbox>
+                            <mat-slide-toggle [checked]="element.isAttivo === true"
+                                (click)="$event.preventDefault(); toggleActivation(element, element.isAttivo !== true)"
+                                [color]="'primary'"
+                                [matTooltip]="element.isAttivo === true ? 'Disattiva utente' : 'Attiva utente'">
+                            </mat-slide-toggle>
                         </td>
-                    </ng-container>
-
-                    <!-- Data Registrazione Column -->
-                    <ng-container matColumnDef="dataRegistrazione">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Data Registrazione </th>
-                        <td mat-cell *matCellDef="let element"> {{element.dataRegistrazione | date:'short'}} </td>
                     </ng-container>
 
                     <!-- Actions Column -->
@@ -85,10 +97,6 @@
                             </button>
                             <button mat-icon-button color="warn" (click)="blockUser(element)" matTooltip="Banna Utente">
                                 <mat-icon>block</mat-icon>
-                            </button>
-                            <button mat-icon-button color="accent" (click)="toggleActivation(element)"
-                                matTooltip="Attiva/Disattiva">
-                                <mat-icon>{{ element.attivo ? 'pause_circle_filled' : 'check_circle' }}</mat-icon>
                             </button>
                         </td>
                     </ng-container>

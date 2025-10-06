@@ -61,101 +61,101 @@ export class TrasformatoreService {
       params = params.set('elementiPerPagina', filters.elementiPerPagina.toString());
     }
 
-    return this.http.get<PaginatedResponse<ProcessoTrasformazioneSummaryDTO>>(`${this.apiUrl}/api/processi-trasformazione/miei-processi`, { params });
+    return this.http.get<PaginatedResponse<ProcessoTrasformazioneSummaryDTO>>(`${this.apiUrl}/processi-trasformazione/miei-processi`, { params });
   }
 
   getProcessById(id: number): Observable<ProcessoTrasformazioneDetailDTO> {
-    return this.http.get<ProcessoTrasformazioneDetailDTO>(`${this.apiUrl}/api/processi-trasformazione/${id}`);
+    return this.http.get<ProcessoTrasformazioneDetailDTO>(`${this.apiUrl}/processi-trasformazione/${id}`);
   }
 
   createProcess(request: CreateProcessoRequestDTO): Observable<ProcessoTrasformazioneDetailDTO> {
-    return this.http.post<ProcessoTrasformazioneDetailDTO>(`${this.apiUrl}/api/processi-trasformazione`, request);
+    return this.http.post<ProcessoTrasformazioneDetailDTO>(`${this.apiUrl}/processi-trasformazione`, request);
   }
 
   updateProcess(id: number, request: UpdateProcessoRequestDTO): Observable<ProcessoTrasformazioneDetailDTO> {
-    return this.http.put<ProcessoTrasformazioneDetailDTO>(`${this.apiUrl}/api/processi-trasformazione/${id}`, request);
+    return this.http.put<ProcessoTrasformazioneDetailDTO>(`${this.apiUrl}/processi-trasformazione/${id}`, request);
   }
 
   deleteProcess(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/api/processi-trasformazione/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/processi-trasformazione/${id}`);
   }
 
   updateProcessStatus(id: number, request: UpdateStatoProcessoRequestDTO): Observable<ProcessoTrasformazioneDetailDTO> {
-    return this.http.put<ProcessoTrasformazioneDetailDTO>(`${this.apiUrl}/api/processi-trasformazione/${id}/stato`, request);
+    return this.http.put<ProcessoTrasformazioneDetailDTO>(`${this.apiUrl}/processi-trasformazione/${id}/stato`, request);
   }
 
   // === FASI DI LAVORAZIONE ===
   
   getProcessPhases(processId: number): Observable<FaseLavorazioneDTO[]> {
-    return this.http.get<FaseLavorazioneDTO[]>(`${this.apiUrl}/api/processi-trasformazione/${processId}/fasi`);
+    return this.http.get<FaseLavorazioneDTO[]>(`${this.apiUrl}/processi-trasformazione/${processId}/fasi`);
   }
 
   createPhase(processId: number, request: CreateFaseLavorazioneRequestDTO): Observable<FaseLavorazioneDTO> {
-    return this.http.post<FaseLavorazioneDTO>(`${this.apiUrl}/api/processi-trasformazione/${processId}/fasi`, request);
+    return this.http.post<FaseLavorazioneDTO>(`${this.apiUrl}/processi-trasformazione/${processId}/fasi`, request);
   }
 
   updatePhase(processId: number, phaseId: number, request: UpdateFaseLavorazioneRequestDTO): Observable<FaseLavorazioneDTO> {
-    return this.http.put<FaseLavorazioneDTO>(`${this.apiUrl}/api/processi-trasformazione/${processId}/fasi/${phaseId}`, request);
+    return this.http.put<FaseLavorazioneDTO>(`${this.apiUrl}/processi-trasformazione/${processId}/fasi/${phaseId}`, request);
   }
 
   deletePhase(processId: number, phaseId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/api/processi-trasformazione/${processId}/fasi/${phaseId}`);
+    return this.http.delete<void>(`${this.apiUrl}/processi-trasformazione/${processId}/fasi/${phaseId}`);
   }
 
   updatePhaseStatus(processId: number, phaseId: number, stato: string): Observable<FaseLavorazioneDTO> {
-    return this.http.put<FaseLavorazioneDTO>(`${this.apiUrl}/api/processi-trasformazione/${processId}/fasi/${phaseId}/stato`, { stato });
+    return this.http.put<FaseLavorazioneDTO>(`${this.apiUrl}/processi-trasformazione/${processId}/fasi/${phaseId}/stato`, { stato });
   }
 
   // === TRACCIABILITÀ ===
   
   getProcessTraceability(processId: number): Observable<TracciabilitaDTO[]> {
-    return this.http.get<TracciabilitaDTO[]>(`${this.apiUrl}/api/processi-trasformazione/${processId}/tracciabilita`);
+    return this.http.get<TracciabilitaDTO[]>(`${this.apiUrl}/processi-trasformazione/${processId}/tracciabilita`);
   }
 
   createTraceability(processId: number, request: CreateTracciabilitaRequestDTO): Observable<TracciabilitaDTO> {
-    return this.http.post<TracciabilitaDTO>(`${this.apiUrl}/api/processi-trasformazione/${processId}/tracciabilita`, request);
+    return this.http.post<TracciabilitaDTO>(`${this.apiUrl}/processi-trasformazione/${processId}/tracciabilita`, request);
   }
 
   getTraceabilityById(id: number): Observable<TracciabilitaDTO> {
-    return this.http.get<TracciabilitaDTO>(`${this.apiUrl}/api/tracciabilita/${id}`);
+    return this.http.get<TracciabilitaDTO>(`${this.apiUrl}/tracciabilita/${id}`);
   }
 
   // === CERTIFICAZIONI ===
   
   getProcessCertifications(processId: number): Observable<CertificationDTO[]> {
-    return this.http.get<CertificationDTO[]>(`${this.apiUrl}/api/processi-trasformazione/${processId}/certificazioni`);
+    return this.http.get<CertificationDTO[]>(`${this.apiUrl}/processi-trasformazione/${processId}/certificazioni`);
   }
 
   addCertificationToProcess(processId: number, request: CreateCertificazioneRequestDTO): Observable<CertificationDTO> {
-    return this.http.post<CertificationDTO>(`${this.apiUrl}/api/processi-trasformazione/${processId}/certificazioni`, request);
+    return this.http.post<CertificationDTO>(`${this.apiUrl}/processi-trasformazione/${processId}/certificazioni`, request);
   }
 
   removeCertificationFromProcess(processId: number, certificationId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/api/processi-trasformazione/${processId}/certificazioni/${certificationId}`);
+    return this.http.delete<void>(`${this.apiUrl}/processi-trasformazione/${processId}/certificazioni/${certificationId}`);
   }
 
   // === COSTI E RESA ===
   
   getProcessCosts(processId: number): Observable<CostoProcessoDTO[]> {
-    return this.http.get<CostoProcessoDTO[]>(`${this.apiUrl}/api/processi-trasformazione/${processId}/costi`);
+    return this.http.get<CostoProcessoDTO[]>(`${this.apiUrl}/processi-trasformazione/${processId}/costi`);
   }
 
   addCostToProcess(processId: number, request: any): Observable<CostoProcessoDTO> {
-    return this.http.post<CostoProcessoDTO>(`${this.apiUrl}/api/processi-trasformazione/${processId}/costi`, request);
+    return this.http.post<CostoProcessoDTO>(`${this.apiUrl}/processi-trasformazione/${processId}/costi`, request);
   }
 
   getProcessResa(processId: number): Observable<ResaProcessoDTO[]> {
-    return this.http.get<ResaProcessoDTO[]>(`${this.apiUrl}/api/processi-trasformazione/${processId}/resa`);
+    return this.http.get<ResaProcessoDTO[]>(`${this.apiUrl}/processi-trasformazione/${processId}/resa`);
   }
 
   addResaToProcess(processId: number, request: any): Observable<ResaProcessoDTO> {
-    return this.http.post<ResaProcessoDTO>(`${this.apiUrl}/api/processi-trasformazione/${processId}/resa`, request);
+    return this.http.post<ResaProcessoDTO>(`${this.apiUrl}/processi-trasformazione/${processId}/resa`, request);
   }
 
   // === STATISTICHE ===
   
   getTrasformatoreStats(): Observable<TrasformatoreStatsDTO> {
-    return this.http.get<TrasformatoreStatsDTO>(`${this.apiUrl}/api/trasformatore/stats`);
+    return this.http.get<TrasformatoreStatsDTO>(`${this.apiUrl}/trasformatore/stats`);
   }
 
   // === UTILITIES ===

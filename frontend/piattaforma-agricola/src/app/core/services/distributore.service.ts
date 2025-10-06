@@ -21,40 +21,40 @@ export class DistributoreService {
   // === PACCHETTI ===
   
   getMyPackages(): Observable<PacchettoTipicitaDTO[]> {
-    return this.http.get<PacchettoTipicitaDTO[]>(`${this.apiUrl}/api/pacchetti/miei-pacchetti`);
+    return this.http.get<PacchettoTipicitaDTO[]>(`${this.apiUrl}/pacchetti/miei-pacchetti`);
   }
 
   getPackageById(id: number): Observable<DettaglioPacchettoDTO> {
-    return this.http.get<DettaglioPacchettoDTO>(`${this.apiUrl}/api/pacchetti/${id}`);
+    return this.http.get<DettaglioPacchettoDTO>(`${this.apiUrl}/pacchetti/${id}`);
   }
 
   createPackage(request: CreatePacchettoRequestDTO): Observable<PacchettoTipicitaDTO> {
-    return this.http.post<PacchettoTipicitaDTO>(`${this.apiUrl}/api/pacchetti`, request);
+    return this.http.post<PacchettoTipicitaDTO>(`${this.apiUrl}/pacchetti`, request);
   }
 
   updatePackage(id: number, request: UpdatePacchettoRequestDTO): Observable<PacchettoTipicitaDTO> {
-    return this.http.put<PacchettoTipicitaDTO>(`${this.apiUrl}/api/pacchetti/${id}`, request);
+    return this.http.put<PacchettoTipicitaDTO>(`${this.apiUrl}/pacchetti/${id}`, request);
   }
 
   deletePackage(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/api/pacchetti/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/pacchetti/${id}`);
   }
   
   // === GESTIONE PRODOTTI NEI PACCHETTI ===
   
   addProductToPackage(packageId: number, productId: number, quantita: number): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/api/pacchetti/${packageId}/prodotti`, {
+    return this.http.post<void>(`${this.apiUrl}/pacchetti/${packageId}/prodotti`, {
       idProdotto: productId,
       quantita: quantita
     });
   }
 
   removeProductFromPackage(packageId: number, productId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/api/pacchetti/${packageId}/prodotti/${productId}`);
+    return this.http.delete<void>(`${this.apiUrl}/pacchetti/${packageId}/prodotti/${productId}`);
   }
 
   updateProductQuantity(packageId: number, productId: number, quantita: number): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/api/pacchetti/${packageId}/prodotti/${productId}`, {
+    return this.http.put<void>(`${this.apiUrl}/pacchetti/${packageId}/prodotti/${productId}`, {
       quantita: quantita
     });
   }
@@ -62,7 +62,7 @@ export class DistributoreService {
   // === STATISTICHE ===
   
   getDistributoreStats(): Observable<DistributoreStatsDTO> {
-    return this.http.get<DistributoreStatsDTO>(`${this.apiUrl}/api/distributore/stats`);
+    return this.http.get<DistributoreStatsDTO>(`${this.apiUrl}/distributore/stats`);
   }
   
   // === UTILITIES ===

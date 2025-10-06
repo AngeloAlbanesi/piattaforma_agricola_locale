@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AdminService } from '../../../../../core/services/admin.service';
-import { AdminUserDTO, AccreditamentoStato } from '../../../../../core/models/admin.models';
+import { UserPublicDTO, AccreditamentoStato } from '../../../../../core/models/admin.models';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CompanyDetailsDialogComponent } from '../company-details-dialog/company-details-dialog.component';
 import { ActivatedRoute } from '@angular/router';
@@ -33,9 +33,9 @@ export class AccreditamentiListComponent implements OnInit {
     @Input() tipo: 'venditori' | 'curatori' | 'animatori' = 'venditori';
     readonly Stato = AccreditamentoStato;
 
-    displayedColumns = ['idUtente', 'nome', 'cognome', 'email', 'ruolo', 'actions'];
+    displayedColumns = ['idUtente', 'nome', 'cognome', 'tipoRuolo', 'statoAccreditamento', 'actions'];
     isLoading = false;
-    data: AdminUserDTO[] = [];
+    data: UserPublicDTO[] = [];
 
     constructor(
         private adminService: AdminService,
@@ -67,12 +67,12 @@ export class AccreditamentiListComponent implements OnInit {
                 break;
         }
         obs.subscribe({
-            next: (list: AdminUserDTO[]) => { this.data = list; this.isLoading = false; },
+            next: (list: UserPublicDTO[]) => { this.data = list; this.isLoading = false; },
             error: () => { this.snackBar.open('Errore nel caricamento', 'Chiudi', { duration: 3000 }); this.isLoading = false; }
         });
     }
 
-    changeState(user: AdminUserDTO, stato: AccreditamentoStato): void {
+    changeState(user: UserPublicDTO, stato: AccreditamentoStato): void {
         let obs;
         switch (this.tipo) {
             case 'venditori':
@@ -88,11 +88,16 @@ export class AccreditamentiListComponent implements OnInit {
         });
     }
 
-    viewCompany(user: AdminUserDTO): void {
+    viewCompany(user: UserPublicDTO): void {
         if (this.tipo !== 'venditori') return;
-        this.dialog.open(CompanyDetailsDialogComponent, {
-            width: '600px',
-            data: { userId: user.idUtente }
+        this.adminService.getVendorCompanyData(user.idUtente).subscribe({
+            next: (companyData) => {
+                this.dialog.open(CompanyDetailsDialogComponent, {
+                    width: '600px',
+                    data: companyData
+                });
+            },
+            error: () => this.snackBar.open('Errore nel caricamento dati azienda', 'Chiudi', { duration: 3000 })
         });
     }
 }

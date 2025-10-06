@@ -30,7 +30,7 @@ export class AnimatoreService {
     // === STATISTICHE ===
 
     getAnimatoreStats(): Observable<AnimatoreStatsDTO> {
-        return this.http.get<AnimatoreStatsDTO>(`${this.apiUrl}/api/animatore/stats`);
+        return this.http.get<AnimatoreStatsDTO>(`${this.apiUrl}/animatore/stats`);
     }
 
     // === GESTIONE EVENTI ===
@@ -38,11 +38,11 @@ export class AnimatoreService {
     getMyEvents(filters?: EventoFilters): Observable<PaginatedResponse<EventoDTO>> {
         let params = this.buildParamsFromFilters(filters);
 
-        return this.http.get<PaginatedResponse<EventoDTO>>(`${this.apiUrl}/api/animatore/eventi`, { params });
+        return this.http.get<PaginatedResponse<EventoDTO>>(`${this.apiUrl}/animatore/eventi`, { params });
     }
 
     getEventById(eventId: number): Observable<EventoDTO> {
-        return this.http.get<EventoDTO>(`${this.apiUrl}/api/animatore/eventi/${eventId}`);
+        return this.http.get<EventoDTO>(`${this.apiUrl}/animatore/eventi/${eventId}`);
     }
 
     /**
@@ -50,7 +50,7 @@ export class AnimatoreService {
      * Endpoint: POST /api/eventi/creaEvento
      */
     createEvento(evento: CreateEventoRequestDTO): Observable<EventoDetailDTO> {
-        return this.http.post<EventoDetailDTO>(`${this.apiUrl}/api/eventi/creaEvento`, evento);
+        return this.http.post<EventoDetailDTO>(`${this.apiUrl}/eventi/creaEvento`, evento);
     }
 
     /**
@@ -58,7 +58,7 @@ export class AnimatoreService {
      * Endpoint: PUT /api/eventi/{id}
      */
     updateEvento(eventId: number, evento: AggiornaEventoRequestDTO): Observable<EventoDetailDTO> {
-        return this.http.put<EventoDetailDTO>(`${this.apiUrl}/api/eventi/${eventId}`, evento);
+        return this.http.put<EventoDetailDTO>(`${this.apiUrl}/eventi/${eventId}`, evento);
     }
 
     /**
@@ -66,7 +66,7 @@ export class AnimatoreService {
      * Endpoint: DELETE /api/eventi/{id}
      */
     deleteEvento(eventId: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/api/eventi/${eventId}`);
+        return this.http.delete<void>(`${this.apiUrl}/eventi/${eventId}`);
     }
 
     /**
@@ -74,12 +74,12 @@ export class AnimatoreService {
      * Endpoint: POST /api/eventi/{id}/promote
      */
     promoteEvento(eventId: number, request: PromoteRequestDTO): Observable<ShareResponseDTO> {
-        return this.http.post<ShareResponseDTO>(`${this.apiUrl}/api/eventi/${eventId}/promote`, request);
+        return this.http.post<ShareResponseDTO>(`${this.apiUrl}/eventi/${eventId}/promote`, request);
     }
 
     // Manteniamo per compatibilità con codice esistente
     publishEvento(eventId: number): Observable<void> {
-        return this.http.post<void>(`${this.apiUrl}/api/animatore/eventi/${eventId}/pubblica`, {});
+        return this.http.post<void>(`${this.apiUrl}/animatore/eventi/${eventId}/pubblica`, {});
     }
 
     // === GESTIONE PARTECIPANTI ===
@@ -89,11 +89,11 @@ export class AnimatoreService {
      * Endpoint: GET /api/eventi/{id}/partecipanti
      */
     getEventParticipants(eventId: number): Observable<EventoPartecipanteDTO[]> {
-        return this.http.get<EventoPartecipanteDTO[]>(`${this.apiUrl}/api/eventi/${eventId}/partecipanti`);
+        return this.http.get<EventoPartecipanteDTO[]>(`${this.apiUrl}/eventi/${eventId}/partecipanti`);
     }
 
     confirmParticipant(eventId: number, participantId: number): Observable<void> {
-        return this.http.post<void>(`${this.apiUrl}/api/animatore/eventi/${eventId}/partecipanti/${participantId}/conferma`, {});
+        return this.http.post<void>(`${this.apiUrl}/animatore/eventi/${eventId}/partecipanti/${participantId}/conferma`, {});
     }
 
     // === GESTIONE STATO EVENTI (secondo API_ANIMATORE.md) ===
@@ -103,7 +103,7 @@ export class AnimatoreService {
      * Endpoint: PATCH /api/eventi/{id}/inizia
      */
     iniziaEvento(eventId: number): Observable<EventoDetailDTO> {
-        return this.http.patch<EventoDetailDTO>(`${this.apiUrl}/api/eventi/${eventId}/inizia`, {});
+        return this.http.patch<EventoDetailDTO>(`${this.apiUrl}/eventi/${eventId}/inizia`, {});
     }
 
     /**
@@ -111,7 +111,7 @@ export class AnimatoreService {
      * Endpoint: PATCH /api/eventi/{id}/termina
      */
     terminaEvento(eventId: number): Observable<EventoDetailDTO> {
-        return this.http.patch<EventoDetailDTO>(`${this.apiUrl}/api/eventi/${eventId}/termina`, {});
+        return this.http.patch<EventoDetailDTO>(`${this.apiUrl}/eventi/${eventId}/termina`, {});
     }
 
     /**
@@ -119,7 +119,7 @@ export class AnimatoreService {
      * Endpoint: PATCH /api/eventi/{id}/annulla
      */
     annullaEvento(eventId: number): Observable<EventoDetailDTO> {
-        return this.http.patch<EventoDetailDTO>(`${this.apiUrl}/api/eventi/${eventId}/annulla`, {});
+        return this.http.patch<EventoDetailDTO>(`${this.apiUrl}/eventi/${eventId}/annulla`, {});
     }
 
     // === GESTIONE AZIENDE PARTECIPANTI (secondo API_ANIMATORE.md) ===
@@ -129,7 +129,7 @@ export class AnimatoreService {
      * Endpoint: POST /api/eventi/{id}/partecipanti-azienda/{venditorId}
      */
     addAziendaPartecipante(eventId: number, venditorId: number): Observable<void> {
-        return this.http.post<void>(`${this.apiUrl}/api/eventi/${eventId}/partecipanti-azienda/${venditorId}`, {});
+        return this.http.post<void>(`${this.apiUrl}/eventi/${eventId}/partecipanti-azienda/${venditorId}`, {});
     }
 
     /**
@@ -137,7 +137,7 @@ export class AnimatoreService {
      * Endpoint: DELETE /api/eventi/{id}/partecipanti-azienda/{venditorId}
      */
     removeAziendaPartecipante(eventId: number, venditorId: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/api/eventi/${eventId}/partecipanti-azienda/${venditorId}`);
+        return this.http.delete<void>(`${this.apiUrl}/eventi/${eventId}/partecipanti-azienda/${venditorId}`);
     }
 
     /**
@@ -145,13 +145,13 @@ export class AnimatoreService {
      * Endpoint: GET /api/eventi/{id}/partecipanti-azienda
      */
     getAziendePartecipanti(eventId: number): Observable<AziendaPartecipanteDTO[]> {
-        return this.http.get<AziendaPartecipanteDTO[]>(`${this.apiUrl}/api/eventi/${eventId}/partecipanti-azienda`);
+        return this.http.get<AziendaPartecipanteDTO[]>(`${this.apiUrl}/eventi/${eventId}/partecipanti-azienda`);
     }
 
     // === FEEDBACK ===
 
     getEventFeedback(eventId: number): Observable<FeedbackEventoDTO[]> {
-        return this.http.get<FeedbackEventoDTO[]>(`${this.apiUrl}/api/animatore/eventi/${eventId}/feedback`);
+        return this.http.get<FeedbackEventoDTO[]>(`${this.apiUrl}/animatore/eventi/${eventId}/feedback`);
     }
 
     // === UTILITIES ===

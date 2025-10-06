@@ -5,10 +5,12 @@ import { environment } from '../../../environments/environment';
 import { PaginatedResponse } from '../models/common.models';
 import {
     AdminUserDTO,
+    UserPublicDTO,
     CompanyModerationDTO,
     ModerationDecisionDTO,
     AccreditamentoStato,
-    UtenteTipo
+    UtenteTipo,
+    TipoRuolo
 } from '../models/admin.models';
 
 @Injectable({ providedIn: 'root' })
@@ -19,12 +21,12 @@ export class AdminService {
     constructor(private http: HttpClient) { }
 
     // === UTENTI ===
-    listUsers(search?: string, soloAttivi?: boolean, pagina = 0, size = 10): Observable<PaginatedResponse<AdminUserDTO>> {
+    listUsers(search?: string, soloAttivi?: boolean, pagina = 0, size = 10): Observable<PaginatedResponse<UserPublicDTO>> {
         // L'API fornisce liste non paginate: adatto lato client a PaginatedResponse
         const hasSearch = !!search && search.trim().length > 0;
         if (hasSearch) {
             const params = new HttpParams().set('search', search!.trim());
-            return this.http.get<AdminUserDTO[]>(`${this.baseAdmin}/utenti/search`, { params })
+            return this.http.get<UserPublicDTO[]>(`${this.baseAdmin}/utenti/search`, { params })
                 .pipe(map(list => this.toPage(list, pagina, size)));
         }
 
@@ -32,13 +34,13 @@ export class AdminService {
         if (typeof soloAttivi === 'boolean') {
             params = params.set('soloAttivi', String(soloAttivi));
         }
-        return this.http.get<AdminUserDTO[]>(`${this.baseAdmin}/utenti`, { params })
+        return this.http.get<UserPublicDTO[]>(`${this.baseAdmin}/utenti`, { params })
             .pipe(map(list => this.toPage(list, pagina, size)));
     }
 
-    listUsersByTipo(tipoUtente: string, pagina = 0, size = 10): Observable<PaginatedResponse<AdminUserDTO>> {
-        const params = new HttpParams().set('tipoUtente', tipoUtente);
-        return this.http.get<AdminUserDTO[]>(`${this.baseAdmin}/utenti/tipo`, { params })
+    getUsersByType(tipoUtente: TipoRuolo | string, pagina = 0, size = 10): Observable<PaginatedResponse<UserPublicDTO>> {
+        const params = new HttpParams().set('tipoUtente', tipoUtente.toString());
+        return this.http.get<UserPublicDTO[]>(`${this.baseAdmin}/utenti/tipo`, { params })
             .pipe(map(list => this.toPage(list, pagina, size)));
     }
 
@@ -55,36 +57,36 @@ export class AdminService {
     }
 
     // === ACCREDITAMENTI VENDITORI ===
-    getPendingVenditori(): Observable<AdminUserDTO[]> {
-        return this.http.get<AdminUserDTO[]>(`${this.baseAdmin}/venditori/pending`);
+    getPendingVenditori(): Observable<UserPublicDTO[]> {
+        return this.http.get<UserPublicDTO[]>(`${this.baseAdmin}/venditori/pending`);
     }
 
-    updateAccreditamentoVenditore(id: number, stato: AccreditamentoStato): Observable<string> {
-        const params = new HttpParams().set('stato', stato);
+    updateAccreditamentoVenditore(id: number, stato: AccreditamentoStato | string): Observable<string> {
+        const params = new HttpParams().set('stato', stato.toString());
         return this.http.put(`${this.baseAdmin}/venditori/${id}/accreditamento`, null, { params, responseType: 'text' });
     }
 
-    getCompanyByVenditore(id: number): Observable<CompanyModerationDTO> {
+    getVendorCompanyData(id: number): Observable<CompanyModerationDTO> {
         return this.http.get<CompanyModerationDTO>(`${this.baseAdmin}/venditori/${id}/azienda`);
     }
 
     // === ACCREDITAMENTI CURATORI ===
-    getPendingCuratori(): Observable<AdminUserDTO[]> {
-        return this.http.get<AdminUserDTO[]>(`${this.baseAdmin}/curatori/pending`);
+    getPendingCuratori(): Observable<UserPublicDTO[]> {
+        return this.http.get<UserPublicDTO[]>(`${this.baseAdmin}/curatori/pending`);
     }
 
-    updateAccreditamentoCuratore(id: number, stato: AccreditamentoStato): Observable<string> {
-        const params = new HttpParams().set('stato', stato);
+    updateAccreditamentoCuratore(id: number, stato: AccreditamentoStato | string): Observable<string> {
+        const params = new HttpParams().set('stato', stato.toString());
         return this.http.put(`${this.baseAdmin}/curatori/${id}/accreditamento`, null, { params, responseType: 'text' });
     }
 
     // === ACCREDITAMENTI ANIMATORI ===
-    getPendingAnimatori(): Observable<AdminUserDTO[]> {
-        return this.http.get<AdminUserDTO[]>(`${this.baseAdmin}/animatori/pending`);
+    getPendingAnimatori(): Observable<UserPublicDTO[]> {
+        return this.http.get<UserPublicDTO[]>(`${this.baseAdmin}/animatori/pending`);
     }
 
-    updateAccreditamentoAnimatore(id: number, stato: AccreditamentoStato): Observable<string> {
-        const params = new HttpParams().set('stato', stato);
+    updateAccreditamentoAnimatore(id: number, stato: AccreditamentoStato | string): Observable<string> {
+        const params = new HttpParams().set('stato', stato.toString());
         return this.http.put(`${this.baseAdmin}/animatori/${id}/accreditamento`, null, { params, responseType: 'text' });
     }
 

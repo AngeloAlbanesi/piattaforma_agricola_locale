@@ -48,6 +48,14 @@
         }
     }
 
+    // === TAB ICONS ===
+    ::ng-deep .mat-mdc-tab-label {
+        mat-icon {
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+    }
+
     // === LOADING ===
     .loading-container {
         display: flex;

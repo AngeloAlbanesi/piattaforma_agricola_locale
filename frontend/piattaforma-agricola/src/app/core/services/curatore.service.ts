@@ -28,7 +28,7 @@ export class CuratoreService {
     // === STATISTICHE ===
 
     getCuratoreStats(): Observable<CuratoreStatsDTO> {
-        return this.http.get<CuratoreStatsDTO>(`${this.apiUrl}/api/curatore/stats`);
+        return this.http.get<CuratoreStatsDTO>(`${this.apiUrl}/curatore/stats`);
     }
 
     // === APPROVAZIONI IN CORSO ===
@@ -126,15 +126,15 @@ export class CuratoreService {
     // === DETTAGLI ELEMENTI DA APPROVARE ===
 
     getProductDetails(productId: number): Observable<ProdottoApprovazioneDTO> {
-        return this.http.get<ProdottoApprovazioneDTO>(`${this.apiUrl}/api/curatore/prodotti/${productId}/dettagli`);
+        return this.http.get<ProdottoApprovazioneDTO>(`${this.apiUrl}/curatore/prodotti/${productId}/dettagli`);
     }
 
     getCompanyDetails(companyId: number): Observable<AziendaApprovazioneDTO> {
-        return this.http.get<AziendaApprovazioneDTO>(`${this.apiUrl}/api/curatore/aziende/${companyId}/dettagli`);
+        return this.http.get<AziendaApprovazioneDTO>(`${this.apiUrl}/curatore/aziende/${companyId}/dettagli`);
     }
 
     getContentDetails(contentId: number): Observable<ContenutoApprovazioneDTO> {
-        return this.http.get<ContenutoApprovazioneDTO>(`${this.apiUrl}/api/curatore/contenuti/${contentId}/dettagli`);
+        return this.http.get<ContenutoApprovazioneDTO>(`${this.apiUrl}/curatore/contenuti/${contentId}/dettagli`);
     }
 
     // === STORICO APPROVAZIONI ===
@@ -142,7 +142,7 @@ export class CuratoreService {
     getApprovalHistory(filters?: ApprovazioneFilters): Observable<ApprovazionePendingDTO[]> {
         let params = this.buildParamsFromFilters(filters);
 
-        return this.http.get<ApprovazionePendingDTO[]>(`${this.apiUrl}/api/curatore/approvazioni/storico`, { params });
+        return this.http.get<ApprovazionePendingDTO[]>(`${this.apiUrl}/curatore/approvazioni/storico`, { params });
     }
 
     // === UTILITIES ===

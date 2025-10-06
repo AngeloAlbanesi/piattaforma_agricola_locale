@@ -21,11 +21,18 @@ export class ActivationDialogComponent {
     tipoCtrl = new FormControl<UtenteTipo>('VENDITORE', { nonNullable: true, validators: [Validators.required] });
 
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: { displayName: string; attivo: boolean },
+        @Inject(MAT_DIALOG_DATA) public data: { displayName: string; attivo: boolean; skipTipoSelection?: boolean },
         private dialogRef: MatDialogRef<ActivationDialogComponent>
     ) { }
 
     confirm(): void {
+        // Se skipTipoSelection è true, restituisci solo true
+        if (this.data.skipTipoSelection) {
+            this.dialogRef.close(true);
+            return;
+        }
+
+        // Altrimenti, restituisci l'oggetto con tipo (backward compatibility)
         if (this.tipoCtrl.invalid) return;
         this.dialogRef.close({ tipo: this.tipoCtrl.value as UtenteTipo });
     }

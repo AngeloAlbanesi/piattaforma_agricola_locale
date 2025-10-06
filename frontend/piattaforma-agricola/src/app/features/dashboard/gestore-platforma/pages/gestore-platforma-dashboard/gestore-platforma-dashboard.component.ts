@@ -22,6 +22,7 @@ import { GestorePlatformaStatsDTO } from '../../../../../core/models/gestore-pla
 import { GestoreStatsOverviewComponent } from '../../components/gestore-stats-overview/gestore-stats-overview.component';
 import { GestoreQuickActionsComponent } from '../../components/gestore-quick-actions/gestore-quick-actions.component';
 import { UtentiManagementComponent } from '../../components/utenti-management/utenti-management.component';
+import { AccreditamentiManagementComponent } from '../../components/accreditamenti-management/accreditamenti-management.component';
 import { PersonalDataCardComponent } from '../../../shared/components';
 
 @Component({
@@ -39,6 +40,7 @@ import { PersonalDataCardComponent } from '../../../shared/components';
         GestoreStatsOverviewComponent,
         GestoreQuickActionsComponent,
         UtentiManagementComponent,
+        AccreditamentiManagementComponent,
         PersonalDataCardComponent
     ],
     templateUrl: './gestore-platforma-dashboard.component.html',

@@ -59,6 +59,9 @@ export class CertificazioniManagementComponent implements OnInit {
     isLoading = false;
     isLoadingProducts = true;
 
+    // Store all certifications
+    allCertifications: CertificationDTO[] = [];
+
     filters = {
         search: ''
     };
@@ -72,6 +75,7 @@ export class CertificazioniManagementComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadProducts();
+        this.loadAllCertifications();
     }
 
     ngAfterViewInit(): void {
@@ -96,12 +100,41 @@ export class CertificazioniManagementComponent implements OnInit {
         });
     }
 
+    loadAllCertifications(): void {
+        this.isLoading = true;
+        this.cdr.markForCheck();
+
+        this.produttoreService.getAllMyCertifications().subscribe({
+            next: (certifications) => {
+                this.allCertifications = certifications;
+                this.dataSource.data = certifications;
+                this.isLoading = false;
+                this.cdr.markForCheck();
+            },
+            error: (error) => {
+                console.error('Errore durante il caricamento delle certificazioni:', error);
+                this.snackBar.open('Errore durante il caricamento delle certificazioni', 'Chiudi', { duration: 3000 });
+                this.isLoading = false;
+                this.cdr.markForCheck();
+            }
+        });
+    }
+
     onProductSelected(productId: number): void {
         this.selectedProductId = productId;
         this.selectedProduct = this.products.find(p => p.idProdotto === productId) || null;
+
         if (this.selectedProductId) {
-            this.loadCertifications(this.selectedProductId);
+            // Filter certifications for the selected product
+            const filteredCertifications = this.allCertifications.filter(
+                cert => cert.idProdottoAssociato === productId
+            );
+            this.dataSource.data = filteredCertifications;
+        } else {
+            // Show all certifications when no product is selected
+            this.dataSource.data = this.allCertifications;
         }
+        this.cdr.markForCheck();
     }
 
     loadCertifications(productId: number): void {
@@ -145,7 +178,8 @@ export class CertificazioniManagementComponent implements OnInit {
                 this.produttoreService.addCertificationToProduct(this.selectedProductId, result).subscribe({
                     next: () => {
                         this.snackBar.open('Certificazione aggiunta con successo', 'Chiudi', { duration: 3000 });
-                        this.loadCertifications(this.selectedProductId!);
+                        // Reload all certifications to update the list
+                        this.loadAllCertifications();
                     },
                     error: (error) => {
                         console.error('Errore durante l\'aggiunta della certificazione:', error);
@@ -159,7 +193,8 @@ export class CertificazioniManagementComponent implements OnInit {
     }
 
     eliminaCertificazione(certificazione: CertificationDTO): void {
-        if (!this.selectedProductId) {
+        if (!certificazione.idProdottoAssociato) {
+            this.snackBar.open('Impossibile eliminare questa certificazione', 'Chiudi', { duration: 3000 });
             return;
         }
 
@@ -169,17 +204,18 @@ export class CertificazioniManagementComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-            if (confirmed && this.selectedProductId) {
+            if (confirmed && certificazione.idProdottoAssociato) {
                 this.isLoading = true;
                 this.cdr.markForCheck();
 
                 this.produttoreService.removeCertificationFromProduct(
-                    this.selectedProductId,
+                    certificazione.idProdottoAssociato,
                     certificazione.idCertificazione
                 ).subscribe({
                     next: () => {
                         this.snackBar.open('Certificazione rimossa con successo', 'Chiudi', { duration: 3000 });
-                        this.loadCertifications(this.selectedProductId!);
+                        // Reload all certifications to update the list
+                        this.loadAllCertifications();
                     },
                     error: (error) => {
                         console.error('Errore durante la rimozione della certificazione:', error);

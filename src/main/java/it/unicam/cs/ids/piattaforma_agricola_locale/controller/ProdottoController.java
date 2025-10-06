@@ -16,6 +16,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOriginePr
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.coltivazione.MetodoDiColtivazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.ProcessoTrasformazione;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.OwnershipValidationService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
@@ -435,6 +436,50 @@ public class ProdottoController {
                     return ResponseEntity.ok(dtos);
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Get all certifications for all products of the authenticated vendor.
+     *
+     * @param authentication The authentication object
+     * @return List of all certifications for all products of the vendor
+     */
+    @GetMapping("/miei-prodotti/certificazioni")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE')")
+    public ResponseEntity<List<CertificazioneDTO>> getAllMyCertifications(Authentication authentication) {
+        try {
+            String email = authentication.getName();
+            log.info("Vendor {} requesting all certifications for their products", email);
+
+            // Get the vendor by email
+            Utente utente = utenteService.getUtenteByEmail(email);
+            if (!(utente instanceof Venditore)) {
+                log.error("User {} is not a vendor", email);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            Venditore venditore = (Venditore) utente;
+
+            // Get all products of the vendor
+            List<Prodotto> prodotti = prodottoService.getProdottiOfferti(venditore);
+
+            // Collect all certifications from all products
+            List<CertificazioneDTO> allCertifications = new ArrayList<>();
+            for (Prodotto prodotto : prodotti) {
+                List<Certificazione> certificazioni = prodottoService.getCertificazioniDelProdotto(prodotto);
+                List<CertificazioneDTO> dtos = certificazioni.stream()
+                        .map(this::mapCertificazioneToDTO)
+                        .collect(Collectors.toList());
+                allCertifications.addAll(dtos);
+            }
+
+            log.info("Retrieved {} total certifications for vendor {}", allCertifications.size(), email);
+            return ResponseEntity.ok(allCertifications);
+
+        } catch (Exception e) {
+            log.error("Error retrieving all certifications for vendor: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     // Helper method to map Certificazione to DTO

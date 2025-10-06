@@ -77,6 +77,10 @@ export class ProduttoreService {
         return this.http.get<CertificationDTO[]>(`${this.apiUrl}/prodotti/${productId}/certificazioni`);
     }
 
+    getAllMyCertifications(): Observable<CertificationDTO[]> {
+        return this.http.get<CertificationDTO[]>(`${this.apiUrl}/prodotti/miei-prodotti/certificazioni`);
+    }
+
     // === METODI DI COLTIVAZIONE ===
 
     createCultivationMethod(productId: number, request: CreateMetodoDiColtivazioneRequestDTO): Observable<MetodoDiColtivazioneDTO> {

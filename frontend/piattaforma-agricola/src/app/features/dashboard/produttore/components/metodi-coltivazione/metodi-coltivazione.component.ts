@@ -78,7 +78,7 @@ export class MetodiColtivazioneComponent implements OnInit {
 
     onProductSelected(productId: number): void {
         this.selectedProductId = productId;
-        this.selectedProduct = this.products.find(p => p.id === productId) || null;
+        this.selectedProduct = this.products.find(p => p.idProdotto === productId) || null;
         if (this.selectedProductId) {
             this.loadCultivationMethod(this.selectedProductId);
         }

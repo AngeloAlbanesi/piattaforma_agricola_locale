@@ -172,7 +172,7 @@ export class ProdottiManagementComponent implements OnInit {
     }
 
     viewProductDetails(prodotto: ProduttoreProductSummaryDTO): void {
-        this.router.navigate(['/dashboard/produttore/prodotti', prodotto.id]);
+        this.router.navigate(['/dashboard/produttore/prodotti', prodotto.idProdotto]);
     }
 
     editProduct(prodotto: ProduttoreProductSummaryDTO): void {
@@ -186,7 +186,7 @@ export class ProdottiManagementComponent implements OnInit {
                 this.isLoading = true;
                 this.cdr.markForCheck();
 
-                this.produttoreService.updateProduct(prodotto.id, result).subscribe({
+                this.produttoreService.updateProduct(prodotto.idProdotto, result).subscribe({
                     next: () => {
                         this.snackBar.open('Prodotto aggiornato con successo', 'Chiudi', { duration: 3000 });
                         this.loadProdotti();
@@ -213,7 +213,7 @@ export class ProdottiManagementComponent implements OnInit {
                 this.isLoading = true;
                 this.cdr.markForCheck();
 
-                this.produttoreService.deleteProduct(prodotto.id).subscribe({
+                this.produttoreService.deleteProduct(prodotto.idProdotto).subscribe({
                     next: () => {
                         this.snackBar.open('Prodotto eliminato con successo', 'Chiudi', { duration: 3000 });
                         this.loadProdotti();
@@ -266,7 +266,7 @@ export class ProdottiManagementComponent implements OnInit {
                 this.isLoading = true;
                 this.cdr.markForCheck();
 
-                this.produttoreService.updateProductQuantity(prodotto.id, result).subscribe({
+                this.produttoreService.updateProductQuantity(prodotto.idProdotto, result).subscribe({
                     next: () => {
                         this.snackBar.open('Quantità aggiornata con successo', 'Chiudi', { duration: 3000 });
                         this.loadProdotti();

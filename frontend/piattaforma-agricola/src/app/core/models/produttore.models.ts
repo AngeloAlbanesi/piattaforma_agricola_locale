@@ -4,7 +4,7 @@
 
 // === PRODOTTI ===
 export interface ProduttoreProductSummaryDTO {
-    id: number;
+    idProdotto: number;
     nome: string;
     descrizione: string;
     prezzo: number;

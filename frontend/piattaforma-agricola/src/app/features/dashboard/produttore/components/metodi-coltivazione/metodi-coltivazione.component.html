@@ -9,8 +9,8 @@
             <mat-form-field appearance="outline" class="product-select">
                 <mat-label>Seleziona Prodotto</mat-label>
                 <mat-select [(ngModel)]="selectedProductId" (ngModelChange)="onProductSelected($event)">
-                    <mat-option *ngFor="let product of products" [value]="product.id">
-                        {{ product.nome }} (ID: {{ product.id }})
+                    <mat-option *ngFor="let product of products" [value]="product.idProdotto">
+                        {{ product.nome }} (ID: {{ product.idProdotto }})
                     </mat-option>
                 </mat-select>
                 <mat-hint>Seleziona un prodotto per visualizzare il suo metodo di coltivazione</mat-hint>

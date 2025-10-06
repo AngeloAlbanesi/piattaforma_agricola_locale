@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AziendaDetailDTO, UpdateAziendaRequestDTO } from '../models/trasformatore.models';
+import { CertificationDTO, CreateCertificazioneRequestDTO } from '../models/produttore.models';
 
 /**
  * Servizio per la gestione dei dati aziendali.
@@ -27,10 +28,33 @@ export class AziendaService {
     }
 
     /**
+     * Crea i dati dell'azienda
+     */
+    createCompany(request: UpdateAziendaRequestDTO): Observable<AziendaDetailDTO> {
+        return this.http.post<AziendaDetailDTO>(`${this.apiUrl}/azienda`, request);
+    }
+
+    /**
      * Aggiorna i dati dell'azienda
      */
     updateCompany(id: number, request: UpdateAziendaRequestDTO): Observable<AziendaDetailDTO> {
-        return this.http.put<AziendaDetailDTO>(`${this.apiUrl}/aziende/${id}`, request);
+        return this.http.put<AziendaDetailDTO>(`${this.apiUrl}/azienda/${id}`, request);
+    }
+
+    // === CERTIFICAZIONI AZIENDA ===
+
+    /**
+     * Aggiunge una certificazione all'azienda
+     */
+    addCompanyCertification(aziendaId: number, request: CreateCertificazioneRequestDTO): Observable<CertificationDTO> {
+        return this.http.post<CertificationDTO>(`${this.apiUrl}/azienda/${aziendaId}/certificazioni`, request);
+    }
+
+    /**
+     * Rimuove una certificazione dall'azienda
+     */
+    removeCompanyCertification(aziendaId: number, certificationId: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/azienda/${aziendaId}/certificazioni/${certificationId}`);
     }
 
     // === UTILITIES ===

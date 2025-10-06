@@ -1,87 +1,105 @@
 <mat-card appearance="outlined">
-  <mat-card-header>
-    <mat-card-title>Gestione Metodi di Coltivazione</mat-card-title>
-    <mat-card-subtitle>Visualizza e gestisci i metodi di coltivazione associati ai tuoi prodotti</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <div class="controls-container">
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Cerca Metodo</mat-label>
-        <input matInput [(ngModel)]="filters.search" (ngModelChange)="applyFilter()" placeholder="Biologico Olivo">
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
+    <mat-card-header>
+        <mat-card-title>Gestione Metodi di Coltivazione</mat-card-title>
+        <mat-card-subtitle>Visualizza e gestisci i metodi di coltivazione associati ai tuoi prodotti</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <!-- Product Selector -->
+        <div class="product-selector-container" *ngIf="!isLoadingProducts">
+            <mat-form-field appearance="outline" class="product-select">
+                <mat-label>Seleziona Prodotto</mat-label>
+                <mat-select [(ngModel)]="selectedProductId" (ngModelChange)="onProductSelected($event)">
+                    <mat-option *ngFor="let product of products" [value]="product.id">
+                        {{ product.nome }} (ID: {{ product.id }})
+                    </mat-option>
+                </mat-select>
+                <mat-hint>Seleziona un prodotto per visualizzare il suo metodo di coltivazione</mat-hint>
+            </mat-form-field>
+        </div>
 
-      <button mat-raised-button color="primary" (click)="aggiungiMetodo()">
-        <mat-icon>add</mat-icon> Nuovo Metodo
-      </button>
-    </div>
+        <!-- Loading Products -->
+        <div class="loading-container" *ngIf="isLoadingProducts">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Caricamento prodotti...</p>
+        </div>
 
-    <div class="table-container">
-      <table mat-table [dataSource]="dataSource" matSort>
+        <!-- Loading Method -->
+        <div class="loading-container" *ngIf="isLoading && selectedProductId">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Caricamento metodo di coltivazione...</p>
+        </div>
 
-        <!-- ID Column -->
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-          <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
-        </ng-container>
+        <!-- No Product Selected -->
+        <div class="empty-state" *ngIf="!isLoadingProducts && !selectedProductId && !isLoading">
+            <mat-icon>eco</mat-icon>
+            <p>Seleziona un prodotto per iniziare</p>
+        </div>
 
-        <!-- Nome Column -->
-        <ng-container matColumnDef="nome">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
-          <td mat-cell *matCellDef="let element"> {{ element.nome }} </td>
-        </ng-container>
-
-        <!-- Periodo Coltivazione Column -->
-        <ng-container matColumnDef="periodoColtivazione">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Periodo </th>
-          <td mat-cell *matCellDef="let element"> {{ element.periodoColtivazione }} </td>
-        </ng-container>
-
-        <!-- Superficie Column -->
-        <ng-container matColumnDef="superficie">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Superficie (ha) </th>
-          <td mat-cell *matCellDef="let element"> {{ element.superficie }} </td>
-        </ng-container>
-
-        <!-- Ubicazione Column -->
-        <ng-container matColumnDef="ubicazione">
-          <th mat-header-cell *matHeaderCellDef> Ubicazione </th>
-          <td mat-cell *matCellDef="let element"> {{ element.ubicazione }} </td>
-        </ng-container>
-
-        <!-- Tecniche Column -->
-        <ng-container matColumnDef="tecniche">
-          <th mat-header-cell *matHeaderCellDef> Tecniche </th>
-          <td mat-cell *matCellDef="let element">
-            <mat-chip-listbox>
-              <mat-chip *ngFor="let tecnica of element.tecniche">{{ tecnica }}</mat-chip>
-            </mat-chip-listbox>
-          </td>
-        </ng-container>
-
-        <!-- Azioni Column -->
-        <ng-container matColumnDef="azioni">
-          <th mat-header-cell *matHeaderCellDef> Azioni </th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-icon-button color="primary" (click)="modificaMetodo(element)" matTooltip="Modifica Metodo">
-              <mat-icon>edit</mat-icon>
+        <!-- No Method Found -->
+        <div class="empty-state" *ngIf="!isLoading && selectedProductId && !hasMethod">
+            <mat-icon>info</mat-icon>
+            <p>Nessun metodo di coltivazione associato a questo prodotto</p>
+            <button mat-raised-button color="primary" (click)="aggiungiMetodo()">
+                <mat-icon>add</mat-icon>
+                Crea Metodo di Coltivazione
             </button>
-            <button mat-icon-button color="warn" (click)="eliminaMetodo(element)" matTooltip="Elimina Metodo">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
+        </div>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <!-- Method Details Card -->
+        <div class="method-details" *ngIf="!isLoading && hasMethod && cultivationMethod">
+            <mat-card appearance="outlined" class="method-card">
+                <mat-card-header>
+                    <mat-card-title>{{ cultivationMethod.nome }}</mat-card-title>
+                    <mat-card-subtitle>ID: {{ cultivationMethod.id }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="detail-row">
+                        <strong>Descrizione:</strong>
+                        <p>{{ cultivationMethod.descrizione }}</p>
+                    </div>
 
-        <!-- Row when there is no data -->
-        <tr class="mat-row no-data-row" *matNoDataRow>
-          <td class="mat-cell" [attr.colspan]="displayedColumns.length">Nessun metodo di coltivazione trovato.</td>
-        </tr>
-      </table>
+                    <mat-divider></mat-divider>
 
-      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" showFirstLastButtons></mat-paginator>
-    </div>
-  </mat-card-content>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>Periodo:</strong>
+                            <span>{{ cultivationMethod.periodoColtivazione }}</span>
+                        </div>
+
+                        <div class="detail-item" *ngIf="cultivationMethod.superficie">
+                            <strong>Superficie:</strong>
+                            <span>{{ cultivationMethod.superficie }} ha</span>
+                        </div>
+
+                        <div class="detail-item" *ngIf="cultivationMethod.ubicazione">
+                            <strong>Ubicazione:</strong>
+                            <span>{{ cultivationMethod.ubicazione }}</span>
+                        </div>
+                    </div>
+
+                    <mat-divider
+                        *ngIf="cultivationMethod.tecniche && cultivationMethod.tecniche.length > 0"></mat-divider>
+
+                    <div class="detail-row" *ngIf="cultivationMethod.tecniche && cultivationMethod.tecniche.length > 0">
+                        <strong>Tecniche:</strong>
+                        <div class="techniques-list">
+                            <span class="technique-chip" *ngFor="let tecnica of cultivationMethod.tecniche">
+                                {{ tecnica }}
+                            </span>
+                        </div>
+                    </div>
+                </mat-card-content>
+                <mat-card-actions align="end">
+                    <button mat-button color="primary" (click)="modificaMetodo()" matTooltip="Modifica Metodo">
+                        <mat-icon>edit</mat-icon>
+                        Modifica
+                    </button>
+                    <button mat-button color="warn" (click)="eliminaMetodo()" matTooltip="Elimina Metodo">
+                        <mat-icon>delete</mat-icon>
+                        Elimina
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </mat-card-content>
 </mat-card>

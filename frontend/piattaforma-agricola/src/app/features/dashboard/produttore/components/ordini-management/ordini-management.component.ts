@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -88,7 +88,8 @@ export class OrdiniManagementComponent implements OnInit {
         private produttoreService: ProduttoreService,
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
-        private router: Router
+        private router: Router,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -121,21 +122,27 @@ export class OrdiniManagementComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
-        this.paginator.page.subscribe(() => {
-            this.filters.pagina = this.paginator.pageIndex;
-            this.filters.elementiPerPagina = this.paginator.pageSize;
-            this.loadOrdini();
-        });
+        if (this.paginator) {
+            this.paginator.page.subscribe(() => {
+                this.filters.pagina = this.paginator.pageIndex;
+                this.filters.elementiPerPagina = this.paginator.pageSize;
+                this.loadOrdini();
+            });
+        }
 
-        this.sort.sortChange.subscribe(() => {
-            this.filters.pagina = 0;
-            // Implementare logica di ordinamento se l'API lo supporta
-            this.loadOrdini();
-        });
+        if (this.sort) {
+            this.sort.sortChange.subscribe(() => {
+                this.filters.pagina = 0;
+                // Implementare logica di ordinamento se l'API lo supporta
+                this.loadOrdini();
+            });
+        }
     }
 
     loadOrdini(): void {
         this.isLoading = true;
+        this.cdr.markForCheck();
+
         this.produttoreService.getMyOrders()
             .pipe(
                 catchError((error: any) => {
@@ -145,6 +152,7 @@ export class OrdiniManagementComponent implements OnInit {
                     // L'errore viene loggato in console per il debug
 
                     this.isLoading = false;
+                    this.cdr.markForCheck();
                     return of([]);
                 })
             )
@@ -152,6 +160,7 @@ export class OrdiniManagementComponent implements OnInit {
                 this.dataSource.data = data;
                 this.totalElements = data.length;
                 this.isLoading = false;
+                this.cdr.markForCheck();
             });
     }
 

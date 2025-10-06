@@ -183,10 +183,10 @@ export class ProduttoreService {
             if (filters.search) {
                 params = params.set('search', filters.search);
             }
-            if (filters.statoVerifica) {
+            if (filters.statoVerifica && filters.statoVerifica !== 'TUTTI') {
                 params = params.set('statoVerifica', filters.statoVerifica);
             }
-            if (filters.tipoOrigine) {
+            if (filters.tipoOrigine && filters.tipoOrigine !== 'TUTTI') {
                 params = params.set('tipoOrigine', filters.tipoOrigine);
             }
             if (filters.certificazioni && filters.certificazioni.length > 0) {

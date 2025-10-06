@@ -43,6 +43,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -150,17 +151,62 @@ public class ProdottoController {
 
     @GetMapping("/miei-prodotti")
     @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
-    public ResponseEntity<List<ProductSummaryDTO>> getMyProducts(Authentication authentication) {
+    public ResponseEntity<Page<ProductSummaryDTO>> getMyProducts(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int elementiPerPagina,
+            @RequestParam(defaultValue = "nome") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @RequestParam(required = false) String statoVerifica,
+            @RequestParam(required = false) String tipoOrigine,
+            @RequestParam(required = false) String search) {
+
         String email = authentication.getName();
         Venditore venditore = (Venditore) utenteService.getUtenteByEmail(email);
 
+        Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(pagina, elementiPerPagina, sort);
+
         List<Prodotto> myProducts = prodottoService.getProdottiByVenditore(venditore.getId());
+
+        // Applica filtri opzionali
+        if (statoVerifica != null && !statoVerifica.isEmpty()) {
+            StatoVerificaValori statoEnum = StatoVerificaValori.valueOf(statoVerifica);
+            myProducts = myProducts.stream()
+                    .filter(p -> p.getStatoVerifica() == statoEnum)
+                    .collect(Collectors.toList());
+        }
+
+        if (tipoOrigine != null && !tipoOrigine.isEmpty()) {
+            TipoOrigineProdotto tipoEnum = TipoOrigineProdotto.valueOf(tipoOrigine);
+            myProducts = myProducts.stream()
+                    .filter(p -> p.getTipoOrigine() == tipoEnum)
+                    .collect(Collectors.toList());
+        }
+
+        if (search != null && !search.trim().isEmpty()) {
+            String searchLower = search.toLowerCase();
+            myProducts = myProducts.stream()
+                    .filter(p -> p.getNome().toLowerCase().contains(searchLower) ||
+                            (p.getDescrizione() != null && p.getDescrizione().toLowerCase().contains(searchLower)))
+                    .collect(Collectors.toList());
+        }
+
         List<ProductSummaryDTO> summaryDTOs = myProducts.stream()
                 .map(prodottoMapper::toSummaryDTO)
                 .collect(Collectors.toList());
 
-        log.info("Retrieved {} products for authenticated vendor: {}", summaryDTOs.size(), email);
-        return ResponseEntity.ok(summaryDTOs);
+        // Calcola la paginazione manualmente sulla lista
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), summaryDTOs.size());
+        List<ProductSummaryDTO> pagedContent = start < summaryDTOs.size() ? summaryDTOs.subList(start, end)
+                : new ArrayList<>();
+
+        Page<ProductSummaryDTO> pagedResult = new PageImpl<>(pagedContent, pageable, summaryDTOs.size());
+
+        log.info("Retrieved {} products (page {}, size {}) for authenticated vendor: {}",
+                pagedResult.getTotalElements(), pagina, elementiPerPagina, email);
+        return ResponseEntity.ok(pagedResult);
     }
 
     @PostMapping
@@ -610,7 +656,7 @@ public class ProdottoController {
     public ResponseEntity<?> getProductTraceability(@PathVariable Long id) {
         try {
             log.info("Richiesta tracciabilità per prodotto con ID: {}", id);
-            
+
             // Verifica che il prodotto esista
             Optional<Prodotto> prodottoOpt = prodottoService.getProdottoById(id);
             if (prodottoOpt.isEmpty()) {
@@ -618,18 +664,18 @@ public class ProdottoController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Prodotto con ID " + id + " non trovato");
             }
-            
+
             Prodotto prodotto = prodottoOpt.get();
-            
+
             // Verifica che il prodotto sia di tipo TRASFORMATO
             if (prodotto.getTipoOrigine() != TipoOrigineProdotto.TRASFORMATO) {
-                log.warn("Prodotto con ID {} non è di tipo TRASFORMATO. Tipo attuale: {}", 
+                log.warn("Prodotto con ID {} non è di tipo TRASFORMATO. Tipo attuale: {}",
                         id, prodotto.getTipoOrigine());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Il prodotto con ID " + id + " non è di tipo TRASFORMATO. " +
-                              "La tracciabilità è disponibile solo per prodotti trasformati.");
+                                "La tracciabilità è disponibile solo per prodotti trasformati.");
             }
-            
+
             // Verifica che il prodotto abbia un processo di trasformazione associato
             Long processoId = prodotto.getIdProcessoTrasformazioneOriginario();
             if (processoId == null) {
@@ -637,23 +683,24 @@ public class ProdottoController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body("Errore: il prodotto trasformato non ha un processo di trasformazione associato");
             }
-            
+
             // Recupera il processo di trasformazione con tutte le informazioni necessarie
-            Optional<ProcessoTrasformazione> processoOpt = processoTrasformazioneService.getProcessoTracciabilita(processoId);
+            Optional<ProcessoTrasformazione> processoOpt = processoTrasformazioneService
+                    .getProcessoTracciabilita(processoId);
             if (processoOpt.isEmpty()) {
                 log.warn("Processo di trasformazione con ID {} non trovato per prodotto {}", processoId, id);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body("Errore: processo di trasformazione associato non trovato");
             }
-            
+
             ProcessoTrasformazione processo = processoOpt.get();
-            
+
             // Converte il processo in DTO di tracciabilità
             TraceabilityDTO traceabilityDTO = traceabilityMapper.toTraceabilityDTO(processo);
-            
+
             log.info("Tracciabilità recuperata con successo per prodotto ID: {}", id);
             return ResponseEntity.ok(traceabilityDTO);
-            
+
         } catch (Exception e) {
             log.error("Errore durante il recupero della tracciabilità per prodotto ID {}: {}", id, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

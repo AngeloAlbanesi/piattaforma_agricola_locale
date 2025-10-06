@@ -121,28 +121,36 @@ export class ProdottiManagementComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
-        this.paginator.page.subscribe(() => {
-            this.filters.pagina = this.paginator.pageIndex;
-            this.filters.elementiPerPagina = this.paginator.pageSize;
-            this.loadProdotti();
-        });
+        if (this.paginator) {
+            this.paginator.page.subscribe(() => {
+                this.filters.pagina = this.paginator.pageIndex;
+                this.filters.elementiPerPagina = this.paginator.pageSize;
+                this.loadProdotti();
+            });
+        }
 
-        this.sort.sortChange.subscribe(() => {
-            this.filters.pagina = 0;
-            // Implementare logica di ordinamento se l'API lo supporta
-            this.loadProdotti();
-        });
+        if (this.sort) {
+            this.sort.sortChange.subscribe(() => {
+                this.filters.pagina = 0;
+                // Implementare logica di ordinamento se l'API lo supporta
+                this.loadProdotti();
+            });
+        }
     }
 
     loadProdotti(): void {
         this.isLoading = true;
+        this.cdr.markForCheck();
+
         this.produttoreService.getMyProducts(this.filters).subscribe((data: PaginatedResponse<ProduttoreProductSummaryDTO>) => {
             this.dataSource.data = data.content;
             this.totalElements = data.totalElements;
             this.isLoading = false;
+            this.cdr.markForCheck();
         }, (error: any) => {
             this.snackBar.open('Errore durante il caricamento dei prodotti.', 'Chiudi', { duration: 3000 });
             this.isLoading = false;
+            this.cdr.markForCheck();
         });
     }
 

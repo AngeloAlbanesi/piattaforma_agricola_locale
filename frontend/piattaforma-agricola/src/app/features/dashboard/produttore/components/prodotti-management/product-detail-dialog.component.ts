@@ -13,7 +13,9 @@ import { MatListModule } from '@angular/material/list';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ProduttoreService } from '../../../../../core/services/produttore.service';
+import { AziendaService } from '../../../../../core/services/azienda.service';
 import { ProduttoreProductDetailDTO, StatoVerifica, TipoOrigineProdotto } from '../../../../../core/models/produttore.models';
+import { AziendaDetailDTO } from '../../../../../core/models/trasformatore.models';
 
 export interface ProductDetailDialogData {
     productId: number;
@@ -42,6 +44,7 @@ export interface ProductDetailDialogData {
 })
 export class ProductDetailDialogComponent implements OnInit, OnDestroy {
     product: ProduttoreProductDetailDTO | null = null;
+    companyData: AziendaDetailDTO | null = null;
     isLoading = true;
     error: string | null = null;
 
@@ -51,12 +54,15 @@ export class ProductDetailDialogComponent implements OnInit, OnDestroy {
         public dialogRef: MatDialogRef<ProductDetailDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ProductDetailDialogData,
         private produttoreService: ProduttoreService,
+        private aziendaService: AziendaService,
         private snackBar: MatSnackBar,
         private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
+        console.log('ProductDetailDialogComponent inizializzato');
         this.loadProductDetails();
+        this.loadCompanyData();
     }
 
     ngOnDestroy(): void {
@@ -108,6 +114,23 @@ export class ProductDetailDialogComponent implements OnInit, OnDestroy {
                         'Chiudi',
                         { duration: 3000 }
                     );
+                }
+            });
+    }
+
+    private loadCompanyData(): void {
+        this.aziendaService.getMyCompany()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (company) => {
+                    this.companyData = company;
+                    console.log('Dati azienda ricevuti nel product detail:', company);
+                    this.cdr.markForCheck();
+                },
+                error: (error) => {
+                    console.error('Errore nel caricamento dei dati aziendali:', error);
+                    this.companyData = null;
+                    this.cdr.markForCheck();
                 }
             });
     }
@@ -248,6 +271,55 @@ export class ProductDetailDialogComponent implements OnInit, OnDestroy {
 
     trackByOrderId(index: number, ordine: any): number {
         return ordine.id;
+    }
+
+    /**
+     * Formatta l'indirizzo completo dell'azienda
+     */
+    getIndirizzoAzienda(): string {
+        if (!this.companyData?.indirizzo) return 'Non specificato';
+
+        const address = this.companyData.indirizzo;
+        const parts = [
+            address.via,
+            address.civico,
+            address.cap,
+            address.citta,
+            address.provincia,
+            address.paese
+        ].filter(part => part && part.trim() !== '');
+
+        return parts.join(', ') || 'Non specificato';
+    }
+
+    /**
+     * Ottiene la descrizione dell'azienda con fallback
+     */
+    getDescrizioneAzienda(): string {
+        if (!this.companyData?.descrizione || this.companyData.descrizione.trim() === '') {
+            return 'Non specificata';
+        }
+        return this.companyData.descrizione;
+    }
+
+    /**
+     * Ottiene il nome dell'azienda con fallback
+     */
+    getNomeAzienda(): string {
+        if (!this.companyData?.nomeAzienda || this.companyData.nomeAzienda.trim() === '') {
+            return 'Non specificato';
+        }
+        return this.companyData.nomeAzienda;
+    }
+
+    /**
+     * Ottiene la partita IVA con fallback
+     */
+    getPartitaIva(): string {
+        if (!this.companyData?.partitaIva || this.companyData.partitaIva.trim() === '') {
+            return 'Non specificata';
+        }
+        return this.companyData.partitaIva;
     }
 
 }

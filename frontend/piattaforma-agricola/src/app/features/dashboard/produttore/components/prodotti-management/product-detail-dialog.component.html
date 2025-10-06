@@ -263,7 +263,7 @@
             </mat-tab>
 
             <!-- Tab Informazioni Azienda -->
-            <mat-tab label="Info Azienda" *ngIf="product.venditore">
+            <mat-tab label="Info Azienda">
                 <div class="tab-content">
                     <mat-card class="company-info-card" appearance="outlined">
                         <mat-card-header>
@@ -275,7 +275,7 @@
                                     <mat-icon>business</mat-icon>
                                     <div class="detail-content">
                                         <span class="detail-label">Nome Azienda</span>
-                                        <span class="detail-value">{{ product.venditore.nomeAzienda }}</span>
+                                        <span class="detail-value">{{ getNomeAzienda() }}</span>
                                     </div>
                                 </div>
 
@@ -283,15 +283,23 @@
                                     <mat-icon>assignment_ind</mat-icon>
                                     <div class="detail-content">
                                         <span class="detail-label">Partita IVA</span>
-                                        <span class="detail-value">{{ product.venditore.partitaIva }}</span>
+                                        <span class="detail-value">{{ getPartitaIva() }}</span>
                                     </div>
                                 </div>
 
                                 <div class="company-detail">
                                     <mat-icon>location_on</mat-icon>
                                     <div class="detail-content">
-                                        <span class="detail-label">Indirizzo</span>
-                                        <span class="detail-value">{{ product.venditore.indirizzoAzienda }}</span>
+                                        <span class="detail-label">Indirizzo Azienda</span>
+                                        <span class="detail-value">{{ getIndirizzoAzienda() }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="company-detail">
+                                    <mat-icon>description</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Descrizione Azienda</span>
+                                        <span class="detail-value">{{ getDescrizioneAzienda() }}</span>
                                     </div>
                                 </div>
                             </div>

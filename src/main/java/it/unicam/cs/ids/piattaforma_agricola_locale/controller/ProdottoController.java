@@ -504,22 +504,43 @@ public class ProdottoController {
     /**
      * Recupera il metodo di coltivazione associato a un prodotto.
      * Endpoint pubblico accessibile a tutti gli utenti.
+     * Il proprietario può vedere i metodi anche per prodotti IN_REVISIONE.
      */
     @GetMapping("/{id}/metodi-coltivazione")
-    public ResponseEntity<MetodoDiColtivazioneDTO> getCultivationMethod(@PathVariable Long id) {
+    public ResponseEntity<MetodoDiColtivazioneDTO> getCultivationMethod(
+            @PathVariable Long id,
+            Authentication authentication) {
         return prodottoService.getProdottoById(id)
                 .map(prodotto -> {
-                    // Verifica che il prodotto sia approvato prima di mostrare i metodi di
-                    // coltivazione
-                    if (prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO) {
-                        log.warn("Attempt to access cultivation method for non-approved product ID: {}", id);
+                    // Determina se l'utente corrente è il proprietario del prodotto
+                    boolean isOwner = false;
+                    if (authentication != null && authentication.isAuthenticated()) {
+                        String email = authentication.getName();
+                        Venditore venditore = (Venditore) utenteService.getUtenteByEmail(email);
+                        isOwner = prodotto.getVenditore().getIdUtente().equals(venditore.getIdUtente());
+                    }
+
+                    // Se non è il proprietario, verifica che il prodotto sia approvato
+                    if (!isOwner && prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO) {
+                        log.warn("Attempt to access cultivation method for non-approved product ID: {} by non-owner",
+                                id);
+                        return ResponseEntity.notFound().<MetodoDiColtivazioneDTO>build();
+                    }
+
+                    // Se è il proprietario, permetti l'accesso anche per prodotti IN_REVISIONE o
+                    // APPROVATO
+                    if (isOwner && prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO
+                            && prodotto.getStatoVerifica() != StatoVerificaValori.IN_REVISIONE) {
+                        log.warn(
+                                "Owner attempted to access cultivation method for product ID: {} with invalid state: {}",
+                                id, prodotto.getStatoVerifica());
                         return ResponseEntity.notFound().<MetodoDiColtivazioneDTO>build();
                     }
 
                     MetodoDiColtivazione metodo = produttoreService.getMetodoDiColtivazioneByProdotto(id);
                     if (metodo != null) {
                         MetodoDiColtivazioneDTO dto = metodiColtivazioneMapper.toDTO(metodo);
-                        log.info("Retrieved cultivation method for product ID: {}", id);
+                        log.info("Retrieved cultivation method for product ID: {} (owner: {})", id, isOwner);
                         return ResponseEntity.ok(dto);
                     } else {
                         log.info("No cultivation method found for product ID: {}", id);

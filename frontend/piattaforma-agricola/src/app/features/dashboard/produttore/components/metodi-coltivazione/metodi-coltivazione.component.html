@@ -17,20 +17,21 @@
             </mat-form-field>
 
             <!-- Product Status Alert -->
-            <div class="product-status-alert" *ngIf="selectedProduct && !isProductApproved">
+            <div class="product-status-alert" *ngIf="selectedProduct && !canManageCultivationMethod">
                 <mat-card appearance="outlined" class="warning-card">
                     <mat-card-content>
                         <div class="warning-content">
                             <mat-icon class="warning-icon">warning</mat-icon>
                             <div class="warning-text">
-                                <strong>Prodotto non approvato</strong>
+                                <strong>Prodotto non disponibile per gestione metodi</strong>
                                 <p>Il prodotto "{{ selectedProductName }}" ha stato: <strong>{{ selectedProduct.statoVerifica }}</strong></p>
-                                <p>I metodi di coltivazione possono essere gestiti solo per prodotti con stato "APPROVATO".</p>
+                                <p>I metodi di coltivazione possono essere gestiti solo per prodotti con stato "APPROVATO" o "IN_REVISIONE".</p>
                             </div>
                         </div>
                     </mat-card-content>
                 </mat-card>
             </div>
+
         </div>
 
         <!-- Loading Products -->
@@ -52,7 +53,7 @@
         </div>
 
         <!-- No Method Found -->
-        <div class="empty-state" *ngIf="!isLoading && selectedProductId && !hasMethod && isProductApproved">
+        <div class="empty-state" *ngIf="!isLoading && selectedProductId && !hasMethod && canManageCultivationMethod">
             <mat-icon>info</mat-icon>
             <p>Nessun metodo di coltivazione associato a questo prodotto</p>
             <button mat-raised-button color="primary" (click)="aggiungiMetodo()">
@@ -62,7 +63,7 @@
         </div>
 
         <!-- Method Details Card -->
-        <div class="method-details" *ngIf="!isLoading && hasMethod && cultivationMethod">
+        <div class="method-details" *ngIf="!isLoading && hasMethod && cultivationMethod && selectedProductId">
             <mat-card appearance="outlined" class="method-card">
                 <mat-card-header>
                     <mat-card-title>{{ cultivationMethod.nome }}</mat-card-title>
@@ -110,7 +111,7 @@
                             color="primary" 
                             (click)="modificaMetodo()" 
                             [disabled]="!canManageCultivationMethod"
-                            [matTooltip]="isProductApproved ? 'Modifica Metodo' : 'Disponibile solo per prodotti approvati'">
+                            [matTooltip]="canManageCultivationMethod ? 'Modifica Metodo' : 'Disponibile solo per prodotti approvati o IN_REVISIONE'">
                         <mat-icon>edit</mat-icon>
                         Modifica
                     </button>
@@ -118,7 +119,7 @@
                             color="warn" 
                             (click)="eliminaMetodo()" 
                             [disabled]="!canManageCultivationMethod"
-                            [matTooltip]="isProductApproved ? 'Elimina Metodo' : 'Disponibile solo per prodotti approvati'">
+                            [matTooltip]="canManageCultivationMethod ? 'Elimina Metodo' : 'Disponibile solo per prodotti approvati o IN_REVISIONE'">
                         <mat-icon>delete</mat-icon>
                         Elimina
                     </button>

@@ -216,7 +216,7 @@ mat-divider {
   }
 }
 
-// Warning card styles
+// Status card styles
 .product-status-alert {
     margin-top: 16px;
 
@@ -248,6 +248,45 @@ mat-divider {
                 p {
                     margin: 4px 0;
                     color: #bf360c;
+                    font-size: 0.9rem;
+                    line-height: 1.4;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+
+    .info-card {
+        border-left: 4px solid #2196f3;
+        background-color: #e3f2fd;
+
+        .info-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+
+            .info-icon {
+                color: #2196f3;
+                font-size: 24px;
+                width: 24px;
+                height: 24px;
+                margin-top: 2px;
+            }
+
+            .info-text {
+                flex: 1;
+
+                strong {
+                    color: #1565c0;
+                    font-weight: 600;
+                }
+
+                p {
+                    margin: 4px 0;
+                    color: #0d47a1;
                     font-size: 0.9rem;
                     line-height: 1.4;
 

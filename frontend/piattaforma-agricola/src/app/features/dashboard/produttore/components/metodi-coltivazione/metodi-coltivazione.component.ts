@@ -52,12 +52,20 @@ export class MetodiColtivazioneComponent implements OnInit {
         return this.selectedProduct?.statoVerifica === 'APPROVATO';
     }
 
-    get selectedProductName(): string {
-        return this.selectedProduct?.nome || '';
+    get isProductInReview(): boolean {
+        return this.selectedProduct?.statoVerifica === 'IN_REVISIONE';
     }
 
     get canManageCultivationMethod(): boolean {
-        return this.selectedProductId !== null && this.isProductApproved;
+        return this.selectedProductId !== null && (this.isProductApproved || this.isProductInReview);
+    }
+
+    get isProductRejected(): boolean {
+        return this.selectedProduct?.statoVerifica === 'RESPINTO';
+    }
+
+    get selectedProductName(): string {
+        return this.selectedProduct?.nome || '';
     }
 
     constructor(
@@ -100,14 +108,18 @@ export class MetodiColtivazioneComponent implements OnInit {
         this.isLoading = true;
         this.cdr.markForCheck();
 
+        console.log('Caricamento metodo di coltivazione per prodotto ID:', productId);
+
         this.produttoreService.getCultivationMethod(productId).subscribe({
             next: (method) => {
+                console.log('Metodo di coltivazione caricato:', method);
                 this.cultivationMethod = method;
                 this.hasMethod = true;
                 this.isLoading = false;
                 this.cdr.markForCheck();
             },
             error: (error) => {
+                console.log('Errore o nessun metodo trovato:', error);
                 // 404 means no cultivation method exists for this product
                 this.cultivationMethod = null;
                 this.hasMethod = false;
@@ -123,10 +135,10 @@ export class MetodiColtivazioneComponent implements OnInit {
             return;
         }
 
-        // Controllo stato di approvazione del prodotto
-        if (this.selectedProduct.statoVerifica !== 'APPROVATO') {
+        // Controllo stato del prodotto - permessi per APPROVATO e IN_REVISIONE
+        if (!this.canManageCultivationMethod) {
             this.snackBar.open(
-                'Il metodo di coltivazione può essere creato solo per prodotti approvati. Stato attuale: ' + this.selectedProduct.statoVerifica, 
+                'Il metodo di coltivazione può essere creato solo per prodotti approvati o in revisione. Stato attuale: ' + this.selectedProduct.statoVerifica, 
                 'Chiudi', 
                 { duration: 5000 }
             );
@@ -172,10 +184,10 @@ export class MetodiColtivazioneComponent implements OnInit {
             return;
         }
 
-        // Controllo stato di approvazione del prodotto
-        if (this.selectedProduct.statoVerifica !== 'APPROVATO') {
+        // Controllo stato del prodotto - permessi per APPROVATO e IN_REVISIONE
+        if (!this.canManageCultivationMethod) {
             this.snackBar.open(
-                'Il metodo di coltivazione può essere modificato solo per prodotti approvati. Stato attuale: ' + this.selectedProduct.statoVerifica, 
+                'Il metodo di coltivazione può essere modificato solo per prodotti approvati o in revisione. Stato attuale: ' + this.selectedProduct.statoVerifica, 
                 'Chiudi', 
                 { duration: 5000 }
             );
@@ -213,10 +225,10 @@ export class MetodiColtivazioneComponent implements OnInit {
             return;
         }
 
-        // Controllo stato di approvazione del prodotto
-        if (this.selectedProduct.statoVerifica !== 'APPROVATO') {
+        // Controllo stato del prodotto - permessi per APPROVATO e IN_REVISIONE
+        if (!this.canManageCultivationMethod) {
             this.snackBar.open(
-                'Il metodo di coltivazione può essere eliminato solo per prodotti approvati. Stato attuale: ' + this.selectedProduct.statoVerifica, 
+                'Il metodo di coltivazione può essere eliminato solo per prodotti approvati o in revisione. Stato attuale: ' + this.selectedProduct.statoVerifica, 
                 'Chiudi', 
                 { duration: 5000 }
             );

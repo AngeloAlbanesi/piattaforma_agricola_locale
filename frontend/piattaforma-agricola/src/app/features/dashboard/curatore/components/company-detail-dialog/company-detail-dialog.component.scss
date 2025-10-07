@@ -134,6 +134,10 @@
                     transform: translateY(-2px);
                 }
 
+                &.detail-item-full {
+                    grid-column: 1 / -1;
+                }
+
                 mat-icon {
                     color: #ff9800;
                     margin-top: 2px;
@@ -153,6 +157,12 @@
                     font-weight: 500;
                     margin: 0;
                     word-break: break-word;
+
+                    &.description-text {
+                        line-height: 1.6;
+                        font-weight: 400;
+                        white-space: pre-wrap;
+                    }
 
                     a {
                         color: #2196f3;

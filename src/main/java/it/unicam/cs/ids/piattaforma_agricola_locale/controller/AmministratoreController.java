@@ -526,7 +526,7 @@ public class AmministratoreController {
         int prodottiPending = curatoreService.getProdottiInAttesaRevisione().size();
         int prodottiApproved = curatoreService.getProdottiApprovati().size();
         int prodottiRejected = curatoreService.getProdottiRifiutati().size();
-        
+
         int aziendePending = curatoreService.getDatiAziendaInAttesaRevisione().size();
         int aziendeApproved = curatoreService.getDatiAziendaApprovati().size();
         int aziendeRejected = curatoreService.getDatiAziendaRifiutati().size();
@@ -557,6 +557,7 @@ public class AmministratoreController {
                 .indirizzo(datiAzienda.getIndirizzo())
                 .telefono(datiAzienda.getTelefono())
                 .email(datiAzienda.getEmail())
+                .descrizione(datiAzienda.getDescrizioneAzienda())
                 .sitoWeb(datiAzienda.getSitoWeb())
                 .statoVerifica(datiAzienda.getStatoVerifica().toString())
                 .feedbackVerifica(datiAzienda.getFeedbackVerifica())
@@ -581,6 +582,7 @@ public class AmministratoreController {
         private String indirizzo;
         private String telefono;
         private String email;
+        private String descrizione;
         private String sitoWeb;
         private String statoVerifica;
         private String feedbackVerifica;

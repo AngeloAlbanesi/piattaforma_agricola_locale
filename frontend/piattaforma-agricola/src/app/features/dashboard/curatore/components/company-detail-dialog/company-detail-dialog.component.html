@@ -60,19 +60,11 @@
                         </div>
                     </div>
 
-                    <div class="detail-item">
-                        <mat-icon>phone</mat-icon>
+                    <div class="detail-item detail-item-full" *ngIf="company.descrizione">
+                        <mat-icon>description</mat-icon>
                         <div>
-                            <p class="detail-label">Telefono</p>
-                            <p class="detail-value">{{ company.telefono }}</p>
-                        </div>
-                    </div>
-
-                    <div class="detail-item">
-                        <mat-icon>email</mat-icon>
-                        <div>
-                            <p class="detail-label">Email</p>
-                            <p class="detail-value">{{ company.email }}</p>
+                            <p class="detail-label">Descrizione Azienda</p>
+                            <p class="detail-value description-text">{{ company.descrizione }}</p>
                         </div>
                     </div>
 
@@ -119,15 +111,15 @@
                     <div class="summary-item">
                         <mat-icon class="summary-icon">badge</mat-icon>
                         <div>
-                            <p class="summary-label">P.IVA Valida</p>
+                            <p class="summary-label">P.IVA Presente</p>
                             <p class="summary-value">{{ company.partitaIva ? 'Sì' : 'No' }}</p>
                         </div>
                     </div>
                     <div class="summary-item">
-                        <mat-icon class="summary-icon">contact_mail</mat-icon>
+                        <mat-icon class="summary-icon">location_on</mat-icon>
                         <div>
-                            <p class="summary-label">Contatti Completi</p>
-                            <p class="summary-value">{{ company.email && company.telefono ? 'Sì' : 'No' }}</p>
+                            <p class="summary-label">Indirizzo Presente</p>
+                            <p class="summary-value">{{ company.indirizzo ? 'Sì' : 'No' }}</p>
                         </div>
                     </div>
                 </div>

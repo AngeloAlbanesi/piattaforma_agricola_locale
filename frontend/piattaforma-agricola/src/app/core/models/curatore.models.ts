@@ -160,6 +160,7 @@ export interface CompanyModerationDTO {
     indirizzo: string;
     telefono: string;
     email: string;
+    descrizione?: string;
     sitoWeb?: string;
     statoVerifica: string;
     feedbackVerifica?: string | null;

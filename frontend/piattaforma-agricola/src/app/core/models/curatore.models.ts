@@ -212,13 +212,29 @@ export function mapProductSummaryToPending(p: ProductSummaryDTO): ApprovazionePe
 }
 
 export function mapCompanyModerationToPending(c: CompanyModerationDTO): ApprovazionePendingDTO {
+    // Map any pending/revision state to IN_ATTESA
+    const normalizeStato = (statoVerifica: string): 'IN_ATTESA' | 'APPROVATO' | 'RIFIUTATO' => {
+        const stato = statoVerifica.toUpperCase();
+        if (stato.includes('ATTESA') || stato.includes('PENDING') || stato.includes('REVISIONE')) {
+            return 'IN_ATTESA';
+        }
+        if (stato.includes('APPROV')) {
+            return 'APPROVATO';
+        }
+        if (stato.includes('RIFIUT') || stato.includes('REJECT')) {
+            return 'RIFIUTATO';
+        }
+        // Default to IN_ATTESA for safety (so buttons show)
+        return 'IN_ATTESA';
+    };
+
     return {
         id: c.id,
         tipo: 'AZIENDA',
         elementoId: c.id,
         elementoNome: c.nomeAzienda,
         descrizione: c.sitoWeb ? `${c.indirizzo} — ${c.sitoWeb}` : c.indirizzo,
-        stato: c.statoVerifica === 'IN_ATTESA_REVISIONE' ? 'IN_ATTESA' : (c.statoVerifica as any),
+        stato: normalizeStato(c.statoVerifica),
         dataRichiesta: new Date().toISOString(),
         richiedente: {
             id: c.id,

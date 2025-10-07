@@ -45,6 +45,9 @@ export class ApprovazioniManagementComponent implements OnInit {
         elementiPerPagina: 10
     };
 
+    // Track if user has explicitly set filters (don't override with tab)
+    private userFilteredTipo = false;
+
     constructor(
         private curatoreService: CuratoreService,
         private snackBar: MatSnackBar,
@@ -60,12 +63,17 @@ export class ApprovazioniManagementComponent implements OnInit {
         this.isLoading = true;
         this.errorMessage = null;
 
-        // Aggiorna i filtri in base alla tab selezionata
-        this.updateFiltersByTab();
+        // Only update filters by tab if tipo is not already set by user filters
+        // This prevents overriding user's explicit filter selections
+        if (!this.userFilteredTipo) {
+            this.updateFiltersByTab();
+        }
 
         this.curatoreService.getPendingApprovals(this.filters)
             .subscribe({
                 next: (approvazioni) => {
+                    console.log('Approvazioni caricate:', approvazioni);
+                    console.log('Stati delle approvazioni:', approvazioni.map(a => ({ id: a.elementoId, nome: a.elementoNome, stato: a.stato })));
                     this.approvazioni = approvazioni;
                     this.isLoading = false;
                     this.cdr.markForCheck();
@@ -102,6 +110,8 @@ export class ApprovazioniManagementComponent implements OnInit {
 
     onTabChange(index: number): void {
         this.selectedTab = index;
+        // When tab changes, clear user filter flag so tab filter applies
+        this.userFilteredTipo = false;
         this.loadApprovazioni();
     }
 
@@ -201,6 +211,8 @@ export class ApprovazioniManagementComponent implements OnInit {
 
     onFiltersChanged(newFilters: ApprovazioneFilters): void {
         this.filters = { ...this.filters, ...newFilters };
+        // Mark that user has explicitly set tipo filter
+        this.userFilteredTipo = !!newFilters.tipo;
         this.loadApprovazioni();
     }
 
@@ -210,6 +222,8 @@ export class ApprovazioniManagementComponent implements OnInit {
             pagina: 1,
             elementiPerPagina: 10
         };
+        // Clear user filter flag on reset
+        this.userFilteredTipo = false;
         this.loadApprovazioni();
     }
 

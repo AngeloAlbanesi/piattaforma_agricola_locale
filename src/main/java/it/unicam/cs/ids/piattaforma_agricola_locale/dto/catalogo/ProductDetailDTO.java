@@ -7,6 +7,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.coltivazione.MetodoDiColtivazioneDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserPublicDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.UnitaMisura;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,7 @@ public class ProductDetailDTO {
     private String descrizione;
     private double prezzo;
     private int quantitaDisponibile;
+    private UnitaMisura unitaMisura;
     private StatoVerificaValori statoVerifica;
     private String feedbackVerifica;
     private TipoOrigineProdotto tipoOrigine;

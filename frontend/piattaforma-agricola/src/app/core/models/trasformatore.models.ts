@@ -263,8 +263,6 @@ export interface ProdottoDTO {
     nome: string;
     descrizione: string;
     prezzo: number;
-    categoriaId: number;
-    categoriaNome?: string;
     quantitaDisponibile: number;
     unitaMisura: string;
     immagini?: string[];
@@ -278,7 +276,6 @@ export interface ProdottoDTO {
 export interface ProdottoDetailDTO extends ProdottoDTO {
     processoTrasformazioneId?: number;
     processoTrasformazioneNome?: string;
-    ingredienti: IngredienteDTO[];
     certificazioni: CertificazioneProdottoDTO[];
     tracciabilita?: TracciabilitaProdottoDTO;
     recensioni?: RecensioneDTO[];
@@ -290,23 +287,18 @@ export interface CreateProdottoRequestDTO {
     nome: string;
     descrizione: string;
     prezzo: number;
-    categoriaId: number;
     quantitaDisponibile: number;
     unitaMisura: string;
+    tipoOrigine: string;
     immagini?: string[];
-    processoTrasformazioneId?: number;
-    ingredienti: Array<{
-        prodottoOriginarioId?: number;
-        nome?: string;
-        percentuale: number;
-    }>;
+    idProcessoTrasformazioneOriginario?: number;
+    idMetodoDiColtivazione?: number;
 }
 
 export interface UpdateProdottoRequestDTO {
     nome?: string;
     descrizione?: string;
     prezzo?: number;
-    categoriaId?: number;
     quantitaDisponibile?: number;
     unitaMisura?: string;
     immagini?: string[];

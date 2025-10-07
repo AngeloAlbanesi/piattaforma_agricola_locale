@@ -40,10 +40,6 @@ export class ProdottoFormDialogComponent implements OnInit {
     isLoading = false;
     isEditMode = false;
 
-    unitaMisuraOptions = [
-        'kg', 'g', 'l', 'ml', 'pz', 'confezioni', 'vasetti', 'bottiglie', 'pacchi'
-    ];
-
     constructor(
         private fb: FormBuilder,
         private prodottiService: ProdottiService,
@@ -66,11 +62,9 @@ export class ProdottoFormDialogComponent implements OnInit {
             nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             descrizione: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
             prezzo: ['', [Validators.required, Validators.min(0.01)]],
-            categoriaId: ['', Validators.required],
             quantitaDisponibile: ['', [Validators.required, Validators.min(0)]],
             unitaMisura: ['', Validators.required],
-            processoTrasformazioneId: [''],
-            ingredienti: this.fb.array([])
+            tipoOrigine: ['TRASFORMATO']
         });
     }
 
@@ -79,26 +73,9 @@ export class ProdottoFormDialogComponent implements OnInit {
             nome: product.nome,
             descrizione: product.descrizione,
             prezzo: product.prezzo,
-            categoriaId: product.categoriaId,
             quantitaDisponibile: product.quantitaDisponibile,
             unitaMisura: product.unitaMisura
         });
-    }
-
-    get ingredienti(): FormArray {
-        return this.productForm.get('ingredienti') as FormArray;
-    }
-
-    addIngrediente(): void {
-        const ingredienteGroup = this.fb.group({
-            nome: ['', Validators.required],
-            percentuale: ['', [Validators.required, Validators.min(0), Validators.max(100)]]
-        });
-        this.ingredienti.push(ingredienteGroup);
-    }
-
-    removeIngrediente(index: number): void {
-        this.ingredienti.removeAt(index);
     }
 
     onSubmit(): void {
@@ -123,11 +100,9 @@ export class ProdottoFormDialogComponent implements OnInit {
             nome: formValue.nome,
             descrizione: formValue.descrizione,
             prezzo: formValue.prezzo,
-            categoriaId: formValue.categoriaId,
             quantitaDisponibile: formValue.quantitaDisponibile,
             unitaMisura: formValue.unitaMisura,
-            processoTrasformazioneId: formValue.processoTrasformazioneId,
-            ingredienti: formValue.ingredienti
+            tipoOrigine: formValue.tipoOrigine || 'TRASFORMATO'
         };
 
         this.prodottiService.createProduct(request).subscribe({
@@ -151,7 +126,6 @@ export class ProdottoFormDialogComponent implements OnInit {
             nome: formValue.nome,
             descrizione: formValue.descrizione,
             prezzo: formValue.prezzo,
-            categoriaId: formValue.categoriaId,
             quantitaDisponibile: formValue.quantitaDisponibile,
             unitaMisura: formValue.unitaMisura
         };

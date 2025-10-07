@@ -26,7 +26,7 @@ import {
   providedIn: 'root'
 })
 export class TrasformatoreService {
-  private readonly apiUrl = this.buildApiUrl('');
+  private readonly apiUrl = environment.apiPrefix || '/api';
 
   constructor(private http: HttpClient) {}
 

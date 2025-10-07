@@ -43,6 +43,9 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
     private Long idProcessoTrasformazioneOriginario;
     @Column(name = "id_metodo_di_coltivazione")
     private Long idMetodoDiColtivazione;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "unita_misura", nullable = false)
+    private UnitaMisura unitaMisura;
 
     public Prodotto() {
         // Default constructor for JPA
@@ -51,12 +54,18 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
 
     public Prodotto(String nome, String descrizione, double prezzo, int quantitaDisponibile,
             Venditore venditore) {
+        this(nome, descrizione, prezzo, quantitaDisponibile, venditore, UnitaMisura.KG);
+    }
+
+    public Prodotto(String nome, String descrizione, double prezzo, int quantitaDisponibile,
+            Venditore venditore, UnitaMisura unitaMisura) {
 
         this.nome = nome;
         this.descrizione = descrizione;
         this.prezzo = prezzo;
         this.quantitaDisponibile = quantitaDisponibile;
         this.venditore = venditore;
+        this.unitaMisura = unitaMisura;
         this.statoVerifica = StatoVerificaValori.IN_REVISIONE;
         this.certificazioniProdotto = new ArrayList<>();
         this.tipoOrigine = TipoOrigineProdotto.COLTIVATO; // Default aggiornato da COLTIVATO_ALLEVATO a COLTIVATO
@@ -74,8 +83,8 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
      * @param idProcessoTrasformazioneOriginario L'ID del processo di trasformazione
      */
     public Prodotto(String nome, String descrizione, double prezzo, int quantitaDisponibile,
-            Venditore venditore, Long idProcessoTrasformazioneOriginario) {
-        this(nome, descrizione, prezzo, quantitaDisponibile, venditore);
+            Venditore venditore, UnitaMisura unitaMisura, Long idProcessoTrasformazioneOriginario) {
+        this(nome, descrizione, prezzo, quantitaDisponibile, venditore, unitaMisura);
         this.tipoOrigine = TipoOrigineProdotto.TRASFORMATO;
         this.idProcessoTrasformazioneOriginario = idProcessoTrasformazioneOriginario;
     }
@@ -264,6 +273,24 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
         this.idMetodoDiColtivazione = idMetodoDiColtivazione;
     }
 
+    /**
+     * Restituisce l'unità di misura del prodotto.
+     *
+     * @return L'unità di misura del prodotto
+     */
+    public UnitaMisura getUnitaMisura() {
+        return unitaMisura;
+    }
+
+    /**
+     * Imposta l'unità di misura del prodotto.
+     *
+     * @param unitaMisura L'unità di misura da impostare
+     */
+    public void setUnitaMisura(UnitaMisura unitaMisura) {
+        this.unitaMisura = unitaMisura;
+    }
+
     @Override
     public String toString() {
         return "Prodotto{" +
@@ -272,6 +299,7 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
                 ", descrizione='" + descrizione + '\'' +
                 ", prezzo=" + prezzo +
                 ", quantitaDisponibile=" + quantitaDisponibile +
+                ", unitaMisura=" + unitaMisura +
                 ", statoVerifica=" + statoVerifica +
                 ", feedbackVerifica='" + feedbackVerifica + '\'' +
                 ", tipoOrigine=" + tipoOrigine +

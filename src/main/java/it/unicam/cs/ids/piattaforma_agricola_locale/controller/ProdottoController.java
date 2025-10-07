@@ -232,6 +232,11 @@ public class ProdottoController {
                 request.getQuantitaDisponibile(),
                 venditore);
 
+        // Imposta l'unità di misura dal DTO della richiesta
+        if (request.getUnitaMisura() != null) {
+            nuovoProdotto.setUnitaMisura(request.getUnitaMisura());
+        }
+
         // Imposta il tipo di origine dal DTO della richiesta
         if (request.getTipoOrigine() != null) {
             nuovoProdotto.setTipoOrigine(request.getTipoOrigine());
@@ -287,6 +292,9 @@ public class ProdottoController {
                     }
                     if (request.getQuantitaDisponibile() != null) {
                         prodotto.setQuantitaDisponibile(request.getQuantitaDisponibile());
+                    }
+                    if (request.getUnitaMisura() != null) {
+                        prodotto.setUnitaMisura(request.getUnitaMisura());
                     }
 
                     // Save the updated product to persist changes

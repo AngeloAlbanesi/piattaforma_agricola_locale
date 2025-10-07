@@ -22,7 +22,7 @@ import {
     providedIn: 'root'
 })
 export class ProdottiService {
-    private readonly apiUrl = this.buildApiUrl('');
+    private readonly apiUrl = environment.apiPrefix || '/api';
 
     constructor(private http: HttpClient) { }
 

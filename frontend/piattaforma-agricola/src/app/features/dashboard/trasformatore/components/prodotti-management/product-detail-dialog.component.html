@@ -151,15 +151,11 @@
                             <mat-card class="certification-card" appearance="outlined"
                                 *ngFor="let cert of product.certificazioni; trackBy: trackByCertId">
                                 <mat-card-header>
-                                    <mat-card-title class="cert-name">{{ cert.tipoCertificazione }}</mat-card-title>
+                                    <mat-card-title class="cert-name">{{ cert.nomeCertificazione }}</mat-card-title>
                                     <mat-card-subtitle class="cert-entity">{{ cert.enteRilascio }}</mat-card-subtitle>
                                 </mat-card-header>
                                 <mat-card-content>
                                     <div class="cert-details">
-                                        <div class="cert-detail">
-                                            <mat-icon>confirmation_number</mat-icon>
-                                            <span>N° Riferimento: {{ cert.numeroRiferimento }}</span>
-                                        </div>
                                         <div class="cert-dates">
                                             <div class="cert-date">
                                                 <mat-icon>event</mat-icon>

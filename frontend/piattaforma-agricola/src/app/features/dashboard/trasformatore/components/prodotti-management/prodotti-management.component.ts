@@ -20,6 +20,7 @@ import { ProdottiService } from '@core/services/prodotti.service';
 import { ProdottoDTO, ProdottoFilters } from '@core/models/trasformatore.models';
 import { ProdottoFormDialogComponent } from '../prodotto-form-dialog/prodotto-form-dialog.component';
 import { ProductDetailDialogComponent } from './product-detail-dialog.component';
+import { DeleteProductConfirmationDialogComponent } from './delete-product-confirmation-dialog.component';
 
 @Component({
     selector: 'app-prodotti-management',
@@ -174,18 +175,28 @@ export class ProdottiManagementComponent implements OnInit {
 
     deleteProduct(product: any): void {
         const productId = product.id || product.idProdotto;
-        if (confirm(`Sei sicuro di voler eliminare il prodotto "${product.nome}"?`)) {
-            this.prodottiService.deleteProduct(productId).subscribe({
-                next: () => {
-                    this.snackBar.open('Prodotto eliminato con successo', 'Chiudi', { duration: 3000 });
-                    this.loadProducts();
-                },
-                error: (error) => {
-                    console.error('Errore nell\'eliminazione del prodotto:', error);
-                    this.snackBar.open('Errore nell\'eliminazione del prodotto', 'Chiudi', { duration: 3000 });
-                }
-            });
-        }
+
+        const dialogRef = this.dialog.open(DeleteProductConfirmationDialogComponent, {
+            width: '500px',
+            data: {
+                productName: product.nome
+            }
+        });
+
+        dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+            if (confirmed) {
+                this.prodottiService.deleteProduct(productId).subscribe({
+                    next: () => {
+                        this.snackBar.open('Prodotto eliminato con successo', 'Chiudi', { duration: 3000 });
+                        this.loadProducts();
+                    },
+                    error: (error) => {
+                        console.error('Errore nell\'eliminazione del prodotto:', error);
+                        this.snackBar.open('Errore nell\'eliminazione del prodotto', 'Chiudi', { duration: 3000 });
+                    }
+                });
+            }
+        });
     }
 
     clearFilters(): void {

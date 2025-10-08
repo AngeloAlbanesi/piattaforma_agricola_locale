@@ -149,7 +149,7 @@ export class ProdottoFormDialogComponent implements OnInit {
             unitaMisura: formValue.unitaMisura
         };
 
-        this.prodottiService.updateProduct(this.data.product.id, request).subscribe({
+        this.prodottiService.updateProduct(this.data.product.idProdotto, request).subscribe({
             next: () => {
                 this.isLoading = false;
                 this.dialogRef.close(true);

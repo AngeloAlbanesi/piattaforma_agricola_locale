@@ -183,6 +183,7 @@ export class ProductDetailDialogComponent implements OnInit, OnDestroy {
     private createMinimalProductDetail(): void {
         this.product = {
             id: this.data.productId,
+            idProdotto: this.data.productId,
             nome: 'Prodotto',
             descrizione: 'Dettagli non disponibili',
             prezzo: 0,

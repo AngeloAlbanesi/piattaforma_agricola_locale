@@ -273,7 +273,8 @@ export interface AzioneRapidaTrasformatore {
 
 // === GESTIONE PRODOTTI TRASFORMATI ===
 export interface ProdottoDTO {
-    id: number;
+    id?: number; // Deprecated, use idProdotto
+    idProdotto: number;
     nome: string;
     descrizione: string;
     prezzo: number;
@@ -328,22 +329,18 @@ export interface IngredienteDTO {
 
 export interface CertificazioneProdottoDTO {
     id: number;
-    tipoCertificazione: 'BIOLOGICO' | 'ARTIGIANALE' | 'DOP' | 'IGP' | 'STG' | 'HACCP';
-    numeroRiferimento: string;
+    nomeCertificazione: string;
     enteRilascio: string;
     dataRilascio: string;
     dataScadenza: string;
-    documentoUrl?: string;
     prodottoId: number;
 }
 
 export interface AddCertificazioneRequestDTO {
-    tipoCertificazione: 'BIOLOGICO' | 'ARTIGIANALE' | 'DOP' | 'IGP' | 'STG' | 'HACCP';
-    numeroRiferimento: string;
+    nomeCertificazione: string;
     enteRilascio: string;
     dataRilascio: string;
     dataScadenza: string;
-    documentoUrl?: string;
 }
 
 export interface TracciabilitaProdottoDTO {

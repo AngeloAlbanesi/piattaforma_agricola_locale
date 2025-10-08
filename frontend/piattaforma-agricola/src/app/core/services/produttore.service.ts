@@ -22,8 +22,7 @@ import {
     providedIn: 'root'
 })
 export class ProduttoreService {
-    // Normalizziamo rimuovendo lo slash finale per evitare doppio prefisso (es. /api//api/...)
-    private readonly apiUrl = this.buildApiUrl('').replace(/\/$/, '');
+    private readonly apiUrl = this.buildApiUrl('');
 
     constructor(private http: HttpClient) { }
 
@@ -142,7 +141,8 @@ export class ProduttoreService {
     private buildApiUrl(path: string): string {
         const base = (environment.apiBaseUrl ?? '').replace(/\/$/, '');
         const prefix = (environment.apiPrefix ?? '').replace(/\/$/, '');
-        const sanitizedPath = path.startsWith('/') ? path : `/${path}`;
+        // Fix: se path è vuoto, non aggiungere slash
+        const sanitizedPath = path ? (path.startsWith('/') ? path : `/${path}`) : '';
 
         if (base) {
             return `${base}${prefix}${sanitizedPath}`;

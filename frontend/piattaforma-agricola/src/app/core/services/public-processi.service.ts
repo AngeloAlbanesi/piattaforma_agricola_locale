@@ -54,7 +54,8 @@ export class PublicProcessiService {
   private buildApiUrl(path: string): string {
     const base = (environment.apiBaseUrl ?? '').replace(/\/$/, '');
     const prefix = (environment.apiPrefix ?? '').replace(/\/$/, '');
-    const sanitizedPath = path.startsWith('/') ? path : `/${path}`;
+    // Fix: se path è vuoto, non aggiungere slash
+    const sanitizedPath = path ? (path.startsWith('/') ? path : `/${path}`) : '';
 
     if (base) {
       return `${base}${prefix}${sanitizedPath}`;

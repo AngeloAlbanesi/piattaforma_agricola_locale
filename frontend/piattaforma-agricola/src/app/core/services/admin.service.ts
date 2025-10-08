@@ -109,15 +109,16 @@ export class AdminService {
             empty: content.length === 0
         };
     }
+private buildApiUrl(path: string): string {
+    const base = (environment.apiBaseUrl ?? '').replace(/\/$/, '');
+    const prefix = (environment.apiPrefix ?? '').replace(/\/$/, '');
+    // Fix: se path è vuoto, non aggiungere slash
+    const sanitizedPath = path ? (path.startsWith('/') ? path : `/${path}`) : '';
 
-    private buildApiUrl(path: string): string {
-        const base = (environment.apiBaseUrl ?? '').replace(/\/$/, '');
-        const prefix = (environment.apiPrefix ?? '').replace(/\/$/, '');
-        const sanitizedPath = path.startsWith('/') ? path : `/${path}`;
-
-        if (base) {
-            return `${base}${prefix}${sanitizedPath}`;
-        }
-        return `${prefix || ''}${sanitizedPath}` || sanitizedPath;
+    if (base) {
+        return `${base}${prefix}${sanitizedPath}`;
     }
+
+    return `${prefix || ''}${sanitizedPath}` || sanitizedPath;
+}
 }

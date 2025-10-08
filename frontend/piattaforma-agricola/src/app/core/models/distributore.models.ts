@@ -146,6 +146,7 @@ export interface CreateDistributoreProductRequestDTO {
   prezzo: number;
   quantitaDisponibile: number;
   unitaMisura: string;
+  tipoOrigine: 'COLTIVATO' | 'COLTIVATO_ALLEVATO' | 'TRASFORMATO';
   immagineUrl?: string;
 }
 
@@ -155,5 +156,6 @@ export interface UpdateDistributoreProductRequestDTO {
   prezzo?: number;
   quantitaDisponibile?: number;
   unitaMisura?: string;
+  tipoOrigine?: 'COLTIVATO' | 'COLTIVATO_ALLEVATO' | 'TRASFORMATO';
   immagineUrl?: string;
 }

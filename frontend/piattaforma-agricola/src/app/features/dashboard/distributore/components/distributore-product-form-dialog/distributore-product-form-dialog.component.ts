@@ -64,6 +64,7 @@ export class DistributoreProductFormDialogComponent implements OnInit {
       prezzo: ['', [Validators.required, Validators.min(0.01)]],
       quantitaDisponibile: ['', [Validators.required, Validators.min(0)]],
       unitaMisura: ['KG', Validators.required],
+      tipoOrigine: ['COLTIVATO', Validators.required],
       immagineUrl: ['']
     });
   }
@@ -75,6 +76,7 @@ export class DistributoreProductFormDialogComponent implements OnInit {
       prezzo: product.prezzo,
       quantitaDisponibile: product.quantitaDisponibile,
       unitaMisura: product.unitaMisura,
+      tipoOrigine: product.tipoOrigine || 'COLTIVATO',
       immagineUrl: product.immagineUrl || ''
     });
   }
@@ -103,6 +105,7 @@ export class DistributoreProductFormDialogComponent implements OnInit {
       prezzo: formValue.prezzo,
       quantitaDisponibile: formValue.quantitaDisponibile,
       unitaMisura: formValue.unitaMisura,
+      tipoOrigine: formValue.tipoOrigine,
       immagineUrl: formValue.immagineUrl || undefined
     };
 
@@ -130,6 +133,7 @@ export class DistributoreProductFormDialogComponent implements OnInit {
       prezzo: formValue.prezzo,
       quantitaDisponibile: formValue.quantitaDisponibile,
       unitaMisura: formValue.unitaMisura,
+      tipoOrigine: formValue.tipoOrigine,
       immagineUrl: formValue.immagineUrl || undefined
     };
 

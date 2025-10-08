@@ -84,6 +84,21 @@
             </mat-form-field>
         </div>
 
+        <!-- Tipo Origine -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Tipo di Origine</mat-label>
+            <mat-select formControlName="tipoOrigine" required>
+                <mat-option value="COLTIVATO">Coltivato</mat-option>
+                <mat-option value="COLTIVATO_ALLEVATO">Coltivato/Allevato</mat-option>
+                <mat-option value="TRASFORMATO">Trasformato</mat-option>
+            </mat-select>
+            <mat-icon matPrefix>category</mat-icon>
+            <mat-hint>Seleziona la tipologia di origine del prodotto</mat-hint>
+            @if (productForm.get('tipoOrigine')?.hasError('required') && productForm.get('tipoOrigine')?.touched) {
+            <mat-error>{{ getErrorMessage('tipoOrigine') }}</mat-error>
+            }
+        </mat-form-field>
+
         <!-- URL Immagine (opzionale) -->
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>URL Immagine (opzionale)</mat-label>

@@ -13,8 +13,7 @@ import { CertificationDTO, CreateCertificazioneRequestDTO } from '../models/prod
     providedIn: 'root'
 })
 export class AziendaService {
-    // Normalizziamo rimuovendo lo slash finale per evitare doppio slash
-    private readonly apiUrl = this.buildApiUrl('').replace(/\/$/, '');
+    private readonly apiUrl = this.buildApiUrl('');
 
     constructor(private http: HttpClient) { }
 
@@ -62,7 +61,8 @@ export class AziendaService {
     private buildApiUrl(path: string): string {
         const base = (environment.apiBaseUrl ?? '').replace(/\/$/, '');
         const prefix = (environment.apiPrefix ?? '').replace(/\/$/, '');
-        const sanitizedPath = path.startsWith('/') ? path : `/${path}`;
+        // Fix: se path è vuoto, non aggiungere slash
+        const sanitizedPath = path ? (path.startsWith('/') ? path : `/${path}`) : '';
 
         if (base) {
             return `${base}${prefix}${sanitizedPath}`;

@@ -9,6 +9,7 @@ export interface ProduttoreProductSummaryDTO {
     descrizione: string;
     prezzo: number;
     quantitaDisponibile: number;
+    unitaMisura: string;
     statoVerifica: string;
     tipoOrigine: string;
     certificazioni: string[];

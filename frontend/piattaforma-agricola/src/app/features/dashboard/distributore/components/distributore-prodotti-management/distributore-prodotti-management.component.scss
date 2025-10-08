@@ -1,0 +1,169 @@
+.prodotti-management {
+  padding: 24px;
+}
+
+.management-card {
+  margin-bottom: 24px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #9b59b6;
+  margin: 0;
+}
+
+.title-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.card-content {
+  padding: 24px 0;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  gap: 16px;
+}
+
+.table-container {
+  width: 100%;
+}
+
+.products-table {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.product-name {
+  max-width: 300px;
+}
+
+.product-description {
+  color: #666;
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
+.price {
+  font-weight: 600;
+  color: #2ecc71;
+}
+
+.quantity {
+  font-weight: 500;
+}
+
+.unit {
+  background: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status.attivo {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status.inattivo {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.status.bozza {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  color: #666;
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.empty-state p {
+  margin: 0 0 24px 0;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .prodotti-management {
+    padding: 16px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-actions {
+    justify-content: center;
+  }
+
+  .product-name {
+    max-width: 200px;
+  }
+
+  .products-table {
+    font-size: 0.875rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}

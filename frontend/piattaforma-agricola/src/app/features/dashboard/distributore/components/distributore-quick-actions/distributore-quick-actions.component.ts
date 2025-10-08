@@ -25,6 +25,14 @@ export class DistributoreQuickActionsComponent {
 
     quickActions: AzioneRapidaDistributore[] = [
         {
+            id: 'create-product',
+            label: 'Crea Prodotto',
+            icon: 'add_shopping_cart',
+            color: 'primary',
+            description: 'Crea un nuovo prodotto da vendere',
+            route: '/prodotti/nuovo'
+        },
+        {
             id: 'create-package',
             label: 'Crea Pacchetto',
             icon: 'add_box',

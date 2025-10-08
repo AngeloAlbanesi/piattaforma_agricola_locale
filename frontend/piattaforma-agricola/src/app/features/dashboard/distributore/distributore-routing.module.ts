@@ -16,6 +16,24 @@ const routes: Routes = [
         }
     },
     {
+        path: 'prodotti/nuovo',
+        loadComponent: () => import('./components/distributore-prodotti-management/distributore-prodotti-management.component').then(m => m.DistributoreProdottiManagementComponent),
+        canActivate: [authGuard, roleGuard],
+        data: {
+            expectedRole: ROLES.DISTRIBUTORE_TIPICITA,
+            title: 'Nuovo Prodotto'
+        }
+    },
+    {
+        path: 'prodotti',
+        loadComponent: () => import('./components/distributore-prodotti-management/distributore-prodotti-management.component').then(m => m.DistributoreProdottiManagementComponent),
+        canActivate: [authGuard, roleGuard],
+        data: {
+            expectedRole: ROLES.DISTRIBUTORE_TIPICITA,
+            title: 'Gestione Prodotti'
+        }
+    },
+    {
         path: 'prodotti-disponibili',
         loadComponent: () => import('./components/available-products/available-products.component').then(m => m.AvailableProductsComponent),
         canActivate: [authGuard, roleGuard],

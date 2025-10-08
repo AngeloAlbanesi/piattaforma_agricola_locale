@@ -119,3 +119,41 @@ export interface AzioneRapidaDistributore {
   description?: string;
   route?: string;
 }
+
+// === GESTIONE PRODOTTI DISTRIBUTORE ===
+
+export interface DistributoreProductDTO {
+  id: number;
+  nome: string;
+  descrizione: string;
+  prezzo: number;
+  quantitaDisponibile: number;
+  unitaMisura: string;
+  stato: string;
+  dataCreazione: string;
+  dataUltimaModifica: string;
+  immagineUrl?: string;
+  distributore: {
+    id: number;
+    nomeAzienda: string;
+    partitaIva: string;
+  };
+}
+
+export interface CreateDistributoreProductRequestDTO {
+  nome: string;
+  descrizione: string;
+  prezzo: number;
+  quantitaDisponibile: number;
+  unitaMisura: string;
+  immagineUrl?: string;
+}
+
+export interface UpdateDistributoreProductRequestDTO {
+  nome?: string;
+  descrizione?: string;
+  prezzo?: number;
+  quantitaDisponibile?: number;
+  unitaMisura?: string;
+  immagineUrl?: string;
+}

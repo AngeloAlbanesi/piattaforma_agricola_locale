@@ -1,0 +1,108 @@
+<h2 mat-dialog-title>
+    <mat-icon>{{ isEditMode ? 'edit' : 'add' }}</mat-icon>
+    {{ isEditMode ? 'Modifica Prodotto' : 'Nuovo Prodotto' }}
+</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="productForm" class="product-form">
+        <!-- Nome -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nome Prodotto</mat-label>
+            <input matInput formControlName="nome" placeholder="Es. Formaggio Tipico Locale" required>
+            <mat-icon matPrefix>label</mat-icon>
+            @if (productForm.get('nome')?.hasError('required') && productForm.get('nome')?.touched) {
+            <mat-error>{{ getErrorMessage('nome') }}</mat-error>
+            }
+            @if (productForm.get('nome')?.hasError('minlength')) {
+            <mat-error>{{ getErrorMessage('nome') }}</mat-error>
+            }
+            @if (productForm.get('nome')?.hasError('maxlength')) {
+            <mat-error>{{ getErrorMessage('nome') }}</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Descrizione -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descrizione</mat-label>
+            <textarea matInput formControlName="descrizione"
+                placeholder="Descrivi il prodotto, le sue caratteristiche, l'origine..." rows="4" required></textarea>
+            <mat-icon matPrefix>description</mat-icon>
+            @if (productForm.get('descrizione')?.hasError('required') && productForm.get('descrizione')?.touched) {
+            <mat-error>{{ getErrorMessage('descrizione') }}</mat-error>
+            }
+            @if (productForm.get('descrizione')?.hasError('minlength')) {
+            <mat-error>{{ getErrorMessage('descrizione') }}</mat-error>
+            }
+            @if (productForm.get('descrizione')?.hasError('maxlength')) {
+            <mat-error>{{ getErrorMessage('descrizione') }}</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Prezzo -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Prezzo (€)</mat-label>
+            <input matInput type="number" formControlName="prezzo" placeholder="0.00" step="0.01" min="0" required>
+            <mat-icon matPrefix>euro</mat-icon>
+            @if (productForm.get('prezzo')?.hasError('required') && productForm.get('prezzo')?.touched) {
+            <mat-error>{{ getErrorMessage('prezzo') }}</mat-error>
+            }
+            @if (productForm.get('prezzo')?.hasError('min')) {
+            <mat-error>{{ getErrorMessage('prezzo') }}</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Quantità e Unità di Misura -->
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Quantità Disponibile</mat-label>
+                <input matInput type="number" formControlName="quantitaDisponibile" placeholder="0" min="0" required>
+                <mat-icon matPrefix>inventory</mat-icon>
+                @if (productForm.get('quantitaDisponibile')?.hasError('required') &&
+                productForm.get('quantitaDisponibile')?.touched) {
+                <mat-error>{{ getErrorMessage('quantitaDisponibile') }}</mat-error>
+                }
+                @if (productForm.get('quantitaDisponibile')?.hasError('min')) {
+                <mat-error>{{ getErrorMessage('quantitaDisponibile') }}</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Unità di Misura</mat-label>
+                <mat-select formControlName="unitaMisura" required>
+                    <mat-option value="KG">Chilogrammi (kg)</mat-option>
+                    <mat-option value="G">Grammi (g)</mat-option>
+                    <mat-option value="L">Litri (l)</mat-option>
+                    <mat-option value="ML">Millilitri (ml)</mat-option>
+                    <mat-option value="BOTTIGLIE">Bottiglie</mat-option>
+                    <mat-option value="CONFEZIONI">Confezioni</mat-option>
+                    <mat-option value="PEZZI">Pezzi</mat-option>
+                    <mat-option value="PACCHI">Pacchi</mat-option>
+                </mat-select>
+                @if (productForm.get('unitaMisura')?.hasError('required') && productForm.get('unitaMisura')?.touched) {
+                <mat-error>{{ getErrorMessage('unitaMisura') }}</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <!-- URL Immagine (opzionale) -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>URL Immagine (opzionale)</mat-label>
+            <input matInput formControlName="immagineUrl" placeholder="https://esempio.com/immagine.jpg">
+            <mat-icon matPrefix>image</mat-icon>
+            <mat-hint>Inserisci l'URL di un'immagine per il prodotto</mat-hint>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    @if (isLoading) {
+    <mat-spinner diameter="24"></mat-spinner>
+    }
+    <button mat-button (click)="onCancel()" [disabled]="isLoading">
+        Annulla
+    </button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="isLoading || productForm.invalid">
+        <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+        {{ isEditMode ? 'Salva Modifiche' : 'Crea Prodotto' }}
+    </button>
+</mat-dialog-actions>

@@ -165,6 +165,7 @@ export class ProductDetailDialogComponent implements OnInit, OnDestroy {
             descrizione: 'Dettagli non disponibili',
             prezzo: 0,
             quantitaDisponibile: 0,
+            unitaMisura: 'KG',
             statoVerifica: 'SCONOSCIUTO',
             tipoOrigine: 'NON_SPECIFICATO',
             certificazioni: [],

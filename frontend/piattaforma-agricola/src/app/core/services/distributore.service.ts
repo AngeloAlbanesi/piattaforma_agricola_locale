@@ -7,7 +7,10 @@ import {
   DettaglioPacchettoDTO,
   DistributoreStatsDTO,
   CreatePacchettoRequestDTO,
-  UpdatePacchettoRequestDTO
+  UpdatePacchettoRequestDTO,
+  DistributoreProductDTO,
+  CreateDistributoreProductRequestDTO,
+  UpdateDistributoreProductRequestDTO
 } from '../models/distributore.models';
 
 @Injectable({
@@ -40,6 +43,28 @@ export class DistributoreService {
     return this.http.delete<void>(`${this.apiUrl}/pacchetti/${id}`);
   }
   
+  // === GESTIONE PRODOTTI ===
+  
+  getMyProducts(): Observable<DistributoreProductDTO[]> {
+    return this.http.get<DistributoreProductDTO[]>(`${this.apiUrl}/prodotti/miei-prodotti`);
+  }
+
+  getProductById(id: number): Observable<DistributoreProductDTO> {
+    return this.http.get<DistributoreProductDTO>(`${this.apiUrl}/prodotti/${id}`);
+  }
+
+  createProduct(request: CreateDistributoreProductRequestDTO): Observable<DistributoreProductDTO> {
+    return this.http.post<DistributoreProductDTO>(`${this.apiUrl}/prodotti`, request);
+  }
+
+  updateProduct(id: number, request: UpdateDistributoreProductRequestDTO): Observable<DistributoreProductDTO> {
+    return this.http.put<DistributoreProductDTO>(`${this.apiUrl}/prodotti/${id}`, request);
+  }
+
+  deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/prodotti/${id}`);
+  }
+
   // === GESTIONE PRODOTTI NEI PACCHETTI ===
   
   addProductToPackage(packageId: number, productId: number, quantita: number): Observable<void> {

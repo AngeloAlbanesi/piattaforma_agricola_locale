@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 
 import { AuthService } from '../../../../../core/services/auth.service';
 import { DistributoreService } from '../../../../../core/services/distributore.service';
@@ -16,6 +17,7 @@ import { DistributoreStatsDTO } from '../../../../../core/models/distributore.mo
 import { DistributoreStatsOverviewComponent } from '../../components/distributore-stats-overview/distributore-stats-overview.component';
 import { DistributoreQuickActionsComponent } from '../../components/distributore-quick-actions/distributore-quick-actions.component';
 import { PacchettiManagementComponent } from '../../components/pacchetti-management/pacchetti-management.component';
+import { DistributoreProductFormDialogComponent } from '../../components/distributore-product-form-dialog/distributore-product-form-dialog.component';
 import { PersonalDataCardComponent, CompanyDataCardComponent } from '../../../shared/components';
 
 @Component({
@@ -29,7 +31,9 @@ import { PersonalDataCardComponent, CompanyDataCardComponent } from '../../../sh
         MatProgressSpinnerModule,
         MatTabsModule,
         MatTooltipModule,
+        MatDialogModule,
         MatSnackBarModule,
+        MatDialogModule,
         DistributoreStatsOverviewComponent,
         DistributoreQuickActionsComponent,
         PacchettiManagementComponent,
@@ -58,7 +62,8 @@ export class DistributoreDashboardComponent implements OnInit, OnDestroy {
         private authService: AuthService,
         private distributoreService: DistributoreService,
         private router: Router,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private dialog: MatDialog
     ) { }
 
     ngOnInit(): void {
@@ -96,7 +101,11 @@ export class DistributoreDashboardComponent implements OnInit, OnDestroy {
     }
 
     navigateToProducts(): void {
-        this.router.navigate(['/dashboard/distributore/prodotti-disponibili']);
+        this.router.navigate(['/prodotti']);
+    }
+
+    navigateToCreateProduct(): void {
+        this.router.navigate(['/prodotti/nuovo']);
     }
 
     navigateToOrders(): void {
@@ -117,6 +126,9 @@ export class DistributoreDashboardComponent implements OnInit, OnDestroy {
 
     onQuickAction(action: string): void {
         switch (action) {
+            case 'create-product':
+                this.openCreateProductDialog();
+                break;
             case 'create-package':
                 this.router.navigate(['/pacchetti/nuovo']);
                 break;
@@ -138,6 +150,21 @@ export class DistributoreDashboardComponent implements OnInit, OnDestroy {
     }
 
     // === UTILITIES ===
+
+    openCreateProductDialog(): void {
+        const dialogRef = this.dialog.open(DistributoreProductFormDialogComponent, {
+            width: '600px',
+            data: {
+                mode: 'create'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.snackBar.open('Prodotto creato con successo', 'Chiudi', { duration: 3000 });
+            }
+        });
+    }
 
     refreshData(): void {
         this.loadDashboardStats();

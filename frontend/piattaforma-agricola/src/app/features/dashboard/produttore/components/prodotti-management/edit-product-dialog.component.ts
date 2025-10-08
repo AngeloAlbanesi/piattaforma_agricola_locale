@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { ProduttoreProductSummaryDTO } from '@core/models/produttore.models';
 
 @Component({
@@ -18,6 +19,7 @@ import { ProduttoreProductSummaryDTO } from '@core/models/produttore.models';
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
+        MatSelectModule,
         MatIconModule
     ],
     template: `
@@ -58,6 +60,12 @@ import { ProduttoreProductSummaryDTO } from '@core/models/produttore.models';
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="half-width">
+            <!-- Spazio vuoto per bilanciare il layout -->
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
             <mat-label>Quantità Disponibile</mat-label>
             <input matInput type="number" formControlName="quantitaDisponibile" min="0" required>
             <mat-error *ngIf="productForm.get('quantitaDisponibile')?.hasError('required')">
@@ -65,6 +73,23 @@ import { ProduttoreProductSummaryDTO } from '@core/models/produttore.models';
             </mat-error>
             <mat-error *ngIf="productForm.get('quantitaDisponibile')?.hasError('min')">
               La quantità deve essere almeno 0
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Unità di Misura</mat-label>
+            <mat-select formControlName="unitaMisura" required>
+              <mat-option value="KG">Chilogrammi (kg)</mat-option>
+              <mat-option value="G">Grammi (g)</mat-option>
+              <mat-option value="L">Litri (l)</mat-option>
+              <mat-option value="ML">Millilitri (ml)</mat-option>
+              <mat-option value="BOTTIGLIE">Bottiglie</mat-option>
+              <mat-option value="CONFEZIONI">Confezioni</mat-option>
+              <mat-option value="PEZZI">Pezzi</mat-option>
+              <mat-option value="PACCHI">Pacchi</mat-option>
+            </mat-select>
+            <mat-error *ngIf="productForm.get('unitaMisura')?.hasError('required')">
+              L&apos;unità di misura è obbligatoria
             </mat-error>
           </mat-form-field>
         </div>
@@ -130,7 +155,8 @@ export class EditProductDialogComponent implements OnInit {
             nome: [this.data.nome, [Validators.required]],
             descrizione: [this.data.descrizione, [Validators.required]],
             prezzo: [this.data.prezzo, [Validators.required, Validators.min(0.01)]],
-            quantitaDisponibile: [this.data.quantitaDisponibile, [Validators.required, Validators.min(0)]]
+            quantitaDisponibile: [this.data.quantitaDisponibile, [Validators.required, Validators.min(0)]],
+            unitaMisura: [this.data.unitaMisura || 'KG', [Validators.required]]
         });
     }
 
@@ -139,7 +165,8 @@ export class EditProductDialogComponent implements OnInit {
         return formValue.nome !== this.data.nome ||
             formValue.descrizione !== this.data.descrizione ||
             formValue.prezzo !== this.data.prezzo ||
-            formValue.quantitaDisponibile !== this.data.quantitaDisponibile;
+            formValue.quantitaDisponibile !== this.data.quantitaDisponibile ||
+            formValue.unitaMisura !== (this.data.unitaMisura || 'KG');
     }
 
     onUpdate(): void {

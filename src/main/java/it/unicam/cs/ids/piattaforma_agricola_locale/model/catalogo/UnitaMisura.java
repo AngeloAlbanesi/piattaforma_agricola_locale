@@ -27,7 +27,27 @@ public enum UnitaMisura {
     /**
      * Millilitri
      */
-    ML("Millilitri");
+    ML("Millilitri"),
+    
+    /**
+     * Bottiglie
+     */
+    BOTTIGLIE("Bottiglie"),
+    
+    /**
+     * Confezioni
+     */
+    CONFEZIONI("Confezioni"),
+    
+    /**
+     * Pezzi
+     */
+    PEZZI("Pezzi"),
+    
+    /**
+     * Pacchi
+     */
+    PACCHI("Pacchi");
     
     private final String descrizione;
     

@@ -64,6 +64,10 @@
                     <mat-option value="G">Grammi (g)</mat-option>
                     <mat-option value="L">Litri (l)</mat-option>
                     <mat-option value="ML">Millilitri (ml)</mat-option>
+                    <mat-option value="BOTTIGLIE">Bottiglie</mat-option>
+                    <mat-option value="CONFEZIONI">Confezioni</mat-option>
+                    <mat-option value="PEZZI">Pezzi</mat-option>
+                    <mat-option value="PACCHI">Pacchi</mat-option>
                 </mat-select>
                 @if (productForm.get('unitaMisura')?.hasError('required') && productForm.get('unitaMisura')?.touched) {
                 <mat-error>{{ getErrorMessage('unitaMisura') }}</mat-error>

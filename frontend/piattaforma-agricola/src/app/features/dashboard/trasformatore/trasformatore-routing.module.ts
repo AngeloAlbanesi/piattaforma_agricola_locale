@@ -6,6 +6,7 @@ import { ROLES } from '@core/services/auth.service';
 import { TrasformatoreDashboardComponent } from './pages/trasformatore-dashboard/trasformatore-dashboard.component';
 import { ProdottiPageComponent } from './pages/prodotti-page/prodotti-page.component';
 import { OrdiniPageComponent } from './pages/ordini-page/ordini-page.component';
+import { ProcessoDetailPageComponent } from './pages/processo-detail-page/processo-detail-page.component';
 
 const routes: Routes = [
     {
@@ -33,6 +34,15 @@ const routes: Routes = [
         data: {
             expectedRole: ROLES.TRASFORMATORE,
             title: 'Gestione Ordini'
+        }
+    },
+    {
+        path: 'processi/:id',
+        component: ProcessoDetailPageComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+            expectedRole: ROLES.TRASFORMATORE,
+            title: 'Dettagli Processo'
         }
     }
 ];

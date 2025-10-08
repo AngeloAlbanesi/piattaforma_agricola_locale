@@ -8,10 +8,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
 
 @Component({
-    selector: 'app-trasformatore-add-product-certification-dialog',
+    selector: 'app-distributore-add-certification-dialog',
     standalone: true,
     imports: [
         CommonModule,
@@ -22,8 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
         MatButtonModule,
         MatIconModule,
         MatDatepickerModule,
-        MatNativeDateModule,
-        MatSelectModule
+        MatNativeDateModule
     ],
     template: `
     <h2 mat-dialog-title>
@@ -118,12 +116,12 @@ import { MatSelectModule } from '@angular/material/select';
     }
   `]
 })
-export class AddProductCertificationDialogComponent implements OnInit {
+export class AddCertificationDialogComponent implements OnInit {
     certificationForm!: FormGroup;
 
     constructor(
         private fb: FormBuilder,
-        private dialogRef: MatDialogRef<AddProductCertificationDialogComponent>,
+        private dialogRef: MatDialogRef<AddCertificationDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { productId: number; productName: string }
     ) { }
 
@@ -161,4 +159,3 @@ export class AddProductCertificationDialogComponent implements OnInit {
         return `${year}-${month}-${day}`;
     }
 }
-

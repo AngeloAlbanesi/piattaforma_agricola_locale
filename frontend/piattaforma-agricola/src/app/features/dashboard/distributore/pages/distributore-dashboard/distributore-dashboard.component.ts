@@ -19,6 +19,8 @@ import { DistributoreQuickActionsComponent } from '../../components/distributore
 import { PacchettiManagementComponent } from '../../components/pacchetti-management/pacchetti-management.component';
 import { DistributoreProductFormDialogComponent } from '../../components/distributore-product-form-dialog/distributore-product-form-dialog.component';
 import { PersonalDataCardComponent, CompanyDataCardComponent } from '../../../shared/components';
+import { DistributoreProdottiManagementComponent } from '../../components/distributore-prodotti-management/distributore-prodotti-management.component';
+import { CertificazioniDistributoreComponent } from '../../components/certificazioni-management/certificazioni-distributore.component';
 
 @Component({
     selector: 'app-distributore-dashboard',
@@ -38,7 +40,9 @@ import { PersonalDataCardComponent, CompanyDataCardComponent } from '../../../sh
         DistributoreQuickActionsComponent,
         PacchettiManagementComponent,
         PersonalDataCardComponent,
-        CompanyDataCardComponent
+        CompanyDataCardComponent,
+        DistributoreProdottiManagementComponent,
+        CertificazioniDistributoreComponent
     ],
     templateUrl: './distributore-dashboard.component.html',
     styleUrls: ['./distributore-dashboard.component.scss'],

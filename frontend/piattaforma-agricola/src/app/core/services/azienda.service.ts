@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AziendaDetailDTO, UpdateAziendaRequestDTO } from '../models/trasformatore.models';
 import { CertificationDTO, CreateCertificazioneRequestDTO } from '../models/produttore.models';
@@ -23,21 +23,27 @@ export class AziendaService {
      * Ottiene i dati dell'azienda dell'utente corrente
      */
     getMyCompany(): Observable<AziendaDetailDTO> {
-        return this.http.get<AziendaDetailDTO>(`${this.apiUrl}/aziende/mia-azienda`);
+        return this.http.get<AziendaDetailDTO>(`${this.apiUrl}/aziende/mia-azienda`).pipe(
+            tap(azienda => this.normalizeAzienda(azienda))
+        );
     }
 
     /**
      * Crea i dati dell'azienda
      */
     createCompany(request: UpdateAziendaRequestDTO): Observable<AziendaDetailDTO> {
-        return this.http.post<AziendaDetailDTO>(`${this.apiUrl}/azienda`, request);
+        return this.http.post<AziendaDetailDTO>(`${this.apiUrl}/azienda`, request).pipe(
+            tap(azienda => this.normalizeAzienda(azienda))
+        );
     }
 
     /**
      * Aggiorna i dati dell'azienda
      */
     updateCompany(id: number, request: UpdateAziendaRequestDTO): Observable<AziendaDetailDTO> {
-        return this.http.put<AziendaDetailDTO>(`${this.apiUrl}/azienda/${id}`, request);
+        return this.http.put<AziendaDetailDTO>(`${this.apiUrl}/azienda/${id}`, request).pipe(
+            tap(azienda => this.normalizeAzienda(azienda))
+        );
     }
 
     // === CERTIFICAZIONI AZIENDA ===
@@ -108,5 +114,25 @@ export class AziendaService {
             'DISTRIBUZIONE': 'Distribuzione'
         };
         return labels[tipo] || tipo;
+    }
+
+    /**
+     * Normalizza i dati dell'azienda assicurandosi che certificazioni sia sempre un array
+     * Questo risolve il problema NG02200 quando il backend restituisce certificazioni come oggetto
+     */
+    private normalizeAzienda(azienda: AziendaDetailDTO | null): void {
+        if (azienda && azienda.certificazioni) {
+            if (!Array.isArray(azienda.certificazioni)) {
+                console.warn('⚠️ [AziendaService] certificazioni non è un array, convertendolo:', azienda.certificazioni);
+                // Se certificazioni è un oggetto, prova a convertirlo in array
+                if (typeof azienda.certificazioni === 'object') {
+                    // Se è un oggetto con chiavi, converti in array
+                    azienda.certificazioni = Object.values(azienda.certificazioni) as any;
+                } else {
+                    // Altrimenti usa un array vuoto
+                    azienda.certificazioni = [];
+                }
+            }
+        }
     }
 }

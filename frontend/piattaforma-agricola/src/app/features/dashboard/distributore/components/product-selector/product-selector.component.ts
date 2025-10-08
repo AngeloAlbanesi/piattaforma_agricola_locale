@@ -16,6 +16,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 
 import { ProdottiService } from '../../../../../core/services/prodotti.service';
+import { DistributoreService } from '../../../../../core/services/distributore.service';
 import { ProdottoSummaryDTO } from '../../../../../core/models/common.models';
 
 export interface SelectedProduct {
@@ -62,7 +63,7 @@ export class ProductSelectorComponent implements OnInit, OnDestroy {
 
     @Input() selectedProducts: SelectedProduct[] = [];
     @Output() productsSelected = new EventEmitter<SelectedProduct[]>();
-    @Output() productQuantityChanged = new EventEmitter<{productId: number, quantity: number}>();
+    @Output() productQuantityChanged = new EventEmitter<{ productId: number, quantity: number }>();
     @Output() productRemoved = new EventEmitter<number>();
 
     // Form controls
@@ -75,7 +76,7 @@ export class ProductSelectorComponent implements OnInit, OnDestroy {
     filteredProducts: ProdottoSummaryDTO[] = [];
     categories: string[] = [];
     producers: string[] = [];
-    
+
     // State
     isLoading = false;
     showProductList = false;
@@ -88,9 +89,10 @@ export class ProductSelectorComponent implements OnInit, OnDestroy {
 
     constructor(
         private prodottiService: ProdottiService,
+        private distributoreService: DistributoreService,
         private snackBar: MatSnackBar,
         private cdr: ChangeDetectorRef
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.initializeSearchFilters();
@@ -131,35 +133,46 @@ export class ProductSelectorComponent implements OnInit, OnDestroy {
 
     private loadAvailableProducts(): void {
         this.isLoading = true;
-        
-        this.prodottiService.getProducts({
-            pagina: this.currentPage,
-            elementiPerPagina: 100, // Carichiamo più prodotti per il filtro locale
-            stato: 'APPROVATO' // Solo prodotti approvati
-        })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-            next: (response) => {
-                this.availableProducts = response.content || [];
-                this.totalProducts = response.totalElements || 0;
-                
-                // Estraiamo categorie e produttori univoci
-                this.extractUniqueValues();
-                this.applyFilters();
-                
-                this.isLoading = false;
-                this.cdr.markForCheck();
-            },
-            error: (error) => {
-                console.error('Errore nel caricamento prodotti:', error);
-                this.snackBar.open('Errore nel caricamento dei prodotti', 'Chiudi', {
-                    duration: 3000,
-                    panelClass: 'error-snackbar'
-                });
-                this.isLoading = false;
-                this.cdr.markForCheck();
-            }
-        });
+
+        // Load only the distributor's own products
+        this.distributoreService.getMyProducts()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (products) => {
+                    // Map DistributoreProductDTO to ProdottoSummaryDTO format
+                    this.availableProducts = products.map(p => ({
+                        id: p.id,
+                        nome: p.nome,
+                        descrizione: p.descrizione,
+                        prezzo: p.prezzo,
+                        quantitaDisponibile: p.quantitaDisponibile,
+                        unitaMisura: p.unitaMisura,
+                        stato: p.stato,
+                        categoria: '', // Distributore products may not have categoria
+                        produttore: {
+                            nomeAzienda: p.distributore?.nomeAzienda || 'N/A'
+                        }
+                    } as ProdottoSummaryDTO));
+
+                    this.totalProducts = products.length;
+
+                    // Estraiamo categorie e produttori univoci
+                    this.extractUniqueValues();
+                    this.applyFilters();
+
+                    this.isLoading = false;
+                    this.cdr.markForCheck();
+                },
+                error: (error) => {
+                    console.error('Errore nel caricamento prodotti:', error);
+                    this.snackBar.open('Errore nel caricamento dei prodotti', 'Chiudi', {
+                        duration: 3000,
+                        panelClass: 'error-snackbar'
+                    });
+                    this.isLoading = false;
+                    this.cdr.markForCheck();
+                }
+            });
     }
 
     private extractUniqueValues(): void {
@@ -184,7 +197,7 @@ export class ProductSelectorComponent implements OnInit, OnDestroy {
         // Filtro ricerca
         const searchTerm = this.searchControl.value?.toLowerCase().trim();
         if (searchTerm) {
-            filtered = filtered.filter(product => 
+            filtered = filtered.filter(product =>
                 product.nome.toLowerCase().includes(searchTerm) ||
                 product.descrizione?.toLowerCase().includes(searchTerm) ||
                 product.produttore?.nomeAzienda.toLowerCase().includes(searchTerm)
@@ -242,7 +255,7 @@ export class ProductSelectorComponent implements OnInit, OnDestroy {
         const updatedProducts = [...this.selectedProducts, selectedProduct];
         this.selectedProducts = updatedProducts;
         this.productsSelected.emit(updatedProducts);
-        
+
         // Riapplica i filtri per nascondere il prodotto appena aggiunto
         this.applyFilters();
     }
@@ -252,7 +265,7 @@ export class ProductSelectorComponent implements OnInit, OnDestroy {
         this.selectedProducts = updatedProducts;
         this.productsSelected.emit(updatedProducts);
         this.productRemoved.emit(productId);
-        
+
         // Riapplica i filtri per mostrare di nuovo il prodotto
         this.applyFilters();
     }
@@ -263,8 +276,8 @@ export class ProductSelectorComponent implements OnInit, OnDestroy {
             // Verifica limite massimo se disponibile
             if (product.maxQuantita && quantity > product.maxQuantita) {
                 this.snackBar.open(
-                    `Quantità massima disponibile: ${product.maxQuantita}`, 
-                    'Chiudi', 
+                    `Quantità massima disponibile: ${product.maxQuantita}`,
+                    'Chiudi',
                     { duration: 3000, panelClass: 'warning-snackbar' }
                 );
                 return;

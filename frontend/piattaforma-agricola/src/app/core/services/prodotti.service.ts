@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PaginatedResponse, ProdottoSummaryDTO } from '../models/common.models';
 import {
@@ -33,22 +33,29 @@ export class ProdottiService {
      */
     getMyProducts(filters?: ProdottoFilters): Observable<PaginatedResponse<ProdottoDTO>> {
         let params = this.buildParamsFromFilters(filters);
-        return this.http.get<PaginatedResponse<ProdottoDTO>>(`${this.apiUrl}/prodotti/miei-prodotti`, { params });
+        return this.http.get<PaginatedResponse<ProdottoDTO>>(`${this.apiUrl}/prodotti/miei-prodotti`, { params }).pipe(
+            map(response => {
+                if (response?.content) {
+                    response.content.forEach(product => this.normalizeProduct(product));
+                }
+                return response;
+            })
+        );
     }
 
     /**
      * Ottiene tutti i prodotti disponibili (per distributori)
      */
-    getProducts(filters?: { 
-        pagina?: number; 
-        elementiPerPagina?: number; 
+    getProducts(filters?: {
+        pagina?: number;
+        elementiPerPagina?: number;
         stato?: string;
         search?: string;
         categoria?: string;
         produttore?: string;
     }): Observable<PaginatedResponse<ProdottoSummaryDTO>> {
         let params = new HttpParams();
-        
+
         if (filters) {
             if (filters.pagina !== undefined) {
                 params = params.set('pagina', filters.pagina.toString());
@@ -69,29 +76,51 @@ export class ProdottiService {
                 params = params.set('produttore', filters.produttore);
             }
         }
-        
-        return this.http.get<PaginatedResponse<ProdottoSummaryDTO>>(`${this.apiUrl}/prodotti`, { params });
+
+        return this.http.get<PaginatedResponse<ProdottoSummaryDTO>>(`${this.apiUrl}/prodotti`, { params }).pipe(
+            map(response => {
+                if (response?.content) {
+                    response.content.forEach(product => this.normalizeProduct(product));
+                }
+                return response;
+            })
+        );
     }
 
     /**
      * Ottiene i dettagli di un prodotto specifico
      */
     getProductById(id: number): Observable<ProdottoDetailDTO> {
-        return this.http.get<ProdottoDetailDTO>(`${this.apiUrl}/prodotti/${id}`);
+        return this.http.get<ProdottoDetailDTO>(`${this.apiUrl}/prodotti/${id}`).pipe(
+            map(product => {
+                this.normalizeProduct(product);
+                return product;
+            })
+        );
     }
 
     /**
      * Crea un nuovo prodotto trasformato
      */
     createProduct(request: CreateProdottoRequestDTO): Observable<ProdottoDetailDTO> {
-        return this.http.post<ProdottoDetailDTO>(`${this.apiUrl}/prodotti`, request);
+        return this.http.post<ProdottoDetailDTO>(`${this.apiUrl}/prodotti`, request).pipe(
+            map(product => {
+                this.normalizeProduct(product);
+                return product;
+            })
+        );
     }
 
     /**
      * Aggiorna un prodotto esistente
      */
     updateProduct(id: number, request: UpdateProdottoRequestDTO): Observable<ProdottoDetailDTO> {
-        return this.http.put<ProdottoDetailDTO>(`${this.apiUrl}/prodotti/${id}`, request);
+        return this.http.put<ProdottoDetailDTO>(`${this.apiUrl}/prodotti/${id}`, request).pipe(
+            map(product => {
+                this.normalizeProduct(product);
+                return product;
+            })
+        );
     }
 
     /**
@@ -107,7 +136,12 @@ export class ProdottiService {
      * Aggiunge una certificazione a un prodotto
      */
     addCertification(productId: number, request: AddCertificazioneRequestDTO): Observable<ProdottoDetailDTO> {
-        return this.http.post<ProdottoDetailDTO>(`${this.apiUrl}/prodotti/${productId}/certificazioni`, request);
+        return this.http.post<ProdottoDetailDTO>(`${this.apiUrl}/prodotti/${productId}/certificazioni`, request).pipe(
+            map(product => {
+                this.normalizeProduct(product);
+                return product;
+            })
+        );
     }
 
     /**
@@ -208,5 +242,32 @@ export class ProdottiService {
             'RIFIUTATO': 'warn'
         };
         return colors[stato];
+    }
+
+    /**
+     * Normalizza un prodotto assicurandosi che certificazioni sia sempre un array
+     * Questo risolve il problema NG02200 quando il backend restituisce certificazioni come oggetto
+     */
+    private normalizeProduct(product: any): void {
+        if (product) {
+            // Normalizza certificazioni
+            if (product.certificazioni && !Array.isArray(product.certificazioni)) {
+                console.warn('⚠️ [ProdottiService] certificazioni non è un array, convertendolo:', product.certificazioni);
+                if (typeof product.certificazioni === 'object') {
+                    product.certificazioni = Object.values(product.certificazioni);
+                } else {
+                    product.certificazioni = [];
+                }
+            }
+            // Normalizza certificazioniDettagli se presente
+            if (product.certificazioniDettagli && !Array.isArray(product.certificazioniDettagli)) {
+                console.warn('⚠️ [ProdottiService] certificazioniDettagli non è un array, convertendolo:', product.certificazioniDettagli);
+                if (typeof product.certificazioniDettagli === 'object') {
+                    product.certificazioniDettagli = Object.values(product.certificazioniDettagli);
+                } else {
+                    product.certificazioniDettagli = [];
+                }
+            }
+        }
     }
 }

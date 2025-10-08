@@ -190,11 +190,35 @@ export class AuthService {
     // === PROFILO (documentazione curatore) ===
     getProfile(): Observable<UserDetailDTO> {
         // La doc richiede Authorization anche su /auth/profile
-        return this.http.get<UserDetailDTO>(`${this.apiAuthUrl}/profile`);
+        return this.http.get<UserDetailDTO>(`${this.apiAuthUrl}/profile`).pipe(
+            tap(profile => this.normalizeProfile(profile))
+        );
     }
 
     updateProfile(update: UserUpdateDTO): Observable<UserDetailDTO> {
-        return this.http.put<UserDetailDTO>(`${this.apiAuthUrl}/profile`, update);
+        return this.http.put<UserDetailDTO>(`${this.apiAuthUrl}/profile`, update).pipe(
+            tap(profile => this.normalizeProfile(profile))
+        );
+    }
+
+    /**
+     * Normalizza il profilo utente assicurandosi che ruoli sia sempre un array
+     * Questo risolve il problema NG02200 quando il backend restituisce ruoli come oggetto
+     */
+    private normalizeProfile(profile: UserDetailDTO | null): void {
+        if (profile && (profile as any).ruoli) {
+            if (!Array.isArray((profile as any).ruoli)) {
+                console.warn('⚠️ [AuthService] ruoli non è un array, convertendolo:', (profile as any).ruoli);
+                // Se ruoli è un oggetto, prova a convertirlo in array
+                if (typeof (profile as any).ruoli === 'object') {
+                    // Se è un oggetto con chiavi, converti in array
+                    (profile as any).ruoli = Object.values((profile as any).ruoli);
+                } else {
+                    // Altrimenti usa un array vuoto
+                    (profile as any).ruoli = [];
+                }
+            }
+        }
     }
 }
 

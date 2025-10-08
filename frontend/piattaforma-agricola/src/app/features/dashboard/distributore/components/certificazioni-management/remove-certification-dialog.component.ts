@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { CertificazioneProdottoDTO } from '@core/models/trasformatore.models';
+import { CertificationDTO } from '../../../../../core/models/distributore.models';
 
 @Component({
-    selector: 'app-trasformatore-remove-certification-confirmation-dialog',
+    selector: 'app-distributore-remove-certification-dialog',
     standalone: true,
     imports: [
         CommonModule,
@@ -61,10 +61,10 @@ import { CertificazioneProdottoDTO } from '@core/models/trasformatore.models';
     }
   `]
 })
-export class RemoveCertificationConfirmationDialogComponent {
+export class RemoveCertificationDialogComponent {
     constructor(
-        private dialogRef: MatDialogRef<RemoveCertificationConfirmationDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: CertificazioneProdottoDTO
+        private dialogRef: MatDialogRef<RemoveCertificationDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: CertificationDTO
     ) { }
 
     onConfirm(): void {
@@ -75,4 +75,3 @@ export class RemoveCertificationConfirmationDialogComponent {
         this.dialogRef.close(false);
     }
 }
-

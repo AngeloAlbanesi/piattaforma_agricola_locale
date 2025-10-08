@@ -7,107 +7,111 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DistributoreService } from '@core/services/distributore.service';
 import { DistributoreProductDTO } from '@core/models/distributore.models';
 import { DistributoreProductFormDialogComponent } from '../distributore-product-form-dialog/distributore-product-form-dialog.component';
 
 @Component({
-  selector: 'app-distributore-prodotti-management',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTableModule,
-    MatCardModule,
-    MatDialogModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule
-  ],
-  templateUrl: './distributore-prodotti-management.component.html',
-  styleUrls: ['./distributore-prodotti-management.component.scss']
+    selector: 'app-distributore-prodotti-management',
+    standalone: true,
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTableModule,
+        MatCardModule,
+        MatDialogModule,
+        MatProgressSpinnerModule,
+        MatSnackBarModule,
+        MatTooltipModule
+    ],
+    templateUrl: './distributore-prodotti-management.component.html',
+    styleUrls: ['./distributore-prodotti-management.component.scss']
 })
 export class DistributoreProdottiManagementComponent implements OnInit {
-  products: DistributoreProductDTO[] = [];
-  isLoading = false;
-  
-  displayedColumns: string[] = ['nome', 'prezzo', 'quantita', 'unitaMisura', 'stato', 'azioni'];
+    products: DistributoreProductDTO[] = [];
+    isLoading = false;
 
-  constructor(
-    private distributoreService: DistributoreService,
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) {}
+    displayedColumns: string[] = ['nome', 'prezzo', 'quantita', 'unitaMisura', 'stato', 'azioni'];
 
-  ngOnInit(): void {
-    this.loadProducts();
-  }
+    constructor(
+        private distributoreService: DistributoreService,
+        private dialog: MatDialog,
+        private snackBar: MatSnackBar
+    ) { }
 
-  loadProducts(): void {
-    this.isLoading = true;
-    this.distributoreService.getMyProducts().subscribe({
-      next: (products) => {
-        this.products = products;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Errore nel caricamento prodotti:', error);
-        this.snackBar.open('Errore nel caricamento dei prodotti', 'Chiudi', { duration: 3000 });
-        this.isLoading = false;
-      }
-    });
-  }
-
-  openCreateProductDialog(): void {
-    const dialogRef = this.dialog.open(DistributoreProductFormDialogComponent, {
-      width: '600px',
-      data: {
-        mode: 'create'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+    ngOnInit(): void {
         this.loadProducts();
-      }
-    });
-  }
-
-  openEditProductDialog(product: DistributoreProductDTO): void {
-    const dialogRef = this.dialog.open(DistributoreProductFormDialogComponent, {
-      width: '600px',
-      data: {
-        mode: 'edit',
-        product: product
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadProducts();
-      }
-    });
-  }
-
-  deleteProduct(product: DistributoreProductDTO): void {
-    if (confirm(`Sei sicuro di voler eliminare il prodotto "${product.nome}"?`)) {
-      this.distributoreService.deleteProduct(product.id).subscribe({
-        next: () => {
-          this.snackBar.open('Prodotto eliminato con successo', 'Chiudi', { duration: 3000 });
-          this.loadProducts();
-        },
-        error: (error) => {
-          console.error('Errore nell\'eliminazione del prodotto:', error);
-          this.snackBar.open('Errore nell\'eliminazione del prodotto', 'Chiudi', { duration: 3000 });
-        }
-      });
     }
-  }
 
-  formatCurrency(value: number): string {
-    return new Intl.NumberFormat('it-IT', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(value);
-  }
+    loadProducts(): void {
+        this.isLoading = true;
+        this.distributoreService.getMyProducts().subscribe({
+            next: (products) => {
+                // Ensure products is always an array
+                this.products = Array.isArray(products) ? products : [];
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Errore nel caricamento prodotti:', error);
+                this.snackBar.open('Errore nel caricamento dei prodotti', 'Chiudi', { duration: 3000 });
+                this.products = [];
+                this.isLoading = false;
+            }
+        });
+    }
+
+    openCreateProductDialog(): void {
+        const dialogRef = this.dialog.open(DistributoreProductFormDialogComponent, {
+            width: '600px',
+            data: {
+                mode: 'create'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.loadProducts();
+            }
+        });
+    }
+
+    openEditProductDialog(product: DistributoreProductDTO): void {
+        const dialogRef = this.dialog.open(DistributoreProductFormDialogComponent, {
+            width: '600px',
+            data: {
+                mode: 'edit',
+                product: product
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.loadProducts();
+            }
+        });
+    }
+
+    deleteProduct(product: DistributoreProductDTO): void {
+        if (confirm(`Sei sicuro di voler eliminare il prodotto "${product.nome}"?`)) {
+            this.distributoreService.deleteProduct(product.id).subscribe({
+                next: () => {
+                    this.snackBar.open('Prodotto eliminato con successo', 'Chiudi', { duration: 3000 });
+                    this.loadProducts();
+                },
+                error: (error) => {
+                    console.error('Errore nell\'eliminazione del prodotto:', error);
+                    this.snackBar.open('Errore nell\'eliminazione del prodotto', 'Chiudi', { duration: 3000 });
+                }
+            });
+        }
+    }
+
+    formatCurrency(value: number): string {
+        return new Intl.NumberFormat('it-IT', {
+            style: 'currency',
+            currency: 'EUR'
+        }).format(value);
+    }
 }

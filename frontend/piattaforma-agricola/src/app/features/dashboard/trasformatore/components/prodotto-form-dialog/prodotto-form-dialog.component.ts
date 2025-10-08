@@ -10,7 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProdottiService } from '@core/services/prodotti.service';
-import { ProdottoDTO, CreateProdottoRequestDTO, UpdateProdottoRequestDTO } from '@core/models/trasformatore.models';
+import { TrasformatoreService } from '@core/services/trasformatore.service';
+import { ProdottoDTO, CreateProdottoRequestDTO, UpdateProdottoRequestDTO, ProcessoTrasformazioneSummaryDTO } from '@core/models/trasformatore.models';
 
 export interface ProdottoFormDialogData {
     mode: 'create' | 'edit';
@@ -39,10 +40,12 @@ export class ProdottoFormDialogComponent implements OnInit {
     productForm: FormGroup;
     isLoading = false;
     isEditMode = false;
+    processi: ProcessoTrasformazioneSummaryDTO[] = [];
 
     constructor(
         private fb: FormBuilder,
         private prodottiService: ProdottiService,
+        private trasformatoreService: TrasformatoreService,
         private snackBar: MatSnackBar,
         public dialogRef: MatDialogRef<ProdottoFormDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ProdottoFormDialogData
@@ -52,6 +55,7 @@ export class ProdottoFormDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.loadProcessi();
         if (this.isEditMode && this.data.product) {
             this.populateForm(this.data.product);
         }
@@ -64,7 +68,8 @@ export class ProdottoFormDialogComponent implements OnInit {
             prezzo: ['', [Validators.required, Validators.min(0.01)]],
             quantitaDisponibile: ['', [Validators.required, Validators.min(0)]],
             unitaMisura: ['', Validators.required],
-            tipoOrigine: ['TRASFORMATO']
+            tipoOrigine: ['TRASFORMATO'],
+            processoTrasformazioneId: [null]
         });
     }
 
@@ -74,7 +79,20 @@ export class ProdottoFormDialogComponent implements OnInit {
             descrizione: product.descrizione,
             prezzo: product.prezzo,
             quantitaDisponibile: product.quantitaDisponibile,
-            unitaMisura: product.unitaMisura
+            unitaMisura: product.unitaMisura,
+            processoTrasformazioneId: (product as any).processoTrasformazioneId || null
+        });
+    }
+
+    loadProcessi(): void {
+        this.trasformatoreService.getMyProcesses().subscribe({
+            next: (response) => {
+                this.processi = response.content || [];
+            },
+            error: (error) => {
+                console.error('Errore nel caricamento dei processi:', error);
+                this.snackBar.open('Errore nel caricamento dei processi', 'Chiudi', { duration: 3000 });
+            }
         });
     }
 
@@ -102,7 +120,8 @@ export class ProdottoFormDialogComponent implements OnInit {
             prezzo: formValue.prezzo,
             quantitaDisponibile: formValue.quantitaDisponibile,
             unitaMisura: formValue.unitaMisura,
-            tipoOrigine: formValue.tipoOrigine || 'TRASFORMATO'
+            tipoOrigine: formValue.tipoOrigine || 'TRASFORMATO',
+            idProcessoTrasformazioneOriginario: formValue.processoTrasformazioneId || undefined
         };
 
         this.prodottiService.createProduct(request).subscribe({

@@ -79,8 +79,10 @@
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>Processo di Trasformazione (opzionale)</mat-label>
             <mat-select formControlName="processoTrasformazioneId">
-                <mat-option value="">Nessuno</mat-option>
-                <!-- Le opzioni verrebbero caricate dinamicamente -->
+                <mat-option [value]="null">Nessuno</mat-option>
+                @for (processo of processi; track processo.id) {
+                <mat-option [value]="processo.id">{{ processo.nome }}</mat-option>
+                }
             </mat-select>
             <mat-hint>Collega questo prodotto a un processo di trasformazione</mat-hint>
         </mat-form-field>

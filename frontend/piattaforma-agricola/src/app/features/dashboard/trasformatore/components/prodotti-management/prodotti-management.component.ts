@@ -19,6 +19,7 @@ import { Router } from '@angular/router';
 import { ProdottiService } from '@core/services/prodotti.service';
 import { ProdottoDTO, ProdottoFilters } from '@core/models/trasformatore.models';
 import { ProdottoFormDialogComponent } from '../prodotto-form-dialog/prodotto-form-dialog.component';
+import { ProductDetailDialogComponent } from './product-detail-dialog.component';
 
 @Component({
     selector: 'app-prodotti-management',
@@ -134,10 +135,16 @@ export class ProdottiManagementComponent implements OnInit {
         });
     }
 
-    editProduct(product: ProdottoDTO): void {
+    editProduct(product: any): void {
+        // Normalizza il prodotto per avere sempre il campo 'id'
+        const normalizedProduct = {
+            ...product,
+            id: product.id || product.idProdotto
+        };
+
         const dialogRef = this.dialog.open(ProdottoFormDialogComponent, {
             width: '800px',
-            data: { mode: 'edit', product }
+            data: { mode: 'edit', product: normalizedProduct }
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -148,13 +155,27 @@ export class ProdottiManagementComponent implements OnInit {
         });
     }
 
-    viewProduct(product: ProdottoDTO): void {
-        this.router.navigate(['/dashboard/trasformatore/prodotti', product.id]);
+    viewProduct(product: any): void {
+        const dialogRef = this.dialog.open(ProductDetailDialogComponent, {
+            width: '900px',
+            maxWidth: '95vw',
+            maxHeight: '90vh',
+            data: {
+                productId: product.id || product.idProdotto,
+                productSummary: product
+            },
+            panelClass: 'product-detail-dialog-container'
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
+            console.log('Product detail dialog closed');
+        });
     }
 
-    deleteProduct(product: ProdottoDTO): void {
+    deleteProduct(product: any): void {
+        const productId = product.id || product.idProdotto;
         if (confirm(`Sei sicuro di voler eliminare il prodotto "${product.nome}"?`)) {
-            this.prodottiService.deleteProduct(product.id).subscribe({
+            this.prodottiService.deleteProduct(productId).subscribe({
                 next: () => {
                     this.snackBar.open('Prodotto eliminato con successo', 'Chiudi', { duration: 3000 });
                     this.loadProducts();

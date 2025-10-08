@@ -3,6 +3,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.service.mapper;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.processo.FaseLavorazioneDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.processo.ProcessoTrasformazioneDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.processo.ProcessoTrasformazioneResponseDTO;
+import it.unicam.cs.ids.piattaforma_agricola_locale.dto.processo.ProcessoTrasformazioneSummaryDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.FaseLavorazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.ProcessoTrasformazione;
 import org.mapstruct.*;
@@ -50,6 +51,22 @@ public interface ProcessoMapper {
     @Mapping(target = "cognomeTrasformatore", source = "trasformatore.cognome")
     @Mapping(target = "aziendaTrasformatore", source = "trasformatore.datiAzienda.nomeAzienda", defaultValue = "N/D")
     ProcessoTrasformazioneResponseDTO toResponseDto(ProcessoTrasformazione processo);
+
+    /**
+     * Converte un'entità ProcessoTrasformazione in un DTO semplificato per la
+     * lista.
+     *
+     * @param processo l'entità ProcessoTrasformazione da convertire.
+     * @return il ProcessoTrasformazioneSummaryDTO risultante.
+     */
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "nome", source = "nome")
+    @Mapping(target = "descrizione", source = "descrizione")
+    @Mapping(target = "stato", constant = "IN_PROGETTAZIONE")
+    @Mapping(target = "dataCreazione", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "dataUltimaModifica", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "numeroFasi", expression = "java(processo.getFasiLavorazione() != null ? processo.getFasiLavorazione().size() : 0)")
+    ProcessoTrasformazioneSummaryDTO toSummaryDto(ProcessoTrasformazione processo);
 
     /**
      * Converte un'entità FaseLavorazione nel suo DTO corrispondente.

@@ -2,6 +2,14 @@
  * Modelli TypeScript per il Trasformatore basati sulle API del backend
  */
 
+// === PRODUTTORI ===
+export interface ProduttoreSummaryDTO {
+    id: number;
+    nome: string;
+    cognome: string;
+    nomeAzienda: string;
+}
+
 // === PROCESSI DI TRASFORMAZIONE ===
 export interface ProcessoTrasformazioneSummaryDTO {
     id: number;
@@ -41,37 +49,37 @@ export interface FaseLavorazioneDTO {
     id: number;
     nome: string;
     descrizione: string;
-    ordine: number;
-    durataPrevista: number;
-    durataEffettiva?: number;
-    stato: string;
-    dataInizio?: string;
-    dataFine?: string;
-    tecniche: string[];
-    attrezzature: string[];
-    materiali: string[];
-    note?: string;
+    ordineEsecuzione: number;
+    materiaPrimaUtilizzata: string;
+    fonte: {
+        tipo: 'ESTERNA' | 'INTERNA';
+        nomeFornitore?: string; // Solo per tipo ESTERNA
+        produttoreId?: number; // Solo per tipo INTERNA
+    };
 }
 
 export interface CreateFaseLavorazioneRequestDTO {
     nome: string;
     descrizione: string;
-    ordine: number;
-    durataPrevista: number;
-    tecniche: string[];
-    attrezzature: string[];
-    materiali: string[];
-    note?: string;
+    ordineEsecuzione: number;
+    materiaPrimaUtilizzata: string;
+    fonte: {
+        tipo: 'ESTERNA' | 'INTERNA';
+        nomeFornitore?: string; // Solo per tipo ESTERNA
+        produttoreId?: number; // Solo per tipo INTERNA
+    };
 }
 
 export interface UpdateFaseLavorazioneRequestDTO {
     nome?: string;
     descrizione?: string;
-    durataPrevista?: number;
-    tecniche?: string[];
-    attrezzature?: string[];
-    materiali?: string[];
-    note?: string;
+    ordineEsecuzione?: number;
+    materiaPrimaUtilizzata?: string;
+    fonte?: {
+        tipo: 'ESTERNA' | 'INTERNA';
+        nomeFornitore?: string; // Solo per tipo ESTERNA
+        produttoreId?: number; // Solo per tipo INTERNA
+    };
 }
 
 // === TRACCIABILITÀ ===
@@ -219,32 +227,38 @@ export enum CategoriaCosto {
 export interface CreateProcessoRequestDTO {
     nome: string;
     descrizione: string;
-    prodottiInput: Array<{
-        id: number;
-        quantita: number;
-    }>;
-    prodottiOutput: Array<{
-        id: number;
-        quantita: number;
-    }>;
+    metodoProduzione?: string;
+    prodottoFinaleId?: number;
 }
 
 export interface UpdateProcessoRequestDTO {
     nome?: string;
     descrizione?: string;
-    prodottiInput?: Array<{
-        id: number;
-        quantita: number;
-    }>;
-    prodottiOutput?: Array<{
-        id: number;
-        quantita: number;
-    }>;
+    metodoProduzione?: string;
 }
 
 export interface UpdateStatoProcessoRequestDTO {
     stato: string;
     note?: string;
+}
+
+// === INTERFACCE PER DIALOG ===
+export interface ProcessoDialogData {
+    processo?: ProcessoTrasformazioneSummaryDTO | null;
+    isEditMode: boolean;
+}
+
+export interface FaseDialogData {
+    fase?: FaseLavorazioneDTO | null;
+    processoId: number;
+    isEditMode: boolean;
+}
+
+export interface DeleteConfirmationDialogData {
+    title: string;
+    message: string;
+    confirmText?: string;
+    cancelText?: string;
 }
 
 // === AZIONI RAPIDE TRASFORMATORE ===

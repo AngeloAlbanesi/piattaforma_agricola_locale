@@ -1,0 +1,62 @@
+.delete-dialog-container {
+    min-width: 400px;
+    max-width: 500px;
+
+    .dialog-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+
+        .warning-icon {
+            color: #f44336;
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 500;
+        }
+    }
+
+    mat-dialog-content {
+        padding: 16px 0;
+
+        .dialog-message {
+            font-size: 16px;
+            line-height: 1.5;
+            color: rgba(0, 0, 0, 0.87);
+            margin-bottom: 12px;
+        }
+
+        .dialog-warning {
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.6);
+            font-style: italic;
+            margin: 0;
+        }
+    }
+
+    mat-dialog-actions {
+        padding: 16px 0 0 0;
+        gap: 8px;
+
+        .cancel-button {
+            min-width: 80px;
+        }
+
+        .confirm-button {
+            min-width: 100px;
+
+            mat-icon {
+                margin-right: 8px;
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+            }
+        }
+    }
+}

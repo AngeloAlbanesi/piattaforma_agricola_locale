@@ -1,0 +1,65 @@
+<div class="processo-dialog-container">
+    <div class="dialog-header">
+        <mat-icon class="header-icon">{{ isEditMode ? 'edit' : 'add_circle' }}</mat-icon>
+        <h2 mat-dialog-title>{{ isEditMode ? 'Modifica Processo' : 'Nuovo Processo' }}</h2>
+    </div>
+
+    <form [formGroup]="processoForm" (ngSubmit)="onSave()">
+        <mat-dialog-content>
+            <div class="form-container">
+                <!-- Nome Processo -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Nome Processo</mat-label>
+                    <input matInput formControlName="nome" placeholder="Es: Produzione Pasta Fresca" maxlength="100">
+                    <mat-icon matPrefix>label</mat-icon>
+                    <mat-hint align="end">{{ processoForm.get('nome')?.value?.length || 0 }}/100</mat-hint>
+                    <mat-error *ngIf="processoForm.get('nome')?.hasError('required')">
+                        {{ getErrorMessage('nome') }}
+                    </mat-error>
+                    <mat-error *ngIf="processoForm.get('nome')?.hasError('minlength')">
+                        {{ getErrorMessage('nome') }}
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Descrizione -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Descrizione</mat-label>
+                    <textarea matInput formControlName="descrizione"
+                        placeholder="Descrivi il processo di trasformazione..." rows="4" maxlength="500">
+          </textarea>
+                    <mat-icon matPrefix>description</mat-icon>
+                    <mat-hint align="end">{{ processoForm.get('descrizione')?.value?.length || 0 }}/500</mat-hint>
+                    <mat-error *ngIf="processoForm.get('descrizione')?.hasError('required')">
+                        {{ getErrorMessage('descrizione') }}
+                    </mat-error>
+                    <mat-error *ngIf="processoForm.get('descrizione')?.hasError('minlength')">
+                        {{ getErrorMessage('descrizione') }}
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Metodo di Produzione -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Metodo di Produzione</mat-label>
+                    <input matInput formControlName="metodoProduzione"
+                        placeholder="Es: Manuale, Automatizzato, Semi-automatico" maxlength="200">
+                    <mat-icon matPrefix>settings</mat-icon>
+                    <mat-hint>Campo opzionale</mat-hint>
+                    <mat-error *ngIf="processoForm.get('metodoProduzione')?.hasError('maxlength')">
+                        {{ getErrorMessage('metodoProduzione') }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </mat-dialog-content>
+
+        <mat-dialog-actions align="end">
+            <button mat-button type="button" (click)="onCancel()" class="cancel-button">
+                Annulla
+            </button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="!processoForm.valid"
+                class="save-button">
+                <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+                {{ isEditMode ? 'Salva Modifiche' : 'Crea Processo' }}
+            </button>
+        </mat-dialog-actions>
+    </form>
+</div>

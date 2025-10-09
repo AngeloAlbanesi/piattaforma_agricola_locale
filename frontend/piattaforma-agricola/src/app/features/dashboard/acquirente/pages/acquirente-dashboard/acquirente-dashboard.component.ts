@@ -136,6 +136,10 @@ export class AcquirenteDashboardComponent implements OnInit, OnDestroy {
         this.router.navigate(['/ordini']);
     }
 
+    navigateToHome(): void {
+        this.router.navigate(['/']);
+    }
+
     navigateToEvents(): void {
         this.router.navigate(['/']);
     }

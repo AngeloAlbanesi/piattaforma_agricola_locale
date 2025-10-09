@@ -115,6 +115,10 @@ export class TrasformatoreDashboardComponent implements OnInit {
         // Potenziale logica per caricare dati specifici della tab
     }
 
+    navigateToHome(): void {
+        this.router.navigate(['/']);
+    }
+
     logout(): void {
         this.authService.logout();
     }

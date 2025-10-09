@@ -159,6 +159,10 @@ export class ProduttoreDashboardComponent implements OnInit, OnDestroy {
         this.loadDashboardStats();
     }
 
+    navigateToHome(): void {
+        this.router.navigate(['/']);
+    }
+
     logout(): void {
         this.authService.logout();
     }

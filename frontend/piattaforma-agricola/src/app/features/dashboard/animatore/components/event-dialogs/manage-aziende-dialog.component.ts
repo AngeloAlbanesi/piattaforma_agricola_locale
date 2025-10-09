@@ -13,6 +13,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AziendaPartecipanteDTO } from '../../../../../core/models/animatore.models';
+import { PublicAziendeService } from '../../../../../core/services/public-aziende.service';
+import { PublicAziendaSummaryDTO } from '../../../../../core/models/public.models';
 
 export interface ManageAziendeDialogData {
     eventoId: number;
@@ -294,11 +296,13 @@ export class ManageAziendeDialogComponent implements OnInit {
     addForm: FormGroup;
     filteredAziende$: Observable<AziendaPartecipanteDTO[]>;
     aziendeNonPartecipanti: AziendaPartecipanteDTO[] = [];
+    isLoadingAziende = true;
 
     constructor(
         public dialogRef: MatDialogRef<ManageAziendeDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ManageAziendeDialogData,
-        private fb: FormBuilder
+        private fb: FormBuilder,
+        private publicAziendeService: PublicAziendeService
     ) {
         this.addForm = this.fb.group({
             aziendaSearch: ['']
@@ -308,14 +312,48 @@ export class ManageAziendeDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // Filtra le aziende disponibili escludendo quelle già partecipanti
-        this.updateAziendeNonPartecipanti();
+        // Fetch all available companies from public API
+        this.loadAziendeDisponibili();
 
         // Setup autocomplete
         this.filteredAziende$ = this.addForm.get('aziendaSearch')!.valueChanges.pipe(
             startWith(''),
             map(value => this._filterAziende(value))
         );
+    }
+
+    /**
+     * Load all available companies from the public API
+     */
+    private loadAziendeDisponibili(): void {
+        this.isLoadingAziende = true;
+        this.publicAziendeService.getAziende({ page: 0, size: 100 }).subscribe({
+            next: (response) => {
+                // Map PublicAziendaSummaryDTO to AziendaPartecipanteDTO
+                this.data.aziendeDisponibili = response.content.map(azienda => this.mapToAziendaPartecipante(azienda));
+                this.updateAziendeNonPartecipanti();
+                this.isLoadingAziende = false;
+            },
+            error: (err) => {
+                console.error('Error loading companies:', err);
+                this.isLoadingAziende = false;
+            }
+        });
+    }
+
+    /**
+     * Map PublicAziendaSummaryDTO to AziendaPartecipanteDTO
+     */
+    private mapToAziendaPartecipante(azienda: PublicAziendaSummaryDTO): AziendaPartecipanteDTO {
+        return {
+            id: azienda.id,
+            nomeAzienda: azienda.nomeAzienda,
+            partitaIva: '', // Not available in public API
+            indirizzoAzienda: this.publicAziendeService.formatIndirizzoCompleto(azienda),
+            descrizioneAzienda: azienda.descrizione,
+            sitoWebUrl: '', // Not available in summary DTO
+            certificazioniAzienda: []
+        };
     }
 
     private updateAziendeNonPartecipanti(): void {

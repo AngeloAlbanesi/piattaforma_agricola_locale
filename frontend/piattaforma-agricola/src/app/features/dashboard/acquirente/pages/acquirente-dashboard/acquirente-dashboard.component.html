@@ -8,6 +8,9 @@
       </div>
       
       <div class="header-actions" role="toolbar" aria-label="Azioni rapide">
+        <button mat-icon-button (click)="navigateToHome()" matTooltip="Home" aria-label="Vai alla home">
+          <mat-icon>home</mat-icon>
+        </button>
         <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati" aria-label="Aggiorna dati">
           <mat-icon>refresh</mat-icon>
         </button>

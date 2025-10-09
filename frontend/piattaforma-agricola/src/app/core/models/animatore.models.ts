@@ -52,8 +52,8 @@ export interface AnimatoreStatsDTO {
 export interface CreaEventoRequestDTO {
     nomeEvento: string;
     descrizione: string;
-    dataOraInizio: string;
-    dataOraFine: string;
+    dataOraInizio: string; // Format: "dd-MM-yyyy/HH-mm"
+    dataOraFine: string; // Format: "dd-MM-yyyy/HH-mm"
     luogoEvento: string;
     capienzaMassima?: number;
 }
@@ -63,8 +63,8 @@ export interface CreateEventoRequestDTO extends CreaEventoRequestDTO { } // Alia
 export interface AggiornaEventoRequestDTO {
     nomeEvento?: string;
     descrizione?: string;
-    dataOraInizio?: string;
-    dataOraFine?: string;
+    dataOraInizio?: string; // Format: "dd-MM-yyyy/HH-mm"
+    dataOraFine?: string; // Format: "dd-MM-yyyy/HH-mm"
     luogoEvento?: string;
     capienzaMassima?: number;
 }

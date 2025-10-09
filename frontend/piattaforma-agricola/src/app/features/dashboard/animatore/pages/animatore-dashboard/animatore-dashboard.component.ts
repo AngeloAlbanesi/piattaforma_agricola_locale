@@ -102,6 +102,10 @@ export class AnimatoreDashboardComponent implements OnInit, OnDestroy {
         this.router.navigate(['/feedback']);
     }
 
+    navigateToHome(): void {
+        this.router.navigate(['/']);
+    }
+
     navigateToProfile(): void {
         this.router.navigate(['/profilo']);
     }

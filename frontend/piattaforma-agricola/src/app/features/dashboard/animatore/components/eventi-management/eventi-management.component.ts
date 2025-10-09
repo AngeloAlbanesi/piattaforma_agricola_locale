@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -27,6 +27,8 @@ import { Router } from '@angular/router';
 import { PromoteEventDialogComponent } from '../event-dialogs/promote-event-dialog.component';
 import { ConfirmActionDialogComponent } from '../event-dialogs/confirm-action-dialog.component';
 import { ManageAziendeDialogComponent } from '../event-dialogs/manage-aziende-dialog.component';
+import { CreateEventDialogComponent } from '../event-dialogs/create-event-dialog.component';
+import { EditEventDialogComponent } from '../event-dialogs/edit-event-dialog.component';
 
 @Component({
     selector: 'app-eventi-management',
@@ -88,11 +90,13 @@ export class EventiManagementComponent implements OnInit {
         private animatoreService: AnimatoreService,
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
-        private router: Router
+        private router: Router,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
         this.loadEventi();
+
         this.searchTerms.pipe(
             debounceTime(300),
             distinctUntilChanged(),
@@ -101,13 +105,18 @@ export class EventiManagementComponent implements OnInit {
                 this.filters.pagina = 0;
                 return this.animatoreService.getMyEvents(this.filters);
             })
-        ).subscribe((data: PaginatedResponse<EventoDTO>) => {
-            this.dataSource.data = data.content;
-            this.totalElements = data.totalElements;
-            this.isLoading = false;
-        }, (error: any) => {
-            this.snackBar.open('Errore durante il caricamento degli eventi.', 'Chiudi', { duration: 3000 });
-            this.isLoading = false;
+        ).subscribe({
+            next: (data: PaginatedResponse<EventoDTO>) => {
+                this.dataSource.data = data.content || [];
+                this.totalElements = data.totalElements || 0;
+                this.isLoading = false;
+                this.cdr.markForCheck();
+            },
+            error: (error: any) => {
+                this.snackBar.open('Errore durante il caricamento degli eventi.', 'Chiudi', { duration: 3000 });
+                this.isLoading = false;
+                this.cdr.markForCheck();
+            }
         });
     }
 
@@ -130,13 +139,23 @@ export class EventiManagementComponent implements OnInit {
 
     loadEventi(): void {
         this.isLoading = true;
-        this.animatoreService.getMyEvents(this.filters).subscribe((data: PaginatedResponse<EventoDTO>) => {
-            this.dataSource.data = data.content;
-            this.totalElements = data.totalElements;
-            this.isLoading = false;
-        }, (error: any) => {
-            this.snackBar.open('Errore durante il caricamento degli eventi.', 'Chiudi', { duration: 3000 });
-            this.isLoading = false;
+        this.cdr.markForCheck();
+
+        this.animatoreService.getMyEvents(this.filters).subscribe({
+            next: (data: PaginatedResponse<EventoDTO>) => {
+                console.log('📊 Eventi caricati:', data);
+                this.dataSource.data = data.content || [];
+                this.totalElements = data.totalElements || 0;
+                this.isLoading = false;
+                this.cdr.markForCheck();
+            },
+            error: (error: any) => {
+                console.error('❌ Errore caricamento eventi:', error);
+                this.snackBar.open('Errore durante il caricamento degli eventi.', 'Chiudi', { duration: 3000 });
+                this.isLoading = false;
+                this.dataSource.data = [];
+                this.cdr.markForCheck();
+            }
         });
     }
 
@@ -152,11 +171,29 @@ export class EventiManagementComponent implements OnInit {
     }
 
     viewEventDetails(evento: EventoDTO): void {
-        this.router.navigate(['/dashboard/animatore/eventi', evento.id]);
+        const eventoId = (evento as any).idEvento || evento.id;
+        this.router.navigate(['/dashboard/animatore/eventi', eventoId]);
     }
 
     editEvent(evento: EventoDTO): void {
-        this.router.navigate(['/dashboard/animatore/eventi/edit', evento.id]);
+        const dialogRef = this.dialog.open(EditEventDialogComponent, {
+            width: '700px',
+            data: { evento }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.animatoreService.updateEvento(evento.id, result).subscribe({
+                    next: () => {
+                        this.snackBar.open('Evento aggiornato con successo', 'Chiudi', { duration: 3000 });
+                        this.loadEventi();
+                    },
+                    error: (err) => {
+                        this.snackBar.open('Errore durante l\'aggiornamento dell\'evento: ' + (err.error?.message || 'Errore sconosciuto'), 'Chiudi', { duration: 5000 });
+                    }
+                });
+            }
+        });
     }
 
     deleteEvent(evento: EventoDTO): void {
@@ -174,7 +211,8 @@ export class EventiManagementComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.animatoreService.deleteEvento(evento.id).subscribe({
+                const eventoId = (evento as any).idEvento || evento.id;
+                this.animatoreService.deleteEvento(eventoId).subscribe({
                     next: () => {
                         this.snackBar.open('Evento eliminato con successo', 'Chiudi', { duration: 3000 });
                         this.loadEventi();
@@ -204,7 +242,8 @@ export class EventiManagementComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.animatoreService.iniziaEvento(evento.id).subscribe({
+                const eventoId = (evento as any).idEvento || evento.id;
+                this.animatoreService.iniziaEvento(eventoId).subscribe({
                     next: () => {
                         this.snackBar.open('Evento avviato con successo', 'Chiudi', { duration: 3000 });
                         this.loadEventi();
@@ -232,7 +271,8 @@ export class EventiManagementComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.animatoreService.terminaEvento(evento.id).subscribe({
+                const eventoId = (evento as any).idEvento || evento.id;
+                this.animatoreService.terminaEvento(eventoId).subscribe({
                     next: () => {
                         this.snackBar.open('Evento terminato con successo', 'Chiudi', { duration: 3000 });
                         this.loadEventi();
@@ -260,7 +300,8 @@ export class EventiManagementComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.animatoreService.annullaEvento(evento.id).subscribe({
+                const eventoId = (evento as any).idEvento || evento.id;
+                this.animatoreService.annullaEvento(eventoId).subscribe({
                     next: () => {
                         this.snackBar.open('Evento annullato con successo', 'Chiudi', { duration: 3000 });
                         this.loadEventi();
@@ -281,7 +322,8 @@ export class EventiManagementComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe((result: PromoteRequestDTO | undefined) => {
             if (result) {
-                this.animatoreService.promoteEvento(evento.id, result).subscribe({
+                const eventoId = (evento as any).idEvento || evento.id;
+                this.animatoreService.promoteEvento(eventoId, result).subscribe({
                     next: (response) => {
                         this.snackBar.open(`Evento promosso con successo su ${response.canaliPromossi.length} canali`, 'Chiudi', { duration: 3000 });
                     },
@@ -294,8 +336,10 @@ export class EventiManagementComponent implements OnInit {
     }
 
     manageAziende(evento: EventoDTO): void {
+        const eventoId = (evento as any).idEvento || evento.id;
+
         // Carica le aziende partecipanti
-        this.animatoreService.getAziendePartecipanti(evento.id).subscribe({
+        this.animatoreService.getAziendePartecipanti(eventoId).subscribe({
             next: (aziendePartecipanti) => {
                 // TODO: Implementare chiamata per ottenere tutte le aziende disponibili
                 // Per ora usiamo un array vuoto
@@ -304,7 +348,7 @@ export class EventiManagementComponent implements OnInit {
                 const dialogRef = this.dialog.open(ManageAziendeDialogComponent, {
                     width: '800px',
                     data: {
-                        eventoId: evento.id,
+                        eventoId: eventoId,
                         eventoNome: this.animatoreService.getEventoNome(evento),
                         aziendePartecipanti,
                         aziendeDisponibili
@@ -314,7 +358,7 @@ export class EventiManagementComponent implements OnInit {
                 dialogRef.afterClosed().subscribe(result => {
                     if (result) {
                         if (result.action === 'add') {
-                            this.animatoreService.addAziendaPartecipante(evento.id, result.azienda.id).subscribe({
+                            this.animatoreService.addAziendaPartecipante(eventoId, result.azienda.id).subscribe({
                                 next: () => {
                                     this.snackBar.open('Azienda aggiunta con successo', 'Chiudi', { duration: 3000 });
                                     // Ricarica il dialog
@@ -325,7 +369,7 @@ export class EventiManagementComponent implements OnInit {
                                 }
                             });
                         } else if (result.action === 'remove') {
-                            this.animatoreService.removeAziendaPartecipante(evento.id, result.azienda.id).subscribe({
+                            this.animatoreService.removeAziendaPartecipante(eventoId, result.azienda.id).subscribe({
                                 next: () => {
                                     this.snackBar.open('Azienda rimossa con successo', 'Chiudi', { duration: 3000 });
                                     // Ricarica il dialog
@@ -346,8 +390,9 @@ export class EventiManagementComponent implements OnInit {
     }
 
     viewParticipants(evento: EventoDTO): void {
+        const eventoId = (evento as any).idEvento || evento.id;
         // Naviga alla pagina dei partecipanti
-        this.router.navigate(['/dashboard/animatore/eventi', evento.id, 'partecipanti']);
+        this.router.navigate(['/dashboard/animatore/eventi', eventoId, 'partecipanti']);
     }
 
     // === UTILITY METHODS ===
@@ -365,7 +410,23 @@ export class EventiManagementComponent implements OnInit {
     }
 
     createNewEvent(): void {
-        this.router.navigate(['/dashboard/animatore/eventi/nuovo']);
+        const dialogRef = this.dialog.open(CreateEventDialogComponent, {
+            width: '700px'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.animatoreService.createEvento(result).subscribe({
+                    next: () => {
+                        this.snackBar.open('Evento creato con successo', 'Chiudi', { duration: 3000 });
+                        this.loadEventi();
+                    },
+                    error: (err) => {
+                        this.snackBar.open('Errore durante la creazione dell\'evento: ' + (err.error?.message || 'Errore sconosciuto'), 'Chiudi', { duration: 5000 });
+                    }
+                });
+            }
+        });
     }
 
     getStatoClass(stato: string): string {

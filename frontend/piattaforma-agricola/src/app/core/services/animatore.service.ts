@@ -30,6 +30,7 @@ export class AnimatoreService {
     // === STATISTICHE ===
 
     getAnimatoreStats(): Observable<AnimatoreStatsDTO> {
+        // Note: This endpoint may not exist in backend - check API documentation
         return this.http.get<AnimatoreStatsDTO>(`${this.apiUrl}/animatore/stats`);
     }
 
@@ -38,11 +39,13 @@ export class AnimatoreService {
     getMyEvents(filters?: EventoFilters): Observable<PaginatedResponse<EventoDTO>> {
         let params = this.buildParamsFromFilters(filters);
 
-        return this.http.get<PaginatedResponse<EventoDTO>>(`${this.apiUrl}/animatore/eventi`, { params });
+        // Use public eventi endpoint with organizerId filter
+        // The backend will return events for the authenticated user if organizerId matches
+        return this.http.get<PaginatedResponse<EventoDTO>>(`${this.apiUrl}/eventi`, { params });
     }
 
     getEventById(eventId: number): Observable<EventoDTO> {
-        return this.http.get<EventoDTO>(`${this.apiUrl}/animatore/eventi/${eventId}`);
+        return this.http.get<EventoDTO>(`${this.apiUrl}/eventi/${eventId}`);
     }
 
     /**
@@ -77,9 +80,10 @@ export class AnimatoreService {
         return this.http.post<ShareResponseDTO>(`${this.apiUrl}/eventi/${eventId}/promote`, request);
     }
 
-    // Manteniamo per compatibilità con codice esistente
+    // Manteniamo per compatibilità con codice esistente (deprecato - usare promoteEvento)
     publishEvento(eventId: number): Observable<void> {
-        return this.http.post<void>(`${this.apiUrl}/animatore/eventi/${eventId}/pubblica`, {});
+        console.warn('publishEvento is deprecated - use promoteEvento instead');
+        return this.http.post<void>(`${this.apiUrl}/eventi/${eventId}/pubblica`, {});
     }
 
     // === GESTIONE PARTECIPANTI ===
@@ -93,7 +97,8 @@ export class AnimatoreService {
     }
 
     confirmParticipant(eventId: number, participantId: number): Observable<void> {
-        return this.http.post<void>(`${this.apiUrl}/animatore/eventi/${eventId}/partecipanti/${participantId}/conferma`, {});
+        // Note: This endpoint may not exist in backend - check API documentation
+        return this.http.post<void>(`${this.apiUrl}/eventi/${eventId}/partecipanti/${participantId}/conferma`, {});
     }
 
     // === GESTIONE STATO EVENTI (secondo API_ANIMATORE.md) ===
@@ -151,7 +156,8 @@ export class AnimatoreService {
     // === FEEDBACK ===
 
     getEventFeedback(eventId: number): Observable<FeedbackEventoDTO[]> {
-        return this.http.get<FeedbackEventoDTO[]>(`${this.apiUrl}/animatore/eventi/${eventId}/feedback`);
+        // Note: This endpoint may not exist in backend - check API documentation
+        return this.http.get<FeedbackEventoDTO[]>(`${this.apiUrl}/eventi/${eventId}/feedback`);
     }
 
     // === UTILITIES ===
@@ -219,15 +225,16 @@ export class AnimatoreService {
             }
 
             if (filters.organizzatoreId) {
-                params = params.set('organizzatoreId', filters.organizzatoreId.toString());
+                params = params.set('organizerId', filters.organizzatoreId.toString());
             }
 
+            // Use Spring Boot pagination parameter names
             if (filters.pagina !== undefined) {
-                params = params.set('pagina', filters.pagina.toString());
+                params = params.set('page', filters.pagina.toString());
             }
 
             if (filters.elementiPerPagina) {
-                params = params.set('elementiPerPagina', filters.elementiPerPagina.toString());
+                params = params.set('size', filters.elementiPerPagina.toString());
             }
         }
 
@@ -240,21 +247,24 @@ export class AnimatoreService {
      * Determina se un evento può essere avviato
      */
     canStartEvent(evento: EventoDTO): boolean {
-        return evento.stato === 'IN_PROGRAMMA';
+        const stato = (evento as any).statoEvento || evento.stato;
+        return stato === 'IN_PROGRAMMA';
     }
 
     /**
      * Determina se un evento può essere terminato
      */
     canEndEvent(evento: EventoDTO): boolean {
-        return evento.stato === 'IN_CORSO';
+        const stato = (evento as any).statoEvento || evento.stato;
+        return stato === 'IN_CORSO';
     }
 
     /**
      * Determina se un evento può essere annullato
      */
     canCancelEvent(evento: EventoDTO): boolean {
-        return evento.stato !== 'CONCLUSO' && evento.stato !== 'ANNULLATO';
+        const stato = (evento as any).statoEvento || evento.stato;
+        return stato !== 'CONCLUSO' && stato !== 'ANNULLATO';
     }
 
     /**
@@ -283,5 +293,12 @@ export class AnimatoreService {
      */
     getLuogo(evento: EventoDTO): string {
         return evento.luogoEvento || evento.luogo || '';
+    }
+
+    /**
+     * Ottiene l'ID dell'evento gestendo entrambi i formati
+     */
+    getEventoId(evento: EventoDTO | any): number {
+        return evento.idEvento || evento.id;
     }
 }

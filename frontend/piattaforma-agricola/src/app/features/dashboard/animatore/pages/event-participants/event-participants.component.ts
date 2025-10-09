@@ -254,6 +254,6 @@ export class EventParticipantsComponent implements OnInit {
     }
 
     goBack(): void {
-        this.router.navigate(['/dashboard/animatore/eventi']);
+        this.router.navigate(['/dashboard/animatore']);
     }
 }

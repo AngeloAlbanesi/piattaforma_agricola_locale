@@ -109,6 +109,10 @@ export class CuratoreDashboardComponent implements OnInit, OnDestroy {
         this.router.navigate(['/contenuti']);
     }
 
+    navigateToHome(): void {
+        this.router.navigate(['/']);
+    }
+
     navigateToProfile(): void {
         this.router.navigate(['/profilo']);
     }

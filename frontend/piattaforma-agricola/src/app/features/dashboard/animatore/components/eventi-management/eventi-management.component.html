@@ -36,7 +36,7 @@
                 <!-- ID Column -->
                 <ng-container matColumnDef="id">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-                    <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
+                    <td mat-cell *matCellDef="let element"> {{ element.idEvento || element.id }} </td>
                 </ng-container>
 
                 <!-- Titolo Column -->
@@ -52,7 +52,8 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Stato </th>
                     <td mat-cell *matCellDef="let element">
                         <mat-chip-listbox>
-                            <mat-chip [color]="getStatoClass(element.stato)" selected>{{ element.stato }}</mat-chip>
+                            <mat-chip [color]="getStatoClass(element.statoEvento || element.stato)" selected>{{
+                                element.statoEvento || element.stato }}</mat-chip>
                         </mat-chip-listbox>
                     </td>
                 </ng-container>
@@ -61,7 +62,8 @@
                 <ng-container matColumnDef="dataInizio">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Data Inizio </th>
                     <td mat-cell *matCellDef="let element">
-                        {{ (element.dataOraInizio || element.dataInizio) | date:'short':'':'it-IT' }}
+                        {{ (element.dataOraInizio || element.dataInizio) ? ((element.dataOraInizio ||
+                        element.dataInizio) | date:'dd-MM-yyyy') : 'N/A' }}
                     </td>
                 </ng-container>
 

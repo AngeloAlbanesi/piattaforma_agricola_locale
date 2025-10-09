@@ -4,6 +4,7 @@ import { authGuard } from '../../../core/guards/auth.guard';
 import { roleGuard } from '../../../core/guards/role.guard';
 import { ROLES } from '../../../core/services/auth.service';
 import { AnimatoreDashboardComponent } from './pages/animatore-dashboard/animatore-dashboard.component';
+import { EventParticipantsComponent } from './pages/event-participants/event-participants.component';
 
 const routes: Routes = [
     {
@@ -13,6 +14,15 @@ const routes: Routes = [
         data: {
             expectedRole: ROLES.ANIMATORE_FILIERA,
             title: 'Dashboard Animatore'
+        }
+    },
+    {
+        path: 'eventi/:id/partecipanti',
+        component: EventParticipantsComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+            expectedRole: ROLES.ANIMATORE_FILIERA,
+            title: 'Partecipanti Evento'
         }
     }
 ];

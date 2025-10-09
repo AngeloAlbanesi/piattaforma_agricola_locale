@@ -140,6 +140,10 @@ export class GestorePlatformaDashboardComponent implements OnInit, OnDestroy {
         this.router.navigate(['/dashboard/admin/impostazioni']);
     }
 
+    navigateToHome(): void {
+        this.router.navigate(['/']);
+    }
+
     navigateToProfile(): void {
         this.router.navigate(['/profilo']);
     }

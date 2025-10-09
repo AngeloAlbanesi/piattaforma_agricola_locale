@@ -114,4 +114,12 @@ export class DistributoreProdottiManagementComponent implements OnInit {
             currency: 'EUR'
         }).format(value);
     }
+
+    getStatusClass(stato: string): string {
+        return (stato || '').toLowerCase();
+    }
+
+    getStatusDisplay(stato: string): string {
+        return stato || 'Sconosciuto';
+    }
 }

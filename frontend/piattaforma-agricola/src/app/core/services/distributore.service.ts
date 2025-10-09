@@ -25,19 +25,27 @@ export class DistributoreService {
     // === PACCHETTI ===
 
     getMyPackages(): Observable<PacchettoTipicitaDTO[]> {
-        return this.http.get<PacchettoTipicitaDTO[]>(`${this.apiUrl}/pacchetti/miei-pacchetti`);
+        return this.http.get<any[]>(`${this.apiUrl}/pacchetti/miei-pacchetti`).pipe(
+            map(pacchetti => pacchetti.map(p => this.normalizePacchetto(p)))
+        );
     }
 
     getPackageById(id: number): Observable<DettaglioPacchettoDTO> {
-        return this.http.get<DettaglioPacchettoDTO>(`${this.apiUrl}/pacchetti/${id}`);
+        return this.http.get<any>(`${this.apiUrl}/pacchetti/${id}`).pipe(
+            map(p => this.normalizePacchettoDetails(p))
+        );
     }
 
     createPackage(request: CreatePacchettoRequestDTO): Observable<PacchettoTipicitaDTO> {
-        return this.http.post<PacchettoTipicitaDTO>(`${this.apiUrl}/pacchetti`, request);
+        return this.http.post<any>(`${this.apiUrl}/pacchetti`, request).pipe(
+            map(p => this.normalizePacchetto(p))
+        );
     }
 
     updatePackage(id: number, request: UpdatePacchettoRequestDTO): Observable<PacchettoTipicitaDTO> {
-        return this.http.put<PacchettoTipicitaDTO>(`${this.apiUrl}/pacchetti/${id}`, request);
+        return this.http.put<any>(`${this.apiUrl}/pacchetti/${id}`, request).pipe(
+            map(p => this.normalizePacchetto(p))
+        );
     }
 
     deletePackage(id: number): Observable<void> {
@@ -154,6 +162,76 @@ export class DistributoreService {
         }
 
         return `${prefix || ''}${sanitizedPath}` || sanitizedPath;
+    }
+
+    /**
+     * Normalizza i dati del pacchetto mappando i campi del backend a quelli del frontend
+     */
+    private normalizePacchetto(pacchetto: any): PacchettoTipicitaDTO {
+        console.log('🔧 [DistributoreService] Normalizzazione pacchetto prima:', pacchetto);
+
+        const normalized: any = {
+            id: pacchetto.idPacchetto || pacchetto.id,
+            nome: pacchetto.nome,
+            descrizione: pacchetto.descrizione,
+            prezzo: pacchetto.prezzoPacchetto || pacchetto.prezzo,
+            quantitaDisponibile: pacchetto.quantitaDisponibile,
+            immagineUrl: pacchetto.immagineUrl,
+            stato: pacchetto.stato || 'IN_PROGETTAZIONE',
+            dataCreazione: pacchetto.dataCreazione || new Date().toISOString(),
+            dataUltimaModifica: pacchetto.dataUltimaModifica || new Date().toISOString(),
+            prodotti: this.normalizeElementiToProdotti(pacchetto.elementiInclusi || []),
+            distributore: pacchetto.distributore ? {
+                id: pacchetto.distributore.idUtente || pacchetto.distributore.id,
+                nomeAzienda: pacchetto.distributore.nomeAzienda ||
+                    `${pacchetto.distributore.nome || ''} ${pacchetto.distributore.cognome || ''}`.trim(),
+                partitaIva: pacchetto.distributore.partitaIva || 'N/A'
+            } : undefined
+        };
+
+        // Preserva numeroElementi se presente (da PacchettoSummaryDTO)
+        if (pacchetto.numeroElementi !== undefined) {
+            normalized.numeroElementi = pacchetto.numeroElementi;
+        }
+
+        console.log('✅ [DistributoreService] Normalizzazione pacchetto dopo:', normalized);
+        return normalized as PacchettoTipicitaDTO;
+    }
+
+    /**
+     * Normalizza gli elementi inclusi nel pacchetto mappandoli ai prodotti
+     */
+    private normalizeElementiToProdotti(elementi: any[]): any[] {
+        if (!Array.isArray(elementi)) return [];
+
+        return elementi
+            .filter(el => el.tipoElemento === 'PRODOTTO')
+            .map(el => ({
+                id: el.idElemento,
+                nome: el.nomeElemento,
+                descrizione: el.descrizioneElemento,
+                prezzo: el.prezzoElemento,
+                quantita: el.quantita || 1,
+                produttore: {
+                    nomeAzienda: 'N/A'
+                }
+            }));
+    }
+
+    /**
+     * Normalizza i dati dettagliati del pacchetto per la visualizzazione
+     */
+    private normalizePacchettoDetails(pacchetto: any): DettaglioPacchettoDTO {
+        return {
+            ...this.normalizePacchetto(pacchetto),
+            certificazioni: pacchetto.certificazioni || [],
+            recensioni: pacchetto.recensioni || [],
+            statisticheVendite: pacchetto.statisticheVendite || {
+                venditeTotali: 0,
+                mediaValutazione: 0,
+                numeroRecensioni: 0
+            }
+        } as DettaglioPacchettoDTO;
     }
 
     /**

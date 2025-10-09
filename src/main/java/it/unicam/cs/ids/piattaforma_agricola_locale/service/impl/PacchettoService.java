@@ -67,6 +67,7 @@ public class PacchettoService implements IPacchettoService {
     }
 
     @Override
+    @Transactional
     public void aggiungiProdottoAlPacchetto(DistributoreDiTipicita distributore, Pacchetto pacchetto,
             Prodotto prodotto) {
         if (pacchetto == null || prodotto == null) {
@@ -80,7 +81,16 @@ public class PacchettoService implements IPacchettoService {
             throw new IllegalArgumentException("Il distributore non possiede questo pacchetto o prodotto");
         }
 
+        // Verifica disponibilità del prodotto
+        if (prodotto.getQuantitaDisponibile() <= 0) {
+            throw new IllegalArgumentException("Prodotto non disponibile");
+        }
+
         pacchetto.aggiungiElemento(prodotto);
+
+        // Sottrai quantità dal prodotto
+        prodotto.setQuantitaDisponibile(prodotto.getQuantitaDisponibile() - 1);
+
         this.pacchettoRepository.save(pacchetto);
 
     }

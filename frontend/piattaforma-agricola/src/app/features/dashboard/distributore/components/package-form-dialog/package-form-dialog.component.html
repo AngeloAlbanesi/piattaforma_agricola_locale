@@ -9,13 +9,10 @@
             <!-- Informazioni Base -->
             <div class="form-section">
                 <h3 class="section-title">Informazioni Pacchetto</h3>
-                
+
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Nome Pacchetto</mat-label>
-                    <input 
-                        matInput 
-                        formControlName="nome"
-                        placeholder="Es. Pacchetto Sapori Tradizionali"
+                    <input matInput formControlName="nome" placeholder="Es. Pacchetto Sapori Tradizionali"
                         maxlength="100">
                     <mat-icon matSuffix>title</mat-icon>
                     <mat-error *ngIf="hasError('nome', 'required')">
@@ -29,12 +26,9 @@
 
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Descrizione</mat-label>
-                    <textarea 
-                        matInput 
-                        formControlName="descrizione"
+                    <textarea matInput formControlName="descrizione"
                         placeholder="Descrivi il pacchetto, i suoi prodotti e le caratteristiche che lo rendono speciale..."
-                        rows="4"
-                        maxlength="500">
+                        rows="4" maxlength="500">
                     </textarea>
                     <mat-icon matSuffix>description</mat-icon>
                     <mat-error *ngIf="hasError('descrizione', 'required')">
@@ -48,21 +42,28 @@
 
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Prezzo Pacchetto</mat-label>
-                    <input 
-                        matInput 
-                        type="number" 
-                        formControlName="prezzo"
-                        placeholder="0.00"
-                        step="0.01"
+                    <input matInput type="number" formControlName="prezzoPacchetto" placeholder="0.00" step="0.01"
                         min="0.01">
                     <span matPrefix>€&nbsp;</span>
                     <mat-icon matSuffix>euro</mat-icon>
-                    <mat-error *ngIf="hasError('prezzo', 'required') || hasError('prezzo', 'min')">
-                        {{ getErrorMessage('prezzo') }}
+                    <mat-error *ngIf="hasError('prezzoPacchetto', 'required') || hasError('prezzoPacchetto', 'min')">
+                        {{ getErrorMessage('prezzoPacchetto') }}
                     </mat-error>
                     <mat-hint *ngIf="estimatedProductsCost > 0">
                         Costo prodotti: {{ formatCurrency(estimatedProductsCost) }}
                     </mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Quantità Disponibile</mat-label>
+                    <input matInput type="number" formControlName="quantitaDisponibile" placeholder="1" step="1"
+                        min="1">
+                    <mat-icon matSuffix>inventory_2</mat-icon>
+                    <mat-error
+                        *ngIf="hasError('quantitaDisponibile', 'required') || hasError('quantitaDisponibile', 'min')">
+                        {{ getErrorMessage('quantitaDisponibile') }}
+                    </mat-error>
+                    <mat-hint>Numero di pacchetti disponibili per la vendita</mat-hint>
                 </mat-form-field>
             </div>
 
@@ -72,9 +73,8 @@
                     <mat-icon>category</mat-icon>
                     Prodotti del Pacchetto
                 </h3>
-                
-                <app-product-selector
-                    [selectedProducts]="selectedProducts"
+
+                <app-product-selector [selectedProducts]="selectedProducts"
                     (productsSelected)="onProductsSelected($event)"
                     (productQuantityChanged)="onProductQuantityChanged($event.productId, $event.quantity)"
                     (productRemoved)="removeProduct($event)">
@@ -97,8 +97,7 @@
                     </div>
 
                     <div class="selected-products">
-                        <div 
-                            class="product-chip" 
+                        <div class="product-chip"
                             *ngFor="let product of selectedProducts; let i = index; trackBy: trackByProductId">
                             <div class="product-info">
                                 <span class="product-name">{{ product.nome }}</span>
@@ -106,10 +105,7 @@
                                     {{ product.quantita }}x {{ formatCurrency(product.prezzo) }}
                                 </span>
                             </div>
-                            <button 
-                                mat-icon-button 
-                                class="remove-btn"
-                                (click)="removeProduct(product.id)"
+                            <button mat-icon-button class="remove-btn" (click)="removeProduct(product.id)"
                                 matTooltip="Rimuovi prodotto">
                                 <mat-icon>close</mat-icon>
                             </button>
@@ -126,18 +122,11 @@
         </mat-dialog-content>
 
         <mat-dialog-actions class="dialog-actions">
-            <button 
-                mat-button 
-                type="button" 
-                (click)="onCancel()"
-                [disabled]="isLoading">
+            <button mat-button type="button" (click)="onCancel()" [disabled]="isLoading">
                 Annulla
             </button>
-            
-            <button 
-                mat-raised-button 
-                color="primary" 
-                type="submit"
+
+            <button mat-raised-button color="primary" type="submit"
                 [disabled]="isLoading || packageForm.invalid || selectedProducts.length === 0">
                 <mat-icon *ngIf="!isLoading">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
                 <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>

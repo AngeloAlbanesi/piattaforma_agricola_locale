@@ -8,6 +8,7 @@ export interface PacchettoTipicitaDTO {
     nome: string;
     descrizione: string;
     prezzo: number;
+    quantitaDisponibile?: number;
     immagineUrl?: string;
     stato: string;
     dataCreazione: string;
@@ -64,20 +65,24 @@ export interface DistributoreStatsDTO {
 export interface CreatePacchettoRequestDTO {
     nome: string;
     descrizione: string;
-    prezzo: number;
-    prodotti: Array<{
-        id: number;
-        quantita: number;
+    prezzoPacchetto: number;
+    quantitaDisponibile: number;
+    elementiInclusi: Array<{
+        tipoElemento: string;
+        idElemento: number;
+        quantita?: number;
     }>;
 }
 
 export interface UpdatePacchettoRequestDTO {
     nome?: string;
     descrizione?: string;
-    prezzo?: number;
-    prodotti?: Array<{
-        id: number;
-        quantita: number;
+    prezzoPacchetto?: number;
+    quantitaDisponibile?: number;
+    elementiInclusi?: Array<{
+        tipoElemento: string;
+        idElemento: number;
+        quantita?: number;
     }>;
 }
 

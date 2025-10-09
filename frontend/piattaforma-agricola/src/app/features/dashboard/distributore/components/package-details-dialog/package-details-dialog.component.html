@@ -6,7 +6,7 @@
                 <h2 *ngIf="hasPackage">{{ packageDetails!.nome }}</h2>
                 <h2 *ngIf="!hasPackage">Dettagli Pacchetto</h2>
             </div>
-            
+
             <div class="status-section" *ngIf="hasPackage">
                 <div class="status-badge" [style.background-color]="getStatoColor(packageDetails!.stato)">
                     <mat-icon>{{ getStatoIcon(packageDetails!.stato) }}</mat-icon>
@@ -56,42 +56,10 @@
                                         <span>{{ formatDate(packageDetails!.dataUltimaModifica) }}</span>
                                     </div>
                                 </div>
-                                
+
                                 <div class="description-section">
                                     <label>Descrizione:</label>
                                     <p class="description">{{ packageDetails!.descrizione }}</p>
-                                </div>
-                            </mat-card-content>
-                        </mat-card>
-
-                        <!-- Statistiche Economiche -->
-                        <mat-card class="stats-card">
-                            <mat-card-header>
-                                <mat-card-title>
-                                    <mat-icon>analytics</mat-icon>
-                                    Analisi Economica
-                                </mat-card-title>
-                            </mat-card-header>
-                            <mat-card-content>
-                                <div class="economic-stats">
-                                    <div class="stat-item">
-                                        <div class="stat-value">{{ formatCurrency(totalProductsCost) }}</div>
-                                        <div class="stat-label">Costo Prodotti</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-value">{{ formatCurrency(packageDetails!.prezzo) }}</div>
-                                        <div class="stat-label">Prezzo Vendita</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-value" [class.positive]="profitMargin > 0" [class.negative]="profitMargin < 0">
-                                            {{ profitMargin.toFixed(1) }}%
-                                        </div>
-                                        <div class="stat-label">Margine di Profitto</div>
-                                    </div>
-                                    <div class="stat-item">
-                                        <div class="stat-value">{{ totalProducts }}</div>
-                                        <div class="stat-label">Prodotti Inclusi</div>
-                                    </div>
                                 </div>
                             </mat-card-content>
                         </mat-card>
@@ -113,8 +81,7 @@
                             </mat-card-header>
                             <mat-card-content>
                                 <div class="products-list">
-                                    <div 
-                                        class="product-item" 
+                                    <div class="product-item"
                                         *ngFor="let product of packageDetails!.prodotti; trackBy: trackByProductId">
                                         <div class="product-main-info">
                                             <div class="product-details">
@@ -126,26 +93,30 @@
                                                     <mat-icon>business</mat-icon>
                                                     {{ product.produttore.nomeAzienda }}
                                                 </div>
-                                                
+
                                                 <!-- Certificazioni prodotto -->
-                                                <div class="product-certifications" *ngIf="product.certificazioni?.length">
+                                                <div class="product-certifications"
+                                                    *ngIf="product.certificazioni?.length">
                                                     <mat-chip-set>
-                                                        <mat-chip *ngFor="let cert of product.certificazioni" class="cert-chip">
+                                                        <mat-chip *ngFor="let cert of product.certificazioni"
+                                                            class="cert-chip">
                                                             <mat-icon matChipAvatar>verified</mat-icon>
                                                             {{ cert }}
                                                         </mat-chip>
                                                     </mat-chip-set>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="product-quantities">
                                                 <div class="quantity-info">
                                                     <span class="quantity">{{ product.quantita }}</span>
                                                     <span class="unit">unità</span>
                                                 </div>
                                                 <div class="price-info">
-                                                    <div class="unit-price">{{ formatCurrency(product.prezzo) }} /unità</div>
-                                                    <div class="total-price">{{ formatCurrency(product.prezzo * product.quantita) }}</div>
+                                                    <div class="unit-price">{{ formatCurrency(product.prezzo) }} /unità
+                                                    </div>
+                                                    <div class="total-price">{{ formatCurrency(product.prezzo *
+                                                        product.quantita) }}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -168,8 +139,7 @@
                             </mat-card-header>
                             <mat-card-content>
                                 <div class="certifications-list">
-                                    <div 
-                                        class="certification-item" 
+                                    <div class="certification-item"
                                         *ngFor="let cert of packageDetails!.certificazioni; trackBy: trackByCertificationId">
                                         <div class="cert-header">
                                             <mat-icon>verified</mat-icon>
@@ -217,10 +187,9 @@
                                         <div class="stat-value rating-value">
                                             {{ averageRating.toFixed(1) }}
                                             <div class="stars">
-                                                <mat-icon *ngFor="let star of getRatingStars(averageRating)" 
-                                                         class="star" 
-                                                         [class.filled]="star === 'star'" 
-                                                         [class.half]="star === 'star_half'">
+                                                <mat-icon *ngFor="let star of getRatingStars(averageRating)"
+                                                    class="star" [class.filled]="star === 'star'"
+                                                    [class.half]="star === 'star_half'">
                                                     {{ star }}
                                                 </mat-icon>
                                             </div>
@@ -245,8 +214,7 @@
                             </mat-card-header>
                             <mat-card-content>
                                 <div class="reviews-list">
-                                    <div 
-                                        class="review-item" 
+                                    <div class="review-item"
                                         *ngFor="let review of packageDetails!.recensioni; trackBy: trackByReviewId">
                                         <div class="review-header">
                                             <div class="reviewer-info">
@@ -258,9 +226,8 @@
                                                 </span>
                                             </div>
                                             <div class="rating">
-                                                <mat-icon *ngFor="let star of getRatingStars(review.valutazione)" 
-                                                         class="star" 
-                                                         [class.filled]="star === 'star'">
+                                                <mat-icon *ngFor="let star of getRatingStars(review.valutazione)"
+                                                    class="star" [class.filled]="star === 'star'">
                                                     {{ star }}
                                                 </mat-icon>
                                             </div>
@@ -282,13 +249,13 @@
         <button mat-button (click)="onClose()">
             Chiudi
         </button>
-        
+
         <div class="action-buttons" *ngIf="hasPackage">
             <button mat-stroked-button color="warn" (click)="onDelete()">
                 <mat-icon>delete</mat-icon>
                 Elimina
             </button>
-            
+
             <button mat-raised-button color="primary" (click)="onEdit()">
                 <mat-icon>edit</mat-icon>
                 Modifica

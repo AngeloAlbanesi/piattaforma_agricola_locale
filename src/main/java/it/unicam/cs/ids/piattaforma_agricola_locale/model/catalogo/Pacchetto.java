@@ -119,6 +119,10 @@ public class Pacchetto implements Acquistabile {
         return elementiInclusi;
     }
 
+    public List<PacchettoElemento> getPacchettoElementi() {
+        return pacchettoElementi;
+    }
+
     public DistributoreDiTipicita getDistributore() {
         return distributore;
     }

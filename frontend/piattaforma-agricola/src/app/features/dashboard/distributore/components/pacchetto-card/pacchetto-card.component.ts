@@ -84,6 +84,9 @@ export class PacchettoCardComponent {
     }
 
     getProdottiCount(): number {
-        return this.pacchetto?.prodotti?.length || 0;
+        if (this.pacchetto?.prodotti?.length) {
+            return this.pacchetto.prodotti.length;
+        }
+        return (this.pacchetto as any)?.numeroElementi || 0;
     }
 }

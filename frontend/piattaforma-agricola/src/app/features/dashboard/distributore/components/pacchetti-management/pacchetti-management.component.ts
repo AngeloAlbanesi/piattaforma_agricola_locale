@@ -53,11 +53,13 @@ export class PacchettiManagementComponent implements OnInit {
             next: (pacchetti) => {
                 this.pacchetti = pacchetti;
                 this.isLoading = false;
+                this.cdr.markForCheck();
             },
             error: (error) => {
                 console.error('Errore nel caricamento pacchetti:', error);
                 this.errorMessage = 'Impossibile caricare i pacchetti. Riprova più tardi.';
                 this.isLoading = false;
+                this.cdr.markForCheck();
             }
         });
     }

@@ -12,7 +12,6 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.eventi.Evento;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DistributoreDiTipicita;
 import org.mapstruct.*;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
  * Handles complex polymorphic relationships for Acquistabile elements.
  */
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-@Component
 public interface PacchettoMapper {
 
     /**
@@ -48,7 +46,7 @@ public interface PacchettoMapper {
     @Mapping(target = "quantitaDisponibile", source = "quantitaDisponibile")
     @Mapping(target = "nomeDistributore", expression = "java(pacchetto.getDistributore().getNome() + \" \" + pacchetto.getDistributore().getCognome())")
     @Mapping(target = "idDistributore", source = "distributore.idUtente")
-    @Mapping(target = "numeroElementi", expression = "java(pacchetto.getElementiInclusi() != null ? pacchetto.getElementiInclusi().size() : 0)")
+    @Mapping(target = "numeroElementi", expression = "java(pacchetto.getPacchettoElementi() != null ? pacchetto.getPacchettoElementi().size() : 0)")
     PacchettoSummaryDTO toSummaryDTO(Pacchetto pacchetto);
 
     /**

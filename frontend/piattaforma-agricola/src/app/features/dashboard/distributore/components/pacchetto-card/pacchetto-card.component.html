@@ -1,53 +1,54 @@
 <mat-card class="pacchetto-card" appearance="outlined" *ngIf="pacchetto">
-  <!-- Immagine del pacchetto -->
-  <div class="pacchetto-image" [style]="{ 'background-image': 'url(' + (pacchetto.immagineUrl || '/assets/images/default-package.jpg') + ')' }">
-    <div class="image-overlay">
-      <div class="stato-badge" [style]="{ 'background-color': getStatoColor(pacchetto.stato) }">
-        {{ getStatoLabel(pacchetto.stato) }}
-      </div>
+    <!-- Immagine del pacchetto -->
+    <div class="pacchetto-image"
+        [style]="{ 'background-image': 'url(' + (pacchetto.immagineUrl || '/assets/images/default-package.jpg') + ')' }">
+        <div class="image-overlay">
+            <div class="stato-badge" [style]="{ 'background-color': getStatoColor(pacchetto.stato) }">
+                {{ getStatoLabel(pacchetto.stato) }}
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Contenuto della card -->
-  <mat-card-content>
-    <div class="pacchetto-content">
-      <!-- Titolo e prezzo -->
-      <div class="pacchetto-header">
-        <h3 class="pacchetto-title">{{ pacchetto.nome }}</h3>
-        <div class="pacchetto-price">{{ formatCurrency(pacchetto.prezzo) }}</div>
-      </div>
+    <!-- Contenuto della card -->
+    <mat-card-content>
+        <div class="pacchetto-content">
+            <!-- Titolo e prezzo -->
+            <div class="pacchetto-header">
+                <h3 class="pacchetto-title">{{ pacchetto.nome }}</h3>
+                <div class="pacchetto-price">{{ formatCurrency(pacchetto.prezzo) }}</div>
+            </div>
 
-      <!-- Descrizione -->
-      <p class="pacchetto-description">{{ pacchetto.descrizione }}</p>
+            <!-- Descrizione -->
+            <p class="pacchetto-description">{{ pacchetto.descrizione }}</p>
 
-      <!-- Informazioni aggiuntive -->
-      <div class="pacchetto-info">
-        <div class="info-item">
-          <mat-icon class="info-icon">inventory_2</mat-icon>
-          <span class="info-text">{{ getProdottiCount() }} prodotti</span>
+            <!-- Informazioni aggiuntive -->
+            <div class="pacchetto-info">
+                <div class="info-item">
+                    <mat-icon class="info-icon">inventory_2</mat-icon>
+                    <span class="info-text">{{ getProdottiCount() }} prodotti</span>
+                </div>
+                <div class="info-item" *ngIf="pacchetto.distributore">
+                    <mat-icon class="info-icon">business</mat-icon>
+                    <span class="info-text">{{ pacchetto.distributore.nomeAzienda }}</span>
+                </div>
+                <div class="info-item">
+                    <mat-icon class="info-icon">calendar_today</mat-icon>
+                    <span class="info-text">{{ formatDate(pacchetto.dataCreazione) }}</span>
+                </div>
+            </div>
         </div>
-        <div class="info-item">
-          <mat-icon class="info-icon">business</mat-icon>
-          <span class="info-text">{{ pacchetto.distributore.nomeAzienda }}</span>
-        </div>
-        <div class="info-item">
-          <mat-icon class="info-icon">calendar_today</mat-icon>
-          <span class="info-text">{{ formatDate(pacchetto.dataCreazione) }}</span>
-        </div>
-      </div>
-    </div>
-  </mat-card-content>
+    </mat-card-content>
 
-  <!-- Azioni -->
-  <mat-card-actions class="pacchetto-actions">
-    <button mat-button color="primary" (click)="onViewDetails()">
-      Dettagli
-    </button>
-    <button mat-button color="accent" (click)="onEdit()">
-      Modifica
-    </button>
-    <button mat-button color="warn" (click)="onDelete()">
-      Elimina
-    </button>
-  </mat-card-actions>
+    <!-- Azioni -->
+    <mat-card-actions class="pacchetto-actions">
+        <button mat-button color="primary" (click)="onViewDetails()">
+            Dettagli
+        </button>
+        <button mat-button color="accent" (click)="onEdit()">
+            Modifica
+        </button>
+        <button mat-button color="warn" (click)="onDelete()">
+            Elimina
+        </button>
+    </mat-card-actions>
 </mat-card>

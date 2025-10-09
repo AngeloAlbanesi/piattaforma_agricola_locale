@@ -14,10 +14,10 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { DistributoreService } from '../../../../../core/services/distributore.service';
 import { ProdottiService } from '../../../../../core/services/prodotti.service';
-import { 
-    PacchettoTipicitaDTO, 
-    CreatePacchettoRequestDTO, 
-    UpdatePacchettoRequestDTO 
+import {
+    PacchettoTipicitaDTO,
+    CreatePacchettoRequestDTO,
+    UpdatePacchettoRequestDTO
 } from '../../../../../core/models/distributore.models';
 import { ProductSelectorComponent } from '../product-selector/product-selector.component';
 
@@ -90,7 +90,8 @@ export class PackageFormDialogComponent implements OnInit, OnDestroy {
         return this.fb.group({
             nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             descrizione: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
-            prezzo: [0, [Validators.required, Validators.min(0.01)]]
+            prezzoPacchetto: [0, [Validators.required, Validators.min(0.01)]],
+            quantitaDisponibile: [1, [Validators.required, Validators.min(1)]]
         });
     }
 
@@ -101,7 +102,8 @@ export class PackageFormDialogComponent implements OnInit, OnDestroy {
         this.packageForm.patchValue({
             nome: pkg.nome,
             descrizione: pkg.descrizione,
-            prezzo: pkg.prezzo
+            prezzoPacchetto: pkg.prezzo,
+            quantitaDisponibile: pkg.quantitaDisponibile || 1
         });
 
         // Popoliamo i prodotti selezionati
@@ -133,22 +135,22 @@ export class PackageFormDialogComponent implements OnInit, OnDestroy {
 
     private updateTotalPrice(): void {
         const totalProductsPrice = this.selectedProducts.reduce(
-            (sum, product) => sum + (product.prezzo * product.quantita), 
+            (sum, product) => sum + (product.prezzo * product.quantita),
             0
         );
-        
+
         // Aggiungiamo un margine del 20% sul prezzo dei prodotti come prezzo suggerito
         const suggestedPrice = Math.round(totalProductsPrice * 1.2 * 100) / 100;
-        
+
         this.packageForm.patchValue({
-            prezzo: suggestedPrice
+            prezzoPacchetto: suggestedPrice
         });
     }
 
     onSubmit(): void {
         if (this.packageForm.invalid || this.selectedProducts.length === 0) {
             this.markFormGroupTouched();
-            
+
             if (this.selectedProducts.length === 0) {
                 this.snackBar.open('Seleziona almeno un prodotto per il pacchetto', 'Chiudi', {
                     duration: 3000,
@@ -172,10 +174,12 @@ export class PackageFormDialogComponent implements OnInit, OnDestroy {
         const request: CreatePacchettoRequestDTO = {
             nome: formData.nome,
             descrizione: formData.descrizione,
-            prezzo: formData.prezzo,
-            prodotti: this.selectedProducts.map(p => ({
-                id: p.id,
-                quantita: p.quantita
+            prezzoPacchetto: formData.prezzoPacchetto,
+            quantitaDisponibile: formData.quantitaDisponibile,
+            elementiInclusi: this.selectedProducts.map(p => ({
+                tipoElemento: 'PRODOTTO',
+                idElemento: p.id,
+                quantita: p.quantita || 1
             }))
         };
 
@@ -206,10 +210,12 @@ export class PackageFormDialogComponent implements OnInit, OnDestroy {
         const request: UpdatePacchettoRequestDTO = {
             nome: formData.nome,
             descrizione: formData.descrizione,
-            prezzo: formData.prezzo,
-            prodotti: this.selectedProducts.map(p => ({
-                id: p.id,
-                quantita: p.quantita
+            prezzoPacchetto: formData.prezzoPacchetto,
+            quantitaDisponibile: formData.quantitaDisponibile,
+            elementiInclusi: this.selectedProducts.map(p => ({
+                tipoElemento: 'PRODOTTO',
+                idElemento: p.id,
+                quantita: p.quantita || 1
             }))
         };
 
@@ -302,7 +308,8 @@ export class PackageFormDialogComponent implements OnInit, OnDestroy {
         const labels: { [key: string]: string } = {
             nome: 'Nome',
             descrizione: 'Descrizione',
-            prezzo: 'Prezzo'
+            prezzoPacchetto: 'Prezzo',
+            quantitaDisponibile: 'Quantità disponibile'
         };
         return labels[controlName] || controlName;
     }

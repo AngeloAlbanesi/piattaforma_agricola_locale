@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -45,8 +45,9 @@ export class PackageDetailsDialogComponent implements OnInit, OnDestroy {
         private distributoreService: DistributoreService,
         private snackBar: MatSnackBar,
         private dialogRef: MatDialogRef<PackageDetailsDialogComponent>,
+        private cdr: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) public data: PackageDetailsDialogData
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.loadPackageDetails();
@@ -66,6 +67,7 @@ export class PackageDetailsDialogComponent implements OnInit, OnDestroy {
                 next: (details) => {
                     this.packageDetails = details;
                     this.isLoading = false;
+                    this.cdr.markForCheck();
                 },
                 error: (error) => {
                     console.error('Errore nel caricamento dettagli pacchetto:', error);
@@ -74,6 +76,7 @@ export class PackageDetailsDialogComponent implements OnInit, OnDestroy {
                         panelClass: 'error-snackbar'
                     });
                     this.isLoading = false;
+                    this.cdr.markForCheck();
                     this.dialogRef.close();
                 }
             });
@@ -204,11 +207,11 @@ export class PackageDetailsDialogComponent implements OnInit, OnDestroy {
         for (let i = 0; i < fullStars; i++) {
             stars.push('star');
         }
-        
+
         if (hasHalfStar) {
             stars.push('star_half');
         }
-        
+
         const emptyStars = 5 - stars.length;
         for (let i = 0; i < emptyStars; i++) {
             stars.push('star_border');

@@ -158,10 +158,25 @@ export class DistributoreService {
 
     /**
      * Normalizza i dati del prodotto assicurandosi che certificazioni sia sempre un array
+     * e che i campi abbiano i nomi corretti
      * Questo risolve il problema NG02200 quando il backend restituisce certificazioni come oggetto
+     * e il problema di mapping tra idProdotto->id e statoVerifica->stato
      */
     private normalizeProduct(product: DistributoreProductDTO | any): void {
-        if (product && product.certificazioni) {
+        if (!product) return;
+
+        // Mappa idProdotto -> id
+        if (product.idProdotto !== undefined && product.id === undefined) {
+            product.id = product.idProdotto;
+        }
+
+        // Mappa statoVerifica -> stato
+        if (product.statoVerifica !== undefined && product.stato === undefined) {
+            product.stato = product.statoVerifica;
+        }
+
+        // Normalizza certificazioni
+        if (product.certificazioni) {
             if (!Array.isArray(product.certificazioni)) {
                 console.warn('⚠️ [DistributoreService] certificazioni non è un array, convertendolo:', product.certificazioni);
                 // Se certificazioni è un oggetto, prova a convertirlo in array

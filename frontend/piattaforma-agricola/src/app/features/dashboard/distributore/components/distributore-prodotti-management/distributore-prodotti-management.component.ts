@@ -11,6 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DistributoreService } from '@core/services/distributore.service';
 import { DistributoreProductDTO } from '@core/models/distributore.models';
 import { DistributoreProductFormDialogComponent } from '../distributore-product-form-dialog/distributore-product-form-dialog.component';
+import { DeleteConfirmationDialogComponent, DeleteConfirmationDialogData } from '../delete-confirmation-dialog/delete-confirmation-dialog.component';
 
 @Component({
     selector: 'app-distributore-prodotti-management',
@@ -94,18 +95,31 @@ export class DistributoreProdottiManagementComponent implements OnInit {
     }
 
     deleteProduct(product: DistributoreProductDTO): void {
-        if (confirm(`Sei sicuro di voler eliminare il prodotto "${product.nome}"?`)) {
-            this.distributoreService.deleteProduct(product.id).subscribe({
-                next: () => {
-                    this.snackBar.open('Prodotto eliminato con successo', 'Chiudi', { duration: 3000 });
-                    this.loadProducts();
-                },
-                error: (error) => {
-                    console.error('Errore nell\'eliminazione del prodotto:', error);
-                    this.snackBar.open('Errore nell\'eliminazione del prodotto', 'Chiudi', { duration: 3000 });
-                }
-            });
-        }
+        const dialogData: DeleteConfirmationDialogData = {
+            product: product,
+            type: 'product'
+        };
+
+        const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+            width: '500px',
+            maxWidth: '90vw',
+            data: dialogData
+        });
+
+        dialogRef.afterClosed().subscribe(confirmed => {
+            if (confirmed) {
+                this.distributoreService.deleteProduct(product.id).subscribe({
+                    next: () => {
+                        this.snackBar.open('Prodotto eliminato con successo', 'Chiudi', { duration: 3000 });
+                        this.loadProducts();
+                    },
+                    error: (error) => {
+                        console.error('Errore nell\'eliminazione del prodotto:', error);
+                        this.snackBar.open('Errore nell\'eliminazione del prodotto', 'Chiudi', { duration: 3000 });
+                    }
+                });
+            }
+        });
     }
 
     formatCurrency(value: number): string {

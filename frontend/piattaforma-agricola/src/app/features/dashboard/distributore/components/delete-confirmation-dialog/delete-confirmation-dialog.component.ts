@@ -5,10 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { PacchettoTipicitaDTO } from '../../../../../core/models/distributore.models';
+import { PacchettoTipicitaDTO, DistributoreProductDTO } from '../../../../../core/models/distributore.models';
 
 export interface DeleteConfirmationDialogData {
-    package: PacchettoTipicitaDTO;
+    package?: PacchettoTipicitaDTO;
+    product?: DistributoreProductDTO;
     type?: 'package' | 'product';
     title?: string;
     message?: string;
@@ -67,10 +68,10 @@ export class DeleteConfirmationDialogComponent {
 
         switch (this.data.type) {
             case 'product':
-                return `Sei sicuro di voler rimuovere questo prodotto dal pacchetto "${this.data.package.nome}"?`;
+                return `Sei sicuro di voler eliminare definitivamente il prodotto "${this.data.product?.nome}"?`;
             case 'package':
             default:
-                return `Sei sicuro di voler eliminare definitivamente il pacchetto "${this.data.package.nome}"?`;
+                return `Sei sicuro di voler eliminare definitivamente il pacchetto "${this.data.package?.nome}"?`;
         }
     }
 
@@ -97,7 +98,7 @@ export class DeleteConfirmationDialogComponent {
     get warningMessage(): string {
         switch (this.data.type) {
             case 'product':
-                return 'Il prodotto verrà rimosso dal pacchetto ma rimarrà disponibile nel catalogo.';
+                return 'Questa azione non può essere annullata. Il prodotto verrà eliminato definitivamente.';
             case 'package':
             default:
                 return 'Questa azione non può essere annullata. Il pacchetto verrà eliminato definitivamente.';
@@ -106,11 +107,24 @@ export class DeleteConfirmationDialogComponent {
 
     get hasOrdersWarning(): boolean {
         // Se il pacchetto ha delle vendite, mostra un warning aggiuntivo
-        return this.data.type === 'package' && this.data.package.stato === 'ATTIVO';
+        return this.data.type === 'package' && this.data.package?.stato === 'ATTIVO';
     }
 
     get ordersWarningMessage(): string {
-        return 'Attenzione: questo pacchetto potrebbe avere ordini associati. Verifica prima di procedere.';
+        return 'Attenzione: questo elemento potrebbe avere ordini associati. Verifica prima di procedere.';
+    }
+
+    // Getter per ottenere il nome dell'elemento
+    get itemName(): string {
+        return this.data.type === 'product' ? this.data.product?.nome || '' : this.data.package?.nome || '';
+    }
+
+    get itemPrice(): number {
+        return this.data.type === 'product' ? this.data.product?.prezzo || 0 : this.data.package?.prezzo || 0;
+    }
+
+    get itemStato(): string {
+        return this.data.type === 'product' ? this.data.product?.stato || '' : this.data.package?.stato || '';
     }
 
     // Utility methods per template

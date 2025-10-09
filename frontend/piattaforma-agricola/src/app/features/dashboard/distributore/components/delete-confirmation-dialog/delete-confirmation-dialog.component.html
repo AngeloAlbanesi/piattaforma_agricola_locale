@@ -13,26 +13,30 @@
                 <p class="message-text">{{ dialogMessage }}</p>
             </div>
 
-            <!-- Dettagli pacchetto -->
-            <div class="package-details">
-                <div class="package-info">
+            <!-- Dettagli elemento -->
+            <div class="item-details">
+                <div class="item-info">
                     <div class="info-row">
                         <span class="label">Nome:</span>
-                        <span class="value">{{ data.package.nome }}</span>
+                        <span class="value">{{ itemName }}</span>
                     </div>
                     <div class="info-row">
                         <span class="label">Stato:</span>
-                        <span class="value status" [style.color]="getStatusColor(data.package.stato)">
-                            {{ getStatusLabel(data.package.stato) }}
+                        <span class="value status" [style.color]="getStatusColor(itemStato)">
+                            {{ getStatusLabel(itemStato) }}
                         </span>
                     </div>
-                    <div class="info-row" *ngIf="data.package.prodotti?.length">
+                    <div class="info-row" *ngIf="data.type === 'package' && data.package?.prodotti?.length">
                         <span class="label">Prodotti inclusi:</span>
-                        <span class="value">{{ data.package.prodotti.length }}</span>
+                        <span class="value">{{ data.package?.prodotti?.length || 0 }}</span>
+                    </div>
+                    <div class="info-row" *ngIf="data.type === 'product'">
+                        <span class="label">Quantità disponibile:</span>
+                        <span class="value">{{ data.product?.quantitaDisponibile || 0 }} {{ data.product?.unitaMisura || '' }}</span>
                     </div>
                     <div class="info-row">
                         <span class="label">Prezzo:</span>
-                        <span class="value price">{{ formatCurrency(data.package.prezzo) }}</span>
+                        <span class="value price">{{ formatCurrency(itemPrice) }}</span>
                     </div>
                 </div>
             </div>
@@ -54,21 +58,27 @@
             </div>
 
             <!-- Lista prodotti se stiamo eliminando un pacchetto con prodotti -->
-            <div class="products-list" *ngIf="data.type === 'package' && data.package.prodotti?.length">
+            <div class="products-list" *ngIf="data.type === 'package' && data.package?.prodotti?.length">
                 <h4>Prodotti che verranno interessati:</h4>
                 <div class="products-grid">
                     <div 
                         class="product-item" 
-                        *ngFor="let product of data.package.prodotti.slice(0, 3)">
-                        <span class="product-name">{{ product.nome }}</span>
-                        <span class="product-quantity">{{ product.quantita }} unità</span>
+                        *ngFor="let product of data.package?.prodotti?.slice(0, 3) || []">
+                        <span class="product-name">{{ product?.nome || '' }}</span>
+                        <span class="product-quantity">{{ product?.quantita || 0 }} unità</span>
                     </div>
-                    <div class="more-products" *ngIf="data.package.prodotti.length > 3">
+                    <div class="more-products" *ngIf="(data.package?.prodotti?.length || 0) > 3">
                         <span class="more-text">
-                            + {{ data.package.prodotti.length - 3 }} altri prodotti
+                            + {{ (data.package?.prodotti?.length || 0) - 3 }} altri prodotti
                         </span>
                     </div>
                 </div>
+            </div>
+
+            <!-- Dettagli aggiuntivi per i prodotti -->
+            <div class="product-extra-details" *ngIf="data.type === 'product' && data.product?.descrizione">
+                <h4>Descrizione prodotto:</h4>
+                <p class="product-description">{{ data.product?.descrizione }}</p>
             </div>
         </div>
     </mat-dialog-content>

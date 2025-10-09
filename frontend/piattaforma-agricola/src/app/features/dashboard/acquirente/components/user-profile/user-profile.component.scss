@@ -147,7 +147,7 @@
   }
 
   &.mat-focused .mat-form-field-outline-thick {
-    color: #3f51b5;
+    color: #495057;
   }
 
   &.mat-invalid .mat-form-field-outline-thick {
@@ -158,15 +158,15 @@
 // Stili per il pulsante di salvataggio
 ::ng-deep .mat-raised-button {
   &.mat-primary {
-    background-color: #3f51b5;
+    background-color: #6c757d;
     
     &:hover {
-      background-color: #303f9f;
+      background-color: #495057;
     }
 
     &:disabled {
-      background-color: rgba(63, 81, 181, 0.12);
-      color: rgba(63, 81, 181, 0.26);
+      background-color: rgba(108, 117, 125, 0.12);
+      color: rgba(108, 117, 125, 0.26);
     }
   }
 }

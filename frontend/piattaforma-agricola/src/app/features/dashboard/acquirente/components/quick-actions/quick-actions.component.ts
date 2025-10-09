@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -17,7 +19,7 @@ export interface QuickAction {
   styleUrls: ['./quick-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, MatTooltipModule]
+  imports: [CommonModule, MatButtonModule, MatCardModule, MatIconModule, MatTooltipModule]
 })
 export class QuickActionsComponent {
   @Output() action = new EventEmitter<string>();

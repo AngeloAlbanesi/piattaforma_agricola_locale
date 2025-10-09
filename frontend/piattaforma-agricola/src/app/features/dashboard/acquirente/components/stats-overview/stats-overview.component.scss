@@ -1,3 +1,5 @@
+@use '../../../../../../styles/_variables' as *;
+
 .stats-overview {
     .stats-grid {
         display: grid;
@@ -16,20 +18,50 @@
     }
 
     .stat-card {
-        transition: all 0.3s ease;
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
         border-radius: 12px;
         overflow: hidden;
+        background-color: $card-background-color;
+        border: 1px solid $border-color-light;
 
         &:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
         }
 
         &.has-data {
-            border-left: 4px solid #3498db;
+            border-left: 4px solid transparent;
 
-            &:hover {
-                border-left-color: #2980b9;
+            &:nth-child(1) {
+                border-left-color: #2e7d32; // green 800
+
+                &:hover {
+                    border-left-color: #1b5e20; // green 900
+                }
+            }
+
+            &:nth-child(2) {
+                border-left-color: #1565c0; // blue 800
+
+                &:hover {
+                    border-left-color: #0d47a1; // blue 900
+                }
+            }
+
+            &:nth-child(3) {
+                border-left-color: #ef6c00; // orange 800
+
+                &:hover {
+                    border-left-color: #e65100; // orange 900
+                }
+            }
+
+            &:nth-child(4) {
+                border-left-color: #7b1fa2; // purple 700
+
+                &:hover {
+                    border-left-color: #6a1b9a; // purple 800
+                }
             }
         }
 
@@ -52,9 +84,11 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
+            background: #f1f5f9; // slate-100
+            color: #334155; // slate-700 (default, overridden per card)
             flex-shrink: 0;
+            box-shadow: none;
+            border: 1px solid rgba(0, 0, 0, 0.06);
 
             @media (max-width: 480px) {
                 width: 50px;
@@ -65,6 +99,7 @@
                 font-size: 28px;
                 width: 28px;
                 height: 28px;
+                color: inherit; // ereditare il colore della pill icona
 
                 @media (max-width: 480px) {
                     font-size: 24px;
@@ -80,8 +115,8 @@
 
             .stat-value {
                 font-size: clamp(1.25rem, 3.2vw, 2.25rem);
-                font-weight: 700;
-                color: #2c3e50;
+                font-weight: 800;
+                color: $text-color-dark;
                 margin: 0 0 0.25rem 0;
                 line-height: 1.2;
 
@@ -91,35 +126,59 @@
             }
 
             .stat-label {
-                font-size: 0.9rem;
-                color: #7f8c8d;
+                font-size: 0.95rem;
+                color: $text-color-primary; // maggiore contrasto
                 margin: 0;
-                font-weight: 500;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
+                font-weight: 600;
+                text-transform: none; // evita perdita di leggibilità
+                letter-spacing: 0; // testo più definito
 
                 @media (max-width: 480px) {
-                    font-size: 0.8rem;
+                    font-size: 0.9rem;
                 }
             }
         }
     }
 
-    // Color variations for different stats
+    // Color variations for different stats (sobrie, con alto contrasto)
     .stat-card:nth-child(1) .stat-icon {
-        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: #2e7d32; // green 800
+        background-color: #e8f5e9; // green 50
+        border-color: rgba(46, 125, 50, 0.2);
+    }
+
+    .stat-card:nth-child(1) .stat-icon mat-icon {
+        color: #2e7d32;
     }
 
     .stat-card:nth-child(2) .stat-icon {
-        background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        color: #1565c0; // blue 800
+        background-color: #e3f2fd; // blue 50
+        border-color: rgba(21, 101, 192, 0.2);
+    }
+
+    .stat-card:nth-child(2) .stat-icon mat-icon {
+        color: #1565c0;
     }
 
     .stat-card:nth-child(3) .stat-icon {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: #ef6c00; // orange 800
+        background-color: #fff3e0; // orange 50
+        border-color: rgba(239, 108, 0, 0.25);
+    }
+
+    .stat-card:nth-child(3) .stat-icon mat-icon {
+        color: #ef6c00;
     }
 
     .stat-card:nth-child(4) .stat-icon {
-        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        color: #7b1fa2; // purple 700
+        background-color: #f3e5f5; // purple 50
+        border-color: rgba(123, 31, 162, 0.2);
+    }
+
+    .stat-card:nth-child(4) .stat-icon mat-icon {
+        color: #7b1fa2;
     }
 
     // Animation for stat values
@@ -139,33 +198,41 @@
         }
     }
 
-    // Empty state styling
+    // Empty state styling - niente opacità per migliore leggibilità
     .stat-card:not(.has-data) {
-        opacity: 0.7;
+        border-left: 4px solid $border-color;
 
         .stat-icon {
-            background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+            background: #f1f5f9;
+            color: #64748b; // slate-500
+            border-color: rgba(100, 116, 139, 0.2);
+            box-shadow: none;
         }
 
         .stat-value {
-            color: #7f8c8d;
+            color: $text-color-primary;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            color: $text-color-secondary;
         }
     }
 }
 
-// Dark mode support
+// Dark mode support - Keeping vibrant colors even in dark mode
 @media (prefers-color-scheme: dark) {
     .stats-overview {
         .stat-card {
-            background: #34495e;
-            border-color: #4a5f7a;
+            background: $card-background-color;
+            border-color: $border-color-light;
 
             .stat-value {
-                color: white !important;
+                color: $text-color-dark !important;
             }
 
             .stat-label {
-                color: #bdc3c7 !important;
+                color: $text-color-primary !important;
             }
         }
     }

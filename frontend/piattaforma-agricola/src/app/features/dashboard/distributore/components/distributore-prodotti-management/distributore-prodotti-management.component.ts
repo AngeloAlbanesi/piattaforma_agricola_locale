@@ -12,6 +12,7 @@ import { DistributoreService } from '@core/services/distributore.service';
 import { DistributoreProductDTO } from '@core/models/distributore.models';
 import { DistributoreProductFormDialogComponent } from '../distributore-product-form-dialog/distributore-product-form-dialog.component';
 import { DeleteConfirmationDialogComponent, DeleteConfirmationDialogData } from '../delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { ProductDetailDialogComponent } from '../product-detail-dialog/product-detail-dialog.component';
 
 @Component({
     selector: 'app-distributore-prodotti-management',
@@ -25,7 +26,8 @@ import { DeleteConfirmationDialogComponent, DeleteConfirmationDialogData } from 
         MatDialogModule,
         MatProgressSpinnerModule,
         MatSnackBarModule,
-        MatTooltipModule
+        MatTooltipModule,
+        ProductDetailDialogComponent
     ],
     templateUrl: './distributore-prodotti-management.component.html',
     styleUrls: ['./distributore-prodotti-management.component.scss']
@@ -127,6 +129,22 @@ export class DistributoreProdottiManagementComponent implements OnInit {
             style: 'currency',
             currency: 'EUR'
         }).format(value);
+    }
+
+    viewProductDetails(product: DistributoreProductDTO): void {
+        const dialogRef = this.dialog.open(ProductDetailDialogComponent, {
+            width: '900px',
+            maxWidth: '95vw',
+            maxHeight: '90vh',
+            data: {
+                productId: product.id
+            },
+            panelClass: 'product-detail-dialog-container'
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
+            console.log('Product detail dialog closed');
+        });
     }
 
     getStatusClass(stato: string): string {

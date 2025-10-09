@@ -137,14 +137,23 @@ export interface DistributoreProductDTO {
     prezzo: number;
     quantitaDisponibile: number;
     unitaMisura: string;
+    tipoOrigine: 'COLTIVATO' | 'COLTIVATO_ALLEVATO' | 'TRASFORMATO';
     stato: string;
     dataCreazione: string;
     dataUltimaModifica: string;
     immagineUrl?: string;
-    distributore: {
+    distributore?: {
         id: number;
         nomeAzienda: string;
         partitaIva: string;
+    };
+    venditore?: {
+        idUtente: number;
+        nome: string;
+        cognome: string;
+        tipoRuolo: string;
+        statoAccreditamento?: string;
+        isAttivo: boolean;
     };
     certificazioni?: CertificationDTO[];
 }

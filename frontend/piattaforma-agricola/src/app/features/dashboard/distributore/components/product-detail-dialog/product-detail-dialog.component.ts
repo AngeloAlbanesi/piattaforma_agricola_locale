@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,39 +8,13 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
-import { ProdottiService } from '../../../../../core/services/prodotti.service';
-import { ProdottoSummaryDTO } from '../../../../../core/models/common.models';
+import { DistributoreService } from '../../../../../core/services/distributore.service';
+import { DistributoreProductDTO } from '../../../../../core/models/distributore.models';
 
 export interface ProductDetailDialogData {
     productId: number;
-}
-
-// Interfaccia per i dettagli estesi del prodotto
-interface ProductDetailDTO extends ProdottoSummaryDTO {
-    ingredienti?: string[];
-    allergeni?: string[];
-    valoriNutrizionali?: {
-        calorie?: number;
-        proteine?: number;
-        carboidrati?: number;
-        grassi?: number;
-        fibre?: number;
-        sale?: number;
-    };
-    metodiConservazione?: string;
-    dataScadenza?: string;
-    numeroLotto?: string;
-    recensioni?: Array<{
-        id: number;
-        valutazione: number;
-        commento: string;
-        autore: string;
-        data: string;
-    }>;
-    mediaValutazione?: number;
-    numeroRecensioni?: number;
 }
 
 @Component({
@@ -59,16 +33,16 @@ interface ProductDetailDTO extends ProdottoSummaryDTO {
     ],
     templateUrl: './product-detail-dialog.component.html',
     styleUrls: ['./product-detail-dialog.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class ProductDetailDialogComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
-    productDetails: ProductDetailDTO | null = null;
+    productDetails: DistributoreProductDTO | null = null;
     isLoading = true;
 
     constructor(
-        private prodottiService: ProdottiService,
+        private distributoreService: DistributoreService,
         private snackBar: MatSnackBar,
         private dialogRef: MatDialogRef<ProductDetailDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ProductDetailDialogData
@@ -86,89 +60,24 @@ export class ProductDetailDialogComponent implements OnInit, OnDestroy {
     private loadProductDetails(): void {
         this.isLoading = true;
 
-        // Simulo il caricamento dei dettagli - in un'app reale useremmo l'ID per fare una chiamata API
-        // Per ora uso getProducts per ottenere almeno le info base
-        this.prodottiService.getProducts({ 
-            elementiPerPagina: 1000,
-            stato: 'APPROVATO' 
-        })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-            next: (response) => {
-                const product = response.content?.find(p => p.id === this.data.productId);
-                if (product) {
-                    // Estendo il prodotto con dati mock per il demo
-                    this.productDetails = this.enhanceProductWithMockData(product);
-                } else {
-                    this.snackBar.open('Prodotto non trovato', 'Chiudi', {
-                        duration: 3000,
-                        panelClass: 'error-snackbar'
-                    });
-                    this.dialogRef.close();
-                }
+        console.log('🔍 [ProductDetailDialog] Caricamento dettagli prodotto ID:', this.data.productId);
+
+        // Carica i dettagli reali del prodotto dall'API
+        this.distributoreService.getProductById(this.data.productId).subscribe({
+            next: (product) => {
+                console.log('✅ [ProductDetailDialog] Dati prodotto ricevuti:', product);
+                this.productDetails = product;
                 this.isLoading = false;
             },
             error: (error) => {
-                console.error('Errore nel caricamento dettagli prodotto:', error);
-                this.snackBar.open('Errore nel caricamento dei dettagli', 'Chiudi', {
-                    duration: 3000,
-                    panelClass: 'error-snackbar'
+                console.error('❌ [ProductDetailDialog] Errore nel caricamento dei dettagli del prodotto:', error);
+                this.snackBar.open('Errore nel caricamento dei dettagli del prodotto', 'Chiudi', { 
+                    duration: 3000 
                 });
                 this.isLoading = false;
                 this.dialogRef.close();
             }
         });
-    }
-
-    private enhanceProductWithMockData(product: ProdottoSummaryDTO): ProductDetailDTO {
-        // Aggiungo dati mock per il demo
-        return {
-            ...product,
-            ingredienti: [
-                'Pomodori San Marzano',
-                'Basilico fresco',
-                'Olio extravergine d\'oliva',
-                'Aglio',
-                'Sale marino'
-            ],
-            allergeni: ['Tracce di sedano'],
-            valoriNutrizionali: {
-                calorie: 85,
-                proteine: 2.1,
-                carboidrati: 8.2,
-                grassi: 4.5,
-                fibre: 2.0,
-                sale: 0.8
-            },
-            metodiConservazione: 'Conservare in luogo fresco e asciutto. Dopo l\'apertura, conservare in frigorifero e consumare entro 3 giorni.',
-            dataScadenza: '2024-12-31',
-            numeroLotto: 'LOT2024001',
-            mediaValutazione: 4.6,
-            numeroRecensioni: 24,
-            recensioni: [
-                {
-                    id: 1,
-                    valutazione: 5,
-                    commento: 'Prodotto eccellente, sapore autentico della tradizione locale.',
-                    autore: 'Marco R.',
-                    data: '2024-01-15'
-                },
-                {
-                    id: 2,
-                    valutazione: 4,
-                    commento: 'Molto buono, consigliato per chi ama i sapori genuini.',
-                    autore: 'Anna M.',
-                    data: '2024-01-10'
-                },
-                {
-                    id: 3,
-                    valutazione: 5,
-                    commento: 'Qualità superiore, si sente la differenza con i prodotti industriali.',
-                    autore: 'Giuseppe T.',
-                    data: '2024-01-08'
-                }
-            ]
-        };
     }
 
     onClose(): void {
@@ -205,62 +114,41 @@ export class ProductDetailDialogComponent implements OnInit, OnDestroy {
         }
     }
 
+    getStatusClass(stato: string): string {
+        return (stato || '').toLowerCase();
+    }
+
+    getStatusDisplay(stato: string): string {
+        return stato || 'Sconosciuto';
+    }
+
     // Getters per template
     get hasProduct(): boolean {
         return !!this.productDetails;
-    }
-
-    get hasIngredients(): boolean {
-        return !!(this.productDetails?.ingredienti?.length);
-    }
-
-    get hasAllergens(): boolean {
-        return !!(this.productDetails?.allergeni?.length);
-    }
-
-    get hasNutritionalValues(): boolean {
-        return !!this.productDetails?.valoriNutrizionali;
-    }
-
-    get hasReviews(): boolean {
-        return !!(this.productDetails?.recensioni?.length);
     }
 
     get hasCertifications(): boolean {
         return !!(this.productDetails?.certificazioni?.length);
     }
 
-    get averageRating(): number {
-        return this.productDetails?.mediaValutazione || 0;
-    }
-
-    get reviewsCount(): number {
-        return this.productDetails?.numeroRecensioni || 0;
-    }
-
-    // Rating stars helper
-    getRatingStars(rating: number): string[] {
-        const stars = [];
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5;
-
-        for (let i = 0; i < fullStars; i++) {
-            stars.push('star');
-        }
+    // Helper per formattare il tipo di origine
+    getTipoOrigineDisplay(tipoOrigine?: string): string {
+        if (!tipoOrigine) return 'Non specificato';
         
-        if (hasHalfStar) {
-            stars.push('star_half');
+        switch (tipoOrigine) {
+            case 'COLTIVATO':
+                return 'Coltivato';
+            case 'COLTIVATO_ALLEVATO':
+                return 'Coltivato/Allevato';
+            case 'TRASFORMATO':
+                return 'Trasformato';
+            default:
+                return tipoOrigine;
         }
-        
-        const emptyStars = 5 - stars.length;
-        for (let i = 0; i < emptyStars; i++) {
-            stars.push('star_border');
-        }
-
-        return stars;
     }
 
-    trackByReviewId(index: number, review: any): number {
-        return review.id;
+    // Helper per tracciare le certificazioni nel template
+    trackByCertificationId(index: number, certification: any): number {
+        return certification.idCertificazione;
     }
 }

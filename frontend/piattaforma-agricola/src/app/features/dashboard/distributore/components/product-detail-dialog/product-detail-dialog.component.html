@@ -29,254 +29,104 @@
                 <!-- Tab Informazioni Generali -->
                 <mat-tab label="Informazioni Generali">
                     <div class="tab-content">
-                        <!-- Product Hero -->
-                        <div class="product-hero">
-                            <div class="product-image">
-                                <img 
-                                    [src]="productDetails!.immagineUrl || '/assets/images/product-placeholder.jpg'" 
-                                    [alt]="productDetails!.nome"
-                                    (error)="$event.target.src='/assets/images/product-placeholder.jpg'">
-                                
-                                <!-- Certifications overlay -->
-                                <div class="certifications-overlay" *ngIf="hasCertifications">
-                                    <mat-chip-set>
-                                        <mat-chip *ngFor="let cert of productDetails!.certificazioni" class="cert-chip">
-                                            <mat-icon matChipAvatar>verified</mat-icon>
-                                            {{ cert }}
-                                        </mat-chip>
-                                    </mat-chip-set>
+                        <!-- Product Summary -->
+                        <div class="product-summary">
+                            <div class="basic-info">
+                                <h3>{{ productDetails!.nome }}</h3>
+                                <p class="description" *ngIf="productDetails!.descrizione">
+                                    {{ productDetails!.descrizione }}
+                                </p>
+                            </div>
+
+                            <div class="key-details">
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <label>Prezzo:</label>
+                                        <span class="price">{{ formatCurrency(productDetails!.prezzo) }}</span>
+                                        <span class="unit" *ngIf="productDetails!.unitaMisura">/ {{ productDetails!.unitaMisura }}</span>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <label>Disponibilità:</label>
+                                        <span [style.color]="getAvailabilityStatus(productDetails!.quantitaDisponibile).color">
+                                            {{ productDetails!.quantitaDisponibile }} {{ productDetails!.unitaMisura || 'unità' }}
+                                        </span>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <label>Unità di misura:</label>
+                                        <span>{{ productDetails!.unitaMisura || 'Non specificata' }}</span>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <label>Tipo di origine:</label>
+                                        <span>{{ getTipoOrigineDisplay(productDetails!.tipoOrigine) }}</span>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <label>Stato:</label>
+                                        <span class="status-badge {{ getStatusClass(productDetails!.stato) }}">
+                                            {{ getStatusDisplay(productDetails!.stato) }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="product-summary">
-                                <div class="basic-info">
-                                    <h3>{{ productDetails!.nome }}</h3>
-                                    <p class="description" *ngIf="productDetails!.descrizione">
-                                        {{ productDetails!.descrizione }}
-                                    </p>
+                            <!-- Distributor Info -->
+                            <div class="distributor-section" *ngIf="productDetails!.venditore">
+                                <h4>
+                                    <mat-icon>business</mat-icon>
+                                    Distributore
+                                </h4>
+                                <div class="distributor-info">
+                                    <div class="distributor-name">{{ productDetails!.venditore.nome }} {{ productDetails!.venditore.cognome }}</div>
+                                    <div class="distributor-piva">Ruolo: {{ productDetails!.venditore.tipoRuolo }}</div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
 
-                                <div class="key-details">
-                                    <div class="detail-grid">
-                                        <div class="detail-item">
-                                            <label>Prezzo:</label>
-                                            <span class="price">{{ formatCurrency(productDetails!.prezzo) }}</span>
-                                            <span class="unit" *ngIf="productDetails!.unitaMisura">/ {{ productDetails!.unitaMisura }}</span>
+                <!-- Tab Certificazioni -->
+                <mat-tab label="Certificazioni" *ngIf="hasCertifications">
+                    <div class="tab-content">
+                        <div class="certifications-list">
+                            <mat-card 
+                                class="certification-card" 
+                                *ngFor="let certification of productDetails!.certificazioni; trackBy: trackByCertificationId">
+                                <mat-card-content>
+                                    <div class="certification-header">
+                                        <div class="certification-name">
+                                            <mat-icon class="cert-icon">verified</mat-icon>
+                                            {{ certification.nomeCertificazione }}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="certification-details">
+                                        <div class="cert-detail-item">
+                                            <label>Ente di rilascio:</label>
+                                            <span>{{ certification.enteRilascio }}</span>
                                         </div>
                                         
-                                        <div class="detail-item">
-                                            <label>Disponibilità:</label>
-                                            <span [style.color]="getAvailabilityStatus(productDetails!.quantitaDisponibile).color">
-                                                {{ productDetails!.quantitaDisponibile }} {{ productDetails!.unitaMisura || 'unità' }}
-                                            </span>
+                                        <div class="cert-detail-item">
+                                            <label>Data rilascio:</label>
+                                            <span>{{ formatDate(certification.dataRilascio) }}</span>
                                         </div>
-
-                                        <div class="detail-item" *ngIf="productDetails!.categoria">
-                                            <label>Categoria:</label>
-                                            <span>{{ productDetails!.categoria }}</span>
-                                        </div>
-
-                                        <div class="detail-item" *ngIf="productDetails!.luogoOrigine">
-                                            <label>Origine:</label>
-                                            <span>
-                                                <mat-icon>place</mat-icon>
-                                                {{ productDetails!.luogoOrigine }}
-                                            </span>
+                                        
+                                        <div class="cert-detail-item">
+                                            <label>Data scadenza:</label>
+                                            <span>{{ formatDate(certification.dataScadenza) }}</span>
                                         </div>
                                     </div>
-                                </div>
-
-                                <!-- Producer Info -->
-                                <div class="producer-section" *ngIf="productDetails!.produttore">
-                                    <h4>
-                                        <mat-icon>business</mat-icon>
-                                        Produttore
-                                    </h4>
-                                    <div class="producer-info">
-                                        <div class="producer-name">{{ productDetails!.produttore.nomeAzienda }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Additional Info Cards -->
-                        <div class="info-cards">
-                            <!-- Lot and Expiry -->
-                            <mat-card class="info-card" *ngIf="productDetails!.numeroLotto || productDetails!.dataScadenza">
-                                <mat-card-header>
-                                    <mat-card-title>
-                                        <mat-icon>inventory</mat-icon>
-                                        Informazioni Lotto
-                                    </mat-card-title>
-                                </mat-card-header>
-                                <mat-card-content>
-                                    <div class="info-grid">
-                                        <div class="info-item" *ngIf="productDetails!.numeroLotto">
-                                            <label>Numero Lotto:</label>
-                                            <span>{{ productDetails!.numeroLotto }}</span>
-                                        </div>
-                                        <div class="info-item" *ngIf="productDetails!.dataScadenza">
-                                            <label>Data Scadenza:</label>
-                                            <span>{{ formatDate(productDetails!.dataScadenza) }}</span>
-                                        </div>
-                                    </div>
-                                </mat-card-content>
-                            </mat-card>
-
-                            <!-- Conservation -->
-                            <mat-card class="info-card" *ngIf="productDetails!.metodiConservazione">
-                                <mat-card-header>
-                                    <mat-card-title>
-                                        <mat-icon>ac_unit</mat-icon>
-                                        Conservazione
-                                    </mat-card-title>
-                                </mat-card-header>
-                                <mat-card-content>
-                                    <p>{{ productDetails!.metodiConservazione }}</p>
                                 </mat-card-content>
                             </mat-card>
                         </div>
-                    </div>
-                </mat-tab>
 
-                <!-- Tab Ingredienti e Allergeni -->
-                <mat-tab label="Ingredienti & Allergeni" *ngIf="hasIngredients || hasAllergens">
-                    <div class="tab-content">
-                        <!-- Ingredienti -->
-                        <mat-card class="ingredients-card" *ngIf="hasIngredients">
-                            <mat-card-header>
-                                <mat-card-title>
-                                    <mat-icon>restaurant</mat-icon>
-                                    Ingredienti
-                                </mat-card-title>
-                            </mat-card-header>
-                            <mat-card-content>
-                                <div class="ingredients-list">
-                                    <mat-chip-set>
-                                        <mat-chip *ngFor="let ingredient of productDetails!.ingredienti" class="ingredient-chip">
-                                            {{ ingredient }}
-                                        </mat-chip>
-                                    </mat-chip-set>
-                                </div>
-                            </mat-card-content>
-                        </mat-card>
-
-                        <!-- Allergeni -->
-                        <mat-card class="allergens-card" *ngIf="hasAllergens">
-                            <mat-card-header>
-                                <mat-card-title>
-                                    <mat-icon>warning</mat-icon>
-                                    Allergeni
-                                </mat-card-title>
-                            </mat-card-header>
-                            <mat-card-content>
-                                <div class="allergens-list">
-                                    <mat-chip-set>
-                                        <mat-chip *ngFor="let allergen of productDetails!.allergeni" class="allergen-chip">
-                                            <mat-icon matChipAvatar>warning</mat-icon>
-                                            {{ allergen }}
-                                        </mat-chip>
-                                    </mat-chip-set>
-                                </div>
-                            </mat-card-content>
-                        </mat-card>
-                    </div>
-                </mat-tab>
-
-                <!-- Tab Valori Nutrizionali -->
-                <mat-tab label="Valori Nutrizionali" *ngIf="hasNutritionalValues">
-                    <div class="tab-content">
-                        <mat-card class="nutrition-card">
-                            <mat-card-header>
-                                <mat-card-title>
-                                    <mat-icon>assessment</mat-icon>
-                                    Valori Nutrizionali per 100g
-                                </mat-card-title>
-                            </mat-card-header>
-                            <mat-card-content>
-                                <div class="nutrition-grid">
-                                    <div class="nutrition-item" *ngIf="productDetails!.valoriNutrizionali!.calorie">
-                                        <div class="nutrition-label">Calorie</div>
-                                        <div class="nutrition-value">{{ productDetails!.valoriNutrizionali!.calorie }} kcal</div>
-                                    </div>
-                                    
-                                    <div class="nutrition-item" *ngIf="productDetails!.valoriNutrizionali!.proteine">
-                                        <div class="nutrition-label">Proteine</div>
-                                        <div class="nutrition-value">{{ productDetails!.valoriNutrizionali!.proteine }} g</div>
-                                    </div>
-                                    
-                                    <div class="nutrition-item" *ngIf="productDetails!.valoriNutrizionali!.carboidrati">
-                                        <div class="nutrition-label">Carboidrati</div>
-                                        <div class="nutrition-value">{{ productDetails!.valoriNutrizionali!.carboidrati }} g</div>
-                                    </div>
-                                    
-                                    <div class="nutrition-item" *ngIf="productDetails!.valoriNutrizionali!.grassi">
-                                        <div class="nutrition-label">Grassi</div>
-                                        <div class="nutrition-value">{{ productDetails!.valoriNutrizionali!.grassi }} g</div>
-                                    </div>
-                                    
-                                    <div class="nutrition-item" *ngIf="productDetails!.valoriNutrizionali!.fibre">
-                                        <div class="nutrition-label">Fibre</div>
-                                        <div class="nutrition-value">{{ productDetails!.valoriNutrizionali!.fibre }} g</div>
-                                    </div>
-                                    
-                                    <div class="nutrition-item" *ngIf="productDetails!.valoriNutrizionali!.sale">
-                                        <div class="nutrition-label">Sale</div>
-                                        <div class="nutrition-value">{{ productDetails!.valoriNutrizionali!.sale }} g</div>
-                                    </div>
-                                </div>
-                            </mat-card-content>
-                        </mat-card>
-                    </div>
-                </mat-tab>
-
-                <!-- Tab Recensioni -->
-                <mat-tab label="Recensioni ({{ reviewsCount }})" *ngIf="hasReviews">
-                    <div class="tab-content">
-                        <!-- Rating Summary -->
-                        <mat-card class="rating-summary-card">
-                            <mat-card-content>
-                                <div class="rating-summary">
-                                    <div class="average-rating">
-                                        <div class="rating-number">{{ averageRating.toFixed(1) }}</div>
-                                        <div class="stars-display">
-                                            <mat-icon *ngFor="let star of getRatingStars(averageRating)" 
-                                                     class="star" 
-                                                     [class.filled]="star === 'star'" 
-                                                     [class.half]="star === 'star_half'">
-                                                {{ star }}
-                                            </mat-icon>
-                                        </div>
-                                        <div class="rating-count">{{ reviewsCount }} recensioni</div>
-                                    </div>
-                                </div>
-                            </mat-card-content>
-                        </mat-card>
-
-                        <!-- Reviews List -->
-                        <div class="reviews-list">
-                            <mat-card 
-                                class="review-card" 
-                                *ngFor="let review of productDetails!.recensioni; trackBy: trackByReviewId">
-                                <mat-card-content>
-                                    <div class="review-header">
-                                        <div class="reviewer-info">
-                                            <div class="reviewer-name">{{ review.autore }}</div>
-                                            <div class="review-date">{{ formatDate(review.data) }}</div>
-                                        </div>
-                                        <div class="review-rating">
-                                            <mat-icon *ngFor="let star of getRatingStars(review.valutazione)" 
-                                                     class="star" 
-                                                     [class.filled]="star === 'star'">
-                                                {{ star }}
-                                            </mat-icon>
-                                        </div>
-                                    </div>
-                                    <p class="review-comment" *ngIf="review.commento">
-                                        {{ review.commento }}
-                                    </p>
-                                </mat-card-content>
-                            </mat-card>
+                        <!-- Empty state per certificazioni -->
+                        <div class="empty-certifications" *ngIf="!hasCertifications">
+                            <mat-icon class="empty-icon">gpp_bad</mat-icon>
+                            <h3>Nessuna certificazione</h3>
+                            <p>Questo prodotto non ha certificazioni associate.</p>
                         </div>
                     </div>
                 </mat-tab>

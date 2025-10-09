@@ -78,10 +78,6 @@
                                     matTooltip="Modifica">
                                     <mat-icon>edit</mat-icon>
                                 </button>
-                                <button mat-icon-button color="primary" (click)="viewProductDetails(product)"
-                                    matTooltip="Visualizza Dettagli">
-                                    <mat-icon>visibility</mat-icon>
-                                </button>
                                 <button mat-icon-button color="warn" (click)="deleteProduct(product)"
                                     matTooltip="Elimina">
                                     <mat-icon>delete</mat-icon>

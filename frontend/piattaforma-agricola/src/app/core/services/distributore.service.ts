@@ -165,14 +165,18 @@ export class DistributoreService {
     private normalizeProduct(product: DistributoreProductDTO | any): void {
         if (!product) return;
 
+        console.log('🔧 [DistributoreService] Normalizzazione prodotto prima:', product);
+
         // Mappa idProdotto -> id
         if (product.idProdotto !== undefined && product.id === undefined) {
             product.id = product.idProdotto;
+            console.log('🔄 [DistributoreService] Mappato idProdotto -> id:', product.id);
         }
 
         // Mappa statoVerifica -> stato
         if (product.statoVerifica !== undefined && product.stato === undefined) {
             product.stato = product.statoVerifica;
+            console.log('🔄 [DistributoreService] Mappato statoVerifica -> stato:', product.stato);
         }
 
         // Normalizza certificazioni
@@ -189,5 +193,7 @@ export class DistributoreService {
                 }
             }
         }
+
+        console.log('✅ [DistributoreService] Normalizzazione prodotto dopo:', product);
     }
 }

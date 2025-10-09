@@ -48,24 +48,7 @@ export class ProductCardComponent {
     }
 
     getProdottoImageUrl(): string {
-        if (this.prodotto.immagineUrl) {
-            return this.prodotto.immagineUrl;
-        }
-
-        // Fallback basato sulla categoria
-        const categoryImages: Record<string, string> = {
-            'FRUTTA': '/assets/images/placeholders/frutta.jpg',
-            'VERDURA': '/assets/images/placeholders/verdura.jpg',
-            'LATTE_DERIVATI': '/assets/images/placeholders/latte.jpg',
-            'CARNE': '/assets/images/placeholders/carne.jpg',
-            'PESCE': '/assets/images/placeholders/pesce.jpg',
-            'CEREALI': '/assets/images/placeholders/cereali.jpg',
-            'FORMAGGI': '/assets/images/placeholders/formaggio.jpg',
-            'VINO': '/assets/images/placeholders/vino.jpg',
-            'OLIO': '/assets/images/placeholders/olio.jpg'
-        };
-
-        return categoryImages[this.prodotto.categoria || ''] || '/assets/images/placeholders/prodotto-generico.jpg';
+        return this.prodotto.immagineUrl || '';
     }
 
     isDisponibile(): boolean {
@@ -93,7 +76,7 @@ export class ProductCardComponent {
     onImageError(event: Event): void {
         const img = event.target as HTMLImageElement | null;
         if (img) {
-            img.src = '/assets/images/placeholders/prodotto-generico.jpg';
+            img.style.display = 'none';
         }
     }
 }

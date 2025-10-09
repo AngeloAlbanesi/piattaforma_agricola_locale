@@ -67,8 +67,8 @@ export class EventiManagementComponent implements OnInit {
     pageSize = 10;
     currentPage = 0;
 
-    @ViewChild(MatPaginator) paginator!: MatPaginator;
-    @ViewChild(MatSort) sort!: MatSort;
+    @ViewChild('paginator') paginator!: MatPaginator;
+    @ViewChild('sort') sort!: MatSort;
 
     filters: EventoFilters = {
         pagina: 0,
@@ -121,20 +121,25 @@ export class EventiManagementComponent implements OnInit {
     }
 
     ngAfterViewInit(): void {
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        if (this.paginator) {
+            this.dataSource.paginator = this.paginator;
+            
+            this.paginator.page.subscribe(() => {
+                this.filters.pagina = this.paginator.pageIndex;
+                this.filters.elementiPerPagina = this.paginator.pageSize;
+                this.loadEventi();
+            });
+        }
 
-        this.paginator.page.subscribe(() => {
-            this.filters.pagina = this.paginator.pageIndex;
-            this.filters.elementiPerPagina = this.paginator.pageSize;
-            this.loadEventi();
-        });
-
-        this.sort.sortChange.subscribe(() => {
-            this.filters.pagina = 0;
-            // Implementare logica di ordinamento se l'API lo supporta
-            this.loadEventi();
-        });
+        if (this.sort) {
+            this.dataSource.sort = this.sort;
+            
+            this.sort.sortChange.subscribe(() => {
+                this.filters.pagina = 0;
+                // Implementare logica di ordinamento se l'API lo supporta
+                this.loadEventi();
+            });
+        }
     }
 
     loadEventi(): void {

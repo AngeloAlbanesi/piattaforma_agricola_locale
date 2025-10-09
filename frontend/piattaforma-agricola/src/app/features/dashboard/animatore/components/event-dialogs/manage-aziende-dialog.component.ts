@@ -4,14 +4,10 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-import { Observable, of } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { AziendaPartecipanteDTO } from '../../../../../core/models/animatore.models';
 import { PublicAziendeService } from '../../../../../core/services/public-aziende.service';
 import { PublicAziendaSummaryDTO } from '../../../../../core/models/public.models';
@@ -32,10 +28,8 @@ export interface ManageAziendeDialogData {
         MatDialogModule,
         MatButtonModule,
         MatFormFieldModule,
-        MatInputModule,
         MatSelectModule,
         MatIconModule,
-        MatAutocompleteModule,
         MatProgressSpinnerModule,
         MatChipsModule
     ],
@@ -52,31 +46,35 @@ export interface ManageAziendeDialogData {
       </div>
 
       <!-- Aggiungi nuova azienda -->
-      <div class="add-section">
+      <div *ngIf="isLoadingAziende" class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Caricamento aziende...</p>
+      </div>
+
+      <div *ngIf="!isLoadingAziende" class="add-section">
         <h4>Aggiungi azienda</h4>
         <form [formGroup]="addForm" class="add-form">
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Cerca azienda</mat-label>
-            <input 
-              type="text"
-              matInput
-              formControlName="aziendaSearch"
-              [matAutocomplete]="auto"
-            >
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayAzienda">
-              <mat-option 
-                *ngFor="let azienda of filteredAziende$ | async" 
-                [value]="azienda"
-                (onSelectionChange)="selectAzienda(azienda)"
-              >
+            <mat-label>Seleziona azienda da aggiungere</mat-label>
+            <mat-select formControlName="aziendaSelect">
+              <mat-option *ngFor="let azienda of aziendeDisponibiliFiltered" [value]="azienda">
                 <div class="azienda-option">
                   <span class="azienda-name">{{ azienda.nomeAzienda }}</span>
-                  <span class="azienda-piva">P.IVA: {{ azienda.partitaIva }}</span>
+                  <span class="azienda-piva">P.IVA: {{ azienda.partitaIva || 'N/D' }}</span>
                 </div>
               </mat-option>
-            </mat-autocomplete>
-            <mat-icon matSuffix>search</mat-icon>
+            </mat-select>
+            <mat-icon matSuffix>business</mat-icon>
           </mat-form-field>
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="addSelectedAzienda()"
+            [disabled]="!addForm.get('aziendaSelect')?.value"
+            type="button"
+          >
+            <mat-icon>add</mat-icon> Aggiungi Azienda
+          </button>
         </form>
       </div>
 
@@ -162,6 +160,21 @@ export interface ManageAziendeDialogData {
       }
     }
 
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      margin-bottom: 20px;
+
+      p {
+        margin-top: 15px;
+        color: #666;
+        font-size: 14px;
+      }
+    }
+
     .add-section {
       margin-bottom: 30px;
       padding-bottom: 20px;
@@ -172,8 +185,18 @@ export interface ManageAziendeDialogData {
         color: #333;
       }
 
+      .add-form {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
       .full-width {
-        width: 100%;
+        flex: 1;
+      }
+
+      button {
+        margin-top: 4px;
       }
     }
 
@@ -294,8 +317,7 @@ export interface ManageAziendeDialogData {
 })
 export class ManageAziendeDialogComponent implements OnInit {
     addForm: FormGroup;
-    filteredAziende$: Observable<AziendaPartecipanteDTO[]>;
-    aziendeNonPartecipanti: AziendaPartecipanteDTO[] = [];
+    aziendeDisponibiliFiltered: AziendaPartecipanteDTO[] = [];
     isLoadingAziende = true;
 
     constructor(
@@ -305,21 +327,13 @@ export class ManageAziendeDialogComponent implements OnInit {
         private publicAziendeService: PublicAziendeService
     ) {
         this.addForm = this.fb.group({
-            aziendaSearch: ['']
+            aziendaSelect: [null, Validators.required]
         });
-
-        this.filteredAziende$ = of([]);
     }
 
     ngOnInit(): void {
         // Fetch all available companies from public API
         this.loadAziendeDisponibili();
-
-        // Setup autocomplete
-        this.filteredAziende$ = this.addForm.get('aziendaSearch')!.valueChanges.pipe(
-            startWith(''),
-            map(value => this._filterAziende(value))
-        );
     }
 
     /**
@@ -327,11 +341,21 @@ export class ManageAziendeDialogComponent implements OnInit {
      */
     private loadAziendeDisponibili(): void {
         this.isLoadingAziende = true;
+
         this.publicAziendeService.getAziende({ page: 0, size: 100 }).subscribe({
             next: (response) => {
-                // Map PublicAziendaSummaryDTO to AziendaPartecipanteDTO
-                this.data.aziendeDisponibili = response.content.map(azienda => this.mapToAziendaPartecipante(azienda));
-                this.updateAziendeNonPartecipanti();
+                // Convert to AziendaPartecipanteDTO
+                const tutteLeAziende = response.content.map(a => this.mapToAziendaPartecipante(a));
+
+                // Filter out companies already participating
+                const idsPartecipanti = new Set(
+                    this.data.aziendePartecipanti.map(a => a.id)
+                );
+
+                this.aziendeDisponibiliFiltered = tutteLeAziende.filter(
+                    a => !idsPartecipanti.has(a.id)
+                );
+
                 this.isLoadingAziende = false;
             },
             error: (err) => {
@@ -350,38 +374,22 @@ export class ManageAziendeDialogComponent implements OnInit {
             nomeAzienda: azienda.nomeAzienda,
             partitaIva: '', // Not available in public API
             indirizzoAzienda: this.publicAziendeService.formatIndirizzoCompleto(azienda),
-            descrizioneAzienda: azienda.descrizione,
+            descrizioneAzienda: azienda.descrizione || '',
             sitoWebUrl: '', // Not available in summary DTO
-            certificazioniAzienda: []
+            certificazioniAzienda: [] // Not available in summary DTO
         };
     }
 
-    private updateAziendeNonPartecipanti(): void {
-        const participantIds = new Set(this.data.aziendePartecipanti.map(a => a.id));
-        this.aziendeNonPartecipanti = this.data.aziendeDisponibili.filter(
-            a => !participantIds.has(a.id)
-        );
-    }
+    /**
+     * Add selected company from dropdown
+     */
+    addSelectedAzienda(): void {
+        const aziendaSelezionata = this.addForm.get('aziendaSelect')?.value;
 
-    private _filterAziende(value: string | AziendaPartecipanteDTO): AziendaPartecipanteDTO[] {
-        if (!value) {
-            return this.aziendeNonPartecipanti.slice(0, 10);
+        if (aziendaSelezionata) {
+            this.selectAzienda(aziendaSelezionata);
+            this.addForm.reset();
         }
-
-        const filterValue = typeof value === 'string'
-            ? value.toLowerCase()
-            : value.nomeAzienda.toLowerCase();
-
-        return this.aziendeNonPartecipanti
-            .filter(azienda =>
-                azienda.nomeAzienda.toLowerCase().includes(filterValue) ||
-                azienda.partitaIva.includes(filterValue)
-            )
-            .slice(0, 10);
-    }
-
-    displayAzienda(azienda: AziendaPartecipanteDTO | null): string {
-        return azienda ? azienda.nomeAzienda : '';
     }
 
     selectAzienda(azienda: AziendaPartecipanteDTO): void {

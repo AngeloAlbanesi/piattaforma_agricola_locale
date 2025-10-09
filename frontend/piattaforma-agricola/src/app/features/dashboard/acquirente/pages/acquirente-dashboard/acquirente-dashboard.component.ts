@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Subject, takeUntil, catchError, of } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -85,6 +85,7 @@ export class AcquirenteDashboardComponent implements OnInit, OnDestroy {
 
     private loadDashboardStats(): void {
         this.isLoading = true;
+        // Usa statistiche di default poiché il backend non è implementato
         const defaultStats: AcquirenteStatsDTO = {
             totaleOrdini: 0,
             spesaTotale: 0,
@@ -95,31 +96,8 @@ export class AcquirenteDashboardComponent implements OnInit, OnDestroy {
             eventiProssimi: []
         };
 
-        this.acquirenteService.getAcquirenteStats()
-            .pipe(
-                takeUntil(this.destroy$),
-                catchError(error => {
-                    console.warn('Acquirente stats non disponibili, uso default:', error);
-                    // Mostra un messaggio non intrusivo all'utente
-                    this.snackBar.open('Statistiche non disponibili al momento. Verranno mostrate informazioni di base.', 'Chiudi', {
-                        duration: 4000,
-                        panelClass: 'warning-snackbar'
-                    });
-                    // Ritornare valori di default in modo che il template possa renderizzare comunque le sezioni
-                    return of(defaultStats as AcquirenteStatsDTO);
-                })
-            )
-            .subscribe({
-                next: (stats) => {
-                    this.stats = stats;
-                    this.isLoading = false;
-                },
-                error: () => {
-                    // In caso di errore imprevisto, impostiamo comunque valori di default per evitare pagina vuota
-                    this.stats = defaultStats;
-                    this.isLoading = false;
-                }
-            });
+        this.stats = defaultStats;
+        this.isLoading = false;
     }
 
     // === NAVIGAZIONE ===

@@ -31,7 +31,7 @@
         </div>
 
         <div class="table-container" *ngIf="!isLoading">
-            <table mat-table [dataSource]="dataSource" matSort>
+            <table mat-table [dataSource]="dataSource" matSort #sort="matSort">
 
                 <!-- ID Column -->
                 <ng-container matColumnDef="id">
@@ -157,7 +157,7 @@
                 </tr>
             </table>
 
-            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" showFirstLastButtons></mat-paginator>
+            <mat-paginator #paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" showFirstLastButtons></mat-paginator>
         </div>
     </mat-card-content>
 </mat-card>

@@ -26,8 +26,7 @@ import { ProductDetailDialogComponent } from '../product-detail-dialog/product-d
         MatDialogModule,
         MatProgressSpinnerModule,
         MatSnackBarModule,
-        MatTooltipModule,
-        ProductDetailDialogComponent
+        MatTooltipModule
     ],
     templateUrl: './distributore-prodotti-management.component.html',
     styleUrls: ['./distributore-prodotti-management.component.scss']

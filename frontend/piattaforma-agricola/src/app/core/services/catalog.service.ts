@@ -204,6 +204,14 @@ export class CatalogService {
                     prodotti = prodotti.filter(p => p.quantitaDisponibile > 0);
                 }
 
+                // Applica filtro prezzo lato frontend
+                if (filters.prezzoMin !== undefined) {
+                    prodotti = prodotti.filter(p => p.prezzo >= filters.prezzoMin!);
+                }
+                if (filters.prezzoMax !== undefined) {
+                    prodotti = prodotti.filter(p => p.prezzo <= filters.prezzoMax!);
+                }
+
                 return prodotti;
             }),
             catchError(() => of([]))
@@ -242,6 +250,14 @@ export class CatalogService {
                 // Applica filtro disponibilità lato frontend
                 if (filters.disponibilitaSolo) {
                     pacchetti = pacchetti.filter(p => p.quantitaDisponibile > 0);
+                }
+
+                // Applica filtro prezzo lato frontend
+                if (filters.prezzoMin !== undefined) {
+                    pacchetti = pacchetti.filter(p => p.prezzo >= filters.prezzoMin!);
+                }
+                if (filters.prezzoMax !== undefined) {
+                    pacchetti = pacchetti.filter(p => p.prezzo <= filters.prezzoMax!);
                 }
 
                 return pacchetti;

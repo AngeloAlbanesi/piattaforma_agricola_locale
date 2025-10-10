@@ -16,11 +16,64 @@ import { CatalogService } from './core/services/catalog.service';
 
 // Le rotte sono state estratte da app-routing-module.ts
 const routes: Routes = [
+    // Public routes - espanse inline per permettere routing corretto
     {
         path: '',
+        loadComponent: () => import('./features/public/pages/home/home.component').then(m => m.HomeComponent),
         pathMatch: 'full',
-        loadChildren: () => import('./features/public/public.routes').then(m => m.PUBLIC_ROUTES),
+        title: 'Piattaforma Agricola Locale - Home'
     },
+    {
+        path: 'prodotti',
+        loadComponent: () => import('./features/public/pages/prodotti/prodotti-page.component').then(m => m.ProdottiPageComponent),
+        title: 'Catalogo Prodotti - Piattaforma Agricola Locale'
+    },
+    {
+        path: 'prodotti/:id',
+        loadComponent: () => import('./features/public/pages/prodotto-detail/prodotto-detail.component').then(m => m.ProdottoDetailComponent),
+        title: 'Dettaglio Prodotto - Piattaforma Agricola Locale'
+    },
+    {
+        path: 'pacchetti',
+        loadComponent: () => import('./features/public/pages/pacchetti/pacchetti-page.component').then(m => m.PacchettiPageComponent),
+        title: 'Pacchetti - Piattaforma Agricola Locale'
+    },
+    {
+        path: 'pacchetti/:id',
+        loadComponent: () => import('./features/public/pages/pacchetto-detail/pacchetto-detail.component').then(m => m.PacchettoDetailComponent),
+        title: 'Dettaglio Pacchetto - Piattaforma Agricola Locale'
+    },
+    {
+        path: 'eventi',
+        loadComponent: () => import('./features/public/pages/eventi/eventi-page.component').then(m => m.EventiPageComponent),
+        title: 'Eventi - Piattaforma Agricola Locale'
+    },
+    {
+        path: 'eventi/:id',
+        loadComponent: () => import('./features/public/pages/evento-detail/evento-detail.component').then(m => m.EventoDetailComponent),
+        title: 'Dettaglio Evento - Piattaforma Agricola Locale'
+    },
+    {
+        path: 'aziende',
+        loadComponent: () => import('./features/public/pages/aziende/aziende-page.component').then(m => m.AziendePageComponent),
+        title: 'Aziende - Piattaforma Agricola Locale'
+    },
+    {
+        path: 'aziende/:id',
+        loadComponent: () => import('./features/public/pages/azienda-detail/azienda-detail.component').then(m => m.AziendaDetailComponent),
+        title: 'Dettaglio Azienda - Piattaforma Agricola Locale'
+    },
+    {
+        path: 'processi',
+        loadComponent: () => import('./features/public/pages/processi/processi-page.component').then(m => m.ProcessiPageComponent),
+        title: 'Processi di Trasformazione - Piattaforma Agricola Locale'
+    },
+    {
+        path: 'processi/:id',
+        loadComponent: () => import('./features/public/pages/processo-detail/processo-detail.component').then(m => m.ProcessoDetailComponent),
+        title: 'Dettaglio Processo - Piattaforma Agricola Locale'
+    },
+    // Altri routes
     {
         path: 'profilo',
         loadComponent: () => import('./features/profilo/pages/user-profile/user-profile.component').then(m => m.UserProfileComponent),
@@ -34,7 +87,6 @@ const routes: Routes = [
         path: 'catalogo',
         loadChildren: () => import('./features/catalogo/catalogo.module').then(m => m.CatalogoModule),
     },
-    // Routes removed: carrello, eventi, gestione-utenti, processi
     {
         path: 'dashboard',
         loadChildren: () => import('./features/dashboard/dashboard-routing.module').then(m => m.DashboardRoutingModule),

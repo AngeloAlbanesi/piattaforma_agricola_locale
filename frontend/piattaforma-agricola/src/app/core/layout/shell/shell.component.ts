@@ -81,4 +81,12 @@ export class ShellComponent {
         const currentUrl = this.router.url;
         return currentUrl.startsWith('/catalogo');
     }
+
+    /**
+     * Verifica se l'utente è su una pagina di dettaglio pubblica
+     */
+    isPublicDetailPage(): boolean {
+        const currentUrl = this.router.url;
+        return currentUrl.match(/^\/(prodotti|pacchetti|eventi|aziende|processi)\/\d+/) !== null;
+    }
 }

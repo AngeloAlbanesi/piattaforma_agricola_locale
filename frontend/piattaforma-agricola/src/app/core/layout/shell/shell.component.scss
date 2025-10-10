@@ -144,6 +144,22 @@ a[mat-list-item].active {
     background-color: transparent !important;
 }
 
+// Stili full-screen per pagine di dettaglio pubbliche (prodotti, pacchetti, eventi, ecc.)
+.shell.public-detail-fullscreen {
+    min-height: 100vh;
+    overflow: visible;
+}
+
+// Stili per pagine di dettaglio pubbliche full-screen
+.shell__content.public-detail-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: transparent !important;
+}
+
 @media (max-width: 960px) {
     .shell__menu {
         display: inline-flex;

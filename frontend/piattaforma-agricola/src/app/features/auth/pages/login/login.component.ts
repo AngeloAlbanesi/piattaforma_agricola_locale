@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { AuthService, LoginRequest } from '../../../../core/services/auth.service';
 
@@ -30,7 +31,8 @@ export class LoginComponent {
         private authService: AuthService,
         private router: Router,
         private route: ActivatedRoute,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private dialog: MatDialog
     ) {
         this.loginForm = this.fb.group({
             email: ['', [Validators.required, Validators.email]],
@@ -128,6 +130,12 @@ export class LoginComponent {
         this.hidePassword = !this.hidePassword;
     }
 
+    openForgotPasswordDialog(): void {
+        this.dialog.open(ForgotPasswordDialogComponent, {
+            width: '400px',
+        });
+    }
+
     getErrorMessage(field: string): string {
         const control = this.loginForm.get(field);
         if (control?.hasError('required') && control?.touched) {
@@ -143,3 +151,58 @@ export class LoginComponent {
         return '';
     }
 }
+
+@Component({
+    selector: 'app-forgot-password-dialog',
+    standalone: false,
+    template: `
+        <div class="dialog-container">
+            <h2 mat-dialog-title>
+                <mat-icon class="dialog-icon">sentiment_satisfied_alt</mat-icon>
+                Recupero Password
+            </h2>
+            <mat-dialog-content>
+                <p class="dialog-message">
+                    E da me che voi? Io al massimo te posso cantà na canzone
+                </p>
+            </mat-dialog-content>
+            <mat-dialog-actions align="end">
+                <button mat-raised-button color="primary" mat-dialog-close>
+                    Va bene, grazie!
+                </button>
+            </mat-dialog-actions>
+        </div>
+    `,
+    styles: [`
+        .dialog-container {
+            padding: 1rem;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #2e7d32;
+            margin: 0 0 1rem 0;
+        }
+
+        .dialog-icon {
+            font-size: 2rem;
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .dialog-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #424242;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        mat-dialog-actions {
+            padding: 1rem 0 0 0;
+        }
+    `]
+})
+export class ForgotPasswordDialogComponent { }

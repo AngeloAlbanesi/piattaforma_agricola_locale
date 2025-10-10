@@ -8,12 +8,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
 import { AuthRoutingModule } from './auth-routing.module';
-import { LoginComponent } from './pages/login/login.component';
+import { LoginComponent, ForgotPasswordDialogComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 
 @NgModule({
-    declarations: [LoginComponent, RegisterComponent],
+    declarations: [LoginComponent, RegisterComponent, ForgotPasswordDialogComponent],
     imports: [
         CommonModule,
         ReactiveFormsModule,
@@ -25,6 +26,7 @@ import { RegisterComponent } from './pages/register/register.component';
         MatIconModule,
         MatProgressSpinnerModule,
         MatSnackBarModule,
+        MatDialogModule,
     ],
 })
 export class AuthModule { }

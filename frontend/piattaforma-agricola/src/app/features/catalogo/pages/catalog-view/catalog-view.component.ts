@@ -144,27 +144,53 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
 
     /**
      * Aggiorna i query params nell'URL
+     * NOTA: Non usa 'merge' per evitare che i parametri rimossi persistano nell'URL
      */
     private updateQueryParams(): void {
         const queryParams: any = {};
 
-        if (this.filters.searchQuery) queryParams.q = this.filters.searchQuery;
-        if (this.filters.tipo && this.filters.tipo !== 'TUTTI') queryParams.tipo = this.filters.tipo;
-        if (this.filters.aziende?.length) queryParams.aziende = this.filters.aziende.join(',');
-        if (this.filters.categorie?.length) queryParams.categorie = this.filters.categorie.join(',');
-        if (this.filters.prezzoMin) queryParams.prezzoMin = this.filters.prezzoMin;
-        if (this.filters.prezzoMax) queryParams.prezzoMax = this.filters.prezzoMax;
-        if (this.filters.certificazioni?.length) queryParams.certificazioni = this.filters.certificazioni.join(',');
-        if (this.filters.disponibilitaSolo) queryParams.disponibili = 'true';
-        if (this.filters.sortBy !== 'nome_asc') queryParams.sort = this.filters.sortBy;
-        if (this.filters.page > 0) queryParams.page = this.filters.page;
-        if (this.filters.size !== 20) queryParams.size = this.filters.size;
-        if (this.viewMode !== 'grid') queryParams.view = this.viewMode;
+        // Aggiungi solo i parametri che hanno un valore valido
+        if (this.filters.searchQuery && this.filters.searchQuery.trim().length > 0) {
+            queryParams.q = this.filters.searchQuery;
+        }
+        if (this.filters.tipo && this.filters.tipo !== 'TUTTI') {
+            queryParams.tipo = this.filters.tipo;
+        }
+        if (this.filters.aziende?.length) {
+            queryParams.aziende = this.filters.aziende.join(',');
+        }
+        if (this.filters.categorie?.length) {
+            queryParams.categorie = this.filters.categorie.join(',');
+        }
+        if (this.filters.prezzoMin !== undefined && this.filters.prezzoMin !== null) {
+            queryParams.prezzoMin = this.filters.prezzoMin;
+        }
+        if (this.filters.prezzoMax !== undefined && this.filters.prezzoMax !== null) {
+            queryParams.prezzoMax = this.filters.prezzoMax;
+        }
+        if (this.filters.certificazioni?.length) {
+            queryParams.certificazioni = this.filters.certificazioni.join(',');
+        }
+        if (this.filters.disponibilitaSolo) {
+            queryParams.disponibili = 'true';
+        }
+        if (this.filters.sortBy !== 'nome_asc') {
+            queryParams.sort = this.filters.sortBy;
+        }
+        if (this.filters.page > 0) {
+            queryParams.page = this.filters.page;
+        }
+        if (this.filters.size !== 20) {
+            queryParams.size = this.filters.size;
+        }
+        if (this.viewMode !== 'grid') {
+            queryParams.view = this.viewMode;
+        }
 
+        // Non usa 'merge' per sostituire completamente i parametri
         this.router.navigate([], {
             relativeTo: this.route,
             queryParams,
-            queryParamsHandling: 'merge',
             replaceUrl: true
         });
     }
@@ -202,9 +228,13 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
      * Gestisce il cambio di ricerca
      */
     onSearch(query: string): void {
+        // Normalizza la query: trim e converti stringa vuota a undefined
+        const normalizedQuery = query?.trim();
+        const searchQuery = normalizedQuery && normalizedQuery.length > 0 ? normalizedQuery : undefined;
+
         this.filters = {
             ...this.filters,
-            searchQuery: query || undefined,
+            searchQuery,
             page: 0
         };
         this.performSearch();

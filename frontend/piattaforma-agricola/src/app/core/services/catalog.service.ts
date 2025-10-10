@@ -160,23 +160,9 @@ export class CatalogService {
 
     /**
      * Recupera tutti i prodotti applicando i filtri
+     * NOTA: La ricerca viene fatta lato frontend perché l'API di ricerca del backend non funziona correttamente
      */
     private fetchProdotti(filters: CatalogFilters): Observable<CatalogItem[]> {
-        // Se c'è una query di ricerca, usa l'endpoint di ricerca
-        if (filters.searchQuery) {
-            return this.prodottiService.cercaProdotti(filters.searchQuery, {
-                categoria: filters.categorie?.[0],
-                prezzoMin: filters.prezzoMin,
-                prezzoMax: filters.prezzoMax,
-                disponibilita: filters.disponibilitaSolo,
-                page: filters.page,
-                size: filters.size
-            }).pipe(
-                map(response => (response.content || []).map(p => this.convertProdottoToCatalogItem(p))),
-                catchError(() => of([]))
-            );
-        }
-
         // Se c'è un filtro per azienda, usa l'endpoint specifico
         if (filters.aziende && filters.aziende.length > 0) {
             return this.prodottiService.getProdottiByVenditore(filters.aziende[0], {
@@ -187,12 +173,19 @@ export class CatalogService {
                 page: filters.page,
                 size: filters.size
             }).pipe(
-                map(response => (response.content || []).map(p => this.convertProdottoToCatalogItem(p))),
+                map(response => {
+                    let prodotti = (response.content || []).map(p => this.convertProdottoToCatalogItem(p));
+                    // Applica filtro ricerca lato frontend
+                    if (filters.searchQuery) {
+                        prodotti = this.filterBySearchQuery(prodotti, filters.searchQuery);
+                    }
+                    return prodotti;
+                }),
                 catchError(() => of([]))
             );
         }
 
-        // Altrimenti usa l'endpoint generale
+        // Usa l'endpoint generale
         return this.prodottiService.getProdotti({
             categoria: filters.categorie?.[0],
             prezzoMin: filters.prezzoMin,
@@ -201,30 +194,23 @@ export class CatalogService {
             page: filters.page,
             size: filters.size
         }).pipe(
-            map(response => (response.content || []).map(p => this.convertProdottoToCatalogItem(p))),
+            map(response => {
+                let prodotti = (response.content || []).map(p => this.convertProdottoToCatalogItem(p));
+                // Applica filtro ricerca lato frontend
+                if (filters.searchQuery) {
+                    prodotti = this.filterBySearchQuery(prodotti, filters.searchQuery);
+                }
+                return prodotti;
+            }),
             catchError(() => of([]))
         );
     }
 
     /**
      * Recupera tutti i pacchetti applicando i filtri
+     * NOTA: La ricerca viene fatta lato frontend perché l'API di ricerca del backend non funziona correttamente
      */
     private fetchPacchetti(filters: CatalogFilters): Observable<CatalogItem[]> {
-        // Se c'è una query di ricerca, usa l'endpoint di ricerca
-        if (filters.searchQuery) {
-            return this.pacchettiService.cercaPacchetti(filters.searchQuery, {
-                categoria: filters.categorie?.[0],
-                prezzoMin: filters.prezzoMin,
-                prezzoMax: filters.prezzoMax,
-                disponibilita: filters.disponibilitaSolo,
-                page: filters.page,
-                size: filters.size
-            }).pipe(
-                map(response => (response.content || []).map(p => this.convertPacchettoToCatalogItem(p))),
-                catchError(() => of([]))
-            );
-        }
-
         // Se c'è un filtro per azienda/distributore
         if (filters.aziende && filters.aziende.length > 0) {
             return this.pacchettiService.getPacchettiByDistributore(filters.aziende[0], {
@@ -235,12 +221,19 @@ export class CatalogService {
                 page: filters.page,
                 size: filters.size
             }).pipe(
-                map(response => (response.content || []).map(p => this.convertPacchettoToCatalogItem(p))),
+                map(response => {
+                    let pacchetti = (response.content || []).map(p => this.convertPacchettoToCatalogItem(p));
+                    // Applica filtro ricerca lato frontend
+                    if (filters.searchQuery) {
+                        pacchetti = this.filterBySearchQuery(pacchetti, filters.searchQuery);
+                    }
+                    return pacchetti;
+                }),
                 catchError(() => of([]))
             );
         }
 
-        // Altrimenti usa l'endpoint generale
+        // Usa l'endpoint generale
         return this.pacchettiService.getPacchetti({
             categoria: filters.categorie?.[0],
             prezzoMin: filters.prezzoMin,
@@ -249,7 +242,14 @@ export class CatalogService {
             page: filters.page,
             size: filters.size
         }).pipe(
-            map(response => (response.content || []).map(p => this.convertPacchettoToCatalogItem(p))),
+            map(response => {
+                let pacchetti = (response.content || []).map(p => this.convertPacchettoToCatalogItem(p));
+                // Applica filtro ricerca lato frontend
+                if (filters.searchQuery) {
+                    pacchetti = this.filterBySearchQuery(pacchetti, filters.searchQuery);
+                }
+                return pacchetti;
+            }),
             catchError(() => of([]))
         );
     }
@@ -441,6 +441,47 @@ export class CatalogService {
             hasNext: false,
             hasPrevious: false
         };
+    }
+
+    /**
+     * Filtra gli item per query di ricerca (lato frontend)
+     * Cerca in modo case-insensitive su: nome, descrizione, azienda, categoria
+     */
+    private filterBySearchQuery(items: CatalogItem[], query: string): CatalogItem[] {
+        if (!query || query.trim().length === 0) {
+            return items;
+        }
+
+        const searchTerm = query.toLowerCase().trim();
+
+        return items.filter(item => {
+            // Cerca nel nome
+            if (item.nome?.toLowerCase().includes(searchTerm)) {
+                return true;
+            }
+
+            // Cerca nella descrizione
+            if (item.descrizione?.toLowerCase().includes(searchTerm)) {
+                return true;
+            }
+
+            // Cerca nel nome azienda
+            if (item.azienda?.nome?.toLowerCase().includes(searchTerm)) {
+                return true;
+            }
+
+            // Cerca nella categoria
+            if (item.categoria?.toLowerCase().includes(searchTerm)) {
+                return true;
+            }
+
+            // Cerca nelle certificazioni
+            if (item.certificazioni?.some(cert => cert.toLowerCase().includes(searchTerm))) {
+                return true;
+            }
+
+            return false;
+        });
     }
 
     // === METODI UTILITY PUBBLICI ===

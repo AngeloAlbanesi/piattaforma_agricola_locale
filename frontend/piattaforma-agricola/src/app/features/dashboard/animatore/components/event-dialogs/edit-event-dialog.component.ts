@@ -6,9 +6,72 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatNativeDateModule, MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { EventoDTO, AggiornaEventoRequestDTO } from '../../../../../core/models/animatore.models';
+
+// Custom DateAdapter per il formato italiano DD/MM/YYYY
+export class ItalianDateAdapter extends NativeDateAdapter {
+    override parse(value: any): Date | null {
+        if (!value || typeof value !== 'string') {
+            return null;
+        }
+
+        // Rimuovi spazi extra
+        const trimmedValue = value.trim();
+        
+        // Supporta i formati: DD/MM/YYYY, D/M/YYYY, DD/M/YYYY, D/MM/YYYY
+        const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+        const match = trimmedValue.match(dateRegex);
+
+        if (match) {
+            const day = parseInt(match[1], 10);
+            const month = parseInt(match[2], 10) - 1; // I mesi in JavaScript sono 0-indexed
+            const year = parseInt(match[3], 10);
+
+            // Valida i valori
+            if (month < 0 || month > 11 || day < 1 || day > 31) {
+                return null;
+            }
+
+            const date = new Date(year, month, day);
+            
+            // Verifica che la data sia valida (es. non 31/02/2024)
+            if (date.getMonth() !== month || date.getDate() !== day || date.getFullYear() !== year) {
+                return null;
+            }
+
+            return date;
+        }
+
+        return null;
+    }
+
+    override format(date: Date, displayFormat: Object): string {
+        if (!date) {
+            return '';
+        }
+
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}/${month}/${year}`;
+    }
+}
+
+// Formati per le date italiane
+export const ITALIAN_DATE_FORMATS = {
+    parse: {
+        dateInput: 'DD/MM/YYYY',
+    },
+    display: {
+        dateInput: 'DD/MM/YYYY',
+        monthYearLabel: 'MMM YYYY',
+        dateA11yLabel: 'DD/MM/YYYY',
+        monthYearA11yLabel: 'MMMM YYYY',
+    },
+};
 
 export interface EditEventDialogData {
     evento: EventoDTO;
@@ -29,7 +92,9 @@ export interface EditEventDialogData {
         MatIconModule
     ],
     providers: [
-        { provide: MAT_DATE_LOCALE, useValue: 'it-IT' }
+        { provide: MAT_DATE_LOCALE, useValue: 'it-IT' },
+        { provide: DateAdapter, useClass: ItalianDateAdapter },
+        { provide: MAT_DATE_FORMATS, useValue: ITALIAN_DATE_FORMATS }
     ],
     template: `
     <h2 mat-dialog-title>
@@ -86,12 +151,15 @@ export interface EditEventDialogData {
               matInput 
               [matDatepicker]="pickerInizio"
               formControlName="dataInizio"
-              placeholder="Seleziona data"
+              placeholder="gg/mm/aaaa"
             >
             <mat-datepicker-toggle matSuffix [for]="pickerInizio"></mat-datepicker-toggle>
             <mat-datepicker #pickerInizio></mat-datepicker>
             <mat-error *ngIf="eventForm.get('dataInizio')?.hasError('required')">
               La data di inizio è obbligatoria
+            </mat-error>
+            <mat-error *ngIf="eventForm.get('dataInizio')?.hasError('matDatepickerParse')">
+              Formato non valido. Usa: gg/mm/aaaa
             </mat-error>
           </mat-form-field>
 
@@ -118,12 +186,15 @@ export interface EditEventDialogData {
               matInput 
               [matDatepicker]="pickerFine"
               formControlName="dataFine"
-              placeholder="Seleziona data"
+              placeholder="gg/mm/aaaa"
             >
             <mat-datepicker-toggle matSuffix [for]="pickerFine"></mat-datepicker-toggle>
             <mat-datepicker #pickerFine></mat-datepicker>
             <mat-error *ngIf="eventForm.get('dataFine')?.hasError('required')">
               La data di fine è obbligatoria
+            </mat-error>
+            <mat-error *ngIf="eventForm.get('dataFine')?.hasError('matDatepickerParse')">
+              Formato non valido. Usa: gg/mm/aaaa
             </mat-error>
           </mat-form-field>
 
@@ -176,15 +247,12 @@ export interface EditEventDialogData {
             placeholder="Es. 100"
           >
           <mat-icon matSuffix>people</mat-icon>
-          <mat-hint>Numero massimo di partecipanti (1-1000)</mat-hint>
+          <mat-hint>Numero massimo di partecipanti</mat-hint>
           <mat-error *ngIf="eventForm.get('capienzaMassima')?.hasError('required')">
             La capienza massima è obbligatoria
           </mat-error>
           <mat-error *ngIf="eventForm.get('capienzaMassima')?.hasError('min')">
             Minimo 1 partecipante
-          </mat-error>
-          <mat-error *ngIf="eventForm.get('capienzaMassima')?.hasError('max')">
-            Massimo 1000 partecipanti
           </mat-error>
         </mat-form-field>
       </form>
@@ -301,7 +369,7 @@ export class EditEventDialogComponent implements OnInit {
             dataFine: ['', Validators.required],
             oraFine: ['', Validators.required],
             luogoEvento: ['', [Validators.required, Validators.maxLength(255)]],
-            capienzaMassima: ['', [Validators.required, Validators.min(1), Validators.max(1000)]]
+            capienzaMassima: ['', [Validators.required, Validators.min(1)]]
         }, { validators: this.dateRangeValidator });
     }
 

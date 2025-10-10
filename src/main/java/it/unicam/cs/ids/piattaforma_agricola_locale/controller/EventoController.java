@@ -453,6 +453,9 @@ public class EventoController {
     /**
      * Add a company as participant to an event.
      * Only the organizer of the event can add participants.
+     * 
+     * @param id         Event ID
+     * @param venditorId Company ID (DatiAzienda ID)
      */
     @PostMapping("/{id}/partecipanti-azienda/{venditorId}")
     @RequiresAccreditation
@@ -463,14 +466,15 @@ public class EventoController {
             Authentication authentication) {
 
         try {
-            // Get the vendor user
-            Venditore venditore = venditoreRepository.findById(venditorId)
-                    .orElseThrow(() -> new IllegalArgumentException("Venditore con ID " + venditorId + " non trovato"));
+            // Get the vendor user by company ID (DatiAzienda ID)
+            Venditore venditore = venditoreRepository.findByDatiAziendaId(venditorId)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Azienda con ID " + venditorId + " non trovata o non associata a un venditore"));
 
             // Add the company participant
             eventoService.aggiungiAziendaPartecipante(id, venditore);
 
-            log.info("Added company participant (vendor ID: {}) to event ID: {}", venditorId, id);
+            log.info("Added company participant (company ID: {}) to event ID: {}", venditorId, id);
 
             return ResponseEntity.status(HttpStatus.CREATED).build();
 
@@ -483,6 +487,9 @@ public class EventoController {
     /**
      * Remove a company participant from an event.
      * Only the organizer of the event can remove participants.
+     * 
+     * @param id         Event ID
+     * @param venditorId Company ID (DatiAzienda ID)
      */
     @DeleteMapping("/{id}/partecipanti-azienda/{venditorId}")
     @RequiresAccreditation
@@ -493,14 +500,15 @@ public class EventoController {
             Authentication authentication) {
 
         try {
-            // Get the vendor user
-            Venditore venditore = venditoreRepository.findById(venditorId)
-                    .orElseThrow(() -> new IllegalArgumentException("Venditore con ID " + venditorId + " non trovato"));
+            // Get the vendor user by company ID (DatiAzienda ID)
+            Venditore venditore = venditoreRepository.findByDatiAziendaId(venditorId)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Azienda con ID " + venditorId + " non trovata o non associata a un venditore"));
 
             // Remove the company participant
             eventoService.rimuoviAziendaPartecipante(id, venditore);
 
-            log.info("Removed company participant (vendor ID: {}) from event ID: {}", venditorId, id);
+            log.info("Removed company participant (company ID: {}) from event ID: {}", venditorId, id);
 
             return ResponseEntity.noContent().build();
 

@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.Objects;
 
@@ -32,6 +33,7 @@ public class FaseLavorazione {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_processo_trasformazione")
+    @JsonIgnoreProperties({"fasiLavorazione", "trasformatore", "prodottoFinale"})
     private ProcessoTrasformazione processoTrasformazione;
     
     @ManyToOne(fetch = FetchType.LAZY)

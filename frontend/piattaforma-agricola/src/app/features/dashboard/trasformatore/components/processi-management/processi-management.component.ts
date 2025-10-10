@@ -98,20 +98,25 @@ export class ProcessiManagementComponent implements OnInit {
     }
 
     ngAfterViewInit(): void {
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        if (this.paginator) {
+            this.dataSource.paginator = this.paginator;
+            
+            this.paginator.page.subscribe(() => {
+                this.filters.pagina = this.paginator.pageIndex;
+                this.filters.elementiPerPagina = this.paginator.pageSize;
+                this.loadProcessi();
+            });
+        }
 
-        this.paginator.page.subscribe(() => {
-            this.filters.pagina = this.paginator.pageIndex;
-            this.filters.elementiPerPagina = this.paginator.pageSize;
-            this.loadProcessi();
-        });
-
-        this.sort.sortChange.subscribe(() => {
-            this.filters.pagina = 0;
-            // Implementare logica di ordinamento se l'API lo supporta
-            this.loadProcessi();
-        });
+        if (this.sort) {
+            this.dataSource.sort = this.sort;
+            
+            this.sort.sortChange.subscribe(() => {
+                this.filters.pagina = 0;
+                // Implementare logica di ordinamento se l'API lo supporta
+                this.loadProcessi();
+            });
+        }
     }
 
     loadProcessi(): void {

@@ -272,36 +272,48 @@ public class ProcessoTrasformazioneController {
         FonteMateriaPrimaPublicDTO dto = new FonteMateriaPrimaPublicDTO();
         dto.setId(fonte.getId());
 
-        // Force initialization of lazy proxy to get actual class type
-        String className = fonte.getClass().getSimpleName();
-        log.debug("Mapping fonte with class: {}", className);
+        // Get actual class name (unwrap Hibernate proxy if needed)
+        String className = org.hibernate.Hibernate.getClass(fonte).getName();
+        log.debug("Mapping fonte with actual class: {}", className);
 
         dto.setDescrizioneFonte(fonte.getDescrizione());
 
-        // Check actual runtime class to determine fonte type
-        if (className.contains("FonteInterna") || fonte instanceof FonteInterna) {
+        // Determine type by checking actual class (not proxy)
+        boolean isInterna = className.endsWith("FonteInterna");
+        boolean isEsterna = className.endsWith("FonteEsterna");
+
+        log.debug("Fonte type check - isInterna: {}, isEsterna: {}", isInterna, isEsterna);
+
+        if (isInterna) {
             dto.setTipoFonte("INTERNA");
             try {
+                // Initialize proxy before casting
+                org.hibernate.Hibernate.initialize(fonte);
                 FonteInterna fonteInterna = (FonteInterna) fonte;
                 Produttore produttore = fonteInterna.getProduttore();
                 if (produttore != null) {
                     dto.setProdottoId(produttore.getIdUtente());
                     dto.setProdottoNome(produttore.getNome() + " " + produttore.getCognome());
+                    log.debug("Mapped INTERNA fonte with produttore: {} {}",
+                            produttore.getNome(), produttore.getCognome());
                 }
             } catch (Exception e) {
-                log.warn("Error accessing FonteInterna produttore: {}", e.getMessage());
+                log.error("Error accessing FonteInterna produttore: {}", e.getMessage(), e);
             }
-        } else if (className.contains("FonteEsterna") || fonte instanceof FonteEsterna) {
+        } else if (isEsterna) {
             dto.setTipoFonte("ESTERNA");
             try {
+                // Initialize proxy before casting
+                org.hibernate.Hibernate.initialize(fonte);
                 FonteEsterna fonteEsterna = (FonteEsterna) fonte;
                 dto.setProdottoNome(fonteEsterna.getNomeFornitore());
+                log.debug("Mapped ESTERNA fonte with fornitore: {}", fonteEsterna.getNomeFornitore());
             } catch (Exception e) {
-                log.warn("Error accessing FonteEsterna fornitore: {}", e.getMessage());
+                log.error("Error accessing FonteEsterna fornitore: {}", e.getMessage(), e);
             }
         } else {
-            // Fallback: if we can't determine the type, mark as ESTERNA
-            log.warn("Unknown fonte type, defaulting to ESTERNA: {}", className);
+            // This should never happen with proper discriminator mapping
+            log.error("Unknown fonte type for class: {} - this indicates a mapping issue", className);
             dto.setTipoFonte("ESTERNA");
         }
 

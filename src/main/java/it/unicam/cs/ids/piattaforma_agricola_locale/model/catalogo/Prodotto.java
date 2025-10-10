@@ -3,6 +3,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.Acquistabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.ElementoVerificabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
@@ -32,9 +33,11 @@ public class Prodotto implements Acquistabile, ElementoVerificabile {
     private String feedbackVerifica;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_venditore", nullable = false)
+    @JsonIgnoreProperties({"prodottiOfferti", "datiAzienda", "passwordHash", "email", "numeroTelefono", "authorities", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "enabled"})
     private Venditore venditore;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_prodotto_associato")
+    @JsonIgnoreProperties({"prodotto"})
     private List<Certificazione> certificazioniProdotto;
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_origine", nullable = false)

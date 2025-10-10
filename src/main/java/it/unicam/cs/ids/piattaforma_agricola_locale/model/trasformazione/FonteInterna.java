@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import jakarta.persistence.*;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Produttore;
@@ -16,6 +17,7 @@ public class FonteInterna extends FonteMateriaPrima {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_produttore", nullable = true)
+    @JsonIgnoreProperties({"prodottiOfferti", "datiAzienda", "passwordHash", "email", "numeroTelefono", "authorities", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "enabled"})
     private Produttore produttore;
 
     public FonteInterna() {}

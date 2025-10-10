@@ -361,4 +361,42 @@ export class ProdottoDetailComponent implements OnInit, OnDestroy {
             default: return 'N/D';
         }
     }
+
+    // === Helper methods per fasi di lavorazione ===
+
+    getFonteColor(fase: any): string {
+        // Per il public DTO, le fasi hanno fontiMateriePrime[] array
+        if (fase?.fontiMateriePrime && fase.fontiMateriePrime.length > 0) {
+            // Usa la prima fonte per determinare il colore
+            const tipo = fase.fontiMateriePrime[0].tipoFonte;
+            return tipo === 'INTERNA' ? 'accent' : 'primary';
+        }
+        return 'primary';
+    }
+
+    getFonteIcon(fase: any): string {
+        if (fase?.fontiMateriePrime && fase.fontiMateriePrime.length > 0) {
+            const tipo = fase.fontiMateriePrime[0].tipoFonte;
+            return tipo === 'INTERNA' ? 'home' : 'public';
+        }
+        return 'help';
+    }
+
+    getFonteLabel(fase: any): string {
+        if (fase?.fontiMateriePrime && fase.fontiMateriePrime.length > 0) {
+            const tipo = fase.fontiMateriePrime[0].tipoFonte;
+            const label = tipo === 'INTERNA' ? 'Interna' : 'Esterna';
+            // Se ci sono più fonti, aggiungi il conteggio
+            if (fase.fontiMateriePrime.length > 1) {
+                return `${label} (+${fase.fontiMateriePrime.length - 1})`;
+            }
+            return label;
+        }
+        return 'N/D';
+    }
+
+    getFonteName(fase: any): string {
+        // Non più utilizzato con la nuova struttura
+        return 'Non specificato';
+    }
 }

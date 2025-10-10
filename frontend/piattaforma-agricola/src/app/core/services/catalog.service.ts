@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin, of, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, catchError, debounceTime, distinctUntilChanged, shareReplay } from 'rxjs/operators';
+import { map, catchError, debounceTime, distinctUntilChanged, shareReplay, switchMap } from 'rxjs/operators';
 
 import { PublicProdottiService } from './public-prodotti.service';
 import { PublicPacchettiService } from './public-pacchetti.service';
@@ -31,6 +31,12 @@ export class CatalogService {
     // Cache per le aziende
     private aziendeCache$?: Observable<PublicAziendaSummaryDTO[]>;
 
+    // Mappa prodottoId -> aziendaId (popolata dalle certificazioni)
+    private prodottoToAziendaMap = new Map<number, number>();
+
+    // Mappa aziendaId -> nome azienda (popolata dalle aziende caricate)
+    private aziendaNameMap = new Map<number, string>();
+
     // Subject per gestire i filtri correnti
     private filtersSubject = new BehaviorSubject<CatalogFilters>(DEFAULT_CATALOG_FILTERS);
     public filters$ = this.filtersSubject.asObservable();
@@ -45,34 +51,40 @@ export class CatalogService {
 
     /**
      * Cerca nel catalogo applicando i filtri specificati
+     * Prima carica le aziende per popolare le mappe, poi i prodotti/pacchetti
      */
     searchCatalog(filters: CatalogFilters): Observable<CatalogSearchResult> {
         // Aggiorna i filtri correnti
         this.filtersSubject.next(filters);
 
-        // Determina quali API chiamare in base al filtro tipo
-        const shouldFetchProdotti = !filters.tipo || filters.tipo === 'TUTTI' || filters.tipo === 'PRODOTTO';
-        const shouldFetchPacchetti = !filters.tipo || filters.tipo === 'TUTTI' || filters.tipo === 'PACCHETTO';
+        // Prima carica le aziende per popolare le mappe
+        return this.getAllAziende().pipe(
+            switchMap(() => {
+                // Determina quali API chiamare in base al filtro tipo
+                const shouldFetchProdotti = !filters.tipo || filters.tipo === 'TUTTI' || filters.tipo === 'PRODOTTO';
+                const shouldFetchPacchetti = !filters.tipo || filters.tipo === 'TUTTI' || filters.tipo === 'PACCHETTO';
 
-        // Prepara le chiamate API
-        const requests: Observable<CatalogItem[]>[] = [];
+                // Prepara le chiamate API
+                const requests: Observable<CatalogItem[]>[] = [];
 
-        if (shouldFetchProdotti) {
-            requests.push(this.fetchProdotti(filters));
-        }
+                if (shouldFetchProdotti) {
+                    requests.push(this.fetchProdotti(filters));
+                }
 
-        if (shouldFetchPacchetti) {
-            requests.push(this.fetchPacchetti(filters));
-        }
+                if (shouldFetchPacchetti) {
+                    requests.push(this.fetchPacchetti(filters));
+                }
 
-        // Se non ci sono richieste, ritorna risultato vuoto
-        if (requests.length === 0) {
-            return of(this.createEmptyResult());
-        }
+                // Se non ci sono richieste, ritorna risultato vuoto
+                if (requests.length === 0) {
+                    return of(this.createEmptyResult());
+                }
 
-        // Esegue le richieste in parallelo e combina i risultati
-        return forkJoin(requests).pipe(
-            map(results => this.combineResults(results.flat(), filters)),
+                // Esegue le richieste in parallelo e combina i risultati
+                return forkJoin(requests).pipe(
+                    map(results => this.combineResults(results.flat(), filters))
+                );
+            }),
             catchError(error => {
                 console.error('Errore durante la ricerca nel catalogo:', error);
                 return of(this.createEmptyResult());
@@ -255,17 +267,48 @@ export class CatalogService {
     }
 
     /**
-     * Recupera tutte le aziende (con cache)
+     * Recupera tutte le aziende (con cache) e popola le mappe
      */
     private getAllAziende(): Observable<PublicAziendaSummaryDTO[]> {
         if (!this.aziendeCache$) {
             this.aziendeCache$ = this.aziendeService.getAziende({ size: 1000 }).pipe(
-                map(response => response.content || []),
+                map(response => {
+                    const aziende = response.content || [];
+                    // Popola le mappe
+                    aziende.forEach(azienda => {
+                        const nome = azienda.nomeAzienda || 'Azienda Sconosciuta';
+                        // Mappa aziendaId -> nome
+                        this.aziendaNameMap.set(azienda.id, nome);
+
+                        // Mappa prodottoId -> aziendaId usando le certificazioni
+                        // NOTA: L'API restituisce certificazioniAzienda ma il DTO non lo riflette
+                        const azienda_any = azienda as any;
+                        if (azienda_any.certificazioniAzienda) {
+                            azienda_any.certificazioniAzienda.forEach((cert: any) => {
+                                if (cert.idProdottoAssociato) {
+                                    this.prodottoToAziendaMap.set(cert.idProdottoAssociato, azienda.id);
+                                }
+                            });
+                        }
+                    });
+                    return aziende;
+                }),
                 shareReplay(1),
                 catchError(() => of([]))
             );
         }
         return this.aziendeCache$;
+    }
+
+    /**
+     * Ottiene il nome dell'azienda dato un ID prodotto
+     */
+    private getAziendaNameByProdottoId(prodottoId: number): string {
+        const aziendaId = this.prodottoToAziendaMap.get(prodottoId);
+        if (aziendaId) {
+            return this.aziendaNameMap.get(aziendaId) || 'Azienda Sconosciuta';
+        }
+        return 'Azienda Sconosciuta';
     }
 
     /**
@@ -295,9 +338,9 @@ export class CatalogService {
         // Estrae ID prodotto dai possibili campi
         const id = prodotto.idProdotto || prodotto.id || 0;
 
-        // Estrae info azienda dai possibili campi
-        const aziendaId = prodotto.idVenditore || prodotto.produttore?.id || 0;
-        const aziendaNome = prodotto.nomeVenditore || prodotto.produttore?.nomeAzienda || 'Azienda Sconosciuta';
+        // Usa direttamente i campi nomeAzienda e idAzienda dal backend
+        const aziendaNome = prodotto.nomeAzienda || prodotto.produttore?.nomeAzienda || 'Azienda Sconosciuta';
+        const aziendaId = prodotto.idAzienda || prodotto.produttore?.id || 0;
 
         return {
             id,
@@ -326,9 +369,9 @@ export class CatalogService {
         // Estrae ID pacchetto dai possibili campi
         const id = pacchetto.idPacchetto || pacchetto.id || 0;
 
-        // Estrae info azienda/distributore dai possibili campi
-        const aziendaId = pacchetto.idDistributore || pacchetto.distributore?.id || 0;
-        const aziendaNome = pacchetto.nomeDistributore || pacchetto.distributore?.nomeAzienda || 'Azienda Sconosciuta';
+        // Usa direttamente i campi nomeAzienda e idAzienda dal backend
+        const aziendaNome = pacchetto.nomeAzienda || pacchetto.distributore?.nomeAzienda || 'Azienda Sconosciuta';
+        const aziendaId = pacchetto.idAzienda || pacchetto.distributore?.id || 0;
 
         // Estrae prezzo dai possibili campi
         const prezzoBase = pacchetto.prezzoPacchetto || pacchetto.prezzoScontato || pacchetto.prezzo || 0;

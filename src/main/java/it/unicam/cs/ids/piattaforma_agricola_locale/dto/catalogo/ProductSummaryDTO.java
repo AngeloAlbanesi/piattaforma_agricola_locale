@@ -33,4 +33,6 @@ public class ProductSummaryDTO {
     private MetodoDiColtivazioneDTO metodoDiColtivazione;
     private String nomeVenditore;
     private Long idVenditore;
+    private String nomeAzienda;
+    private Long idAzienda;
 }

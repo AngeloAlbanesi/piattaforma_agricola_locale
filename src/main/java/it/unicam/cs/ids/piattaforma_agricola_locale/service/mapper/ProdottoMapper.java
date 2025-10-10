@@ -55,6 +55,8 @@ public abstract class ProdottoMapper {
     @Mapping(target = "metodoDiColtivazione", expression = "java(mapMetodoDiColtivazione(prodotto.getIdMetodoDiColtivazione()))")
     @Mapping(target = "nomeVenditore", expression = "java(prodotto.getVenditore() != null ? prodotto.getVenditore().getNome() + \" \" + prodotto.getVenditore().getCognome() : null)")
     @Mapping(target = "idVenditore", source = "venditore.idUtente")
+    @Mapping(target = "nomeAzienda", expression = "java(prodotto.getVenditore() != null && prodotto.getVenditore().getDatiAzienda() != null ? prodotto.getVenditore().getDatiAzienda().getNomeAzienda() : null)")
+    @Mapping(target = "idAzienda", expression = "java(prodotto.getVenditore() != null && prodotto.getVenditore().getDatiAzienda() != null ? prodotto.getVenditore().getDatiAzienda().getId() : null)")
     public abstract ProductSummaryDTO toSummaryDTO(Prodotto prodotto);
 
     /**

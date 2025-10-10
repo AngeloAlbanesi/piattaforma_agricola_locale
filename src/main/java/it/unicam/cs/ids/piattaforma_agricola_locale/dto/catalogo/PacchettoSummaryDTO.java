@@ -26,4 +26,6 @@ public class PacchettoSummaryDTO {
     private String nomeDistributore;
     private Long idDistributore;
     private int numeroElementi;
+    private String nomeAzienda;
+    private Long idAzienda;
 }

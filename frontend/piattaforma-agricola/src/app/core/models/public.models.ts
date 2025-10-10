@@ -21,6 +21,8 @@ export interface PublicProdottoSummaryDTO {
     // Campi dal backend
     nomeVenditore?: string;
     idVenditore?: number;
+    nomeAzienda?: string;     // Nome dell'azienda del venditore
+    idAzienda?: number;       // ID dell'azienda del venditore
     // Campi alternativi
     produttore?: {
         id: number;
@@ -109,6 +111,8 @@ export interface PublicPacchettoSummaryDTO {
     nomeDistributore?: string;
     idDistributore?: number;
     numeroElementi?: number;  // Campo dal backend
+    nomeAzienda?: string;      // Nome dell'azienda del distributore
+    idAzienda?: number;        // ID dell'azienda del distributore
     // Campi alternativi
     distributore?: {
         id: number;

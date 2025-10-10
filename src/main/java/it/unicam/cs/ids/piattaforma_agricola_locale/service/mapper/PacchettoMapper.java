@@ -47,6 +47,8 @@ public interface PacchettoMapper {
     @Mapping(target = "nomeDistributore", expression = "java(pacchetto.getDistributore().getNome() + \" \" + pacchetto.getDistributore().getCognome())")
     @Mapping(target = "idDistributore", source = "distributore.idUtente")
     @Mapping(target = "numeroElementi", expression = "java(pacchetto.getPacchettoElementi() != null ? pacchetto.getPacchettoElementi().size() : 0)")
+    @Mapping(target = "nomeAzienda", expression = "java(pacchetto.getDistributore() != null && pacchetto.getDistributore().getDatiAzienda() != null ? pacchetto.getDistributore().getDatiAzienda().getNomeAzienda() : null)")
+    @Mapping(target = "idAzienda", expression = "java(pacchetto.getDistributore() != null && pacchetto.getDistributore().getDatiAzienda() != null ? pacchetto.getDistributore().getDatiAzienda().getId() : null)")
     PacchettoSummaryDTO toSummaryDTO(Pacchetto pacchetto);
 
     /**

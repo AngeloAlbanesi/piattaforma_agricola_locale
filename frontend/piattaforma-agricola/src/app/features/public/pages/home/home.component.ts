@@ -117,7 +117,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     onProductSearch(query: string): void {
         if (query && query.trim()) {
-            this.router.navigate(['/prodotti'], {
+            this.router.navigate(['/catalogo'], {
                 queryParams: { search: query.trim() }
             });
         }
@@ -172,7 +172,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     navigateToProdotti(): void {
-        this.router.navigate(['/prodotti']);
+        this.router.navigate(['/catalogo']);
     }
 
     navigateToEventi(): void {

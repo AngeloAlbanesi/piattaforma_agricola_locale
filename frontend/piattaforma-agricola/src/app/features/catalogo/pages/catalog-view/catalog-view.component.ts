@@ -346,6 +346,13 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
         this.filtersOpened = true;
     }
 
+    /**
+     * Naviga alla home page
+     */
+    navigateToHome(): void {
+        this.router.navigate(['/']);
+    }
+
     // === UTILITIES ===
 
     /**

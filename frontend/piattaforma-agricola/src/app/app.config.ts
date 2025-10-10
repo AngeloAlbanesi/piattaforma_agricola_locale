@@ -24,11 +24,6 @@ const routes: Routes = [
         title: 'Piattaforma Agricola Locale - Home'
     },
     {
-        path: 'prodotti',
-        loadComponent: () => import('./features/public/pages/prodotti/prodotti-page.component').then(m => m.ProdottiPageComponent),
-        title: 'Catalogo Prodotti - Piattaforma Agricola Locale'
-    },
-    {
         path: 'prodotti/:id',
         loadComponent: () => import('./features/public/pages/prodotto-detail/prodotto-detail.component').then(m => m.ProdottoDetailComponent),
         title: 'Dettaglio Prodotto - Piattaforma Agricola Locale'

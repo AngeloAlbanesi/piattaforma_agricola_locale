@@ -5,8 +5,33 @@
 }
 
 .catalog-header {
+    position: relative;
     margin-bottom: 24px;
     text-align: center;
+
+    .home-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        z-index: 10;
+
+        &:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transform: scale(1.1);
+        }
+
+        mat-icon {
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+            margin: 0;
+        }
+    }
 
     .header-content {
         max-width: 800px;
@@ -206,6 +231,11 @@
     .catalog-header {
         margin-bottom: 16px;
 
+        .home-button {
+            width: 48px;
+            height: 48px;
+        }
+
         .page-title {
             font-size: 24px;
 
@@ -286,6 +316,17 @@
     }
 
     .catalog-header {
+        .home-button {
+            width: 40px;
+            height: 40px;
+
+            mat-icon {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+            }
+        }
+
         .page-title {
             font-size: 20px;
             flex-direction: column;

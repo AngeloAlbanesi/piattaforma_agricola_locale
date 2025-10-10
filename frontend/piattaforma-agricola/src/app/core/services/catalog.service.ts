@@ -172,46 +172,33 @@ export class CatalogService {
 
     /**
      * Recupera tutti i prodotti applicando i filtri
-     * NOTA: La ricerca viene fatta lato frontend perché l'API di ricerca del backend non funziona correttamente
+     * NOTA: La ricerca e il filtro aziende vengono fatti lato frontend perché l'API di ricerca del backend non funziona correttamente
      */
     private fetchProdotti(filters: CatalogFilters): Observable<CatalogItem[]> {
-        // Se c'è un filtro per azienda, usa l'endpoint specifico
-        if (filters.aziende && filters.aziende.length > 0) {
-            return this.prodottiService.getProdottiByVenditore(filters.aziende[0], {
-                categoria: filters.categorie?.[0],
-                prezzoMin: filters.prezzoMin,
-                prezzoMax: filters.prezzoMax,
-                disponibilita: filters.disponibilitaSolo,
-                page: filters.page,
-                size: filters.size
-            }).pipe(
-                map(response => {
-                    let prodotti = (response.content || []).map(p => this.convertProdottoToCatalogItem(p));
-                    // Applica filtro ricerca lato frontend
-                    if (filters.searchQuery) {
-                        prodotti = this.filterBySearchQuery(prodotti, filters.searchQuery);
-                    }
-                    return prodotti;
-                }),
-                catchError(() => of([]))
-            );
-        }
-
-        // Usa l'endpoint generale
+        // Usa sempre l'endpoint generale e filtra lato frontend
         return this.prodottiService.getProdotti({
             categoria: filters.categorie?.[0],
             prezzoMin: filters.prezzoMin,
             prezzoMax: filters.prezzoMax,
             disponibilita: filters.disponibilitaSolo,
-            page: filters.page,
-            size: filters.size
+            page: 0,
+            size: 1000  // Prende tutti i prodotti per filtrarli client-side
         }).pipe(
             map(response => {
                 let prodotti = (response.content || []).map(p => this.convertProdottoToCatalogItem(p));
+
                 // Applica filtro ricerca lato frontend
                 if (filters.searchQuery) {
                     prodotti = this.filterBySearchQuery(prodotti, filters.searchQuery);
                 }
+
+                // Applica filtro aziende lato frontend
+                if (filters.aziende && filters.aziende.length > 0) {
+                    prodotti = prodotti.filter(p =>
+                        filters.aziende!.includes(p.azienda.id)
+                    );
+                }
+
                 return prodotti;
             }),
             catchError(() => of([]))
@@ -220,46 +207,33 @@ export class CatalogService {
 
     /**
      * Recupera tutti i pacchetti applicando i filtri
-     * NOTA: La ricerca viene fatta lato frontend perché l'API di ricerca del backend non funziona correttamente
+     * NOTA: La ricerca e il filtro aziende vengono fatti lato frontend perché l'API di ricerca del backend non funziona correttamente
      */
     private fetchPacchetti(filters: CatalogFilters): Observable<CatalogItem[]> {
-        // Se c'è un filtro per azienda/distributore
-        if (filters.aziende && filters.aziende.length > 0) {
-            return this.pacchettiService.getPacchettiByDistributore(filters.aziende[0], {
-                categoria: filters.categorie?.[0],
-                prezzoMin: filters.prezzoMin,
-                prezzoMax: filters.prezzoMax,
-                disponibilita: filters.disponibilitaSolo,
-                page: filters.page,
-                size: filters.size
-            }).pipe(
-                map(response => {
-                    let pacchetti = (response.content || []).map(p => this.convertPacchettoToCatalogItem(p));
-                    // Applica filtro ricerca lato frontend
-                    if (filters.searchQuery) {
-                        pacchetti = this.filterBySearchQuery(pacchetti, filters.searchQuery);
-                    }
-                    return pacchetti;
-                }),
-                catchError(() => of([]))
-            );
-        }
-
-        // Usa l'endpoint generale
+        // Usa sempre l'endpoint generale e filtra lato frontend
         return this.pacchettiService.getPacchetti({
             categoria: filters.categorie?.[0],
             prezzoMin: filters.prezzoMin,
             prezzoMax: filters.prezzoMax,
             disponibilita: filters.disponibilitaSolo,
-            page: filters.page,
-            size: filters.size
+            page: 0,
+            size: 1000  // Prende tutti i pacchetti per filtrarli client-side
         }).pipe(
             map(response => {
                 let pacchetti = (response.content || []).map(p => this.convertPacchettoToCatalogItem(p));
+
                 // Applica filtro ricerca lato frontend
                 if (filters.searchQuery) {
                     pacchetti = this.filterBySearchQuery(pacchetti, filters.searchQuery);
                 }
+
+                // Applica filtro aziende lato frontend
+                if (filters.aziende && filters.aziende.length > 0) {
+                    pacchetti = pacchetti.filter(p =>
+                        filters.aziende!.includes(p.azienda.id)
+                    );
+                }
+
                 return pacchetti;
             }),
             catchError(() => of([]))

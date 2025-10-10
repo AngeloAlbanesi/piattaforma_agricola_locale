@@ -1,0 +1,32 @@
+<div class="catalog-sort-header">
+    <!-- Contatore risultati -->
+    <div class="results-count">
+        <mat-icon>inventory_2</mat-icon>
+        <span class="count-text">{{ resultsRange }}</span>
+    </div>
+
+    <!-- Controlli ordinamento e vista -->
+    <div class="controls">
+        <!-- Ordinamento -->
+        <mat-form-field appearance="outline" class="sort-select">
+            <mat-label>Ordina per</mat-label>
+            <mat-select [value]="sortBy" (selectionChange)="onSortChange($event.value)"
+                aria-label="Seleziona criterio ordinamento">
+                <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+                    {{ option.label }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Toggle vista -->
+        <mat-button-toggle-group [value]="viewMode" (change)="onViewModeChange($event.value)" class="view-toggle"
+            aria-label="Seleziona modalità visualizzazione">
+            <mat-button-toggle value="grid" matTooltip="Vista griglia">
+                <mat-icon>grid_view</mat-icon>
+            </mat-button-toggle>
+            <mat-button-toggle value="list" matTooltip="Vista lista">
+                <mat-icon>view_list</mat-icon>
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+    </div>
+</div>

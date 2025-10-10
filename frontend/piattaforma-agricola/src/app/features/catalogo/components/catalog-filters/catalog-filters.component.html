@@ -1,0 +1,175 @@
+<div class="catalog-filters">
+    <!-- Header -->
+    <div class="filters-header">
+        <h3>
+            <mat-icon>filter_list</mat-icon>
+            Filtri
+            <span *ngIf="activeFiltersCount > 0" class="filters-count">{{ activeFiltersCount }}</span>
+        </h3>
+        <button mat-icon-button (click)="onResetFilters()" matTooltip="Resetta tutti i filtri"
+            [disabled]="activeFiltersCount === 0" aria-label="Resetta filtri">
+            <mat-icon>refresh</mat-icon>
+        </button>
+    </div>
+
+    <!-- Form filtri -->
+    <form [formGroup]="filtersForm" class="filters-form">
+        <!-- Tipo -->
+        <mat-expansion-panel expanded>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>category</mat-icon>
+                    Tipo
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Tipo di item</mat-label>
+                <mat-select formControlName="tipo">
+                    <mat-option value="TUTTI">Tutti</mat-option>
+                    <mat-option value="PRODOTTO">Solo Prodotti</mat-option>
+                    <mat-option value="PACCHETTO">Solo Pacchetti</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-expansion-panel>
+
+        <!-- Aziende -->
+        <mat-expansion-panel *ngIf="options.aziende && options.aziende.length > 0">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>store</mat-icon>
+                    Aziende
+                    <span *ngIf="filtersForm.get('aziende')?.value?.length > 0" class="selected-count">
+                        ({{ filtersForm.get('aziende')?.value?.length }})
+                    </span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <!-- Ricerca aziende -->
+            <mat-form-field appearance="outline" class="full-width search-field">
+                <mat-label>Cerca azienda</mat-label>
+                <input matInput [(ngModel)]="aziendaSearchQuery" [ngModelOptions]="{standalone: true}"
+                    placeholder="Nome azienda...">
+                <mat-icon matPrefix>search</mat-icon>
+            </mat-form-field>
+
+            <!-- Lista aziende -->
+            <div class="aziende-list">
+                <div *ngFor="let azienda of filteredAziende" class="azienda-item"
+                    [class.selected]="isAziendaSelected(azienda.id)">
+                    <mat-checkbox [checked]="isAziendaSelected(azienda.id)" (change)="toggleAzienda(azienda.id)">
+                        <div class="azienda-info">
+                            <mat-icon class="azienda-icon">{{ getAziendaTipologiaIcon(azienda.tipologia) }}</mat-icon>
+                            <span class="azienda-name">{{ azienda.nome }}</span>
+                        </div>
+                    </mat-checkbox>
+                </div>
+
+                <div *ngIf="filteredAziende.length === 0" class="no-results">
+                    <mat-icon>search_off</mat-icon>
+                    <span>Nessuna azienda trovata</span>
+                </div>
+            </div>
+        </mat-expansion-panel>
+
+        <!-- Categorie -->
+        <mat-expansion-panel *ngIf="options.categorie && options.categorie.length > 0">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>label</mat-icon>
+                    Categorie
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Categorie</mat-label>
+                <mat-select formControlName="categorie" multiple>
+                    <mat-option *ngFor="let categoria of options.categorie" [value]="categoria">
+                        {{ categoria }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-expansion-panel>
+
+        <!-- Range Prezzo -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>euro</mat-icon>
+                    Prezzo
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="price-range">
+                <div class="price-inputs">
+                    <mat-form-field appearance="outline" class="price-input">
+                        <mat-label>Min</mat-label>
+                        <input matInput type="number" formControlName="prezzoMin" [min]="options.prezzoMin"
+                            [max]="filtersForm.get('prezzoMax')?.value">
+                        <span matPrefix>€</span>
+                    </mat-form-field>
+
+                    <span class="price-separator">-</span>
+
+                    <mat-form-field appearance="outline" class="price-input">
+                        <mat-label>Max</mat-label>
+                        <input matInput type="number" formControlName="prezzoMax"
+                            [min]="filtersForm.get('prezzoMin')?.value" [max]="options.prezzoMax">
+                        <span matPrefix>€</span>
+                    </mat-form-field>
+                </div>
+
+                <div class="price-display">
+                    <span>{{ formatPrezzoLabel(filtersForm.get('prezzoMin')?.value) }}</span>
+                    <span>-</span>
+                    <span>{{ formatPrezzoLabel(filtersForm.get('prezzoMax')?.value) }}</span>
+                </div>
+            </div>
+        </mat-expansion-panel>
+
+        <!-- Certificazioni -->
+        <mat-expansion-panel *ngIf="options.certificazioni && options.certificazioni.length > 0">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>verified</mat-icon>
+                    Certificazioni
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Certificazioni</mat-label>
+                <mat-select formControlName="certificazioni" multiple>
+                    <mat-option *ngFor="let cert of options.certificazioni" [value]="cert">
+                        <mat-icon>eco</mat-icon>
+                        {{ cert }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-expansion-panel>
+
+        <!-- Disponibilità -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>inventory</mat-icon>
+                    Disponibilità
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="availability-filter">
+                <mat-checkbox formControlName="disponibilitaSolo">
+                    Mostra solo disponibili
+                </mat-checkbox>
+            </div>
+        </mat-expansion-panel>
+    </form>
+
+    <!-- Footer con azioni -->
+    <div class="filters-footer">
+        <button mat-stroked-button color="primary" (click)="onResetFilters()" [disabled]="activeFiltersCount === 0"
+            class="reset-btn">
+            <mat-icon>clear_all</mat-icon>
+            Pulisci filtri
+        </button>
+    </div>
+</div>

@@ -1,21 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { CatalogoRoutingModule } from './catalogo-routing.module';
-import { ProdottiListComponent } from './pages/prodotti-list/prodotti-list.component';
 
+/**
+ * Modulo per il catalogo pubblico di prodotti e pacchetti
+ * 
+ * Nota: Tutti i componenti del catalogo sono standalone e vengono
+ * importati direttamente nel routing module
+ */
 @NgModule({
-    declarations: [ProdottiListComponent],
+    declarations: [],
     imports: [
         CommonModule,
-        CatalogoRoutingModule,
-        MatCardModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatProgressSpinnerModule,
-    ],
+        CatalogoRoutingModule
+    ]
 })
 export class CatalogoModule { }

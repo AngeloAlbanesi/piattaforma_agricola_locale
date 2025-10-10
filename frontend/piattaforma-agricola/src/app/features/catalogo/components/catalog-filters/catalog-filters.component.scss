@@ -1,0 +1,262 @@
+.catalog-filters {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filters-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+    background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%);
+
+    h3 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #212121;
+
+        mat-icon {
+            color: #1976d2;
+        }
+    }
+
+    .filters-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 24px;
+        height: 24px;
+        padding: 0 8px;
+        background: #1976d2;
+        color: white;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+}
+
+.filters-form {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+
+    mat-expansion-panel {
+        margin-bottom: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    mat-expansion-panel-header {
+        mat-panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+
+            mat-icon {
+                color: #1976d2;
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+            }
+
+            .selected-count {
+                margin-left: auto;
+                font-size: 12px;
+                color: #1976d2;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .full-width {
+        width: 100%;
+    }
+
+    .search-field {
+        margin-bottom: 16px;
+    }
+}
+
+.aziende-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 8px 0;
+
+    .azienda-item {
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: background 0.2s ease;
+
+        &:hover {
+            background: #f5f5f5;
+        }
+
+        &.selected {
+            background: #e3f2fd;
+        }
+
+        mat-checkbox {
+            width: 100%;
+
+            ::ng-deep .mdc-checkbox {
+                padding: 0;
+            }
+        }
+
+        .azienda-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .azienda-icon {
+                color: #666;
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+            }
+
+            .azienda-name {
+                font-size: 14px;
+                color: #212121;
+            }
+        }
+    }
+
+    .no-results {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        color: #999;
+        text-align: center;
+        gap: 8px;
+
+        mat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            opacity: 0.5;
+        }
+
+        span {
+            font-size: 14px;
+        }
+    }
+}
+
+.price-range {
+    .price-inputs {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+
+        .price-input {
+            flex: 1;
+        }
+
+        .price-separator {
+            margin-top: -8px;
+            color: #999;
+            font-weight: 500;
+        }
+    }
+
+    .price-display {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px;
+        background: #f5f5f5;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1976d2;
+
+        span {
+            &:nth-child(2) {
+                color: #999;
+            }
+        }
+    }
+}
+
+.availability-filter {
+    padding: 8px 0;
+
+    mat-checkbox {
+        ::ng-deep .mdc-label {
+            font-size: 14px;
+        }
+    }
+}
+
+.filters-footer {
+    padding: 16px;
+    border-top: 1px solid #e0e0e0;
+    background: #fafafa;
+
+    .reset-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+        }
+    }
+}
+
+// Scrollbar personalizzato
+.filters-form,
+.aziende-list {
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #bbb;
+        border-radius: 3px;
+
+        &:hover {
+            background: #999;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .catalog-filters {
+        border-radius: 0;
+    }
+
+    .filters-header h3 {
+        font-size: 16px;
+    }
+
+    .aziende-list {
+        max-height: 200px;
+    }
+}

@@ -1,0 +1,108 @@
+<mat-card class="catalog-item-card" [class.list-view]="viewMode === 'list'" (click)="onViewDetails()">
+    <!-- Badge tipo -->
+    <div class="type-badge" [class]="typeBadgeClass">
+        <mat-icon>{{ item.tipo === 'PRODOTTO' ? 'shopping_basket' : 'inventory_2' }}</mat-icon>
+        <span>{{ typeBadge }}</span>
+    </div>
+
+    <!-- Badge sconto (se presente) -->
+    <div *ngIf="hasDiscount" class="discount-badge">
+        -{{ item.sconto }}%
+    </div>
+
+    <div class="card-content">
+        <!-- Immagine -->
+        <div class="image-container">
+            <img [src]="imageUrl" [alt]="item.nome" class="item-image" loading="lazy">
+
+            <!-- Overlay non disponibile -->
+            <div *ngIf="!isAvailable" class="unavailable-overlay">
+                <mat-icon>block</mat-icon>
+                <span>Non disponibile</span>
+            </div>
+        </div>
+
+        <!-- Informazioni -->
+        <mat-card-content class="info-section">
+            <!-- Nome -->
+            <h3 class="item-name" [matTooltip]="item.nome">{{ item.nome }}</h3>
+
+            <!-- Azienda -->
+            <div class="azienda-info" (click)="onClickAzienda($event)">
+                <mat-icon>store</mat-icon>
+                <span class="azienda-name">{{ item.azienda.nome }}</span>
+            </div>
+
+            <!-- Descrizione (solo in list view) -->
+            <p *ngIf="viewMode === 'list' && item.descrizione" class="item-description">
+                {{ item.descrizione }}
+            </p>
+
+            <!-- Categoria e info aggiuntive -->
+            <div class="item-meta">
+                <mat-chip-set aria-label="Categoria e informazioni">
+                    <mat-chip *ngIf="item.categoria" class="category-chip">
+                        {{ item.categoria }}
+                    </mat-chip>
+                    <mat-chip *ngIf="item.tipo === 'PRODOTTO' && item.unitaMisura" class="info-chip">
+                        {{ item.unitaMisura }}
+                    </mat-chip>
+                    <mat-chip *ngIf="item.tipo === 'PACCHETTO' && item.numeroProdotti" class="info-chip">
+                        {{ item.numeroProdotti }} prodotti
+                    </mat-chip>
+                </mat-chip-set>
+            </div>
+
+            <!-- Certificazioni -->
+            <div *ngIf="item.certificazioni && item.certificazioni.length > 0" class="certifications">
+                <mat-chip-set aria-label="Certificazioni">
+                    <mat-chip *ngFor="let cert of item.certificazioni.slice(0, 3)" class="certification-chip"
+                        [matTooltip]="getCertificationLabel(cert)">
+                        <mat-icon>{{ getCertificationIcon(cert) }}</mat-icon>
+                        <span>{{ getCertificationLabel(cert) }}</span>
+                    </mat-chip>
+                    <mat-chip *ngIf="item.certificazioni.length > 3" class="more-chip">
+                        +{{ item.certificazioni.length - 3 }}
+                    </mat-chip>
+                </mat-chip-set>
+            </div>
+
+            <!-- Prezzo e disponibilità -->
+            <div class="price-availability">
+                <div class="price-section">
+                    <span *ngIf="item.prezzoOriginale" class="original-price">
+                        {{ formatPrice(item.prezzoOriginale) }}
+                    </span>
+                    <span class="current-price" [class.discounted]="hasDiscount">
+                        {{ formatPrice(item.prezzo) }}
+                    </span>
+                </div>
+                <div class="availability-section" [class]="availabilityClass">
+                    <mat-icon>{{ isAvailable ? 'check_circle' : 'cancel' }}</mat-icon>
+                    <span>{{ availabilityMessage }}</span>
+                </div>
+            </div>
+
+            <!-- Azioni -->
+            <mat-card-actions class="card-actions">
+                <button mat-raised-button color="primary" class="details-btn" (click)="onViewDetails()"
+                    aria-label="Visualizza dettagli">
+                    <mat-icon>visibility</mat-icon>
+                    Dettagli
+                </button>
+
+                <button *ngIf="isAuthenticated && isAvailable" mat-raised-button color="accent" class="cart-btn"
+                    (click)="onAddToCart($event)" aria-label="Aggiungi al carrello">
+                    <mat-icon>add_shopping_cart</mat-icon>
+                    Aggiungi
+                </button>
+
+                <button *ngIf="!isAuthenticated && isAvailable" mat-stroked-button class="login-prompt-btn"
+                    routerLink="/auth/login" (click)="$event.stopPropagation()" aria-label="Accedi per acquistare">
+                    <mat-icon>login</mat-icon>
+                    Accedi per acquistare
+                </button>
+            </mat-card-actions>
+        </mat-card-content>
+    </div>
+</mat-card>

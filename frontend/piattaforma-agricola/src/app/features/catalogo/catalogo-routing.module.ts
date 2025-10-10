@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ProdottiListComponent } from './pages/prodotti-list/prodotti-list.component';
+import { CatalogViewComponent } from './pages/catalog-view/catalog-view.component';
 
 const routes: Routes = [
     {
         path: '',
-        component: ProdottiListComponent,
-    },
+        component: CatalogViewComponent,
+        title: 'Catalogo Prodotti e Pacchetti - Piattaforma Agricola Locale'
+    }
 ];
 
 @NgModule({

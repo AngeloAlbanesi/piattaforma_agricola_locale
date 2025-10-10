@@ -12,6 +12,7 @@ import { PublicPacchettiService } from './core/services/public-pacchetti.service
 import { PublicEventiService } from './core/services/public-eventi.service';
 import { PublicAziendeService } from './core/services/public-aziende.service';
 import { PublicProcessiService } from './core/services/public-processi.service';
+import { CatalogService } from './core/services/catalog.service';
 
 // Le rotte sono state estratte da app-routing-module.ts
 const routes: Routes = [
@@ -29,7 +30,11 @@ const routes: Routes = [
         path: 'auth',
         loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule),
     },
-    // Routes removed: catalogo, carrello, eventi, gestione-utenti, processi
+    {
+        path: 'catalogo',
+        loadChildren: () => import('./features/catalogo/catalogo.module').then(m => m.CatalogoModule),
+    },
+    // Routes removed: carrello, eventi, gestione-utenti, processi
     {
         path: 'dashboard',
         loadChildren: () => import('./features/dashboard/dashboard-routing.module').then(m => m.DashboardRoutingModule),
@@ -57,5 +62,7 @@ export const appConfig: ApplicationConfig = {
         PublicEventiService,
         PublicAziendeService,
         PublicProcessiService,
+        // Servizio catalogo
+        CatalogService,
     ]
 };

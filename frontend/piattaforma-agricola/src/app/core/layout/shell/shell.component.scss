@@ -25,6 +25,13 @@
     overflow: visible;
 }
 
+// Stili full-screen per catalogo
+.shell.catalogo-fullscreen {
+    /* catalogo in full-screen senza shell */
+    min-height: 100vh;
+    overflow: visible;
+}
+
 .shell__brand {
     padding: 1.5rem 1.25rem 1rem;
 }
@@ -119,6 +126,16 @@ a[mat-list-item].active {
 
 // Stili per dashboard full-screen
 .shell__content.dashboard-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: transparent !important;
+}
+
+// Stili per catalogo full-screen
+.shell__content.catalogo-fullscreen-content {
     padding: 0 !important;
     min-height: 100vh !important;
     width: 100%;

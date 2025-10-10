@@ -1,7 +1,7 @@
 <mat-sidenav-container class="shell" [class.landing-fullscreen]="isLandingPage()" [class.auth-fullscreen]="isAuthPage()"
-    [class.dashboard-fullscreen]="isDashboardPage()">
-    <!-- Sidenav nascosto sulla landing page, sulle pagine di autenticazione e sulle dashboard -->
-    @if (!isLandingPage() && !isAuthPage() && !isDashboardPage()) {
+    [class.dashboard-fullscreen]="isDashboardPage()" [class.catalogo-fullscreen]="isCatalogoPage()">
+    <!-- Sidenav nascosto sulla landing page, sulle pagine di autenticazione, sulle dashboard e sul catalogo -->
+    @if (!isLandingPage() && !isAuthPage() && !isDashboardPage() && !isCatalogoPage()) {
     <mat-sidenav mode="side" opened>
         <div class="shell__brand">
             <h1>{{ appName() }}</h1>
@@ -19,10 +19,9 @@
     }
 
     <mat-sidenav-content>
-        <!-- Toolbar nascosta sulle pagine di autenticazione e sulle dashboard -->
-        @if (!isAuthPage() && !isDashboardPage()) {
-        <mat-toolbar color="primary" class="shell__toolbar"
-            [class.landing-toolbar]="isLandingPage()">
+        <!-- Toolbar nascosta sulle pagine di autenticazione, sulle dashboard e sul catalogo -->
+        @if (!isAuthPage() && !isDashboardPage() && !isCatalogoPage()) {
+        <mat-toolbar color="primary" class="shell__toolbar" [class.landing-toolbar]="isLandingPage()">
             <button mat-icon-button class="shell__menu" aria-label="toggle navigation" disabled>
                 <mat-icon>menu</mat-icon>
             </button>
@@ -33,9 +32,10 @@
         </mat-toolbar>
         }
 
-        <!-- Main content con stile condizionale per landing page, pagine di autenticazione e dashboard -->
+        <!-- Main content con stile condizionale per landing page, pagine di autenticazione, dashboard e catalogo -->
         <main class="shell__content" [class.landing-fullscreen-content]="isLandingPage()"
-            [class.auth-fullscreen-content]="isAuthPage()" [class.dashboard-fullscreen-content]="isDashboardPage()">
+            [class.auth-fullscreen-content]="isAuthPage()" [class.dashboard-fullscreen-content]="isDashboardPage()"
+            [class.catalogo-fullscreen-content]="isCatalogoPage()">
             <router-outlet></router-outlet>
         </main>
     </mat-sidenav-content>

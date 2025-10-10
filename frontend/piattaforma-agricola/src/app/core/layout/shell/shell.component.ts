@@ -73,4 +73,12 @@ export class ShellComponent {
         const currentUrl = this.router.url;
         return currentUrl.startsWith('/dashboard');
     }
+
+    /**
+     * Verifica se l'utente è sulla pagina del catalogo
+     */
+    isCatalogoPage(): boolean {
+        const currentUrl = this.router.url;
+        return currentUrl.startsWith('/catalogo');
+    }
 }

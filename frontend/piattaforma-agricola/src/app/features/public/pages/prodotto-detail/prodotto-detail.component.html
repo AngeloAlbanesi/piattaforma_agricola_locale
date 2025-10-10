@@ -123,39 +123,137 @@
                                 <p>{{ prodotto.quantitaDisponibile }} {{ prodotto.unitaMisura || 'pezzi' }}</p>
                             </div>
                         </div>
+                    </div>
+                </mat-tab>
 
-                        <!-- Metodo di Coltivazione -->
-                        <div class="cultivation-method" *ngIf="hasMetodoColtivazione()">
-                            <h3>Metodo di Coltivazione</h3>
-                            <mat-card class="method-card">
+                <!-- Metodi di Coltivazione (solo per produttori) -->
+                <mat-tab label="Metodi di Coltivazione" *ngIf="showMetodiColtivazione()">
+                    <div class="tab-content">
+                        <div class="cultivation-section" *ngIf="hasMetodiColtivazione()">
+                            <mat-card class="cultivation-card" appearance="outlined">
                                 <mat-card-header>
-                                    <mat-card-title>{{ prodotto.metodoColtivazione?.nome }}</mat-card-title>
-                                    <mat-card-subtitle>{{ prodotto.metodoColtivazione?.tipo }}</mat-card-subtitle>
+                                    <mat-card-title>{{ prodotto!.metodoColtivazione!.nome }}</mat-card-title>
+                                    <mat-card-subtitle>{{ prodotto!.metodoColtivazione!.tipo }}</mat-card-subtitle>
                                 </mat-card-header>
                                 <mat-card-content>
-                                    <p>{{ prodotto.metodoColtivazione?.descrizione }}</p>
+                                    <div class="cultivation-description">
+                                        <h4>Descrizione</h4>
+                                        <p>{{ prodotto!.metodoColtivazione!.descrizione }}</p>
+                                    </div>
 
-                                    <div class="method-principles"
-                                        *ngIf="(prodotto.metodoColtivazione?.principi?.length || 0) > 0">
+                                    <div class="cultivation-techniques"
+                                        *ngIf="prodotto!.metodoColtivazione!.principi?.length">
                                         <h4>Principi</h4>
                                         <mat-chip-listbox>
-                                            <mat-chip-option
-                                                *ngFor="let principio of prodotto.metodoColtivazione?.principi">
+                                            <mat-chip *ngFor="let principio of prodotto!.metodoColtivazione!.principi">
                                                 {{ principio }}
-                                            </mat-chip-option>
+                                            </mat-chip>
+                                        </mat-chip-listbox>
+                                    </div>
+
+                                    <div class="cultivation-restrictions"
+                                        *ngIf="prodotto!.metodoColtivazione!.restrizioni?.length">
+                                        <h4>Restrizioni</h4>
+                                        <mat-chip-listbox>
+                                            <mat-chip
+                                                *ngFor="let restrizione of prodotto!.metodoColtivazione!.restrizioni">
+                                                {{ restrizione }}
+                                            </mat-chip>
                                         </mat-chip-listbox>
                                     </div>
                                 </mat-card-content>
                             </mat-card>
                         </div>
+
+                        <!-- Messaggio quando non ci sono metodi di coltivazione -->
+                        <div class="empty-state" *ngIf="!hasMetodiColtivazione()">
+                            <mat-icon class="empty-icon">agriculture</mat-icon>
+                            <h3>Nessun Metodo di Coltivazione</h3>
+                            <p>Al momento questo prodotto non ha un metodo di coltivazione associato.</p>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Processi di Trasformazione (solo per trasformatori) -->
+                <mat-tab label="Processi di Trasformazione" *ngIf="showProcessiTrasformazione()">
+                    <div class="tab-content">
+                        <div class="process-section" *ngIf="!loadingProcesso && hasProcessiTrasformazione()">
+                            <mat-card class="process-overview-card" appearance="outlined">
+                                <mat-card-header>
+                                    <mat-card-title>{{ processo!.nomeProcesso }}</mat-card-title>
+                                    <mat-card-subtitle>{{ processo!.metodoProduzione }}</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <p>{{ processo!.descrizioneProcesso }}</p>
+                                    <div class="process-meta">
+                                        <mat-icon>event</mat-icon>
+                                        <span>Creato il {{ formatDate(processo!.dataCreazione) }}</span>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+
+                            <!-- Fasi di Lavorazione -->
+                            <div class="fasi-section" *ngIf="processo!.fasiLavorazione?.length">
+                                <h3>Fasi di Lavorazione</h3>
+                                <mat-expansion-panel *ngFor="let fase of processo!.fasiLavorazione" class="fase-panel">
+                                    <mat-expansion-panel-header>
+                                        <mat-panel-title>
+                                            <mat-icon>build</mat-icon>
+                                            Fase {{ fase.numeroFase }}: {{ fase.nome }}
+                                        </mat-panel-title>
+                                    </mat-expansion-panel-header>
+                                    <div class="fase-content">
+                                        <p class="fase-description">{{ fase.descrizione }}</p>
+
+                                        <!-- Fonti Materie Prime -->
+                                        <div class="fonti-section" *ngIf="fase.fontiMateriePrime?.length">
+                                            <h4>Materie Prime Utilizzate</h4>
+                                            <mat-list class="fonti-list">
+                                                <mat-list-item *ngFor="let fonte of fase.fontiMateriePrime"
+                                                    class="fonte-item">
+                                                    <mat-icon matListItemIcon>
+                                                        {{ fonte.tipoFonte === 'INTERNA' ? 'inventory_2' :
+                                                        'local_shipping' }}
+                                                    </mat-icon>
+                                                    <div matListItemTitle>
+                                                        {{ fonte.prodottoNome || fonte.descrizioneFonte || 'Fonte non
+                                                        specificata' }}
+                                                    </div>
+                                                    <div matListItemLine>
+                                                        <span class="fonte-quantita">{{ fonte.quantita }} {{
+                                                            fonte.unitaMisura }}</span>
+                                                        <mat-chip class="fonte-tipo-chip">
+                                                            {{ fonte.tipoFonte === 'INTERNA' ? 'Interna' : 'Esterna' }}
+                                                        </mat-chip>
+                                                    </div>
+                                                </mat-list-item>
+                                            </mat-list>
+                                        </div>
+                                    </div>
+                                </mat-expansion-panel>
+                            </div>
+                        </div>
+
+                        <!-- Loading state -->
+                        <div *ngIf="loadingProcesso" class="loading-state">
+                            <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+                            <p>Caricamento processo di trasformazione...</p>
+                        </div>
+
+                        <!-- Messaggio quando non ci sono processi di trasformazione -->
+                        <div class="empty-state" *ngIf="!loadingProcesso && !hasProcessiTrasformazione()">
+                            <mat-icon class="empty-icon">precision_manufacturing</mat-icon>
+                            <h3>Nessun Processo di Trasformazione</h3>
+                            <p>Al momento questo prodotto non ha un processo di trasformazione associato.</p>
+                        </div>
                     </div>
                 </mat-tab>
 
                 <!-- Certificazioni -->
-                <mat-tab label="Certificazioni" *ngIf="hasCertificazioni()">
+                <mat-tab label="Certificazioni" *ngIf="showCertificazioni()">
                     <div class="tab-content">
-                        <div class="certifications-grid">
-                            <mat-card class="certification-card" *ngFor="let cert of prodotto.certificazioniDettagli"
+                        <div class="certifications-grid" *ngIf="hasCertificazioni()">
+                            <mat-card class="certification-card" *ngFor="let cert of prodotto!.certificazioniDettagli"
                                 [ngClass]="getStatoCertificazione(cert.dataScadenza)">
                                 <mat-card-header>
                                     <mat-card-title>{{ cert.tipoCertificazione }}</mat-card-title>
@@ -180,6 +278,13 @@
                                     </button>
                                 </mat-card-content>
                             </mat-card>
+                        </div>
+
+                        <!-- Messaggio quando non ci sono certificazioni -->
+                        <div class="empty-state" *ngIf="!hasCertificazioni()">
+                            <mat-icon class="empty-icon">verified</mat-icon>
+                            <h3>Nessuna Certificazione</h3>
+                            <p>Al momento questo prodotto non ha certificazioni associate.</p>
                         </div>
                     </div>
                 </mat-tab>

@@ -34,6 +34,8 @@ export interface PublicProdottoSummaryDTO {
 
 // DTO dettagliato per prodotto pubblico
 export interface PublicProdottoDetailDTO extends PublicProdottoSummaryDTO {
+    tipoOrigine?: string; // 'COLTIVATO', 'COLTIVATO_ALLEVATO', 'TRASFORMATO'
+    idProcessoTrasformazioneOriginario?: number;
     metodoColtivazione?: {
         id: number;
         nome: string;
@@ -92,6 +94,38 @@ export interface TracciabilitaProdottoDTO {
     }>;
     certificazioni: string[];
     catenaCompleta: boolean;
+}
+
+// === MODELLI PER PROCESSI DI TRASFORMAZIONE ===
+
+// DTO per processo di trasformazione pubblico
+export interface ProcessoTrasformazionePublicDTO {
+    idProcesso: number;
+    nomeProcesso: string;
+    descrizioneProcesso: string;
+    metodoProduzione: string;
+    dataCreazione: string;
+    fasiLavorazione?: FaseLavorazioneDTO[];
+}
+
+// DTO per fase di lavorazione
+export interface FaseLavorazioneDTO {
+    id: number;
+    nome: string;
+    numeroFase: number;
+    descrizione: string;
+    fontiMateriePrime?: FonteMateriaPrimaDTO[];
+}
+
+// DTO per fonte materia prima
+export interface FonteMateriaPrimaDTO {
+    id: number;
+    tipoFonte: string; // 'ESTERNA' o 'INTERNA'
+    descrizioneFonte?: string;
+    prodottoId?: number;
+    prodottoNome?: string;
+    quantita: number;
+    unitaMisura: string;
 }
 
 // === MODELLI PER PACCHETTI ===

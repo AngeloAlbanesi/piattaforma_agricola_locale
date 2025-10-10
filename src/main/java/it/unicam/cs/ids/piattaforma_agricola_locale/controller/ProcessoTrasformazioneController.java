@@ -195,6 +195,25 @@ public class ProcessoTrasformazioneController {
     }
 
     /**
+     * Get public details of a transformation process by ID.
+     * This endpoint is publicly accessible to allow viewing process details
+     * for transformed products in the public catalog.
+     */
+    @GetMapping("/pubblico/{id}")
+    public ResponseEntity<ProcessoTrasformazioneDTO> getPublicProcessoById(@PathVariable Long id) {
+        return processoTrasformazioneService.getProcessoById(id)
+                .map(processo -> {
+                    ProcessoTrasformazioneDTO dto = processoMapper.toDto(processo);
+                    log.info("Retrieved public transformation process details for ID: {}", id);
+                    return ResponseEntity.ok(dto);
+                })
+                .orElseGet(() -> {
+                    log.warn("Public transformation process with ID {} not found", id);
+                    return ResponseEntity.notFound().build();
+                });
+    }
+
+    /**
      * Update an existing transformation process.
      * Only the owner can update their processes.
      */

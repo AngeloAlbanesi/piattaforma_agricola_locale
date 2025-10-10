@@ -10,10 +10,12 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 
 import { PublicProdottiService } from '../../../../core/services/public-prodotti.service';
+import { PublicProcessiService } from '../../../../core/services/public-processi.service';
 import { PublicProdottoDetailDTO, PublicProdottoSummaryDTO, getProdottoId } from '../../../../core/models/public.models';
-import { PublicAziendaSummaryDTO } from '../../../../core/models/public.models';
+import { PublicAziendaSummaryDTO, ProcessoTrasformazionePublicDTO } from '../../../../core/models/public.models';
 
 @Component({
     selector: 'app-prodotto-detail',
@@ -29,7 +31,8 @@ import { PublicAziendaSummaryDTO } from '../../../../core/models/public.models';
         MatChipsModule,
         MatTabsModule,
         MatExpansionModule,
-        MatDividerModule
+        MatDividerModule,
+        MatListModule
     ],
     templateUrl: './prodotto-detail.component.html',
     styleUrls: ['./prodotto-detail.component.scss']
@@ -48,10 +51,15 @@ export class ProdottoDetailComponent implements OnInit, OnDestroy {
     aziendaProduttrice: PublicAziendaSummaryDTO | null = null;
     loadingAzienda = false;
 
+    // Processo di trasformazione
+    processo: ProcessoTrasformazionePublicDTO | null = null;
+    loadingProcesso = false;
+
     private subscriptions = new Map<string, any>();
 
     constructor(
         private prodottiService: PublicProdottiService,
+        private processiService: PublicProcessiService,
         private route: ActivatedRoute,
         private router: Router,
         private snackBar: MatSnackBar,
@@ -94,6 +102,11 @@ export class ProdottoDetailComponent implements OnInit, OnDestroy {
                 this.prodotto = prodotto;
                 this.loading = false;
                 this.cdr.detectChanges();
+
+                // Carica processo se prodotto trasformato
+                if (this.isTrasformato() && prodotto.idProcessoTrasformazioneOriginario) {
+                    this.loadProcessoDettagli(prodotto.idProcessoTrasformazioneOriginario);
+                }
 
                 // Carica dati correlati
                 this.loadProdottiCorrelati();
@@ -237,10 +250,6 @@ export class ProdottoDetailComponent implements OnInit, OnDestroy {
         return this.prodotto?.immagineUrl || '/assets/images/placeholder-product.jpg';
     }
 
-    hasCertificazioni(): boolean {
-        return !!(this.prodotto?.certificazioniDettagli && this.prodotto.certificazioniDettagli.length > 0);
-    }
-
     hasTracciabilita(): boolean {
         return !!(this.prodotto?.tracciabilita);
     }
@@ -277,5 +286,59 @@ export class ProdottoDetailComponent implements OnInit, OnDestroy {
             case 'expired': return 'warn';
             default: return 'primary';
         }
+    }
+
+    // === Metodi per processi di trasformazione ===
+
+    loadProcessoDettagli(processoId: number): void {
+        this.loadingProcesso = true;
+        const processoSub = this.processiService.getProcessoById(processoId).subscribe({
+            next: (processo) => {
+                this.processo = processo;
+                this.loadingProcesso = false;
+                this.cdr.detectChanges();
+            },
+            error: (error: any) => {
+                console.error('Errore caricamento processo:', error);
+                this.loadingProcesso = false;
+                this.cdr.detectChanges();
+            }
+        });
+        this.subscriptions.set('processo', processoSub);
+    }
+
+    // === Helper methods per tipi prodotto ===
+
+    isProduttore(): boolean {
+        return this.prodotto?.tipoOrigine === 'COLTIVATO' ||
+            this.prodotto?.tipoOrigine === 'COLTIVATO_ALLEVATO';
+    }
+
+    isTrasformato(): boolean {
+        return this.prodotto?.tipoOrigine === 'TRASFORMATO';
+    }
+
+    showMetodiColtivazione(): boolean {
+        return this.isProduttore();
+    }
+
+    showProcessiTrasformazione(): boolean {
+        return this.isTrasformato();
+    }
+
+    hasMetodiColtivazione(): boolean {
+        return !!this.prodotto?.metodoColtivazione;
+    }
+
+    hasProcessiTrasformazione(): boolean {
+        return !!this.processo;
+    }
+
+    showCertificazioni(): boolean {
+        return true; // Mostra sempre la tab certificazioni
+    }
+
+    hasCertificazioni(): boolean {
+        return !!(this.prodotto?.certificazioniDettagli?.length);
     }
 }

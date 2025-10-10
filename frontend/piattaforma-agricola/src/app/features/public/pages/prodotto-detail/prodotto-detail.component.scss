@@ -674,6 +674,183 @@
     animation: fadeInUp 0.6s ease-out;
 }
 
+// === Stili per sezione metodi di coltivazione ===
+.cultivation-section {
+    .cultivation-card {
+        margin-bottom: 24px;
+        border-radius: 12px;
+
+        .cultivation-description,
+        .cultivation-techniques,
+        .cultivation-restrictions {
+            margin-top: 16px;
+
+            h4 {
+                color: #333;
+                margin: 0 0 12px 0;
+                font-size: 1.1rem;
+                font-weight: 500;
+            }
+
+            p {
+                color: #666;
+                line-height: 1.6;
+            }
+
+            mat-chip-listbox {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+        }
+    }
+}
+
+// === Stili per sezione processi di trasformazione ===
+.process-section {
+    .process-overview-card {
+        margin-bottom: 24px;
+        border-radius: 12px;
+
+        .process-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            color: #666;
+            font-size: 0.95rem;
+
+            mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+            }
+        }
+    }
+
+    .fasi-section {
+        margin-top: 24px;
+
+        h3 {
+            color: #333;
+            margin-bottom: 16px;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .fase-panel {
+            margin-bottom: 12px;
+            border-radius: 8px;
+
+            mat-panel-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 500;
+
+                mat-icon {
+                    color: #2196f3;
+                }
+            }
+
+            .fase-content {
+                padding: 16px 0;
+
+                .fase-description {
+                    color: #666;
+                    line-height: 1.6;
+                    margin-bottom: 16px;
+                }
+
+                .fonti-section {
+                    background-color: #f5f5f5;
+                    border-radius: 8px;
+                    padding: 16px;
+
+                    h4 {
+                        color: #333;
+                        margin: 0 0 12px 0;
+                        font-size: 1.05rem;
+                        font-weight: 500;
+                    }
+
+                    .fonti-list {
+                        .fonte-item {
+                            background: white;
+                            border-radius: 8px;
+                            margin-bottom: 8px;
+                            padding: 12px;
+                            transition: transform 0.2s ease;
+
+                            &:hover {
+                                transform: translateX(4px);
+                            }
+
+                            .fonte-quantita {
+                                font-weight: 500;
+                                color: #333;
+                                margin-right: 8px;
+                            }
+
+                            .fonte-tipo-chip {
+                                font-size: 0.85rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+
+    mat-progress-spinner {
+        margin-bottom: 16px;
+    }
+
+    p {
+        color: #666;
+        font-size: 1rem;
+    }
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+
+    .empty-icon {
+        font-size: 80px;
+        width: 80px;
+        height: 80px;
+        color: #ccc;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        color: #666;
+        margin: 0 0 12px 0;
+        font-size: 1.5rem;
+        font-weight: 400;
+    }
+
+    p {
+        color: #999;
+        font-size: 1rem;
+        max-width: 400px;
+        line-height: 1.5;
+    }
+}
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
     * {

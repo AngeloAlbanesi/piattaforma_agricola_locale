@@ -292,8 +292,15 @@ export class CatalogService {
      * Converte un prodotto in CatalogItem
      */
     private convertProdottoToCatalogItem(prodotto: PublicProdottoSummaryDTO): CatalogItem {
+        // Estrae ID prodotto dai possibili campi
+        const id = prodotto.idProdotto || prodotto.id || 0;
+
+        // Estrae info azienda dai possibili campi
+        const aziendaId = prodotto.idVenditore || prodotto.produttore?.id || 0;
+        const aziendaNome = prodotto.nomeVenditore || prodotto.produttore?.nomeAzienda || 'Azienda Sconosciuta';
+
         return {
-            id: prodotto.id,
+            id,
             tipo: 'PRODOTTO',
             nome: prodotto.nome,
             descrizione: prodotto.descrizione,
@@ -303,8 +310,8 @@ export class CatalogService {
             categoria: prodotto.categoria,
             certificazioni: prodotto.certificazioni,
             azienda: {
-                id: prodotto.produttore?.id || 0,
-                nome: prodotto.produttore?.nomeAzienda || 'Azienda Sconosciuta'
+                id: aziendaId,
+                nome: aziendaNome
             },
             unitaMisura: prodotto.unitaMisura,
             luogoOrigine: prodotto.luogoOrigine,
@@ -316,21 +323,31 @@ export class CatalogService {
      * Converte un pacchetto in CatalogItem
      */
     private convertPacchettoToCatalogItem(pacchetto: PublicPacchettoSummaryDTO): CatalogItem {
-        // Usa prezzoScontato se disponibile, altrimenti prezzo, altrimenti 0
-        const prezzoBase = pacchetto.prezzoScontato || pacchetto.prezzo || 0;
+        // Estrae ID pacchetto dai possibili campi
+        const id = pacchetto.idPacchetto || pacchetto.id || 0;
+
+        // Estrae info azienda/distributore dai possibili campi
+        const aziendaId = pacchetto.idDistributore || pacchetto.distributore?.id || 0;
+        const aziendaNome = pacchetto.nomeDistributore || pacchetto.distributore?.nomeAzienda || 'Azienda Sconosciuta';
+
+        // Estrae prezzo dai possibili campi
+        const prezzoBase = pacchetto.prezzoPacchetto || pacchetto.prezzoScontato || pacchetto.prezzo || 0;
         const sconto = pacchetto.sconto || 0;
 
-        const prezzoScontato = sconto > 0 && pacchetto.prezzo
-            ? pacchetto.prezzo * (1 - sconto / 100)
+        const prezzoScontato = sconto > 0 && prezzoBase
+            ? prezzoBase * (1 - sconto / 100)
             : undefined;
 
+        // Estrae numero prodotti dai possibili campi
+        const numeroProdotti = pacchetto.numeroElementi || pacchetto.numeroProdotti || 0;
+
         return {
-            id: pacchetto.id,
+            id,
             tipo: 'PACCHETTO',
             nome: pacchetto.nome,
             descrizione: pacchetto.descrizione,
             prezzo: prezzoScontato || prezzoBase,
-            prezzoOriginale: prezzoScontato ? pacchetto.prezzo : undefined,
+            prezzoOriginale: prezzoScontato ? prezzoBase : undefined,
             prezzoScontato,
             sconto: pacchetto.sconto,
             quantitaDisponibile: pacchetto.quantitaDisponibile,
@@ -338,10 +355,10 @@ export class CatalogService {
             categoria: pacchetto.categoria,
             certificazioni: [],
             azienda: {
-                id: pacchetto.distributore?.id || 0,
-                nome: pacchetto.distributore?.nomeAzienda || 'Azienda Sconosciuta'
+                id: aziendaId,
+                nome: aziendaNome
             },
-            numeroProdotti: pacchetto.numeroProdotti,
+            numeroProdotti,
             originalData: pacchetto
         };
     }

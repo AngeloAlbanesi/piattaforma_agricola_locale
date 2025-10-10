@@ -1,187 +1,182 @@
 <div class="home-container">
-  <!-- Hero Section con Ricerca -->
-  <section class="hero-section">
-    <div class="hero-content">
-      <h1 class="hero-title">Scopri i Tesori della Terra</h1>
-      <p class="hero-subtitle">Prodotti locali, eventi e tradizioni direttamente dalle aziende agricole della tua zona</p>
-      
-      <div class="search-container">
-        <div class="search-row">
-          <app-search-box 
-            placeholder="Cerca prodotti freschi..." 
-            appearance="outline"
-            (search)="onProductSearch($event)">
-          </app-search-box>
-          <button mat-raised-button color="primary" (click)="navigateToProdotti()">
-            <mat-icon>shopping_basket</mat-icon>
-            Tutti i Prodotti
-          </button>
-        </div>
-        
-        <div class="search-row">
-          <app-search-box 
-            placeholder="Cerca eventi in zona..." 
-            appearance="outline"
-            (search)="onEventSearch($event)">
-          </app-search-box>
-          <button mat-raised-button color="accent" (click)="navigateToEventi()">
-            <mat-icon>event</mat-icon>
-            Tutti gli Eventi
-          </button>
-        </div>
-      </div>
-    </div>
-  </section>
+    <!-- Hero Section con Ricerca -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Scopri i Tesori della Terra</h1>
+            <p class="hero-subtitle">Prodotti locali, eventi e tradizioni direttamente dalle aziende agricole della tua
+                zona</p>
 
-  <!-- Loading State -->
-  @if (loading) {
+            <div class="search-container">
+                <div class="search-row">
+                    <app-search-box placeholder="Cerca prodotti freschi..." appearance="outline"
+                        (search)="onProductSearch($event)">
+                    </app-search-box>
+                    <button mat-raised-button color="primary" (click)="navigateToProdotti()">
+                        <mat-icon>shopping_basket</mat-icon>
+                        Tutti i Prodotti
+                    </button>
+                </div>
+
+                <div class="search-row">
+                    <app-search-box placeholder="Cerca eventi in zona..." appearance="outline"
+                        (search)="onEventSearch($event)">
+                    </app-search-box>
+                    <button mat-raised-button color="accent" (click)="navigateToEventi()">
+                        <mat-icon>event</mat-icon>
+                        Tutti gli Eventi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading State -->
+    @if (loading) {
     <!-- Loading State -->
     <div class="loading-container">
-      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-      <p>Caricamento contenuti in evidenza...</p>
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <p>Caricamento contenuti in evidenza...</p>
     </div>
-  } @else if (error) {
+    } @else if (error) {
     <!-- Error State -->
     <div class="error-container">
-      <mat-icon class="error-icon">error_outline</mat-icon>
-      <h3>Oops! Qualcosa è andato storto</h3>
-      <p>{{ error }}</p>
-      <div class="error-actions">
-        @if (errorProdotti) {
-        <button mat-raised-button color="primary" (click)="retryLoadProdotti()">
-          Riprova Prodotti
-        </button>
-        }
-        @if (errorEventi) {
-        <button mat-raised-button color="accent" (click)="retryLoadEventi()">
-          Riprova Eventi
-        </button>
-        }
-      </div>
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <h3>Oops! Qualcosa è andato storto</h3>
+        <p>{{ error }}</p>
+        <div class="error-actions">
+            @if (errorProdotti) {
+            <button mat-raised-button color="primary" (click)="retryLoadProdotti()">
+                Riprova Prodotti
+            </button>
+            }
+            @if (errorEventi) {
+            <button mat-raised-button color="accent" (click)="retryLoadEventi()">
+                Riprova Eventi
+            </button>
+            }
+        </div>
     </div>
-  } @else {
+    } @else {
     <!-- Content Sections -->
     <div class="content-sections">
-      <!-- Prodotti in Evidenza -->
-      @if (prodottiInEvidenza.length > 0) {
-      <section class="featured-section">
-        <div class="section-header">
-          <h2 class="section-title">Prodotti in Evidenza</h2>
-          <p class="section-subtitle">Le migliori selezioni dai nostri produttori locali</p>
-          <button mat-stroked-button (click)="navigateToProdotti()" class="view-all-btn">
-            Vedi tutti i prodotti
-            <mat-icon>arrow_forward</mat-icon>
-          </button>
-        </div>
-        
-        <div class="products-grid">
-          @for (prodotto of prodottiInEvidenza; track prodotto.id) {
-          <app-product-card
-            [prodotto]="prodotto"
-            [compact]="true"
-            (viewDetails)="navigateToProdottoDetail(prodotto.id)">
-          </app-product-card>
-          }
-        </div>
-      </section>
-      }
+        <!-- Prodotti in Evidenza -->
+        @if (prodottiInEvidenza.length > 0) {
+        <section class="featured-section">
+            <div class="section-header">
+                <h2 class="section-title">Prodotti in Evidenza</h2>
+                <p class="section-subtitle">Le migliori selezioni dai nostri produttori locali</p>
+                <button mat-stroked-button (click)="navigateToProdotti()" class="view-all-btn">
+                    Vedi tutti i prodotti
+                    <mat-icon>arrow_forward</mat-icon>
+                </button>
+            </div>
 
-      <!-- Eventi Prossimi -->
-      @if (eventiProssimi.length > 0) {
-      <section class="featured-section events-section">
-        <div class="section-header">
-          <h2 class="section-title">Eventi Prossimi</h2>
-          <p class="section-subtitle">Non perderti gli eventi agricoli della tua zona</p>
-          <button mat-stroked-button (click)="navigateToEventi()" class="view-all-btn">
-            Vedi tutti gli eventi
-            <mat-icon>arrow_forward</mat-icon>
-          </button>
-        </div>
-        
-        <div class="events-grid">
-          @for (evento of eventiProssimi; track evento.id) {
-          <mat-card class="event-card" (click)="navigateToEventoDetail(evento.id)">
-            <mat-card-header>
-              <div mat-card-avatar class="event-avatar">
-                <mat-icon>event</mat-icon>
-              </div>
-              <mat-card-title>{{ evento.nome }}</mat-card-title>
-              <mat-card-subtitle>{{ formatDate(evento.dataOraInizio) }}</mat-card-subtitle>
-            </mat-card-header>
-            
-            <mat-card-content>
-              <p class="event-description">{{ evento.descrizione ? (evento.descrizione | slice:0:150) + (evento.descrizione.length > 150 ? '...' : '') : '' }}</p>
-              
-              <div class="event-details">
-                @if (evento.luogo) {
-                <div class="event-detail-item">
-                  <mat-icon>location_on</mat-icon>
-                  <span>{{ evento.luogo }}</span>
-                </div>
+            <div class="products-grid">
+                @for (prodotto of prodottiInEvidenza; track prodotto.id) {
+                <app-product-card [prodotto]="prodotto" [compact]="true" (viewDetails)="navigateToProdotto(prodotto)">
+                </app-product-card>
                 }
-                
-                @if (evento.numeroMassimoPartecipanti) {
-                <div class="event-detail-item">
-                  <mat-icon>people</mat-icon>
-                  <span>{{ evento.numeroMassimoPartecipanti }} posti disponibili</span>
-                </div>
+            </div>
+        </section>
+        }
+
+        <!-- Eventi Prossimi -->
+        @if (eventiProssimi.length > 0) {
+        <section class="featured-section events-section">
+            <div class="section-header">
+                <h2 class="section-title">Eventi Prossimi</h2>
+                <p class="section-subtitle">Non perderti gli eventi agricoli della tua zona</p>
+                <button mat-stroked-button (click)="navigateToEventi()" class="view-all-btn">
+                    Vedi tutti gli eventi
+                    <mat-icon>arrow_forward</mat-icon>
+                </button>
+            </div>
+
+            <div class="events-grid">
+                @for (evento of eventiProssimi; track evento.id) {
+                <mat-card class="event-card" (click)="navigateToEventoDetail(evento.id)">
+                    <mat-card-header>
+                        <div mat-card-avatar class="event-avatar">
+                            <mat-icon>event</mat-icon>
+                        </div>
+                        <mat-card-title>{{ evento.nome }}</mat-card-title>
+                        <mat-card-subtitle>{{ formatDate(evento.dataOraInizio) }}</mat-card-subtitle>
+                    </mat-card-header>
+
+                    <mat-card-content>
+                        <p class="event-description">{{ evento.descrizione ? (evento.descrizione | slice:0:150) +
+                            (evento.descrizione.length > 150 ? '...' : '') : '' }}</p>
+
+                        <div class="event-details">
+                            @if (evento.luogo) {
+                            <div class="event-detail-item">
+                                <mat-icon>location_on</mat-icon>
+                                <span>{{ evento.luogo }}</span>
+                            </div>
+                            }
+
+                            @if (evento.numeroMassimoPartecipanti) {
+                            <div class="event-detail-item">
+                                <mat-icon>people</mat-icon>
+                                <span>{{ evento.numeroMassimoPartecipanti }} posti disponibili</span>
+                            </div>
+                            }
+                        </div>
+                    </mat-card-content>
+
+                    <mat-card-actions>
+                        <mat-chip-listbox aria-label="Stato evento">
+                            <mat-chip-option [color]="getStatoColor(evento.stato)" selected>
+                                {{ getStatoLabel(evento.stato) }}
+                            </mat-chip-option>
+                        </mat-chip-listbox>
+
+                        <button mat-button color="primary">
+                            Dettagli
+                            <mat-icon>arrow_forward</mat-icon>
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
                 }
-              </div>
-            </mat-card-content>
-            
-            <mat-card-actions>
-              <mat-chip-listbox aria-label="Stato evento">
-                <mat-chip-option [color]="getStatoColor(evento.stato)" selected>
-                  {{ getStatoLabel(evento.stato) }}
-                </mat-chip-option>
-              </mat-chip-listbox>
-              
-              <button mat-button color="primary">
-                Dettagli
-                <mat-icon>arrow_forward</mat-icon>
-              </button>
-            </mat-card-actions>
-          </mat-card>
-          }
-        </div>
-      </section>
-      }
+            </div>
+        </section>
+        }
 
-      <!-- Sezione Vuota se non ci sono contenuti -->
-      @if (prodottiInEvidenza.length === 0 && eventiProssimi.length === 0) {
-      <section class="empty-section">
-        <mat-icon class="empty-icon">agriculture</mat-icon>
-        <h3>Nessun contenuto disponibile al momento</h3>
-        <p>Torna presto per scoprire nuovi prodotti ed eventi dalla nostra piattaforma!</p>
-        
-        <div class="empty-actions">
-          <button mat-raised-button color="primary" (click)="navigateToProdotti()">
-            Esplora Prodotti
-          </button>
-          <button mat-raised-button color="accent" (click)="navigateToEventi()">
-            Scopri Eventi
-          </button>
-        </div>
-      </section>
-      }
-    </div>
-  }
+        <!-- Sezione Vuota se non ci sono contenuti -->
+        @if (prodottiInEvidenza.length === 0 && eventiProssimi.length === 0) {
+        <section class="empty-section">
+            <mat-icon class="empty-icon">agriculture</mat-icon>
+            <h3>Nessun contenuto disponibile al momento</h3>
+            <p>Torna presto per scoprire nuovi prodotti ed eventi dalla nostra piattaforma!</p>
 
-  <!-- Call to Action Section -->
-  <section class="cta-section">
-    <div class="cta-content">
-      <h2>Unisciti alla Comunità Agricola Locale</h2>
-      <p>Sostieni i produttori della tua zona e scopri prodotti autentici e tradizioni genuine</p>
-      <div class="cta-actions">
-        <button mat-raised-button color="primary" size="large">
-          <mat-icon>shopping_basket</mat-icon>
-          Inizia a Comprare
-        </button>
-        <button mat-stroked-button color="primary" size="large">
-          <mat-icon>info</mat-icon>
-          Scopri di Più
-        </button>
-      </div>
+            <div class="empty-actions">
+                <button mat-raised-button color="primary" (click)="navigateToProdotti()">
+                    Esplora Prodotti
+                </button>
+                <button mat-raised-button color="accent" (click)="navigateToEventi()">
+                    Scopri Eventi
+                </button>
+            </div>
+        </section>
+        }
     </div>
-  </section>
+    }
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Unisciti alla Comunità Agricola Locale</h2>
+            <p>Sostieni i produttori della tua zona e scopri prodotti autentici e tradizioni genuine</p>
+            <div class="cta-actions">
+                <button mat-raised-button color="primary" size="large">
+                    <mat-icon>shopping_basket</mat-icon>
+                    Inizia a Comprare
+                </button>
+                <button mat-stroked-button color="primary" size="large">
+                    <mat-icon>info</mat-icon>
+                    Scopri di Più
+                </button>
+            </div>
+        </div>
+    </section>
 </div>

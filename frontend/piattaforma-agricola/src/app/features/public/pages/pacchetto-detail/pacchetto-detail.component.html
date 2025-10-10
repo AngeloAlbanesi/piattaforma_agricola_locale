@@ -195,7 +195,7 @@
                                             || 0) }} totale)</span>
                                     </div>
                                     <button mat-icon-button matListItemMeta
-                                        (click)="navigateToProdotto(elemento.prodotto.id)" class="view-product-btn">
+                                        (click)="navigateToProdottoObj(elemento.prodotto)" class="view-product-btn">
                                         <mat-icon>visibility</mat-icon>
                                     </button>
                                 </mat-list-item>
@@ -324,7 +324,7 @@
             <h2>Pacchetti Correlati</h2>
             <div class="related-grid">
                 @for (pacchetto of pacchettiCorrelati; track pacchetto.id) {
-                <mat-card class="related-package-card" (click)="navigateToPacchetto(pacchetto.id)">
+                <mat-card class="related-package-card" (click)="navigateToPacchettoObj(pacchetto)">
                     <mat-card-header>
                         <div mat-card-avatar class="related-avatar">
                             <mat-icon>inventory_2</mat-icon>
@@ -335,17 +335,18 @@
                     <mat-card-content>
                         <p class="related-description">{{ pacchetto.descrizione | slice:0:100 }}...</p>
                         <div class="related-price">
-                            @if (pacchetto.prezzoScontato && pacchetto.prezzoScontato < pacchetto.prezzo) {
-                            <span>
+                            @if (pacchetto.prezzoScontato && pacchetto.prezzoScontato < getPrezzoSicuro(pacchetto)) {
+                                <span>
                                 {{ formatCurrency(pacchetto.prezzoScontato) }}
-                                <span class="original-price">{{ formatCurrency(pacchetto.prezzo) }}</span>
-                            </span>
-                            }
-                            @if (!pacchetto.prezzoScontato || pacchetto.prezzoScontato >= pacchetto.prezzo) {
-                            <span>
-                                {{ formatCurrency(pacchetto.prezzo) }}
-                            </span>
-                            }
+                                <span class="original-price">{{ formatCurrency(getPrezzoSicuro(pacchetto)) }}</span>
+                                </span>
+                                }
+                                @if (!pacchetto.prezzoScontato || pacchetto.prezzoScontato >=
+                                getPrezzoSicuro(pacchetto)) {
+                                <span>
+                                    {{ formatCurrency(getPrezzoSicuro(pacchetto)) }}
+                                </span>
+                                }
                         </div>
                     </mat-card-content>
                     <mat-card-actions>
@@ -360,5 +361,5 @@
         </div>
         }
     </div>
-}
+    }
 </div>

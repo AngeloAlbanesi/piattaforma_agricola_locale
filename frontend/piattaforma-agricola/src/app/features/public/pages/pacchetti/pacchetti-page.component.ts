@@ -13,7 +13,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatChipsModule } from '@angular/material/chips';
 
 import { PublicPacchettiService } from '../../../../core/services/public-pacchetti.service';
-import { PublicPacchettoSummaryDTO } from '../../../../core/models/public.models';
+import { PublicPacchettoSummaryDTO, getPacchettoId } from '../../../../core/models/public.models';
 import { PublicPacchettoFilters } from '../../../../core/models/public.models';
 import { PaginatedResponse } from '../../../../core/models/common.models';
 import { SearchBoxComponent } from '../../shared/components/search/search-box/search-box.component';
@@ -164,6 +164,14 @@ export class PacchettiPageComponent implements OnInit, OnDestroy {
 
     navigateToPacchettoDetail(pacchettoId: number): void {
         this.router.navigate(['/pacchetti', pacchettoId]);
+    }
+
+    /**
+     * Helper per navigare ai dettagli del pacchetto da oggetto pacchetto
+     */
+    navigateToPacchetto(pacchetto: PublicPacchettoSummaryDTO): void {
+        const id = getPacchettoId(pacchetto);
+        this.navigateToPacchettoDetail(id);
     }
 
     retryLoad(): void {

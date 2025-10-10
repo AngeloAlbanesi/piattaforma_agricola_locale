@@ -4,13 +4,13 @@
         <div class="header-content">
             <h1 class="page-title">Pacchetti Agricoli</h1>
             <p class="page-subtitle">Scopri le nostre selezioni speciali di prodotti agricoli a prezzi vantaggiosi</p>
-            
+
             <!-- Search Bar -->
             <div class="search-section">
                 <app-search-box placeholder="Cerca pacchetti per nome o categoria..." appearance="outline"
                     (search)="onSearch($event)">
                 </app-search-box>
-                
+
                 <button mat-stroked-button (click)="toggleFilters()" class="filters-toggle">
                     <mat-icon>filter_list</mat-icon>
                     Filtri
@@ -108,7 +108,7 @@
         @if (pacchetti.length > 0) {
         <div class="packages-grid">
             @for (pacchetto of pacchetti; track pacchetto.id) {
-            <mat-card class="package-card" (click)="navigateToPacchettoDetail(pacchetto.id)">
+            <mat-card class="package-card" (click)="navigateToPacchetto(pacchetto)">
                 <div class="package-image-container">
                     <img [src]="pacchetto.immagineUrl || '/assets/images/placeholder-package.jpg'"
                         [alt]="pacchetto.nome" class="package-image">
@@ -140,26 +140,26 @@
                     </p>
 
                     @if ((pacchetto.prodotti?.length || 0) > 0) {
-                        <div class="package-products">
-                            <h4>Contenuto:</h4>
-                            <div class="products-list">
-                                @for (elemento of (pacchetto.prodotti || []).slice(0, 3); track $index) {
-                                    <span class="product-item">{{ elemento.prodotto.nome }}{{ !$last ? ',' : '' }}</span>
-                                }
-                                @if ((pacchetto.prodotti?.length || 0) > 3) {
-                                <span class="more-products">
-                                    +{{ (pacchetto.prodotti?.length || 0) - 3 }} prodotti
-                                </span>
-                                }
-                            </div>
+                    <div class="package-products">
+                        <h4>Contenuto:</h4>
+                        <div class="products-list">
+                            @for (elemento of (pacchetto.prodotti || []).slice(0, 3); track $index) {
+                            <span class="product-item">{{ elemento.prodotto.nome }}{{ !$last ? ',' : '' }}</span>
+                            }
+                            @if ((pacchetto.prodotti?.length || 0) > 3) {
+                            <span class="more-products">
+                                +{{ (pacchetto.prodotti?.length || 0) - 3 }} prodotti
+                            </span>
+                            }
                         </div>
+                    </div>
                     } @else {
-                        <div class="package-products no-products">
-                            <h4>Contenuto:</h4>
-                            <div class="products-list">
-                                <span>Nessun prodotto incluso</span>
-                            </div>
+                    <div class="package-products no-products">
+                        <h4>Contenuto:</h4>
+                        <div class="products-list">
+                            <span>Nessun prodotto incluso</span>
                         </div>
+                    </div>
                     }
 
 

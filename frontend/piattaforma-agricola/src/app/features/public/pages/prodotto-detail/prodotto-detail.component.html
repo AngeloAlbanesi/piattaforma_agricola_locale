@@ -249,7 +249,7 @@
             <h2>Prodotti Correlati</h2>
             <div class="related-grid">
                 <mat-card class="related-product-card" *ngFor="let prodotto of prodottiCorrelati"
-                    (click)="navigateToProdotto(prodotto.id)">
+                    (click)="navigateToProdottoObj(prodotto)">
                     <mat-card-header>
                         <div mat-card-avatar class="related-avatar">
                             <mat-icon>shopping_basket</mat-icon>

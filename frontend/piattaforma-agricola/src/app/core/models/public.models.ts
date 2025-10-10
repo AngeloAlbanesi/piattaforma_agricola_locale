@@ -9,7 +9,8 @@ import { PaginatedResponse } from './common.models';
 
 // DTO base per prodotto pubblico
 export interface PublicProdottoSummaryDTO {
-    id: number;
+    idProdotto?: number;  // Campo dal backend
+    id?: number;          // Campo alternativo
     nome: string;
     descrizione?: string;
     prezzo: number;
@@ -17,6 +18,10 @@ export interface PublicProdottoSummaryDTO {
     quantitaDisponibile: number;
     unitaMisura?: string;
     luogoOrigine?: string;
+    // Campi dal backend
+    nomeVenditore?: string;
+    idVenditore?: number;
+    // Campi alternativi
     produttore?: {
         id: number;
         nomeAzienda: string;
@@ -91,18 +96,25 @@ export interface TracciabilitaProdottoDTO {
 
 // DTO base per pacchetto pubblico
 export interface PublicPacchettoSummaryDTO {
-    id: number;
+    idPacchetto?: number;  // Campo dal backend
+    id?: number;           // Campo alternativo
     nome: string;
     descrizione?: string;
-    prezzo: number;
+    prezzoPacchetto?: number;  // Campo dal backend
+    prezzo?: number;           // Campo alternativo
     sconto?: number;
     prezzoScontato?: number;
     quantitaDisponibile: number;
+    // Campi dal backend
+    nomeDistributore?: string;
+    idDistributore?: number;
+    numeroElementi?: number;  // Campo dal backend
+    // Campi alternativi
     distributore?: {
         id: number;
         nomeAzienda: string;
     };
-    numeroProdotti: number;
+    numeroProdotti?: number;
     immagineUrl?: string;
     categoria?: string;
     // Lista opzionale dei prodotti contenuti nel pacchetto (quando fornita dal backend)
@@ -463,4 +475,27 @@ export interface RicercaAvanzataRequest {
         pagina: number;
         elementiPerPagina: number;
     };
+}
+
+// === HELPER FUNCTIONS ===
+
+/**
+ * Estrae l'ID da un prodotto gestendo i vari formati del backend
+ */
+export function getProdottoId(prodotto: PublicProdottoSummaryDTO): number {
+    return prodotto.idProdotto || prodotto.id || 0;
+}
+
+/**
+ * Estrae l'ID da un pacchetto gestendo i vari formati del backend
+ */
+export function getPacchettoId(pacchetto: PublicPacchettoSummaryDTO): number {
+    return pacchetto.idPacchetto || pacchetto.id || 0;
+}
+
+/**
+ * Estrae il prezzo da un pacchetto gestendo i vari formati del backend
+ */
+export function getPacchettoPrezzo(pacchetto: PublicPacchettoSummaryDTO): number {
+    return pacchetto.prezzoPacchetto || pacchetto.prezzo || 0;
 }

@@ -1,175 +1,165 @@
 <div class="prodotti-page-container">
-  <!-- Header Section -->
-  <section class="page-header">
-    <div class="header-content">
-      <h1 class="page-title">Catalogo Prodotti</h1>
-      <p class="page-subtitle">Scopri i prodotti freschi e genuini delle aziende agricole locali</p>
-      
-      <!-- Search Bar -->
-      <div class="search-section">
-        <app-search-box 
-          placeholder="Cerca prodotti per nome, categoria o produttore..." 
-          appearance="outline"
-          (search)="onSearch($event)">
-        </app-search-box>
-        
-        <button mat-stroked-button (click)="toggleFilters()" class="filters-toggle">
-          <mat-icon>filter_list</mat-icon>
-          Filtri
-          @if (getActiveFiltersCount() > 0) {
-          <mat-chip color="primary" class="filters-count">
-            {{ getActiveFiltersCount() }}
-          </mat-chip>
-          }
-        </button>
-      </div>
-    </div>
-  </section>
+    <!-- Header Section -->
+    <section class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">Catalogo Prodotti</h1>
+            <p class="page-subtitle">Scopri i prodotti freschi e genuini delle aziende agricole locali</p>
 
-  <!-- Filters Panel -->
-  @if (showFilters) {
-  <section class="filters-section">
-    <div class="filters-content">
-      <app-filters-panel
-        [categoryOptions]="getCategorieOptions()"
-        [sortOptions]="ordinamentoOptions"
-        [priceRange]="{ min: 0, max: 500 }"
-        [checkboxOptions]="[
+            <!-- Search Bar -->
+            <div class="search-section">
+                <app-search-box placeholder="Cerca prodotti per nome, categoria o produttore..." appearance="outline"
+                    (search)="onSearch($event)">
+                </app-search-box>
+
+                <button mat-stroked-button (click)="toggleFilters()" class="filters-toggle">
+                    <mat-icon>filter_list</mat-icon>
+                    Filtri
+                    @if (getActiveFiltersCount() > 0) {
+                    <mat-chip color="primary" class="filters-count">
+                        {{ getActiveFiltersCount() }}
+                    </mat-chip>
+                    }
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Panel -->
+    @if (showFilters) {
+    <section class="filters-section">
+        <div class="filters-content">
+            <app-filters-panel [categoryOptions]="getCategorieOptions()" [sortOptions]="ordinamentoOptions"
+                [priceRange]="{ min: 0, max: 500 }" [checkboxOptions]="[
           { value: 'bio', label: 'Biologico' },
           { value: 'km0', label: 'Km0' },
           { value: 'glutenfree', label: 'Senza glutine' },
           { value: 'vegan', label: 'Vegano' }
-        ]"
-        (filtersChange)="onFiltersChange($event)"
-        (reset)="onFiltersReset()">
-      </app-filters-panel>
-    </div>
-  </section>
-  }
-
-  @if (loading) {
-  <!-- Loading State -->
-  <div class="loading-container">
-    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-    <p>Caricamento prodotti...</p>
-  </div>
-  } @else if (error) {
-  <!-- Error State -->
-  <div class="error-container">
-    <mat-icon class="error-icon">error_outline</mat-icon>
-    <h3>Oops! Qualcosa è andato storto</h3>
-    <p>{{ error }}</p>
-    <button mat-raised-button color="primary" (click)="retryLoad()">
-      Riprova
-    </button>
-  </div>
-  } @else {
-  <!-- Results Section -->
-  <section class="results-section">
-    <!-- Results Header -->
-    <div class="results-header">
-      <div class="results-info">
-        <h2 class="results-title">
-          {{ totalCount }} {{ totalCount === 1 ? 'Prodotto' : 'Prodotti' }} Trovati
-        </h2>
-        @if (filters.query) {
-        <p class="results-subtitle">
-          Ricerca per: <strong>"{{ filters.query }}"</strong>
-        </p>
-        }
-      </div>
-
-      <!-- Quick Filters -->
-      <div class="quick-filters">
-        <mat-form-field appearance="outline" class="quick-filter">
-          <mat-label>Categoria</mat-label>
-          <mat-select (selectionChange)="onCategoriaChange($event.value)">
-            <mat-option value="">Tutte le categorie</mat-option>
-            @for (categoria of categorieOptions; track categoria) {
-            <mat-option [value]="categoria">
-              {{ categoria }}
-            </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="quick-filter">
-          <mat-label>Ordina per</mat-label>
-          <mat-select (selectionChange)="onOrdinamentoChange($event.value)">
-            <mat-option value="">Rilevanza</mat-option>
-            @for (option of ordinamentoOptions; track option.value) {
-            <mat-option [value]="option.value">
-              {{ option.label }}
-            </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        <mat-slide-toggle (change)="onDisponibilitaChange($event.checked)" class="availability-toggle">
-          Solo disponibili
-        </mat-slide-toggle>
-      </div>
-    </div>
-
-    <!-- Products Grid -->
-    @if (prodotti.length > 0) {
-    <div class="products-grid">
-      @for (prodotto of prodotti; track prodotto.id) {
-      <app-product-card
-        [prodotto]="prodotto"
-        (viewDetails)="navigateToProdottoDetail(prodotto.id)"
-      ></app-product-card>
-      }
-    </div>
+        ]" (filtersChange)="onFiltersChange($event)" (reset)="onFiltersReset()">
+            </app-filters-panel>
+        </div>
+    </section>
     }
 
-    <!-- Empty State -->
-    @if (prodotti.length === 0 && !loading) {
-    <div class="empty-state">
-      <mat-icon class="empty-icon">shopping_basket</mat-icon>
-      <h3>Nessun prodotto trovato</h3>
-      @if (getActiveFiltersCount() > 0) {
-      <p>
-        Prova a modificare i filtri di ricerca o
-        <button mat-button color="primary" (click)="resetAllFilters()">rimuovi tutti i filtri</button>
-      </p>
-      }
-      @if (getActiveFiltersCount() === 0) {
-      <p>
-        Non ci sono prodotti disponibili al momento. Riprova più tardi.
-      </p>
-      }
-      <div class="empty-actions">
-        @if (getActiveFiltersCount() > 0) {
-        <button mat-raised-button color="primary" (click)="resetAllFilters()">
-          Rimuovi Filtri
+    @if (loading) {
+    <!-- Loading State -->
+    <div class="loading-container">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <p>Caricamento prodotti...</p>
+    </div>
+    } @else if (error) {
+    <!-- Error State -->
+    <div class="error-container">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <h3>Oops! Qualcosa è andato storto</h3>
+        <p>{{ error }}</p>
+        <button mat-raised-button color="primary" (click)="retryLoad()">
+            Riprova
         </button>
+    </div>
+    } @else {
+    <!-- Results Section -->
+    <section class="results-section">
+        <!-- Results Header -->
+        <div class="results-header">
+            <div class="results-info">
+                <h2 class="results-title">
+                    {{ totalCount }} {{ totalCount === 1 ? 'Prodotto' : 'Prodotti' }} Trovati
+                </h2>
+                @if (filters.query) {
+                <p class="results-subtitle">
+                    Ricerca per: <strong>"{{ filters.query }}"</strong>
+                </p>
+                }
+            </div>
+
+            <!-- Quick Filters -->
+            <div class="quick-filters">
+                <mat-form-field appearance="outline" class="quick-filter">
+                    <mat-label>Categoria</mat-label>
+                    <mat-select (selectionChange)="onCategoriaChange($event.value)">
+                        <mat-option value="">Tutte le categorie</mat-option>
+                        @for (categoria of categorieOptions; track categoria) {
+                        <mat-option [value]="categoria">
+                            {{ categoria }}
+                        </mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="quick-filter">
+                    <mat-label>Ordina per</mat-label>
+                    <mat-select (selectionChange)="onOrdinamentoChange($event.value)">
+                        <mat-option value="">Rilevanza</mat-option>
+                        @for (option of ordinamentoOptions; track option.value) {
+                        <mat-option [value]="option.value">
+                            {{ option.label }}
+                        </mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-slide-toggle (change)="onDisponibilitaChange($event.checked)" class="availability-toggle">
+                    Solo disponibili
+                </mat-slide-toggle>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        @if (prodotti.length > 0) {
+        <div class="products-grid">
+            @for (prodotto of prodotti; track prodotto.id) {
+            <app-product-card [prodotto]="prodotto" (viewDetails)="navigateToProdotto(prodotto)"></app-product-card>
+            }
+        </div>
         }
-        <button mat-stroked-button color="primary" routerLink="/">
-          <mat-icon>home</mat-icon>
-          Torna alla Home
+
+        <!-- Empty State -->
+        @if (prodotti.length === 0 && !loading) {
+        <div class="empty-state">
+            <mat-icon class="empty-icon">shopping_basket</mat-icon>
+            <h3>Nessun prodotto trovato</h3>
+            @if (getActiveFiltersCount() > 0) {
+            <p>
+                Prova a modificare i filtri di ricerca o
+                <button mat-button color="primary" (click)="resetAllFilters()">rimuovi tutti i filtri</button>
+            </p>
+            }
+            @if (getActiveFiltersCount() === 0) {
+            <p>
+                Non ci sono prodotti disponibili al momento. Riprova più tardi.
+            </p>
+            }
+            <div class="empty-actions">
+                @if (getActiveFiltersCount() > 0) {
+                <button mat-raised-button color="primary" (click)="resetAllFilters()">
+                    Rimuovi Filtri
+                </button>
+                }
+                <button mat-stroked-button color="primary" routerLink="/">
+                    <mat-icon>home</mat-icon>
+                    Torna alla Home
+                </button>
+            </div>
+        </div>
+        }
+
+        <!-- Pagination -->
+        @if (totalCount > pageSize) {
+        <div class="pagination-container">
+            <mat-paginator [length]="totalCount" [pageSize]="pageSize" [pageSizeOptions]="[6, 12, 24, 48]"
+                (page)="onPageChange($event)" showFirstLastButtons>
+            </mat-paginator>
+        </div>
+        }
+    </section>
+
+    <!-- Quick Actions (Floating) -->
+    @if (!loading && !error && prodotti.length > 0) {
+    <div class="quick-actions">
+        <button mat-fab color="primary" class="scroll-to-top" (click)="scrollToTop()">
+            <mat-icon>keyboard_arrow_up</mat-icon>
         </button>
-      </div>
     </div>
     }
-
-    <!-- Pagination -->
-    @if (totalCount > pageSize) {
-    <div class="pagination-container">
-      <mat-paginator [length]="totalCount" [pageSize]="pageSize" [pageSizeOptions]="[6, 12, 24, 48]"
-        (page)="onPageChange($event)" showFirstLastButtons>
-      </mat-paginator>
-    </div>
     }
-  </section>
-
-  <!-- Quick Actions (Floating) -->
-  @if (!loading && !error && prodotti.length > 0) {
-  <div class="quick-actions">
-    <button mat-fab color="primary" class="scroll-to-top" (click)="scrollToTop()">
-      <mat-icon>keyboard_arrow_up</mat-icon>
-    </button>
-  </div>
-  }
-}
 </div>

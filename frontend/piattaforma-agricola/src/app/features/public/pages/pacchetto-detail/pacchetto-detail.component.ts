@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -57,7 +57,8 @@ export class PacchettoDetailComponent implements OnInit, OnDestroy {
         private pacchettiService: PublicPacchettiService,
         private route: ActivatedRoute,
         private router: Router,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -95,6 +96,7 @@ export class PacchettoDetailComponent implements OnInit, OnDestroy {
             next: (pacchetto) => {
                 this.pacchetto = pacchetto;
                 this.loading = false;
+                this.cdr.detectChanges();
 
                 // Carica dati correlati
                 this.loadPacchettiCorrelati();
@@ -104,6 +106,7 @@ export class PacchettoDetailComponent implements OnInit, OnDestroy {
                 console.error('Errore nel caricamento dettaglio pacchetto:', error);
                 this.error = 'Impossibile caricare i dettagli del pacchetto. Riprova più tardi.';
                 this.loading = false;
+                this.cdr.detectChanges();
                 this.snackBar.open(this.error, 'Chiudi', {
                     duration: 5000,
                     panelClass: ['error-snackbar']

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -54,7 +54,8 @@ export class ProdottoDetailComponent implements OnInit, OnDestroy {
         private prodottiService: PublicProdottiService,
         private route: ActivatedRoute,
         private router: Router,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -92,6 +93,7 @@ export class ProdottoDetailComponent implements OnInit, OnDestroy {
             next: (prodotto) => {
                 this.prodotto = prodotto;
                 this.loading = false;
+                this.cdr.detectChanges();
 
                 // Carica dati correlati
                 this.loadProdottiCorrelati();
@@ -101,6 +103,7 @@ export class ProdottoDetailComponent implements OnInit, OnDestroy {
                 console.error('Errore nel caricamento dettaglio prodotto:', error);
                 this.error = 'Impossibile caricare i dettagli del prodotto. Riprova più tardi.';
                 this.loading = false;
+                this.cdr.detectChanges();
                 this.snackBar.open(this.error, 'Chiudi', {
                     duration: 5000,
                     panelClass: ['error-snackbar']

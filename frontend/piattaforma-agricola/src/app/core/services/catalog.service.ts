@@ -199,6 +199,11 @@ export class CatalogService {
                     );
                 }
 
+                // Applica filtro disponibilità lato frontend
+                if (filters.disponibilitaSolo) {
+                    prodotti = prodotti.filter(p => p.quantitaDisponibile > 0);
+                }
+
                 return prodotti;
             }),
             catchError(() => of([]))
@@ -232,6 +237,11 @@ export class CatalogService {
                     pacchetti = pacchetti.filter(p =>
                         filters.aziende!.includes(p.azienda.id)
                     );
+                }
+
+                // Applica filtro disponibilità lato frontend
+                if (filters.disponibilitaSolo) {
+                    pacchetti = pacchetti.filter(p => p.quantitaDisponibile > 0);
                 }
 
                 return pacchetti;

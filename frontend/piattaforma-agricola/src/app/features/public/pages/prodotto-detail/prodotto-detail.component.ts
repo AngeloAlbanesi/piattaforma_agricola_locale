@@ -327,7 +327,11 @@ export class ProdottoDetailComponent implements OnInit, OnDestroy {
     }
 
     hasMetodiColtivazione(): boolean {
-        return !!this.prodotto?.metodoColtivazione;
+        return !!(this.prodotto?.metodoColtivazione || this.prodotto?.metodoDiColtivazione);
+    }
+
+    getMetodoColtivazione() {
+        return this.prodotto?.metodoColtivazione || this.prodotto?.metodoDiColtivazione;
     }
 
     hasProcessiTrasformazione(): boolean {
@@ -339,6 +343,22 @@ export class ProdottoDetailComponent implements OnInit, OnDestroy {
     }
 
     hasCertificazioni(): boolean {
-        return !!(this.prodotto?.certificazioniDettagli?.length);
+        const certifDettagli = this.prodotto?.certificazioniDettagli;
+        const certifBackend = this.prodotto?.certificazioni;
+        return !!(certifDettagli?.length || certifBackend?.length);
+    }
+
+    getCertificazioni(): any[] {
+        return this.prodotto?.certificazioniDettagli || this.prodotto?.certificazioni || [];
+    }
+
+    getTipoOrigineLabel(): string {
+        const tipo = this.prodotto?.tipoOrigine;
+        switch (tipo) {
+            case 'COLTIVATO': return 'Coltivato';
+            case 'COLTIVATO_ALLEVATO': return 'Coltivato/Allevato';
+            case 'TRASFORMATO': return 'Trasformato';
+            default: return 'N/D';
+        }
     }
 }

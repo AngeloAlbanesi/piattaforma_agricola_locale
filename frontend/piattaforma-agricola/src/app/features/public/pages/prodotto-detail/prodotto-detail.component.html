@@ -57,6 +57,30 @@
                     <span class="price-unit">/ {{ prodotto.unitaMisura || 'pz' }}</span>
                 </div>
 
+                <!-- Info Principali -->
+                <div class="product-main-info">
+                    <mat-card appearance="outlined" class="info-card">
+                        <mat-card-content>
+                            <div class="info-row">
+                                <mat-icon>inventory</mat-icon>
+                                <div class="info-content">
+                                    <span class="info-label">Quantità Disponibile</span>
+                                    <span class="info-value">{{ prodotto.quantitaDisponibile }} {{ prodotto.unitaMisura
+                                        || 'pz' }}</span>
+                                </div>
+                            </div>
+                            <mat-divider></mat-divider>
+                            <div class="info-row">
+                                <mat-icon>category</mat-icon>
+                                <div class="info-content">
+                                    <span class="info-label">Tipo Origine</span>
+                                    <span class="info-value">{{ getTipoOrigineLabel() }}</span>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
                 <div class="product-description">
                     <p>{{ prodotto.descrizione || 'Nessuna descrizione disponibile' }}</p>
                 </div>
@@ -64,6 +88,39 @@
                 <div class="product-origin" *ngIf="prodotto.luogoOrigine">
                     <mat-icon>location_on</mat-icon>
                     <span>Origine: {{ prodotto.luogoOrigine }}</span>
+                </div>
+
+                <!-- Info Azienda -->
+                <div class="company-info" *ngIf="prodotto.nomeAzienda || prodotto.venditore">
+                    <h4>Info Azienda</h4>
+                    <mat-card appearance="outlined" class="company-card">
+                        <mat-card-content>
+                            <div class="company-row">
+                                <mat-icon>business</mat-icon>
+                                <div class="company-content">
+                                    <span class="company-label">Nome Azienda</span>
+                                    <span class="company-value">{{ prodotto.nomeAzienda || 'N/D' }}</span>
+                                </div>
+                            </div>
+                            <mat-divider></mat-divider>
+                            <div class="company-row" *ngIf="prodotto.venditore">
+                                <mat-icon>person</mat-icon>
+                                <div class="company-content">
+                                    <span class="company-label">Venditore</span>
+                                    <span class="company-value">{{ prodotto.venditore.nome }} {{
+                                        prodotto.venditore.cognome }}</span>
+                                </div>
+                            </div>
+                            <mat-divider *ngIf="prodotto.venditore"></mat-divider>
+                            <div class="company-row" *ngIf="prodotto.venditore">
+                                <mat-icon>badge</mat-icon>
+                                <div class="company-content">
+                                    <span class="company-label">Ruolo</span>
+                                    <span class="company-value">{{ prodotto.venditore.tipoRuolo }}</span>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
                 </div>
 
                 <div class="producer-info" *ngIf="prodotto.produttore">
@@ -132,31 +189,31 @@
                         <div class="cultivation-section" *ngIf="hasMetodiColtivazione()">
                             <mat-card class="cultivation-card" appearance="outlined">
                                 <mat-card-header>
-                                    <mat-card-title>{{ prodotto!.metodoColtivazione!.nome }}</mat-card-title>
-                                    <mat-card-subtitle>{{ prodotto!.metodoColtivazione!.tipo }}</mat-card-subtitle>
+                                    <mat-card-title>{{ getMetodoColtivazione()?.nome }}</mat-card-title>
+                                    <mat-card-subtitle>{{ getMetodoColtivazione()?.tipo || 'Metodo di coltivazione'
+                                        }}</mat-card-subtitle>
                                 </mat-card-header>
                                 <mat-card-content>
                                     <div class="cultivation-description">
                                         <h4>Descrizione</h4>
-                                        <p>{{ prodotto!.metodoColtivazione!.descrizione }}</p>
+                                        <p>{{ getMetodoColtivazione()?.descrizione }}</p>
                                     </div>
 
                                     <div class="cultivation-techniques"
-                                        *ngIf="prodotto!.metodoColtivazione!.principi?.length">
+                                        *ngIf="getMetodoColtivazione()?.principi?.length">
                                         <h4>Principi</h4>
                                         <mat-chip-listbox>
-                                            <mat-chip *ngFor="let principio of prodotto!.metodoColtivazione!.principi">
+                                            <mat-chip *ngFor="let principio of getMetodoColtivazione()?.principi">
                                                 {{ principio }}
                                             </mat-chip>
                                         </mat-chip-listbox>
                                     </div>
 
                                     <div class="cultivation-restrictions"
-                                        *ngIf="prodotto!.metodoColtivazione!.restrizioni?.length">
+                                        *ngIf="getMetodoColtivazione()?.restrizioni?.length">
                                         <h4>Restrizioni</h4>
                                         <mat-chip-listbox>
-                                            <mat-chip
-                                                *ngFor="let restrizione of prodotto!.metodoColtivazione!.restrizioni">
+                                            <mat-chip *ngFor="let restrizione of getMetodoColtivazione()?.restrizioni">
                                                 {{ restrizione }}
                                             </mat-chip>
                                         </mat-chip-listbox>
@@ -219,10 +276,10 @@
                                                         {{ fonte.prodottoNome || fonte.descrizioneFonte || 'Fonte non
                                                         specificata' }}
                                                     </div>
-                                                    <div matListItemLine>
-                                                        <span class="fonte-quantita">{{ fonte.quantita }} {{
-                                                            fonte.unitaMisura }}</span>
-                                                        <mat-chip class="fonte-tipo-chip">
+                                                    <div matListItemLine class="fonte-info-line">
+                                                        <span class="fonte-quantita">{{ fonte.unitaMisura }}</span>
+                                                        <mat-chip class="fonte-tipo-chip"
+                                                            [ngClass]="fonte.tipoFonte === 'INTERNA' ? 'fonte-interna' : 'fonte-esterna'">
                                                             {{ fonte.tipoFonte === 'INTERNA' ? 'Interna' : 'Esterna' }}
                                                         </mat-chip>
                                                     </div>
@@ -253,15 +310,17 @@
                 <mat-tab label="Certificazioni" *ngIf="showCertificazioni()">
                     <div class="tab-content">
                         <div class="certifications-grid" *ngIf="hasCertificazioni()">
-                            <mat-card class="certification-card" *ngFor="let cert of prodotto!.certificazioniDettagli"
+                            <mat-card class="certification-card" *ngFor="let cert of getCertificazioni()"
                                 [ngClass]="getStatoCertificazione(cert.dataScadenza)">
                                 <mat-card-header>
-                                    <mat-card-title>{{ cert.tipoCertificazione }}</mat-card-title>
+                                    <mat-card-title>{{ cert.tipoCertificazione || cert.nomeCertificazione
+                                        }}</mat-card-title>
                                     <mat-card-subtitle>{{ cert.enteRilascio }}</mat-card-subtitle>
                                 </mat-card-header>
                                 <mat-card-content>
                                     <div class="cert-info">
-                                        <p><strong>Numero:</strong> {{ cert.numeroRiferimento }}</p>
+                                        <p *ngIf="cert.numeroRiferimento"><strong>Numero:</strong> {{
+                                            cert.numeroRiferimento }}</p>
                                         <p><strong>Rilasciata:</strong> {{ formatDate(cert.dataRilascio) }}</p>
                                         <p><strong>Scadenza:</strong> {{ formatDate(cert.dataScadenza) }}</p>
                                     </div>

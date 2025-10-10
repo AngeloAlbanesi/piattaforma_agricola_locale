@@ -18,14 +18,15 @@ import java.util.List;
 
 /**
  * DTO for detailed product information, used in single product view.
- * Contains all product fields plus related entities like vendor and certifications.
+ * Contains all product fields plus related entities like vendor and
+ * certifications.
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetailDTO {
-    
+
     private Long idProdotto;
     private String nome;
     private String descrizione;
@@ -40,4 +41,8 @@ public class ProductDetailDTO {
     private MetodoDiColtivazioneDTO metodoDiColtivazione;
     private UserPublicDTO venditore;
     private List<CertificazioneDTO> certificazioni;
+
+    // Informazioni azienda del venditore
+    private String nomeAzienda;
+    private Long idAzienda;
 }

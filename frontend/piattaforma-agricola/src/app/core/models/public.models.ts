@@ -36,21 +36,43 @@ export interface PublicProdottoSummaryDTO {
 export interface PublicProdottoDetailDTO extends PublicProdottoSummaryDTO {
     tipoOrigine?: string; // 'COLTIVATO', 'COLTIVATO_ALLEVATO', 'TRASFORMATO'
     idProcessoTrasformazioneOriginario?: number;
+    idMetodoDiColtivazione?: number;
     metodoColtivazione?: {
         id: number;
         nome: string;
         descrizione: string;
-        tipo: string;
+        tipo?: string;
         principi?: string[];
         restrizioni?: string[];
+        dataInizio?: string;
+        dataFine?: string;
     };
-    certificazioniDettagli: CertificazioneProdottoDTO[];
+    metodoDiColtivazione?: {  // Alias per backend compatibility
+        id: number;
+        nome: string;
+        descrizione: string;
+        tipo?: string;
+        principi?: string[];
+        restrizioni?: string[];
+        dataInizio?: string;
+        dataFine?: string;
+    };
+    certificazioniDettagli?: CertificazioneProdottoDTO[];  // Frontend format
+    certificazioni?: any[];  // Backend format
     tracciabilita?: TracciabilitaProdottoDTO;
     dataRaccolta?: string;
     dataDisponibilita?: string;
     valutazioneMedia?: number;
     numeroRecensioni?: number;
     prodottoVenditoreId?: number;
+    venditore?: {
+        idUtente: number;
+        nome: string;
+        cognome: string;
+        tipoRuolo: string;
+        statoAccreditamento?: string;
+        isAttivo: boolean;
+    };
 }
 
 // DTO per certificazioni prodotto

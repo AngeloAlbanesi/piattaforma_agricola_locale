@@ -200,10 +200,12 @@ public class ProcessoTrasformazioneController {
      * for transformed products in the public catalog.
      */
     @GetMapping("/pubblico/{id}")
-    public ResponseEntity<ProcessoTrasformazioneDTO> getPublicProcessoById(@PathVariable Long id) {
+    @PreAuthorize("permitAll()")
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public ResponseEntity<ProcessoTrasformazionePublicDTO> getPublicProcessoById(@PathVariable Long id) {
         return processoTrasformazioneService.getProcessoById(id)
                 .map(processo -> {
-                    ProcessoTrasformazioneDTO dto = processoMapper.toDto(processo);
+                    ProcessoTrasformazionePublicDTO dto = mapToPublicDTO(processo);
                     log.info("Retrieved public transformation process details for ID: {}", id);
                     return ResponseEntity.ok(dto);
                 })
@@ -211,6 +213,103 @@ public class ProcessoTrasformazioneController {
                     log.warn("Public transformation process with ID {} not found", id);
                     return ResponseEntity.notFound().build();
                 });
+    }
+
+    /**
+     * Maps a ProcessoTrasformazione entity to a public DTO without cyclic
+     * references.
+     */
+    private ProcessoTrasformazionePublicDTO mapToPublicDTO(ProcessoTrasformazione processo) {
+        ProcessoTrasformazionePublicDTO dto = new ProcessoTrasformazionePublicDTO();
+        dto.setIdProcesso(processo.getId());
+        dto.setNomeProcesso(processo.getNome());
+        dto.setDescrizioneProcesso(processo.getDescrizione());
+        dto.setMetodoProduzione(processo.getMetodoProduzione());
+        dto.setDataCreazione(null); // ProcessoTrasformazione doesn't have a creation date field
+
+        // Map fasi lavorazione - force lazy loading
+        List<FaseLavorazionePublicDTO> fasiDTO = new ArrayList<>();
+        List<FaseLavorazione> fasi = processo.getFasiLavorazione();
+        if (fasi != null && !fasi.isEmpty()) {
+            log.debug("Mapping {} fasi for processo {}", fasi.size(), processo.getId());
+            for (FaseLavorazione fase : fasi) {
+                fasiDTO.add(mapFaseToPublicDTO(fase));
+            }
+        }
+        dto.setFasiLavorazione(fasiDTO);
+
+        return dto;
+    }
+
+    /**
+     * Maps a FaseLavorazione entity to a public DTO.
+     */
+    private FaseLavorazionePublicDTO mapFaseToPublicDTO(FaseLavorazione fase) {
+        FaseLavorazionePublicDTO dto = new FaseLavorazionePublicDTO();
+        dto.setId(fase.getId());
+        dto.setNome(fase.getNome());
+        dto.setNumeroFase(fase.getOrdineEsecuzione());
+        dto.setDescrizione(fase.getDescrizione());
+
+        // Map fonte materia prima to list (even though there's only one)
+        List<FonteMateriaPrimaPublicDTO> fontiDTO = new ArrayList<>();
+        FonteMateriaPrima fonte = fase.getFonte();
+        if (fonte != null) {
+            log.debug("Mapping fonte for fase {}: fonte class is {}", fase.getId(), fonte.getClass().getName());
+            fontiDTO.add(mapFonteToPublicDTO(fonte, fase.getMateriaPrimaUtilizzata()));
+        } else {
+            log.warn("Fase {} has null fonte", fase.getId());
+        }
+        dto.setFontiMateriePrime(fontiDTO);
+
+        return dto;
+    }
+
+    /**
+     * Maps a FonteMateriaPrima entity to a public DTO.
+     */
+    private FonteMateriaPrimaPublicDTO mapFonteToPublicDTO(FonteMateriaPrima fonte, String materiaPrimaUtilizzata) {
+        FonteMateriaPrimaPublicDTO dto = new FonteMateriaPrimaPublicDTO();
+        dto.setId(fonte.getId());
+
+        // Force initialization of lazy proxy to get actual class type
+        String className = fonte.getClass().getSimpleName();
+        log.debug("Mapping fonte with class: {}", className);
+
+        dto.setDescrizioneFonte(fonte.getDescrizione());
+
+        // Check actual runtime class to determine fonte type
+        if (className.contains("FonteInterna") || fonte instanceof FonteInterna) {
+            dto.setTipoFonte("INTERNA");
+            try {
+                FonteInterna fonteInterna = (FonteInterna) fonte;
+                Produttore produttore = fonteInterna.getProduttore();
+                if (produttore != null) {
+                    dto.setProdottoId(produttore.getIdUtente());
+                    dto.setProdottoNome(produttore.getNome() + " " + produttore.getCognome());
+                }
+            } catch (Exception e) {
+                log.warn("Error accessing FonteInterna produttore: {}", e.getMessage());
+            }
+        } else if (className.contains("FonteEsterna") || fonte instanceof FonteEsterna) {
+            dto.setTipoFonte("ESTERNA");
+            try {
+                FonteEsterna fonteEsterna = (FonteEsterna) fonte;
+                dto.setProdottoNome(fonteEsterna.getNomeFornitore());
+            } catch (Exception e) {
+                log.warn("Error accessing FonteEsterna fornitore: {}", e.getMessage());
+            }
+        } else {
+            // Fallback: if we can't determine the type, mark as ESTERNA
+            log.warn("Unknown fonte type, defaulting to ESTERNA: {}", className);
+            dto.setTipoFonte("ESTERNA");
+        }
+
+        // Set quantity and unit (using materia prima as description)
+        dto.setQuantita(null); // Not available in current model
+        dto.setUnitaMisura(materiaPrimaUtilizzata);
+
+        return dto;
     }
 
     /**

@@ -779,21 +779,51 @@
                             background: white;
                             border-radius: 8px;
                             margin-bottom: 8px;
-                            padding: 12px;
+                            padding: 16px;
+                            min-height: auto;
+                            height: auto;
                             transition: transform 0.2s ease;
+                            overflow: visible;
 
                             &:hover {
                                 transform: translateX(4px);
                             }
 
+                            .fonte-info-line {
+                                display: flex;
+                                align-items: center;
+                                gap: 12px;
+                                flex-wrap: wrap;
+                                margin-top: 8px;
+                                min-height: 32px;
+                            }
+
                             .fonte-quantita {
                                 font-weight: 500;
                                 color: #333;
-                                margin-right: 8px;
+                                font-size: 0.95rem;
                             }
 
                             .fonte-tipo-chip {
                                 font-size: 0.85rem;
+                                height: auto;
+                                min-height: 28px;
+                                padding: 6px 14px;
+                                white-space: nowrap;
+                                display: inline-flex;
+                                align-items: center;
+
+                                &.fonte-interna {
+                                    background-color: #e3f2fd;
+                                    color: #1976d2;
+                                    border: 1px solid #1976d2;
+                                }
+
+                                &.fonte-esterna {
+                                    background-color: #fff3e0;
+                                    color: #f57c00;
+                                    border: 1px solid #f57c00;
+                                }
                             }
                         }
                     }
@@ -848,6 +878,65 @@
         font-size: 1rem;
         max-width: 400px;
         line-height: 1.5;
+    }
+}
+
+// === Stili per Info Principali e Info Azienda ===
+.product-main-info,
+.company-info {
+    margin: 20px 0;
+
+    h4 {
+        color: #333;
+        margin: 0 0 12px 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .info-card,
+    .company-card {
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-row,
+    .company-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 0;
+
+        mat-icon {
+            color: #2196f3;
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+        }
+
+        .info-content,
+        .company-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+
+            .info-label,
+            .company-label {
+                font-size: 0.85rem;
+                color: #666;
+                margin-bottom: 4px;
+            }
+
+            .info-value,
+            .company-value {
+                font-size: 1rem;
+                color: #333;
+                font-weight: 500;
+            }
+        }
+    }
+
+    mat-divider {
+        margin: 8px 0;
     }
 }
 

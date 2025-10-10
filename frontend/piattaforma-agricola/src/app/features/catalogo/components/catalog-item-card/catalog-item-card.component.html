@@ -44,12 +44,6 @@
                     <mat-chip *ngIf="item.categoria" class="category-chip">
                         {{ item.categoria }}
                     </mat-chip>
-                    <mat-chip *ngIf="item.tipo === 'PRODOTTO' && item.unitaMisura" class="info-chip">
-                        {{ item.unitaMisura }}
-                    </mat-chip>
-                    <mat-chip *ngIf="item.tipo === 'PACCHETTO' && item.numeroProdotti" class="info-chip">
-                        {{ item.numeroProdotti }} prodotti
-                    </mat-chip>
                 </mat-chip-set>
             </div>
 

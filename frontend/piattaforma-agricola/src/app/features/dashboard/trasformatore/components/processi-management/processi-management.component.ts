@@ -53,7 +53,7 @@ import { Router } from '@angular/router';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProcessiManagementComponent implements OnInit {
-    displayedColumns: string[] = ['id', 'nome', 'stato', 'dataCreazione', 'numeroFasi', 'actions'];
+    displayedColumns: string[] = ['id', 'nome', 'dataCreazione', 'numeroFasi', 'actions'];
     dataSource = new MatTableDataSource<ProcessoTrasformazioneSummaryDTO>([]);
     isLoading = true;
     totalElements = 0;
@@ -66,8 +66,7 @@ export class ProcessiManagementComponent implements OnInit {
 
     filters: ProcessoFilters & { pagina: number, elementiPerPagina: number } = {
         pagina: 0,
-        elementiPerPagina: 10,
-        stato: 'TUTTI'
+        elementiPerPagina: 10
     } as ProcessoFilters & { pagina: number, elementiPerPagina: number };
 
     private searchTerms = new Subject<string>();
@@ -100,7 +99,7 @@ export class ProcessiManagementComponent implements OnInit {
     ngAfterViewInit(): void {
         if (this.paginator) {
             this.dataSource.paginator = this.paginator;
-            
+
             this.paginator.page.subscribe(() => {
                 this.filters.pagina = this.paginator.pageIndex;
                 this.filters.elementiPerPagina = this.paginator.pageSize;
@@ -110,7 +109,7 @@ export class ProcessiManagementComponent implements OnInit {
 
         if (this.sort) {
             this.dataSource.sort = this.sort;
-            
+
             this.sort.sortChange.subscribe(() => {
                 this.filters.pagina = 0;
                 // Implementare logica di ordinamento se l'API lo supporta
@@ -140,12 +139,6 @@ export class ProcessiManagementComponent implements OnInit {
     applyFilter(event: Event): void {
         const filterValue = (event.target as HTMLInputElement).value;
         this.searchTerms.next(filterValue.trim().toLowerCase());
-    }
-
-    onStatusChange(status: StatoProcesso | 'TUTTI'): void {
-        this.filters.stato = status;
-        this.filters.pagina = 0;
-        this.loadProcessi();
     }
 
     viewProcessDetails(processo: ProcessoTrasformazioneSummaryDTO): void {

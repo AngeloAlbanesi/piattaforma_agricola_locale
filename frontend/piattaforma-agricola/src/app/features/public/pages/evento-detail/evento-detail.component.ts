@@ -152,6 +152,35 @@ export class EventoDetailComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * Formatta una data/ora dal backend nel formato dd/MM/yyyy HH:mm
+     * Il backend restituisce: "dd-MM-yyyy/HH-mm" (es: "01-01-2026/07-00")
+     */
+    formatDateTime(dateTimeStr: string): string {
+        if (!dateTimeStr) return 'N/A';
+
+        // Se il formato è "dd-MM-yyyy/HH-mm"
+        if (dateTimeStr.includes('/')) {
+            const [datePart, timePart] = dateTimeStr.split('/');
+            const [day, month, year] = datePart.split('-');
+            const [hour, minute] = timePart.split('-');
+            return `${day}/${month}/${year} ${hour}:${minute}`;
+        }
+
+        // Fallback: prova a parsare come data ISO
+        try {
+            const date = new Date(dateTimeStr);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const hour = date.getHours().toString().padStart(2, '0');
+            const minute = date.getMinutes().toString().padStart(2, '0');
+            return `${day}/${month}/${year} ${hour}:${minute}`;
+        } catch {
+            return dateTimeStr;
+        }
+    }
+
     getFormattedDate(dateString: string): string {
         const date = new Date(dateString);
         const options: Intl.DateTimeFormatOptions = {
@@ -169,6 +198,35 @@ export class EventoDetailComponent implements OnInit, OnDestroy {
             hour: '2-digit',
             minute: '2-digit'
         });
+    }
+
+    /**
+     * Ottiene lo stato dell'evento
+     */
+    getStato(): string {
+        if (!this.evento) return 'Caricamento...';
+        return this.evento.statoEvento || this.evento.stato || 'N/A';
+    }
+
+    /**
+     * Ottiene la classe del chip di stato
+     */
+    getStatoClass(): 'primary' | 'accent' | 'warn' | '' {
+        if (!this.evento) return '';
+        const stato = this.evento.statoEvento || this.evento.stato;
+        
+        switch (stato) {
+            case 'IN_PROGRAMMA':
+                return 'accent';
+            case 'IN_CORSO':
+                return 'primary';
+            case 'CONCLUSO':
+                return '';
+            case 'ANNULLATO':
+                return 'warn';
+            default:
+                return '';
+        }
     }
 
     getFormattedDuration(): string {

@@ -224,8 +224,14 @@ export interface PublicEventoSummaryDTO {
     luogo?: string;  // Alias per compatibilità
     indirizzo?: string;
     organizzatore?: {
-        id: number;
-        nomeAzienda: string;
+        id?: number;
+        idUtente?: number;
+        nomeAzienda?: string;
+        nome?: string;
+        cognome?: string;
+        tipoRuolo?: string;
+        statoAccreditamento?: string;
+        isAttivo?: boolean;
     };
     nomeOrganizzatore?: string;  // Dalla risposta API
     idOrganizzatore?: number;  // Dalla risposta API

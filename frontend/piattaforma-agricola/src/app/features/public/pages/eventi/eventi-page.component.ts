@@ -357,6 +357,33 @@ export class EventiPageComponent implements OnInit, OnDestroy {
         this.loadEventi();
     }
 
+    // === UI helper: chips filtri attivi ===
+    getActiveFilterChips(): Array<{ key: keyof PublicEventoFilters | 'query'; label: string; value: string }> {
+        const chips: Array<{ key: keyof PublicEventoFilters | 'query'; label: string; value: string }> = [];
+        if (this.filters.query) chips.push({ key: 'query', label: 'Ricerca', value: this.filters.query });
+        if (this.filters.luogo) chips.push({ key: 'luogo', label: 'Luogo', value: this.filters.luogo });
+        if (this.filters.dataInizio) chips.push({ key: 'dataInizio', label: 'Dal', value: this.filters.dataInizio });
+        if (this.filters.dataFine) chips.push({ key: 'dataFine', label: 'Al', value: this.filters.dataFine });
+        if (this.filters.gratuito !== undefined) chips.push({ key: 'gratuito', label: 'Gratuito', value: this.filters.gratuito ? 'Sì' : 'No' });
+        if (this.filters.disponibilita !== undefined) chips.push({ key: 'disponibilita', label: 'Disponibilità', value: this.filters.disponibilita ? 'Disponibili' : 'Tutti' });
+        if (this.filters.sortBy) chips.push({ key: 'sortBy', label: 'Ordina', value: this.getSortLabel(this.filters.sortBy) });
+        return chips;
+    }
+
+    clearFilter(key: keyof PublicEventoFilters | 'query'): void {
+        const newFilters = { ...this.filters } as any;
+        delete newFilters[key as string];
+        // page reset
+        this.filters = newFilters;
+        this.currentPage = 0;
+        this.loadEventi();
+    }
+
+    private getSortLabel(value: string): string {
+        const found = this.ordinamentoOptions.find(o => o.value === value);
+        return found?.label || 'Rilevanza';
+    }
+
     // Metodo per convertire le categorie in FilterOption
     getCategorieOptions(): any[] {
         return this.categorieOptions.map(cat => ({ value: cat, label: cat }));

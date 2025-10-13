@@ -1,24 +1,50 @@
 <div class="eventi-page-container">
     <!-- Header Section -->
     <section class="page-header">
+        <div class="header-background"></div>
         <div class="header-content">
-            <h1 class="page-title">Eventi Agricoli</h1>
-            <p class="page-subtitle">Scopri gli eventi, workshop e degustazioni organizzati dalle aziende agricole
-                locali</p>
+            <div class="header-text">
+                <h1 class="page-title">
+                    <mat-icon class="title-icon">agriculture</mat-icon>
+                    Eventi Agricoli
+                </h1>
+                <p class="page-subtitle">Scopri gli eventi, workshop e degustazioni organizzati dalle aziende agricole locali</p>
+            </div>
+            
+            <!-- Search Card -->
+            <div class="search-card">
+                <div class="search-section">
+                    <app-search-box placeholder="Cerca eventi per nome, luogo o categoria..." appearance="outline"
+                        (search)="onSearch($event)" class="search-input">
+                    </app-search-box>
 
-            <!-- Search Bar -->
-            <div class="search-section">
-                <app-search-box placeholder="Cerca eventi per nome, luogo o categoria..." appearance="outline"
-                    (search)="onSearch($event)">
-                </app-search-box>
-
-                <button mat-stroked-button (click)="toggleFilters()" class="filters-toggle">
-                    <mat-icon>filter_list</mat-icon>
-                    Filtri
-                    <mat-chip *ngIf="getActiveFiltersCount() > 0" color="primary" class="filters-count">
-                        {{ getActiveFiltersCount() }}
-                    </mat-chip>
-                </button>
+                    <button mat-raised-button (click)="toggleFilters()" class="filters-toggle" color="primary">
+                        <mat-icon>tune</mat-icon>
+                        Filtri
+                        <mat-chip *ngIf="getActiveFiltersCount() > 0" color="accent" class="filters-count">
+                            {{ getActiveFiltersCount() }}
+                        </mat-chip>
+                    </button>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <mat-icon class="stat-icon">event</mat-icon>
+                        <span class="stat-value">{{ totalCount }}+</span>
+                        <span class="stat-label">Eventi</span>
+                    </div>
+                    <div class="stat-item">
+                        <mat-icon class="stat-icon">location_on</mat-icon>
+                        <span class="stat-value">Tutta Italia</span>
+                        <span class="stat-label">Località</span>
+                    </div>
+                    <div class="stat-item">
+                        <mat-icon class="stat-icon">groups</mat-icon>
+                        <span class="stat-value">5000+</span>
+                        <span class="stat-label">Partecipanti</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -27,12 +53,21 @@
     <section class="filters-section" *ngIf="showFilters">
         <div class="filters-content">
             <div class="custom-filters">
-                <h3>Filtri Eventi</h3>
+                <div class="filters-header">
+                    <mat-icon class="filters-icon">tune</mat-icon>
+                    <h3>Filtri Eventi</h3>
+                    <button mat-icon-button (click)="toggleFilters()" class="close-filters" aria-label="Chiudi filtri">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
 
                 <!-- Date Range Filter -->
-                <div class="date-range-filter">
+                <div class="filter-group">
+                    <mat-label class="filter-label">
+                        <mat-icon>date_range</mat-icon>
+                        Periodo
+                    </mat-label>
                     <mat-form-field appearance="outline" class="date-field">
-                        <mat-label>Periodo</mat-label>
                         <mat-date-range-picker [formGroup]="dateRangeForm" (change)="onDataRangeChange()">
                             <input matStartDate formControlName="dataInizio" placeholder="Data inizio">
                             <input matEndDate formControlName="dataFine" placeholder="Data fine">
@@ -41,20 +76,56 @@
                 </div>
 
                 <!-- Location Filter -->
-                <mat-form-field appearance="outline" class="location-field">
-                    <mat-label>Luogo</mat-label>
-                    <input matInput placeholder="Città o località" (input)="onLuogoChange($event.target.value)">
-                </mat-form-field>
+                <div class="filter-group">
+                    <mat-label class="filter-label">
+                        <mat-icon>location_on</mat-icon>
+                        Luogo
+                    </mat-label>
+                    <mat-form-field appearance="outline" class="location-field">
+                        <input matInput placeholder="Città o località" (input)="onLuogoChange($event.target.value)">
+                        <mat-icon matSuffix>search</mat-icon>
+                    </mat-form-field>
+                </div>
 
                 <!-- Toggle Filters -->
-                <div class="toggle-filters">
-                    <mat-slide-toggle (change)="onGratuitoChange($event.checked)" class="filter-toggle">
-                        Solo eventi gratuiti
-                    </mat-slide-toggle>
+                <div class="filter-group">
+                    <mat-label class="filter-label">
+                        <mat-icon>filter_list</mat-icon>
+                        Preferenze
+                    </mat-label>
+                    <div class="toggle-filters">
+                        <mat-chip-listbox aria-label="Eventi gratuiti">
+                            <mat-chip-option
+                                (click)="onGratuitoChange(!filters.gratuito)"
+                                [selected]="filters.gratuito"
+                                class="filter-chip">
+                                <mat-icon>card_giftcard</mat-icon>
+                                Solo eventi gratuiti
+                            </mat-chip-option>
+                        </mat-chip-listbox>
+                        
+                        <mat-chip-listbox aria-label="Disponibilità">
+                            <mat-chip-option
+                                (click)="onDisponibilitaChange(!filters.disponibilita)"
+                                [selected]="filters.disponibilita"
+                                class="filter-chip">
+                                <mat-icon>event_available</mat-icon>
+                                Solo con disponibilità
+                            </mat-chip-option>
+                        </mat-chip-listbox>
+                    </div>
+                </div>
 
-                    <mat-slide-toggle (change)="onDisponibilitaChange($event.checked)" class="filter-toggle">
-                        Solo con disponibilità
-                    </mat-slide-toggle>
+                <!-- Quick Actions -->
+                <div class="filter-actions">
+                    <button mat-stroked-button (click)="resetAllFilters()" class="reset-btn">
+                        <mat-icon>refresh</mat-icon>
+                        Resetta filtri
+                    </button>
+                    <button mat-raised-button color="primary" (click)="toggleFilters()" class="apply-btn">
+                        <mat-icon>check</mat-icon>
+                        Applica filtri
+                    </button>
                 </div>
             </div>
         </div>
@@ -62,7 +133,7 @@
 
     <!-- Loading State -->
     <div class="loading-container" *ngIf="loading">
-        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <mat-progress-spinner mode="indeterminate" aria-label="Caricamento in corso"></mat-progress-spinner>
         <p>Caricamento eventi...</p>
     </div>
 
@@ -87,6 +158,20 @@
                 <p class="results-subtitle" *ngIf="filters.query">
                     Ricerca per: <strong>"{{ filters.query }}"</strong>
                 </p>
+                <!-- Active filters chips -->
+                <div class="active-filters" *ngIf="getActiveFiltersCount() > 0">
+                    <mat-chip-set aria-label="Filtri attivi">
+                        <mat-chip *ngFor="let chip of getActiveFilterChips()" (removed)="clearFilter(chip.key)"
+                            removable>
+                            <span class="chip-label">{{ chip.label }}:</span> {{ chip.value }}
+                            <button matChipRemove aria-label="Rimuovi filtro {{ chip.label }}">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-chip>
+                        <button mat-button color="primary" class="clear-all" (click)="resetAllFilters()">Rimuovi
+                            tutti</button>
+                    </mat-chip-set>
+                </div>
             </div>
 
             <!-- Quick Filters -->
@@ -110,6 +195,18 @@
                 (registerClick)="onRegisterClick(evento)" (cancelRegistrationClick)="onCancelRegistration($event)"
                 (viewDetails)="onViewEventDetails($event)">
             </app-event-card>
+        </div>
+
+        <!-- Skeleton while loading next page or first load -->
+        <div class="events-grid skeleton" *ngIf="loading">
+            <div class="event-skeleton" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12]">
+                <div class="sk-image"></div>
+                <div class="sk-content">
+                    <div class="sk-line w-70"></div>
+                    <div class="sk-line w-40"></div>
+                    <div class="sk-line w-90"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Empty State -->

@@ -1,15 +1,32 @@
 <div class="evento-detail-container">
-    <!-- Header con navigazione -->
-    <div class="page-header">
-        <button mat-icon-button (click)="goBack()" class="back-button" aria-label="Torna indietro">
-            <mat-icon>arrow_back</mat-icon>
-        </button>
-
-        <div class="header-actions">
+    <!-- Hero Header con navigazione -->
+    <div class="page-hero">
+        <div class="hero-bar">
+            <button mat-icon-button (click)="goBack()" class="back-button" aria-label="Torna indietro">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <div class="spacer"></div>
             <button mat-icon-button (click)="shareEvent()" class="share-button" aria-label="Condividi evento">
                 <mat-icon>share</mat-icon>
             </button>
         </div>
+        @if (evento && !isLoading && !error) {
+        <div class="hero-content">
+            <h1>{{ evento.nomeEvento || evento.nome }}</h1>
+            <div class="meta">
+                <span class="meta-item">
+                    <mat-icon aria-hidden="true">event</mat-icon>
+                    {{ formatDateTime(evento.dataOraInizio) }}
+                </span>
+                @if (evento.luogoEvento || evento.luogo) {
+                <span class="meta-item">
+                    <mat-icon aria-hidden="true">place</mat-icon>
+                    {{ evento.luogoEvento || evento.luogo }}
+                </span>
+                }
+            </div>
+        </div>
+        }
     </div>
 
     @if (isLoading) {
@@ -37,175 +54,210 @@
     </div>
     } @else if (evento) {
     <!-- Contenuto principale dell'evento -->
-    <div class="evento-content">
-        <!-- Card principale con dettagli evento -->
-        <mat-card class="main-event-card">
-            <mat-card-header class="event-header">
-                <div mat-card-avatar class="event-avatar">
-                    <mat-icon>event</mat-icon>
-                </div>
-                <mat-card-title class="event-title">
-                    <mat-icon>event</mat-icon>
-                    {{ evento.nomeEvento || evento.nome }}
-                </mat-card-title>
-                <mat-card-subtitle class="event-subtitle">
-                    @if (evento.organizzatore) {
-                        Organizzato da {{ evento.organizzatore.nomeAzienda || (evento.organizzatore.nome + ' ' + evento.organizzatore.cognome) }}
+    <div class="evento-content" aria-live="polite">
+        <!-- Grid layout per le card -->
+        <div class="event-details-grid">
+            <!-- Card Hero con immagine e info principali -->
+            <mat-card class="hero-event-card">
+                <div class="hero-section">
+                    @if (evento.immagineUrl) {
+                    <div class="event-image-container">
+                        <img [src]="evento.immagineUrl" [alt]="evento.nomeEvento || evento.nome" class="event-image">
+                        <div class="image-overlay"></div>
+                    </div>
                     }
-                </mat-card-subtitle>
-            </mat-card-header>
-
-            <!-- Immagine evento -->
-            @if (evento.immagineUrl) {
-            <div class="event-image-container">
-                <img [src]="evento.immagineUrl" [alt]="evento.nomeEvento || evento.nome" class="event-image">
-            </div>
-            }
-
-            <mat-card-content class="event-details-content">
-                <!-- Stato -->
-                <div class="detail-row">
-                    <span class="detail-label">Stato:</span>
-                    <mat-chip-listbox>
-                        <mat-chip [color]="getStatoClass()" selected>
-                            {{ getStato() }}
-                        </mat-chip>
-                    </mat-chip-listbox>
-                </div>
-
-                <mat-divider></mat-divider>
-
-                <!-- Nome Evento -->
-                <div class="detail-row">
-                    <span class="detail-label">Nome Evento:</span>
-                    <span class="detail-value">{{ evento.nomeEvento || evento.nome }}</span>
-                </div>
-
-                <mat-divider></mat-divider>
-
-                <!-- Descrizione -->
-                <div class="detail-row">
-                    <span class="detail-label">Descrizione:</span>
-                    <span class="detail-value description">{{ evento.descrizione || 'Nessuna descrizione disponibile' }}</span>
-                </div>
-
-                <mat-divider></mat-divider>
-
-                <!-- Data Inizio -->
-                <div class="detail-row">
-                    <span class="detail-label">Data Inizio:</span>
-                    <span class="detail-value">{{ formatDateTime(evento.dataOraInizio) }}</span>
-                </div>
-
-                <mat-divider></mat-divider>
-
-                <!-- Data Fine -->
-                <div class="detail-row">
-                    <span class="detail-label">Data Fine:</span>
-                    <span class="detail-value">{{ formatDateTime(evento.dataOraFine) }}</span>
-                </div>
-
-                <mat-divider></mat-divider>
-
-                <!-- Luogo -->
-                <div class="detail-row">
-                    <span class="detail-label">Luogo:</span>
-                    <span class="detail-value">{{ evento.luogoEvento || evento.luogo }}</span>
-                </div>
-
-                <mat-divider></mat-divider>
-
-                <!-- Capienza Massima -->
-                <div class="detail-row">
-                    <span class="detail-label">Capienza Massima:</span>
-                    <span class="detail-value">{{ evento.capienzaMassima || evento.numeroMassimoPartecipanti || 'Illimitata' }}</span>
-                </div>
-
-                @if (evento.postiDisponibili !== null && evento.postiDisponibili !== undefined) {
-                <mat-divider></mat-divider>
-                <div class="detail-row">
-                    <span class="detail-label">Posti Disponibili:</span>
-                    <span class="detail-value" 
-                          [class.warning-text]="evento.postiDisponibili > 0 && evento.postiDisponibili < 10" 
-                          [class.error-text]="evento.postiDisponibili === 0">
-                        {{ evento.postiDisponibili }}
-                    </span>
-                </div>
-                }
-
-                <!-- Aziende Partecipanti -->
-                @if (evento.aziendePartecipanti && evento.aziendePartecipanti.length > 0) {
-                <mat-divider></mat-divider>
-                <div class="detail-row">
-                    <span class="detail-label">Aziende Partecipanti ({{ evento.aziendePartecipanti.length }}):</span>
-                    <div class="aziende-list">
-                        @for (azienda of evento.aziendePartecipanti; track azienda.id) {
-                        <mat-chip>{{ azienda.nomeAzienda }}</mat-chip>
-                        }
+                    
+                    <div class="hero-content">
+                        <div class="event-header-info">
+                            <h1 class="event-title">{{ evento.nomeEvento || evento.nome }}</h1>
+                            @if (evento.organizzatore) {
+                            <div class="organizer-info">
+                                <mat-icon>business</mat-icon>
+                                <span>Organizzato da {{ evento.organizzatore.nomeAzienda || (evento.organizzatore.nome + ' ' + evento.organizzatore.cognome) }}</span>
+                            </div>
+                            }
+                        </div>
                     </div>
                 </div>
-                }
-            </mat-card-content>
+            </mat-card>
 
-            <!-- Azioni di registrazione -->
-            <mat-card-actions class="event-actions">
-                <!-- Badge "Sei iscritto" se registrato -->
-                @if (isAuthenticated() && isRegistered) {
-                <div class="registered-badge">
-                    <mat-icon>check_circle</mat-icon>
-                    <span>Sei iscritto a questo evento</span>
-                </div>
-                }
+            <!-- Card Informazioni Principali -->
+            <mat-card class="info-event-card">
+                <mat-card-header class="card-header">
+                    <mat-icon class="header-icon">info</mat-icon>
+                    <mat-card-title>Informazioni Evento</mat-card-title>
+                </mat-card-header>
+                
+                <mat-card-content class="info-content">
+                    <!-- Stato e Badge -->
+                    <div class="status-section">
+                        <mat-chip-listbox aria-label="Stato evento">
+                            <mat-chip [color]="getStatoClass()" selected class="status-chip">
+                                <mat-icon>{{ getEventStatus().icon }}</mat-icon>
+                                {{ getStato() }}
+                            </mat-chip>
+                        </mat-chip-listbox>
+                    </div>
 
-                <!-- Pulsante "Iscriviti" se autenticato, non registrato e può registrarsi -->
-                @if (isAuthenticated() && !isRegistered && canRegister) {
-                <button mat-raised-button color="primary" (click)="registerToEvent()" class="register-button">
-                    <mat-icon>how_to_reg</mat-icon>
-                    Iscriviti all'evento
-                </button>
-                }
+                    <!-- Grid informazioni -->
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <mat-icon class="info-icon">event</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Data Inizio</span>
+                                <span class="info-value">{{ formatDateTime(evento.dataOraInizio) }}</span>
+                            </div>
+                        </div>
 
-                <!-- Pulsante "Annulla iscrizione" se autenticato e registrato -->
-                @if (isAuthenticated() && isRegistered) {
-                <button mat-stroked-button color="warn" (click)="cancelRegistration()" class="cancel-button">
-                    <mat-icon>person_remove</mat-icon>
-                    Annulla iscrizione
-                </button>
-                }
+                        <div class="info-item">
+                            <mat-icon class="info-icon">event_available</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Data Fine</span>
+                                <span class="info-value">{{ formatDateTime(evento.dataOraFine) }}</span>
+                            </div>
+                        </div>
 
-                <!-- Pulsante disabilitato se non autenticato -->
-                @if (!isAuthenticated() && canRegister) {
-                <button mat-raised-button disabled class="login-required-button" 
-                        [matTooltip]="'Accedi per iscriverti'" 
-                        matTooltipPosition="above">
-                    <mat-icon>lock</mat-icon>
-                    Iscriviti all'evento
-                </button>
-                }
+                        <div class="info-item">
+                            <mat-icon class="info-icon">location_on</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Luogo</span>
+                                <span class="info-value">{{ evento.luogoEvento || evento.luogo }}</span>
+                            </div>
+                        </div>
 
-                <!-- Messaggio evento pieno/passato -->
-                @if (isPast) {
-                <div class="event-status-message past">
-                    <mat-icon>event_busy</mat-icon>
-                    <span>Evento concluso</span>
-                </div>
-                }
-                @if (isFull && !isPast && !isRegistered) {
-                <div class="event-status-message full">
-                    <mat-icon>event_busy</mat-icon>
-                    <span>Posti esauriti</span>
-                </div>
-                }
+                        <div class="info-item">
+                            <mat-icon class="info-icon">groups</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Capienza</span>
+                                <span class="info-value">{{ evento.capienzaMassima || evento.numeroMassimoPartecipanti || 'Illimitata' }}</span>
+                            </div>
+                        </div>
 
-                <!-- Info tempo rimanente per registrazione -->
-                @if (canRegister && !isRegistered && getRegistrationTimeLeft()) {
-                <span class="registration-info">
-                    <mat-icon>schedule</mat-icon>
-                    {{ getRegistrationTimeLeft() }}
-                </span>
-                }
-            </mat-card-actions>
-        </mat-card>
+                        @if (evento.postiDisponibili !== null && evento.postiDisponibili !== undefined) {
+                        <div class="info-item availability-item">
+                            <mat-icon class="info-icon" [style.color]="getAvailabilityColor()">{{ getAvailabilityStatus().text.includes('Esaurito') ? 'event_busy' : 'event_available' }}</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Posti Disponibili</span>
+                                <span class="info-value" [style.color]="getAvailabilityColor()">{{ evento.postiDisponibili }}</span>
+                                @if (evento.postiDisponibili > 0 && evento.postiDisponibili < 10) {
+                                <span class="availability-warning">Pochi posti rimanenti!</span>
+                                }
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- Card Descrizione -->
+            <mat-card class="description-event-card">
+                <mat-card-header class="card-header">
+                    <mat-icon class="header-icon">description</mat-icon>
+                    <mat-card-title>Descrizione</mat-card-title>
+                </mat-card-header>
+                
+                <mat-card-content>
+                    <div class="description-content">
+                        <p>{{ evento.descrizione || 'Nessuna descrizione disponibile' }}</p>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- Card Aziende Partecipanti -->
+            @if (evento.aziendePartecipanti && evento.aziendePartecipanti.length > 0) {
+            <mat-card class="companies-event-card">
+                <mat-card-header class="card-header">
+                    <mat-icon class="header-icon">business</mat-icon>
+                    <mat-card-title>Aziende Partecipanti ({{ evento.aziendePartecipanti.length }})</mat-card-title>
+                </mat-card-header>
+                
+                <mat-card-content>
+                    <div class="companies-list">
+                        @for (azienda of evento.aziendePartecipanti; track azienda.id) {
+                        <div class="company-item">
+                            <mat-icon class="company-icon">agriculture</mat-icon>
+                            <span class="company-name">{{ azienda.nomeAzienda }}</span>
+                        </div>
+                        }
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            }
+
+            <!-- Card Azioni -->
+            <mat-card class="actions-event-card">
+                <mat-card-header class="card-header">
+                    <mat-icon class="header-icon">how_to_reg</mat-icon>
+                    <mat-card-title>Iscrizione Evento</mat-card-title>
+                </mat-card-header>
+                
+                <mat-card-content class="actions-content">
+                    <!-- Badge "Sei iscritto" se registrato -->
+                    @if (isAuthenticated() && isRegistered) {
+                    <div class="registered-badge">
+                        <mat-icon>check_circle</mat-icon>
+                        <div class="badge-content">
+                            <span class="badge-title">Sei iscritto!</span>
+                            <span class="badge-subtitle">Hai già confermato la tua partecipazione</span>
+                        </div>
+                    </div>
+                    }
+
+                    <!-- Pulsanti di azione -->
+                    <div class="action-buttons">
+                        <!-- Pulsante "Iscriviti" se autenticato, non registrato e può registrarsi -->
+                        @if (isAuthenticated() && !isRegistered && canRegister) {
+                        <button mat-raised-button color="primary" (click)="registerToEvent()" class="register-button" mat-fab extended>
+                            <mat-icon>how_to_reg</mat-icon>
+                            Iscriviti all'evento
+                        </button>
+                        }
+
+                        <!-- Pulsante "Annulla iscrizione" se autenticato e registrato -->
+                        @if (isAuthenticated() && isRegistered) {
+                        <button mat-stroked-button color="warn" (click)="cancelRegistration()" class="cancel-button">
+                            <mat-icon>person_remove</mat-icon>
+                            Annulla iscrizione
+                        </button>
+                        }
+
+                        <!-- Pulsante disabilitato se non autenticato -->
+                        @if (!isAuthenticated() && canRegister) {
+                        <button mat-raised-button disabled class="login-required-button" [matTooltip]="'Accedi per iscriverti'"
+                            matTooltipPosition="above">
+                            <mat-icon>lock</mat-icon>
+                            Iscriviti all'evento
+                        </button>
+                        }
+                    </div>
+
+                    <!-- Messaggi di stato -->
+                    <div class="status-messages">
+                        @if (isPast) {
+                        <div class="event-status-message past">
+                            <mat-icon>event_busy</mat-icon>
+                            <span>Evento concluso</span>
+                        </div>
+                        }
+                        
+                        @if (isFull && !isPast && !isRegistered) {
+                        <div class="event-status-message full">
+                            <mat-icon>event_busy</mat-icon>
+                            <span>Posti esauriti</span>
+                        </div>
+                        }
+
+                        <!-- Info tempo rimanente per registrazione -->
+                        @if (canRegister && !isRegistered && getRegistrationTimeLeft()) {
+                        <div class="registration-info">
+                            <mat-icon>schedule</mat-icon>
+                            <span>{{ getRegistrationTimeLeft() }}</span>
+                        </div>
+                        }
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
     </div>
     }
 </div>

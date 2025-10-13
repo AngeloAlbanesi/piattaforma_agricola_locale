@@ -457,6 +457,24 @@ export class EventiPageComponent implements OnInit, OnDestroy {
             return;
         }
 
+        // Verifica stato evento
+        const statoEvento = evento.statoEvento || evento.stato;
+        if (statoEvento === 'ANNULLATO') {
+            this.snackBar.open('Non è possibile iscriversi a un evento annullato', 'Chiudi', {
+                duration: 3000,
+                panelClass: ['error-snackbar']
+            });
+            return;
+        }
+
+        if (statoEvento === 'CONCLUSO') {
+            this.snackBar.open('Non è possibile iscriversi a un evento concluso', 'Chiudi', {
+                duration: 3000,
+                panelClass: ['error-snackbar']
+            });
+            return;
+        }
+
         const postiDisponibili = this.eventiService.getPostiRimanenti(evento);
 
         if (postiDisponibili <= 0) {

@@ -60,12 +60,12 @@ export class EventCardComponent {
         const numeroMassimo = this.evento.numeroMassimoPartecipanti || this.evento.capienzaMassima;
         const numeroAttuale = this.evento.numeroPartecipanti;
         const postiDisp = this.evento.postiDisponibili;
-        
+
         // Se c'è postiDisponibili, usa quello
         if (postiDisp !== null && postiDisp !== undefined) {
             return postiDisp === 0;
         }
-        
+
         // Altrimenti usa il calcolo classico
         return numeroMassimo !== null && numeroMassimo !== undefined &&
             numeroAttuale !== null && numeroAttuale !== undefined &&
@@ -73,6 +73,12 @@ export class EventCardComponent {
     }
 
     canRegister(): boolean {
+        // Non permettere iscrizione a eventi annullati o conclusi
+        const statoEvento = this.evento?.statoEvento || this.evento?.stato;
+        if (statoEvento === 'ANNULLATO' || statoEvento === 'CONCLUSO') {
+            return false;
+        }
+
         return this.isAuthenticated &&
             !this.isRegistered &&
             this.isEventoFuturo() &&
@@ -127,16 +133,16 @@ export class EventCardComponent {
 
     getPostiDisponibili(): number {
         if (!this.evento) return 0;
-        
+
         // Priorità a postiDisponibili se presente
         if (this.evento.postiDisponibili !== null && this.evento.postiDisponibili !== undefined) {
             return this.evento.postiDisponibili;
         }
-        
+
         // Altrimenti calcola da capienzaMassima o numeroMassimoPartecipanti
         const numeroMassimo = this.evento.numeroMassimoPartecipanti || this.evento.capienzaMassima;
         const numeroAttuale = this.evento.numeroPartecipanti;
-        if (numeroMassimo === null || numeroMassimo === undefined || 
+        if (numeroMassimo === null || numeroMassimo === undefined ||
             numeroAttuale === null || numeroAttuale === undefined) {
             return 0;
         }

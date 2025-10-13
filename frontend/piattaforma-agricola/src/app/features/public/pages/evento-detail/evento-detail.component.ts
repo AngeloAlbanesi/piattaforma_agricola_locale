@@ -103,7 +103,7 @@ export class EventoDetailComponent implements OnInit, OnDestroy {
                 this.calculateRegistrationStatus();
                 this.isLoading = false;
                 this.cdr.detectChanges();
-                
+
                 // Note: Lo stato di registrazione viene gestito localmente dopo le operazioni
                 // Non c'è un endpoint backend per verificare lo stato iniziale
             },
@@ -140,9 +140,14 @@ export class EventoDetailComponent implements OnInit, OnDestroy {
         const now = new Date();
         const dataLimiteRegistrazione = new Date(this.evento.dataOraInizio);
 
+        // Non permettere iscrizione a eventi annullati o conclusi
+        const statoEvento = this.evento.statoEvento || this.evento.stato;
+        const isEventoValido = statoEvento !== 'ANNULLATO' && statoEvento !== 'CONCLUSO';
+
         this.canRegister = !this.isPast &&
             !this.isFull &&
-            now < dataLimiteRegistrazione;
+            now < dataLimiteRegistrazione &&
+            isEventoValido;
 
         // Calcola tempo rimanente per la registrazione
         if (this.canRegister) {
@@ -214,7 +219,7 @@ export class EventoDetailComponent implements OnInit, OnDestroy {
     getStatoClass(): 'primary' | 'accent' | 'warn' | '' {
         if (!this.evento) return '';
         const stato = this.evento.statoEvento || this.evento.stato;
-        
+
         switch (stato) {
             case 'IN_PROGRAMMA':
                 return 'accent';
@@ -451,6 +456,24 @@ export class EventoDetailComponent implements OnInit, OnDestroy {
                 duration: 5000
             }).onAction().subscribe(() => {
                 this.router.navigate(['/auth/login']);
+            });
+            return;
+        }
+
+        // Verifica stato evento
+        const statoEvento = this.evento.statoEvento || this.evento.stato;
+        if (statoEvento === 'ANNULLATO') {
+            this.snackBar.open('Non è possibile iscriversi a un evento annullato', 'Chiudi', {
+                duration: 3000,
+                panelClass: ['error-snackbar']
+            });
+            return;
+        }
+
+        if (statoEvento === 'CONCLUSO') {
+            this.snackBar.open('Non è possibile iscriversi a un evento concluso', 'Chiudi', {
+                duration: 3000,
+                panelClass: ['error-snackbar']
             });
             return;
         }

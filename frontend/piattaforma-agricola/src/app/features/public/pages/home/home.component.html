@@ -93,13 +93,13 @@
             </div>
 
             <div class="events-grid">
-                @for (evento of eventiProssimi; track evento.id) {
-                <mat-card class="event-card" (click)="navigateToEventoDetail(evento.id)">
+                @for (evento of eventiProssimi; track evento.idEvento || evento.id) {
+                <mat-card class="event-card" (click)="navigateToEventoDetail(evento.idEvento || evento.id!)">
                     <mat-card-header>
                         <div mat-card-avatar class="event-avatar">
                             <mat-icon>event</mat-icon>
                         </div>
-                        <mat-card-title>{{ evento.nome }}</mat-card-title>
+                        <mat-card-title>{{ evento.nomeEvento || evento.nome }}</mat-card-title>
                         <mat-card-subtitle>{{ formatDate(evento.dataOraInizio) }}</mat-card-subtitle>
                     </mat-card-header>
 
@@ -108,17 +108,18 @@
                             (evento.descrizione.length > 150 ? '...' : '') : '' }}</p>
 
                         <div class="event-details">
-                            @if (evento.luogo) {
+                            @if (evento.luogoEvento || evento.luogo) {
                             <div class="event-detail-item">
                                 <mat-icon>location_on</mat-icon>
-                                <span>{{ evento.luogo }}</span>
+                                <span>{{ evento.luogoEvento || evento.luogo }}</span>
                             </div>
                             }
 
-                            @if (evento.numeroMassimoPartecipanti) {
+                            @if (evento.numeroMassimoPartecipanti || evento.capienzaMassima) {
                             <div class="event-detail-item">
                                 <mat-icon>people</mat-icon>
-                                <span>{{ evento.numeroMassimoPartecipanti }} posti disponibili</span>
+                                <span>{{ evento.numeroMassimoPartecipanti || evento.capienzaMassima }} posti
+                                    disponibili</span>
                             </div>
                             }
                         </div>
@@ -126,8 +127,8 @@
 
                     <mat-card-actions>
                         <mat-chip-listbox aria-label="Stato evento">
-                            <mat-chip-option [color]="getStatoColor(evento.stato)" selected>
-                                {{ getStatoLabel(evento.stato) }}
+                            <mat-chip-option [color]="getStatoColor(evento.statoEvento || evento.stato!)" selected>
+                                {{ getStatoLabel(evento.statoEvento || evento.stato!) }}
                             </mat-chip-option>
                         </mat-chip-listbox>
 

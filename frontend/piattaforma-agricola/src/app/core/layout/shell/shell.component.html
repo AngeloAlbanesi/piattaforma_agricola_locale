@@ -1,8 +1,9 @@
 <mat-sidenav-container class="shell" [class.landing-fullscreen]="isLandingPage()" [class.auth-fullscreen]="isAuthPage()"
     [class.dashboard-fullscreen]="isDashboardPage()" [class.catalogo-fullscreen]="isCatalogoPage()"
-    [class.public-detail-fullscreen]="isPublicDetailPage()">
-    <!-- Sidenav nascosto sulla landing page, sulle pagine di autenticazione, sulle dashboard, sul catalogo e sulle pagine di dettaglio -->
-    @if (!isLandingPage() && !isAuthPage() && !isDashboardPage() && !isCatalogoPage() && !isPublicDetailPage()) {
+    [class.public-detail-fullscreen]="isPublicDetailPage()" [class.eventi-fullscreen]="isEventiPage()">
+    <!-- Sidenav nascosto sulla landing page, sulle pagine di autenticazione, sulle dashboard, sul catalogo, sulla pagina eventi e sulle pagine di dettaglio -->
+    @if (!isLandingPage() && !isAuthPage() && !isDashboardPage() && !isCatalogoPage() && !isPublicDetailPage() &&
+    !isEventiPage()) {
     <mat-sidenav mode="side" opened>
         <div class="shell__brand">
             <h1>{{ appName() }}</h1>
@@ -20,8 +21,8 @@
     }
 
     <mat-sidenav-content>
-        <!-- Toolbar nascosta sulle pagine di autenticazione, sulle dashboard, sul catalogo e sulle pagine di dettaglio -->
-        @if (!isAuthPage() && !isDashboardPage() && !isCatalogoPage() && !isPublicDetailPage()) {
+        <!-- Toolbar nascosta sulle pagine di autenticazione, sulle dashboard, sul catalogo, sulla pagina eventi e sulle pagine di dettaglio -->
+        @if (!isAuthPage() && !isDashboardPage() && !isCatalogoPage() && !isPublicDetailPage() && !isEventiPage()) {
         <mat-toolbar color="primary" class="shell__toolbar" [class.landing-toolbar]="isLandingPage()">
             <button mat-icon-button class="shell__menu" aria-label="toggle navigation" disabled>
                 <mat-icon>menu</mat-icon>
@@ -33,11 +34,12 @@
         </mat-toolbar>
         }
 
-        <!-- Main content con stile condizionale per landing page, pagine di autenticazione, dashboard, catalogo e pagine di dettaglio -->
+        <!-- Main content con stile condizionale per landing page, pagine di autenticazione, dashboard, catalogo, pagina eventi e pagine di dettaglio -->
         <main class="shell__content" [class.landing-fullscreen-content]="isLandingPage()"
             [class.auth-fullscreen-content]="isAuthPage()" [class.dashboard-fullscreen-content]="isDashboardPage()"
             [class.catalogo-fullscreen-content]="isCatalogoPage()"
-            [class.public-detail-fullscreen-content]="isPublicDetailPage()">
+            [class.public-detail-fullscreen-content]="isPublicDetailPage()"
+            [class.eventi-fullscreen-content]="isEventiPage()">
             <router-outlet></router-outlet>
         </main>
     </mat-sidenav-content>

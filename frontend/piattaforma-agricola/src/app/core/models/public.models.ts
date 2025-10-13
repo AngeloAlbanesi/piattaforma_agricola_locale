@@ -213,21 +213,29 @@ export interface ComposizionePacchettoDTO {
 
 // DTO base per evento pubblico
 export interface PublicEventoSummaryDTO {
-    id: number;
-    nome: string;
+    idEvento: number;  // Allineato con risposta API
+    id?: number;  // Alias per compatibilità
+    nomeEvento: string;  // Allineato con risposta API
+    nome?: string;  // Alias per compatibilità
     descrizione?: string;
     dataOraInizio: string;
     dataOraFine: string;
-    luogo: string;
-    indirizzo: string;
+    luogoEvento: string;  // Allineato con risposta API
+    luogo?: string;  // Alias per compatibilità
+    indirizzo?: string;
     organizzatore?: {
         id: number;
         nomeAzienda: string;
     };
+    nomeOrganizzatore?: string;  // Dalla risposta API
+    idOrganizzatore?: number;  // Dalla risposta API
     numeroPartecipanti?: number;
     numeroMassimoPartecipanti?: number;
+    capienzaMassima?: number;  // Dalla risposta API
+    postiDisponibili?: number;  // Dalla risposta API
     immagineUrl?: string;
-    stato: string;
+    statoEvento: string;  // Allineato con risposta API
+    stato?: string;  // Alias per compatibilità
 }
 
 // DTO dettagliato per evento pubblico

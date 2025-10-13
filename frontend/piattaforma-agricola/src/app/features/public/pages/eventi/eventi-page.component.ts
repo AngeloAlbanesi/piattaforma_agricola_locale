@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, FormGroup } from '@angular/forms';
@@ -15,12 +15,17 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { PublicEventiService } from '../../../../core/services/public-eventi.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { PublicEventoSummaryDTO } from '../../../../core/models/public.models';
 import { PublicEventoFilters } from '../../../../core/models/public.models';
 import { PaginatedResponse } from '../../../../core/models/common.models';
+import { EventoRegistrazioneRequestDTO } from '../../../../core/models/acquirente.models';
 import { SearchBoxComponent } from '../../shared/components/search/search-box/search-box.component';
+import { EventCardComponent } from '../../../dashboard/acquirente/components/event-card/event-card.component';
+import { EventRegistrationDialogComponent, EventRegistrationDialogData } from '../../shared/components/dialogs/event-registration-dialog.component';
 import { FiltersPanelComponent } from '../../shared/components/filters/filters-panel/filters-panel.component';
 
 @Component({
@@ -43,7 +48,9 @@ import { FiltersPanelComponent } from '../../shared/components/filters/filters-p
         MatNativeDateModule,
         MatFormFieldModule,
         MatInputModule,
-        SearchBoxComponent
+        MatDialogModule,
+        SearchBoxComponent,
+        EventCardComponent
     ],
     templateUrl: './eventi-page.component.html',
     styleUrls: ['./eventi-page.component.scss']
@@ -55,6 +62,9 @@ export class EventiPageComponent implements OnInit, OnDestroy {
     totalCount = 0;
     currentPage = 0;
     pageSize = 12;
+
+    // Traccia registrazioni utente
+    registeredEvents = new Map<number, boolean>();
 
     // Filtri
     filters: PublicEventoFilters = {};
@@ -78,9 +88,12 @@ export class EventiPageComponent implements OnInit, OnDestroy {
 
     constructor(
         private eventiService: PublicEventiService,
+        private authService: AuthService,
         private router: Router,
         private fb: FormBuilder,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private dialog: MatDialog,
+        private cdr: ChangeDetectorRef
     ) {
         this.dateRangeForm = fb.group({
             dataInizio: [''],
@@ -106,6 +119,7 @@ export class EventiPageComponent implements OnInit, OnDestroy {
     loadEventi(): void {
         this.loading = true;
         this.error = null;
+        this.cdr.markForCheck();
 
         const eventiSub = this.eventiService.getEventi({
             page: this.currentPage,
@@ -116,11 +130,18 @@ export class EventiPageComponent implements OnInit, OnDestroy {
                 this.eventi = response.content || [];
                 this.totalCount = response.totalElements || 0;
                 this.loading = false;
+
+                // Forza il rilevamento delle modifiche per aggiornare la vista
+                this.cdr.detectChanges();
+
+                // Note: La verifica dello stato di registrazione viene fatta solo quando necessario
+                // (es. al click del pulsante o nella pagina di dettaglio) per evitare troppe chiamate API
             },
             error: (error: any) => {
                 console.error('Errore nel caricamento eventi:', error);
                 this.error = 'Impossibile caricare gli eventi. Riprova più tardi.';
                 this.loading = false;
+                this.cdr.detectChanges();
                 this.snackBar.open(this.error, 'Chiudi', {
                     duration: 5000,
                     panelClass: ['error-snackbar']
@@ -349,5 +370,131 @@ export class EventiPageComponent implements OnInit, OnDestroy {
     // Metodo per scrollare in cima alla pagina
     scrollToTop(): void {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // === METODI PER AUTENTICAZIONE E REGISTRAZIONE ===
+
+    /**
+     * Verifica se l'utente è autenticato
+     */
+    isAuthenticated(): boolean {
+        return this.authService.isAuthenticated();
+    }
+
+    /**
+     * Verifica se l'utente è registrato a un evento
+     */
+    isRegisteredToEvent(eventoId: number): boolean {
+        return this.registeredEvents.get(eventoId) || false;
+    }
+
+    /**
+     * Gestisce il click sul pulsante "Iscriviti"
+     */
+    onRegisterClick(evento: PublicEventoSummaryDTO): void {
+        if (!this.isAuthenticated()) {
+            this.snackBar.open('Devi effettuare il login per iscriverti', 'Accedi', {
+                duration: 5000
+            }).onAction().subscribe(() => {
+                this.router.navigate(['/auth/login']);
+            });
+            return;
+        }
+
+        const postiDisponibili = this.eventiService.getPostiRimanenti(evento);
+
+        if (postiDisponibili <= 0) {
+            this.snackBar.open('Evento completo, nessun posto disponibile', 'Chiudi', {
+                duration: 3000,
+                panelClass: ['error-snackbar']
+            });
+            return;
+        }
+
+        const dialogData: EventRegistrationDialogData = {
+            evento,
+            postiDisponibili
+        };
+
+        const dialogRef = this.dialog.open(EventRegistrationDialogComponent, {
+            width: '500px',
+            maxWidth: '90vw',
+            data: dialogData,
+            disableClose: false
+        });
+
+        dialogRef.afterClosed().subscribe((result: EventoRegistrazioneRequestDTO | null) => {
+            if (result) {
+                this.registerToEvent(evento.idEvento || evento.id!, result);
+            }
+        });
+    }
+
+    /**
+     * Registra l'utente all'evento
+     */
+    private registerToEvent(eventoId: number, request: EventoRegistrazioneRequestDTO): void {
+        this.eventiService.registerForEvent(eventoId, request).subscribe({
+            next: () => {
+                this.registeredEvents.set(eventoId, true);
+                this.snackBar.open('Iscrizione completata con successo!', 'Chiudi', {
+                    duration: 3000,
+                    panelClass: ['success-snackbar']
+                });
+                // Ricarica gli eventi per aggiornare il conteggio partecipanti
+                this.loadEventi();
+            },
+            error: (error: any) => {
+                console.error('Errore durante la registrazione:', error);
+                const message = error.error?.message || 'Impossibile completare l\'iscrizione. Riprova più tardi.';
+                this.snackBar.open(message, 'Chiudi', {
+                    duration: 5000,
+                    panelClass: ['error-snackbar']
+                });
+            }
+        });
+    }
+
+    /**
+     * Gestisce l'annullamento della registrazione
+     */
+    onCancelRegistration(eventoId: number): void {
+        const confirmSnackBar = this.snackBar.open(
+            'Sei sicuro di voler annullare l\'iscrizione?',
+            'Conferma',
+            {
+                duration: 5000,
+                panelClass: ['warning-snackbar']
+            }
+        );
+
+        confirmSnackBar.onAction().subscribe(() => {
+            this.eventiService.cancelEventRegistration(eventoId).subscribe({
+                next: () => {
+                    this.registeredEvents.set(eventoId, false);
+                    this.snackBar.open('Iscrizione annullata con successo', 'Chiudi', {
+                        duration: 3000,
+                        panelClass: ['success-snackbar']
+                    });
+                    // Ricarica gli eventi per aggiornare il conteggio partecipanti
+                    this.loadEventi();
+                },
+                error: (error: any) => {
+                    console.error('Errore durante l\'annullamento:', error);
+                    const message = error.error?.message || 'Impossibile annullare l\'iscrizione. Riprova più tardi.';
+                    this.snackBar.open(message, 'Chiudi', {
+                        duration: 5000,
+                        panelClass: ['error-snackbar']
+                    });
+                }
+            });
+        });
+    }
+
+    /**
+     * Naviga ai dettagli dell'evento
+     */
+    onViewEventDetails(eventoId: number): void {
+        this.navigateToEventoDetail(eventoId);
     }
 }

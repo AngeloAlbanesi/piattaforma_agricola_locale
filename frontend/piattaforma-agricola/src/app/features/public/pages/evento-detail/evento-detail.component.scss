@@ -565,6 +565,24 @@
                     background-color: #f8f9fa;
                     border-top: 1px solid #e9ecef;
 
+                    .registered-badge {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        padding: 12px 24px;
+                        background-color: rgba(76, 175, 80, 0.1);
+                        color: #4caf50;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        font-size: 16px;
+
+                        mat-icon {
+                            font-size: 24px;
+                            width: 24px;
+                            height: 24px;
+                        }
+                    }
+
                     .register-button {
                         min-width: 200px;
                         padding: 12px 24px;
@@ -578,6 +596,55 @@
                         &:disabled {
                             background-color: #ccc;
                             color: #666;
+                        }
+                    }
+
+                    .cancel-button {
+                        min-width: 200px;
+                        padding: 12px 24px;
+                        font-size: 14px;
+                        font-weight: 500;
+
+                        mat-icon {
+                            margin-right: 8px;
+                        }
+                    }
+
+                    .login-required-button {
+                        min-width: 200px;
+                        padding: 12px 24px;
+                        font-size: 16px;
+                        font-weight: 600;
+                        opacity: 0.6;
+
+                        mat-icon {
+                            margin-right: 8px;
+                        }
+                    }
+
+                    .event-status-message {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        padding: 12px 24px;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        font-size: 16px;
+
+                        mat-icon {
+                            font-size: 24px;
+                            width: 24px;
+                            height: 24px;
+                        }
+
+                        &.past {
+                            background-color: rgba(158, 158, 158, 0.1);
+                            color: #9e9e9e;
+                        }
+
+                        &.full {
+                            background-color: rgba(244, 67, 54, 0.1);
+                            color: #f44336;
                         }
                     }
 

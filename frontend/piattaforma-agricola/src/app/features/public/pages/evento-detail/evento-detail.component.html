@@ -12,13 +12,13 @@
         </div>
     </div>
 
-@if (isLoading) {
+    @if (isLoading) {
     <!-- Stato di caricamento -->
     <div class="loading-container">
         <mat-spinner diameter="50"></mat-spinner>
         <p>Caricamento dettagli evento...</p>
     </div>
-} @else if (error) {
+    } @else if (error) {
     <!-- Messaggio di errore -->
     <div class="error-container">
         <mat-card class="error-card">
@@ -35,7 +35,7 @@
             </mat-card-content>
         </mat-card>
     </div>
-} @else if (evento) {
+    } @else if (evento) {
     <!-- Contenuto principale dell'evento -->
     <div class="evento-content">
         <!-- Badge di stato -->
@@ -134,7 +134,7 @@
                             <span class="info-label">Partecipanti</span>
                             <span class="info-value">{{ evento.numeroPartecipanti || 0 }}
                                 @if (evento.numeroMassimoPartecipanti) {
-                                    / {{ evento.numeroMassimoPartecipanti }}
+                                / {{ evento.numeroMassimoPartecipanti }}
                                 }
                             </span>
                             @if (evento.numeroMassimoPartecipanti) {
@@ -169,34 +169,34 @@
                         @for (contatto of evento.contatti || []; track contatto.tipo) {
                         <div class="contact-item">
                             @switch (contatto.tipo) {
-                                @case ('email') {
-                                    <div class="contact-email">
-                                        <mat-icon class="contact-icon">email</mat-icon>
-                                        <span class="contact-value">{{ contatto.valore }}</span>
-                                        <button mat-icon-button (click)="sendEmail()" aria-label="Invia email">
-                                            <mat-icon>send</mat-icon>
-                                        </button>
-                                    </div>
-                                }
-                                @case ('telefono') {
-                                    <div class="contact-phone">
-                                        <mat-icon class="contact-icon">phone</mat-icon>
-                                        <span class="contact-value">{{ contatto.valore }}</span>
-                                        <button mat-icon-button (click)="callPhone()" aria-label="Chiama">
-                                            <mat-icon>call</mat-icon>
-                                        </button>
-                                    </div>
-                                }
-                                @case ('sito') {
-                                    <div class="contact-website">
-                                        <mat-icon class="contact-icon">language</mat-icon>
-                                        <span class="contact-value">{{ contatto.valore }}</span>
-                                        <button mat-icon-button (click)="openExternalLink(contatto.valore)"
-                                            aria-label="Visita sito">
-                                            <mat-icon>open_in_new</mat-icon>
-                                        </button>
-                                    </div>
-                                }
+                            @case ('email') {
+                            <div class="contact-email">
+                                <mat-icon class="contact-icon">email</mat-icon>
+                                <span class="contact-value">{{ contatto.valore }}</span>
+                                <button mat-icon-button (click)="sendEmail()" aria-label="Invia email">
+                                    <mat-icon>send</mat-icon>
+                                </button>
+                            </div>
+                            }
+                            @case ('telefono') {
+                            <div class="contact-phone">
+                                <mat-icon class="contact-icon">phone</mat-icon>
+                                <span class="contact-value">{{ contatto.valore }}</span>
+                                <button mat-icon-button (click)="callPhone()" aria-label="Chiama">
+                                    <mat-icon>call</mat-icon>
+                                </button>
+                            </div>
+                            }
+                            @case ('sito') {
+                            <div class="contact-website">
+                                <mat-icon class="contact-icon">language</mat-icon>
+                                <span class="contact-value">{{ contatto.valore }}</span>
+                                <button mat-icon-button (click)="openExternalLink(contatto.valore)"
+                                    aria-label="Visita sito">
+                                    <mat-icon>open_in_new</mat-icon>
+                                </button>
+                            </div>
+                            }
                             }
                         </div>
                         }
@@ -323,13 +323,55 @@
             <!-- Azioni principali -->
             @if (hasRegistrationInfo()) {
             <mat-card-actions class="event-actions">
-                <button mat-raised-button color="primary" (click)="registerToEvent()" [disabled]="!canRegister"
-                    class="register-button">
-                    <mat-icon>how_to_reg</mat-icon>
-                    {{ isPast ? 'Evento concluso' : isFull ? 'Posti esauriti' : 'Iscriviti ora' }}
-                </button>
+                <!-- Badge "Sei iscritto" se registrato -->
+                @if (isAuthenticated() && isRegistered) {
+                <div class="registered-badge">
+                    <mat-icon>check_circle</mat-icon>
+                    <span>Sei iscritto a questo evento</span>
+                </div>
+                }
 
-                @if (canRegister && getRegistrationTimeLeft()) {
+                <!-- Pulsante "Iscriviti" se autenticato, non registrato e può registrarsi -->
+                @if (isAuthenticated() && !isRegistered && canRegister) {
+                <button mat-raised-button color="primary" (click)="registerToEvent()" class="register-button">
+                    <mat-icon>how_to_reg</mat-icon>
+                    Iscriviti all'evento
+                </button>
+                }
+
+                <!-- Pulsante "Annulla iscrizione" se autenticato e registrato -->
+                @if (isAuthenticated() && isRegistered) {
+                <button mat-stroked-button color="warn" (click)="cancelRegistration()" class="cancel-button">
+                    <mat-icon>person_remove</mat-icon>
+                    Annulla iscrizione
+                </button>
+                }
+
+                <!-- Pulsante disabilitato se non autenticato -->
+                @if (!isAuthenticated() && canRegister) {
+                <button mat-raised-button disabled class="login-required-button" [matTooltip]="'Accedi per iscriverti'"
+                    matTooltipPosition="above">
+                    <mat-icon>lock</mat-icon>
+                    Iscriviti all'evento
+                </button>
+                }
+
+                <!-- Messaggio evento pieno/passato -->
+                @if (isPast) {
+                <div class="event-status-message past">
+                    <mat-icon>event_busy</mat-icon>
+                    <span>Evento concluso</span>
+                </div>
+                }
+                @if (isFull && !isPast && !isRegistered) {
+                <div class="event-status-message full">
+                    <mat-icon>event_busy</mat-icon>
+                    <span>Posti esauriti</span>
+                </div>
+                }
+
+                <!-- Info tempo rimanente per registrazione -->
+                @if (canRegister && !isRegistered && getRegistrationTimeLeft()) {
                 <span class="registration-info">
                     <mat-icon>schedule</mat-icon>
                     {{ getRegistrationTimeLeft() }}
@@ -339,5 +381,5 @@
             }
         </mat-card>
     </div>
-}
+    }
 </div>

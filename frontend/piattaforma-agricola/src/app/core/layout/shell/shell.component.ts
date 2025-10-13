@@ -89,4 +89,12 @@ export class ShellComponent {
         const currentUrl = this.router.url;
         return currentUrl.match(/^\/(prodotti|pacchetti|eventi|aziende|processi)\/\d+/) !== null;
     }
+
+    /**
+     * Verifica se l'utente è sulla pagina eventi pubblica
+     */
+    isEventiPage(): boolean {
+        const currentUrl = this.router.url;
+        return currentUrl === '/eventi' || currentUrl.startsWith('/eventi?');
+    }
 }

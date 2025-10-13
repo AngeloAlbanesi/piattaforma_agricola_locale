@@ -9,11 +9,15 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 import { PublicEventiService } from '../../../../core/services/public-eventi.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { PublicEventoDetailDTO } from '../../../../core/models/public.models';
+import { EventoRegistrazioneRequestDTO } from '../../../../core/models/acquirente.models';
 import { SearchBoxComponent } from '../../shared/components/search/search-box/search-box.component';
+import { EventRegistrationDialogComponent, EventRegistrationDialogData } from '../../shared/components/dialogs/event-registration-dialog.component';
 
 @Component({
     selector: 'app-evento-detail',
@@ -28,7 +32,8 @@ import { SearchBoxComponent } from '../../shared/components/search/search-box/se
         MatChipsModule,
         MatProgressSpinnerModule,
         MatTooltipModule,
-        MatSnackBarModule
+        MatSnackBarModule,
+        MatDialogModule
     ],
     // schemas: [CUSTOM_ELEMENTS_SCHEMA],
     templateUrl: './evento-detail.component.html',
@@ -49,13 +54,18 @@ export class EventoDetailComponent implements OnInit, OnDestroy {
     registrationDaysLeft = 0;
     registrationHoursLeft = 0;
 
+    // Stato registrazione
+    isRegistered = false;
+
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private eventiService: PublicEventiService,
+        private authService: AuthService,
         private sanitizer: DomSanitizer,
         private cdr: ChangeDetectorRef,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private dialog: MatDialog
     ) { }
 
     ngOnInit(): void {
@@ -93,6 +103,9 @@ export class EventoDetailComponent implements OnInit, OnDestroy {
                 this.calculateRegistrationStatus();
                 this.isLoading = false;
                 this.cdr.detectChanges();
+                
+                // Note: Lo stato di registrazione viene gestito localmente dopo le operazioni
+                // Non c'è un endpoint backend per verificare lo stato iniziale
             },
             error: (err: any) => {
                 console.error('Errore nel caricamento dell\'evento:', err);
@@ -360,15 +373,121 @@ export class EventoDetailComponent implements OnInit, OnDestroy {
         window.open(`tel:${telefonoContatto}`);
     }
 
-    // Metodo per la registrazione all'evento (da implementare)
+    // === METODI PER AUTENTICAZIONE E REGISTRAZIONE ===
+
+    /**
+     * Verifica se l'utente è autenticato
+     */
+    isAuthenticated(): boolean {
+        return this.authService.isAuthenticated();
+    }
+
+    /**
+     * Metodo per la registrazione all'evento
+     */
     registerToEvent(): void {
         if (!this.evento || !this.canRegister) return;
 
-        // Qui implementeremo la logica di registrazione
-        this.snackBar.open('Funzionalità di registrazione in arrivo!', 'Chiudi', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom'
+        if (!this.isAuthenticated()) {
+            this.snackBar.open('Devi effettuare il login per iscriverti', 'Accedi', {
+                duration: 5000
+            }).onAction().subscribe(() => {
+                this.router.navigate(['/auth/login']);
+            });
+            return;
+        }
+
+        const postiDisponibili = this.eventiService.getPostiRimanenti(this.evento);
+
+        if (postiDisponibili <= 0) {
+            this.snackBar.open('Evento completo, nessun posto disponibile', 'Chiudi', {
+                duration: 3000,
+                panelClass: ['error-snackbar']
+            });
+            return;
+        }
+
+        const dialogData: EventRegistrationDialogData = {
+            evento: this.evento,
+            postiDisponibili
+        };
+
+        const dialogRef = this.dialog.open(EventRegistrationDialogComponent, {
+            width: '500px',
+            maxWidth: '90vw',
+            data: dialogData,
+            disableClose: false
+        });
+
+        dialogRef.afterClosed().subscribe((result: EventoRegistrazioneRequestDTO | null) => {
+            if (result && this.eventoId) {
+                this.performRegistration(this.eventoId, result);
+            }
+        });
+    }
+
+    /**
+     * Esegue la registrazione all'evento
+     */
+    private performRegistration(eventoId: number, request: EventoRegistrazioneRequestDTO): void {
+        this.eventiService.registerForEvent(eventoId, request).subscribe({
+            next: () => {
+                this.isRegistered = true;
+                this.snackBar.open('Iscrizione completata con successo!', 'Chiudi', {
+                    duration: 3000,
+                    panelClass: ['success-snackbar']
+                });
+                // Ricarica l'evento per aggiornare il conteggio partecipanti
+                this.loadEventoData();
+            },
+            error: (error: any) => {
+                console.error('Errore durante la registrazione:', error);
+                const message = error.error?.message || 'Impossibile completare l\'iscrizione. Riprova più tardi.';
+                this.snackBar.open(message, 'Chiudi', {
+                    duration: 5000,
+                    panelClass: ['error-snackbar']
+                });
+            }
+        });
+    }
+
+    /**
+     * Annulla la registrazione all'evento
+     */
+    cancelRegistration(): void {
+        if (!this.eventoId || !this.isRegistered) return;
+
+        const confirmSnackBar = this.snackBar.open(
+            'Sei sicuro di voler annullare l\'iscrizione?',
+            'Conferma',
+            {
+                duration: 5000,
+                panelClass: ['warning-snackbar']
+            }
+        );
+
+        confirmSnackBar.onAction().subscribe(() => {
+            if (this.eventoId) {
+                this.eventiService.cancelEventRegistration(this.eventoId).subscribe({
+                    next: () => {
+                        this.isRegistered = false;
+                        this.snackBar.open('Iscrizione annullata con successo', 'Chiudi', {
+                            duration: 3000,
+                            panelClass: ['success-snackbar']
+                        });
+                        // Ricarica l'evento per aggiornare il conteggio partecipanti
+                        this.loadEventoData();
+                    },
+                    error: (error: any) => {
+                        console.error('Errore durante l\'annullamento:', error);
+                        const message = error.error?.message || 'Impossibile annullare l\'iscrizione. Riprova più tardi.';
+                        this.snackBar.open(message, 'Chiudi', {
+                            duration: 5000,
+                            panelClass: ['error-snackbar']
+                        });
+                    }
+                });
+            }
         });
     }
 }

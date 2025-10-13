@@ -160,6 +160,22 @@ a[mat-list-item].active {
     background-color: transparent !important;
 }
 
+// Stili full-screen per pagina eventi pubblica
+.shell.eventi-fullscreen {
+    min-height: 100vh;
+    overflow: visible;
+}
+
+// Stili per pagina eventi pubblica full-screen
+.shell__content.eventi-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: transparent !important;
+}
+
 @media (max-width: 960px) {
     .shell__menu {
         display: inline-flex;

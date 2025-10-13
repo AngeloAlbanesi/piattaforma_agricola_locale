@@ -58,30 +58,30 @@ export class PublicEventiService {
         return this.http.get<PublicEventiResponse>(`${this.apiUrl}/eventi/organizzatori/${organizzatoreId}`, { params });
     }
 
-  // === METODI DI REGISTRAZIONE EVENTI ===
+    // === METODI DI REGISTRAZIONE EVENTI ===
 
-  /**
-   * Registra l'utente autenticato a un evento
-   */
-  registerForEvent(eventId: number, request: EventoRegistrazioneRequestDTO): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/eventi/${eventId}/registra`, request);
-  }
+    /**
+     * Registra l'utente autenticato a un evento
+     */
+    registerForEvent(eventId: number, request: EventoRegistrazioneRequestDTO): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/eventi/${eventId}/registra`, request);
+    }
 
-  /**
-   * Annulla la registrazione dell'utente autenticato da un evento
-   */
-  cancelEventRegistration(eventId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/eventi/${eventId}/registra`);
-  }
+    /**
+     * Annulla la registrazione dell'utente autenticato da un evento
+     */
+    cancelEventRegistration(eventId: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/eventi/${eventId}/registra`);
+    }
 
-  /**
-   * Verifica se l'utente autenticato è registrato a un evento
-   * NOTE: Questo endpoint non è ancora implementato nel backend.
-   * Lo stato di registrazione viene gestito localmente nel frontend dopo le operazioni di registrazione/cancellazione.
-   */
-  // isUserRegistered(eventId: number): Observable<boolean> {
-  //   return this.http.get<boolean>(`${this.apiUrl}/eventi/${eventId}/registrato`);
-  // }
+    /**
+     * Verifica se l'utente autenticato è registrato a un evento
+     * NOTE: Questo endpoint non è ancora implementato nel backend.
+     * Lo stato di registrazione viene gestito localmente nel frontend dopo le operazioni di registrazione/cancellazione.
+     */
+    // isUserRegistered(eventId: number): Observable<boolean> {
+    //   return this.http.get<boolean>(`${this.apiUrl}/eventi/${eventId}/registrato`);
+    // }
 
     // === METODI UTILITARI ===
 
@@ -263,8 +263,8 @@ export class PublicEventiService {
         // Altrimenti calcola dai partecipanti
         const numeroMassimo = evento.numeroMassimoPartecipanti || (evento as any).capienzaMassima;
         const numeroAttuale = evento.numeroPartecipanti;
-        
-        if (numeroMassimo === null || numeroMassimo === undefined || 
+
+        if (numeroMassimo === null || numeroMassimo === undefined ||
             numeroAttuale === null || numeroAttuale === undefined) {
             return -1; // Indefinito
         }

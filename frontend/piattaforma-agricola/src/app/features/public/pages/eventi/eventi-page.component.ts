@@ -505,11 +505,24 @@ export class EventiPageComponent implements OnInit, OnDestroy {
             },
             error: (error: any) => {
                 console.error('Errore durante la registrazione:', error);
-                const message = error.error?.message || 'Impossibile completare l\'iscrizione. Riprova più tardi.';
-                this.snackBar.open(message, 'Chiudi', {
-                    duration: 5000,
-                    panelClass: ['error-snackbar']
-                });
+
+                // Se l'errore è 409, l'utente è già registrato - aggiorniamo il localStorage
+                if (error.status === 409) {
+                    this.registeredEvents.set(eventoId, true);
+                    this.saveRegisteredEventsToStorage();
+                    this.snackBar.open('Sei già iscritto a questo evento', 'Chiudi', {
+                        duration: 3000,
+                        panelClass: ['info-snackbar']
+                    });
+                    this.loadEventi();
+                    this.cdr.detectChanges();
+                } else {
+                    const message = error.error?.message || 'Impossibile completare l\'iscrizione. Riprova più tardi.';
+                    this.snackBar.open(message, 'Chiudi', {
+                        duration: 5000,
+                        panelClass: ['error-snackbar']
+                    });
+                }
             }
         });
     }

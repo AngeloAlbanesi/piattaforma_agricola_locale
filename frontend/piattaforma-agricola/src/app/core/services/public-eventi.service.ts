@@ -240,20 +240,35 @@ export class PublicEventiService {
      * Verifica se un evento ha posti disponibili
      */
     haPostiDisponibili(evento: PublicEventoSummaryDTO): boolean {
-        if (!evento.numeroMassimoPartecipanti || !evento.numeroPartecipanti) {
+        if (evento.numeroMassimoPartecipanti === null || evento.numeroMassimoPartecipanti === undefined) {
             return true; // Se non c'è limite massimo, assumiamo che ci siano posti
+        }
+        if (evento.numeroPartecipanti === null || evento.numeroPartecipanti === undefined) {
+            return true; // Se non conosciamo il numero di partecipanti, assumiamo che ci siano posti
         }
         return evento.numeroPartecipanti < evento.numeroMassimoPartecipanti;
     }
 
     /**
      * Calcola i posti rimanenti per un evento
+     * Gestisce sia i nomi di campo standard che quelli alternativi dal backend
      */
     getPostiRimanenti(evento: PublicEventoSummaryDTO): number {
-        if (!evento.numeroMassimoPartecipanti || !evento.numeroPartecipanti) {
+        // Se c'è già postiDisponibili calcolato dal backend, usa quello
+        const postiDisp = (evento as any).postiDisponibili;
+        if (postiDisp !== null && postiDisp !== undefined) {
+            return postiDisp;
+        }
+
+        // Altrimenti calcola dai partecipanti
+        const numeroMassimo = evento.numeroMassimoPartecipanti || (evento as any).capienzaMassima;
+        const numeroAttuale = evento.numeroPartecipanti;
+        
+        if (numeroMassimo === null || numeroMassimo === undefined || 
+            numeroAttuale === null || numeroAttuale === undefined) {
             return -1; // Indefinito
         }
-        return Math.max(0, evento.numeroMassimoPartecipanti - evento.numeroPartecipanti);
+        return Math.max(0, numeroMassimo - numeroAttuale);
     }
 
     /**

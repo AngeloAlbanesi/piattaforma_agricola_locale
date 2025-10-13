@@ -94,11 +94,6 @@ export interface EventRegistrationDialogData {
                         <mat-hint align="end">{{ registrationForm.get('note')?.value?.length || 0 }}/500</mat-hint>
                     </mat-form-field>
                 </form>
-                
-                <div class="info-message">
-                    <mat-icon>info</mat-icon>
-                    <p>Riceverai una conferma via email dopo l'iscrizione. Potrai annullare la tua iscrizione in qualsiasi momento.</p>
-                </div>
             </mat-dialog-content>
             
             <mat-dialog-actions align="end">

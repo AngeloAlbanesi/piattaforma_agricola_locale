@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -69,7 +69,7 @@ import { EventoPartecipanteDTO } from '../../../../../core/models/animatore.mode
               <ng-container matColumnDef="nome">
                 <th mat-header-cell *matHeaderCellDef> Nome Completo </th>
                 <td mat-cell *matCellDef="let partecipante"> 
-                  {{ partecipante.nomeCompleto }} 
+                  {{ partecipante.nome }} {{ partecipante.cognome }} 
                 </td>
               </ng-container>
 
@@ -223,7 +223,8 @@ export class EventParticipantsComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private animatoreService: AnimatoreService,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -237,14 +238,17 @@ export class EventParticipantsComponent implements OnInit {
             next: (data) => {
                 this.partecipanti = data;
                 this.isLoading = false;
+                this.cdr.detectChanges();
             },
             error: (err) => {
+                console.error('Error loading partecipanti:', err);
                 this.snackBar.open(
                     'Errore durante il caricamento dei partecipanti: ' + (err.error?.message || 'Errore sconosciuto'),
                     'Chiudi',
                     { duration: 5000 }
                 );
                 this.isLoading = false;
+                this.cdr.detectChanges();
             }
         });
     }

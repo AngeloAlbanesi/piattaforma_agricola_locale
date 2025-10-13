@@ -83,8 +83,9 @@ export interface EventoFilters {
 
 // === PARTECIPANTI UTENTI ===
 export interface EventoPartecipanteDTO {
-    idUtente: number;
-    nomeCompleto: string;
+    utenteId: number;
+    nome: string;
+    cognome: string;
     email: string;
     numeroPosti: number;
     dataRegistrazione: string;

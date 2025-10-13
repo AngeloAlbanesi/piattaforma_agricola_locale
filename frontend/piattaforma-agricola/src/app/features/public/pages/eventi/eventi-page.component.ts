@@ -65,6 +65,7 @@ export class EventiPageComponent implements OnInit, OnDestroy {
 
     // Traccia registrazioni utente
     registeredEvents = new Map<number, boolean>();
+    private readonly REGISTERED_EVENTS_KEY = 'registeredEvents';
 
     // Filtri
     filters: PublicEventoFilters = {};
@@ -102,6 +103,7 @@ export class EventiPageComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.loadRegisteredEventsFromStorage();
         this.loadEventi();
         this.loadCategorie();
         this.loadStati();
@@ -416,6 +418,33 @@ export class EventiPageComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * Carica le registrazioni salvate da localStorage
+     */
+    private loadRegisteredEventsFromStorage(): void {
+        try {
+            const stored = localStorage.getItem(this.REGISTERED_EVENTS_KEY);
+            if (stored) {
+                const eventIds: number[] = JSON.parse(stored);
+                eventIds.forEach(id => this.registeredEvents.set(id, true));
+            }
+        } catch (error) {
+            console.error('Error loading registered events from storage:', error);
+        }
+    }
+
+    /**
+     * Salva le registrazioni in localStorage
+     */
+    private saveRegisteredEventsToStorage(): void {
+        try {
+            const eventIds = Array.from(this.registeredEvents.keys());
+            localStorage.setItem(this.REGISTERED_EVENTS_KEY, JSON.stringify(eventIds));
+        } catch (error) {
+            console.error('Error saving registered events to storage:', error);
+        }
+    }
+
+    /**
      * Gestisce il click sul pulsante "Iscriviti"
      */
     onRegisterClick(evento: PublicEventoSummaryDTO): void {
@@ -464,12 +493,15 @@ export class EventiPageComponent implements OnInit, OnDestroy {
         this.eventiService.registerForEvent(eventoId, request).subscribe({
             next: () => {
                 this.registeredEvents.set(eventoId, true);
+                this.saveRegisteredEventsToStorage();
                 this.snackBar.open('Iscrizione completata con successo!', 'Chiudi', {
                     duration: 3000,
                     panelClass: ['success-snackbar']
                 });
                 // Ricarica gli eventi per aggiornare il conteggio partecipanti
                 this.loadEventi();
+                // Forza il change detection dopo il reload
+                this.cdr.detectChanges();
             },
             error: (error: any) => {
                 console.error('Errore durante la registrazione:', error);
@@ -498,13 +530,15 @@ export class EventiPageComponent implements OnInit, OnDestroy {
         confirmSnackBar.onAction().subscribe(() => {
             this.eventiService.cancelEventRegistration(eventoId).subscribe({
                 next: () => {
-                    this.registeredEvents.set(eventoId, false);
+                    this.registeredEvents.delete(eventoId);
+                    this.saveRegisteredEventsToStorage();
                     this.snackBar.open('Iscrizione annullata con successo', 'Chiudi', {
                         duration: 3000,
                         panelClass: ['success-snackbar']
                     });
                     // Ricarica gli eventi per aggiornare il conteggio partecipanti
                     this.loadEventi();
+                    this.cdr.detectChanges();
                 },
                 error: (error: any) => {
                     console.error('Errore durante l\'annullamento:', error);

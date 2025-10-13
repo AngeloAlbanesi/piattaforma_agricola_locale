@@ -29,6 +29,7 @@ import { ConfirmActionDialogComponent } from '../event-dialogs/confirm-action-di
 import { ManageAziendeDialogComponent } from '../event-dialogs/manage-aziende-dialog.component';
 import { CreateEventDialogComponent } from '../event-dialogs/create-event-dialog.component';
 import { EditEventDialogComponent } from '../event-dialogs/edit-event-dialog.component';
+import { ViewEventDetailsDialogComponent } from '../event-dialogs/view-event-details-dialog.component';
 
 @Component({
     selector: 'app-eventi-management',
@@ -123,7 +124,7 @@ export class EventiManagementComponent implements OnInit {
     ngAfterViewInit(): void {
         if (this.paginator) {
             this.dataSource.paginator = this.paginator;
-            
+
             this.paginator.page.subscribe(() => {
                 this.filters.pagina = this.paginator.pageIndex;
                 this.filters.elementiPerPagina = this.paginator.pageSize;
@@ -133,7 +134,7 @@ export class EventiManagementComponent implements OnInit {
 
         if (this.sort) {
             this.dataSource.sort = this.sort;
-            
+
             this.sort.sortChange.subscribe(() => {
                 this.filters.pagina = 0;
                 // Implementare logica di ordinamento se l'API lo supporta
@@ -176,8 +177,10 @@ export class EventiManagementComponent implements OnInit {
     }
 
     viewEventDetails(evento: EventoDTO): void {
-        const eventoId = (evento as any).idEvento || evento.id;
-        this.router.navigate(['/dashboard/animatore/eventi', eventoId]);
+        this.dialog.open(ViewEventDetailsDialogComponent, {
+            width: '700px',
+            data: { evento }
+        });
     }
 
     editEvent(evento: EventoDTO): void {

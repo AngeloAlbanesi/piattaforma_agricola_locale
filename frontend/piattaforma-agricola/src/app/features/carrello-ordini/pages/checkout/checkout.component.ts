@@ -198,6 +198,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
      * Processa i pagamenti per gli ordini creati
      */
     private processPayments(ordini: OrdineDetailDTO[], metodoPagamento: string): void {
+        // Per pagamento simulato, il backend gestisce automaticamente lo stato
+        // Non serve chiamare l'API di conferma pagamento
+        if (metodoPagamento === 'SIMULATO') {
+            this.completeCheckout();
+            return;
+        }
+
         let paymentRequest: PagamentoRequestDTO;
 
         if (metodoPagamento === 'CARTA_CREDITO') {
@@ -213,10 +220,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                 datiPayPal: datiPayPal
             };
         } else {
-            // Per pagamento simulato, crea una richiesta semplice
-            paymentRequest = {
-                metodoPagamento: 'SIMULATO'
-            };
+            // Metodo non supportato
+            this.showError('Metodo di pagamento non supportato');
+            return;
         }
 
         // Processa pagamento per ogni ordine

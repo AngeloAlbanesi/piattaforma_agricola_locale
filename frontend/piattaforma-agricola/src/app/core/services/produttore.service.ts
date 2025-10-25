@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { PaginatedResponse } from '../models/common.models';
 import {
@@ -101,15 +102,21 @@ export class ProduttoreService {
     // === ORDINI ===
 
     getMyOrders(): Observable<OrdineRiepilogoDTO[]> {
-        return this.http.get<OrdineRiepilogoDTO[]>(`${this.apiUrl}/ordini-venditore/miei-ordini`);
+        // Usa l'endpoint corretto per venditori
+        // Il backend restituisce una PaginatedResponse, estraiamo solo il content
+        return this.http.get<{ content: OrdineRiepilogoDTO[] }>(`${this.apiUrl}/ordini/venditori`).pipe(
+            map(response => response.content || [])
+        );
     }
 
     getOrderById(id: number): Observable<OrdineRiepilogoDTO> {
-        return this.http.get<OrdineRiepilogoDTO>(`${this.apiUrl}/ordini-venditore/${id}`);
+        // Usa l'endpoint corretto per venditori
+        return this.http.get<OrdineRiepilogoDTO>(`${this.apiUrl}/ordini/venditori/${id}`);
     }
 
     updateOrderStatus(orderId: number, status: string): Observable<OrdineRiepilogoDTO> {
-        return this.http.put<OrdineRiepilogoDTO>(`${this.apiUrl}/ordini-venditore/${orderId}/stato`, { status });
+        // Deprecato: usare i metodi specifici (processOrder, shipOrder, etc.)
+        return this.http.put<OrdineRiepilogoDTO>(`${this.apiUrl}/ordini/venditori/${orderId}/stato`, { status });
     }
 
     // Metodi che seguono la specifica in docs/API_PRODUTTORE.md

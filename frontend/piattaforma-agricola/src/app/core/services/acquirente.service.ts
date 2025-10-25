@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, throwError, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
     ProductSummaryDTO,
@@ -226,7 +226,8 @@ export class AcquirenteService {
      * @returns Observable<OrdineDetailDTO[]> - Lista ordini creati
      */
     createOrderFromCart(request: CreateOrdineRequestDTO): Observable<OrdineDetailDTO[]> {
-        return this.http.post<OrdineDetailDTO[]>(`${this.apiUrl}/ordini`, request).pipe(
+        return this.http.post<{ message: string; count: number; ordini: OrdineDetailDTO[] }>(`${this.apiUrl}/ordini`, request).pipe(
+            map(response => response.ordini),
             catchError(this.handleError)
         );
     }

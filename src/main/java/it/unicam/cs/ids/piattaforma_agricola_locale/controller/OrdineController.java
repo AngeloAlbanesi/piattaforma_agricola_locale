@@ -67,14 +67,20 @@ public class OrdineController {
                     .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
             // Create multiple orders from cart (one per vendor)
-            // Gli ordini vengono creati in stato ATTESA_PAGAMENTO
-            List<Ordine> ordini = ordineService.creaOrdiniDaCarrello(acquirente);
-            
-            // NOTA: Il pagamento NON viene più elaborato automaticamente qui.
-            // L'acquirente deve usare l'endpoint PUT /api/ordini/{id}/pagamento 
-            // per confermare il pagamento con i dati specifici del metodo scelto.
-            log.info("Orders created in ATTESA_PAGAMENTO state. Payment method preference: {}", 
-                    request.getMetodoPagamento());
+            // Se il metodo di pagamento è SIMULATO, gli ordini passano automaticamente a
+            // PRONTO_PER_LAVORAZIONE
+            // Altrimenti, rimangono in ATTESA_PAGAMENTO finché non viene confermato il
+            // pagamento
+            List<Ordine> ordini = ordineService.creaOrdiniDaCarrello(acquirente, request.getMetodoPagamento());
+
+            // NOTA:
+            // - Per CARTA_CREDITO e PAYPAL: gli ordini rimangono in ATTESA_PAGAMENTO.
+            // L'acquirente deve usare l'endpoint PUT /api/ordini/{id}/pagamento.
+            // - Per SIMULATO: gli ordini passano automaticamente a PRONTO_PER_LAVORAZIONE.
+            log.info("Orders created successfully. Count: {}, Payment method: {}, Final state: {}",
+                    ordini.size(),
+                    request.getMetodoPagamento(),
+                    ordini.isEmpty() ? "N/A" : ordini.get(0).getStatoOrdine());
 
             log.info("Orders created successfully - OrderCount: {}, User: {}", ordini.size(), email);
 
@@ -249,26 +255,27 @@ public class OrdineController {
 
             // Get payment strategy and confirm payment with payment data
             IMetodoPagamentoStrategy strategiaPagamento = getPaymentStrategy(request.getMetodoPagamento());
-            
-            // Use the new method with payment data if available, otherwise use the simple one
+
+            // Use the new method with payment data if available, otherwise use the simple
+            // one
             boolean pagamentoRiuscito;
             if (hasPaymentData(request)) {
                 pagamentoRiuscito = strategiaPagamento.elaboraPagamento(ordine, request);
             } else {
                 pagamentoRiuscito = strategiaPagamento.elaboraPagamento(ordine);
             }
-            
+
             if (pagamentoRiuscito) {
                 // Update order status manually since we're calling the strategy directly
                 ordine.setStatoCorrente(StatoCorrente.PRONTO_PER_LAVORAZIONE);
                 ordineService.aggiornaOrdine(ordine);
-                
+
                 log.info("Payment confirmed successfully - OrderId: {}, User: {}", id, email);
                 return ResponseEntity.ok(Map.of("message", "Pagamento confermato con successo",
                         "ordineId", ordine.getIdOrdine(), "stato", ordine.getStatoOrdine()));
             } else {
                 return ResponseEntity.badRequest()
-                        .body(Map.of("error", "Pagamento fallito", 
+                        .body(Map.of("error", "Pagamento fallito",
                                 "message", "Il pagamento non è stato autorizzato. Verificare i dati inseriti."));
             }
 

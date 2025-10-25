@@ -364,7 +364,7 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
     }
 
     @Override
-    public List<Ordine> creaOrdiniDaCarrello(Acquirente acquirente)
+    public List<Ordine> creaOrdiniDaCarrello(Acquirente acquirente, String metodoPagamento)
             throws CarrelloVuotoException, QuantitaNonDisponibileAlCheckoutException, OrdineException {
         if (acquirente == null) {
             throw new OrdineException("Impossibile creare ordini: l'acquirente non può essere null");
@@ -473,6 +473,20 @@ public class OrdineService implements IOrdineService, IOrdineObservable {
                     // Inietta l'AcquistabileService nelle righe ordine
                     riga.setAcquistabileService(carrelloService.getAcquistabileService());
                     rigaOrdineRepository.save(riga);
+                }
+
+                // Se il metodo di pagamento è SIMULATO, passa subito a PRONTO_PER_LAVORAZIONE
+                if ("SIMULATO".equalsIgnoreCase(metodoPagamento)) {
+                    try {
+                        ordine.paga(); // Transizione da ATTESA_PAGAMENTO a PRONTO_PER_LAVORAZIONE
+                        ordineRepository.save(ordine);
+                        log.info("Ordine #{} passato automaticamente a PRONTO_PER_LAVORAZIONE (pagamento SIMULATO)",
+                                ordine.getIdOrdine());
+                    } catch (Exception e) {
+                        log.error("Errore nel passaggio automatico dello stato per ordine #{}: {}",
+                                ordine.getIdOrdine(), e.getMessage());
+                        // L'ordine rimane in ATTESA_PAGAMENTO in caso di errore
+                    }
                 }
 
                 ordiniCreati.add(ordine);

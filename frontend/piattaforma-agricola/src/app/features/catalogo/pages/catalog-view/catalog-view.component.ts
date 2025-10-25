@@ -11,6 +11,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
 
 import { CatalogService } from '../../../../core/services/catalog.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -30,6 +31,7 @@ import { CatalogItemCardComponent } from '../../components/catalog-item-card/cat
 import { CatalogFiltersComponent } from '../../components/catalog-filters/catalog-filters.component';
 import { CatalogSearchBarComponent } from '../../components/catalog-search-bar/catalog-search-bar.component';
 import { CatalogSortHeaderComponent } from '../../components/catalog-sort-header/catalog-sort-header.component';
+import { AddToCartDialogComponent, AddToCartDialogData, AddToCartDialogResult } from '../../components/add-to-cart-dialog/add-to-cart-dialog.component';
 
 /**
  * Componente principale per la vista del catalogo
@@ -83,7 +85,8 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
         private snackBar: MatSnackBar,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private dialog: MatDialog
     ) { }
 
     ngOnInit(): void {
@@ -91,7 +94,7 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
         this.loadFilterOptions();
         this.loadQueryParams();
         this.performSearch();
-        
+
         // Carica il carrello se l'utente è autenticato
         if (this.isAuthenticated) {
             this.loadCartCount();
@@ -359,14 +362,41 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
             return;
         }
 
-        // Prepara richiesta
+        // Apri dialog per selezione quantità
+        const dialogData: AddToCartDialogData = {
+            nome: item.nome,
+            prezzo: item.prezzo,
+            quantitaDisponibile: item.quantitaDisponibile,
+            immagine: item.immagineUrl
+        };
+
+        const dialogRef = this.dialog.open(AddToCartDialogComponent, {
+            width: '500px',
+            maxWidth: '95vw',
+            data: dialogData,
+            autoFocus: true,
+            restoreFocus: true
+        });
+
+        dialogRef.afterClosed().subscribe((result: AddToCartDialogResult | undefined) => {
+            if (result) {
+                // L'utente ha confermato, aggiungi al carrello con la quantità selezionata
+                this.addItemToCart(item, result.quantita);
+            }
+            // Se result è undefined, l'utente ha annullato
+        });
+    }
+
+    /**
+     * Aggiunge un item al carrello con la quantità specificata
+     */
+    private addItemToCart(item: CatalogItem, quantita: number): void {
         const request: AddToCartRequestDTO = {
             tipoAcquistabile: item.tipo,
             idAcquistabile: item.id,
-            quantita: 1
+            quantita: quantita
         };
 
-        // Aggiungi al carrello
         this.acquirenteService.addToCart(request)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
@@ -374,9 +404,13 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
                     // Aggiorna il contatore carrello
                     this.cartItemsCount = carrello.totalElementi || 0;
                     this.cdr.markForCheck();
-                    
+
+                    const message = quantita === 1
+                        ? `${item.nome} aggiunto al carrello!`
+                        : `${quantita}x ${item.nome} aggiunti al carrello!`;
+
                     this.snackBar.open(
-                        `${item.nome} aggiunto al carrello!`,
+                        message,
                         'Vai al Carrello',
                         {
                             duration: 5000,

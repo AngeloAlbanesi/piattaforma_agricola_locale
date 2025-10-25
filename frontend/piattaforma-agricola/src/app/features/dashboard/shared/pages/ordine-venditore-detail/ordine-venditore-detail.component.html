@@ -1,0 +1,242 @@
+<div class="ordine-detail" role="main" aria-label="Dettaglio Ordine">
+    <!-- Header -->
+    <header class="detail-header">
+        <button mat-icon-button (click)="goBack()" class="back-button">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-content">
+            <h1 class="page-title">
+                <mat-icon>receipt</mat-icon>
+                Ordine #{{ ordine?.numeroOrdine || ordine?.id }}
+            </h1>
+            <mat-chip *ngIf="ordine" [color]="getStatoColor(ordine.stato)">
+                {{ getStatoLabel(ordine.stato) }}
+            </mat-chip>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Caricamento ordine...</p>
+    </div>
+
+    <!-- Order Details -->
+    <div *ngIf="!isLoading && ordine" class="order-content">
+        <!-- Customer Info -->
+        <mat-card class="info-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>person</mat-icon>
+                    Informazioni Cliente
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="info-row">
+                    <span class="label">Nome:</span>
+                    <span class="value">{{ ordine.clienteNome }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Email:</span>
+                    <span class="value">{{ ordine.clienteEmail }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Data Ordine:</span>
+                    <span class="value">{{ formatDate(ordine.dataOrdine) }}</span>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Shipping Address -->
+        <mat-card class="info-card" *ngIf="ordine.indirizzoSpedizione">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>local_shipping</mat-icon>
+                    Indirizzo di Spedizione
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="address">
+                    <p>{{ ordine.indirizzoSpedizione.via }} {{ ordine.indirizzoSpedizione.civico }}</p>
+                    <p>{{ ordine.indirizzoSpedizione.cap }} {{ ordine.indirizzoSpedizione.citta }} ({{
+                        ordine.indirizzoSpedizione.provincia }})</p>
+                    <p>{{ ordine.indirizzoSpedizione.paese }}</p>
+                    <p *ngIf="ordine.indirizzoSpedizione.telefono">
+                        <mat-icon inline>phone</mat-icon> {{ ordine.indirizzoSpedizione.telefono }}
+                    </p>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Order Items -->
+        <mat-card class="items-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>shopping_basket</mat-icon>
+                    Articoli ({{ ordine.numeroArticoli }})
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <table mat-table [dataSource]="ordine.articoli" class="items-table">
+                    <ng-container matColumnDef="prodotto">
+                        <th mat-header-cell *matHeaderCellDef>Prodotto</th>
+                        <td mat-cell *matCellDef="let item">
+                            <div class="product-cell">
+                                <img *ngIf="item.prodottoImmagine" [src]="item.prodottoImmagine"
+                                    [alt]="item.prodottoNome" class="product-image">
+                                <div>
+                                    <strong>{{ item.prodottoNome }}</strong>
+                                    <p class="unit">{{ item.unitaMisura }}</p>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="quantita">
+                        <th mat-header-cell *matHeaderCellDef>Quantità</th>
+                        <td mat-cell *matCellDef="let item">{{ item.quantita }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="prezzoUnitario">
+                        <th mat-header-cell *matHeaderCellDef>Prezzo Unitario</th>
+                        <td mat-cell *matCellDef="let item">{{ formatPrice(item.prezzoUnitario) }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="subtotale">
+                        <th mat-header-cell *matHeaderCellDef>Subtotale</th>
+                        <td mat-cell *matCellDef="let item">
+                            <strong>{{ formatPrice(item.subtotale) }}</strong>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+
+                <mat-divider></mat-divider>
+
+                <div class="total-section">
+                    <div class="total-row">
+                        <span>Totale Ordine:</span>
+                        <strong class="total-amount">{{ formatPrice(ordine.totale) }}</strong>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Shipping Info (if available) -->
+        <mat-card class="info-card" *ngIf="ordine.spedizione">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>local_shipping</mat-icon>
+                    Informazioni Spedizione
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="info-row">
+                    <span class="label">Corriere:</span>
+                    <span class="value">{{ ordine.spedizione.corriere }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Tracking Number:</span>
+                    <span class="value"><strong>{{ ordine.spedizione.trackingNumber }}</strong></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Data Spedizione:</span>
+                    <span class="value">{{ formatDate(ordine.spedizione.dataSpedizione) }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Consegna Prevista:</span>
+                    <span class="value">{{ formatDate(ordine.spedizione.dataConsegnaPrevista) }}</span>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Notes -->
+        <mat-card class="info-card" *ngIf="ordine.note">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>notes</mat-icon>
+                    Note
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p>{{ ordine.note }}</p>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Actions -->
+        <mat-card class="actions-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>settings</mat-icon>
+                    Azioni
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <!-- Process Order -->
+                <button mat-raised-button color="primary" *ngIf="canProcess" (click)="processOrder()"
+                    [disabled]="isProcessing">
+                    <mat-icon>play_arrow</mat-icon>
+                    Inizia Lavorazione
+                </button>
+
+                <!-- Ship Order -->
+                <div *ngIf="canShip" class="ship-section">
+                    <button mat-raised-button color="primary" (click)="toggleShippingForm()" [disabled]="isProcessing">
+                        <mat-icon>local_shipping</mat-icon>
+                        {{ showShippingForm ? 'Nascondi Form' : 'Spedisci Ordine' }}
+                    </button>
+
+                    <div *ngIf="showShippingForm" class="shipping-form">
+                        <h3>Dati Spedizione</h3>
+                        <form [formGroup]="shippingForm">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Tracking Number</mat-label>
+                                <input matInput formControlName="trackingNumber" placeholder="TRK123456789">
+                                <mat-error>Campo obbligatorio</mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Corriere</mat-label>
+                                <input matInput formControlName="courier" placeholder="BRT, DHL, ecc.">
+                                <mat-error>Campo obbligatorio</mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Data Consegna Prevista</mat-label>
+                                <input matInput type="date" formControlName="estimatedDelivery">
+                                <mat-error>Campo obbligatorio</mat-error>
+                            </mat-form-field>
+
+                            <button mat-raised-button color="primary" (click)="shipOrder()"
+                                [disabled]="isProcessing || shippingForm.invalid">
+                                <mat-icon>send</mat-icon>
+                                Conferma Spedizione
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Deliver Order -->
+                <button mat-raised-button color="primary" *ngIf="canDeliver" (click)="deliverOrder()"
+                    [disabled]="isProcessing">
+                    <mat-icon>done</mat-icon>
+                    Conferma Consegna
+                </button>
+
+                <!-- Cancel Order -->
+                <button mat-raised-button color="warn" *ngIf="canCancel" (click)="cancelOrder()"
+                    [disabled]="isProcessing">
+                    <mat-icon>cancel</mat-icon>
+                    Annulla Ordine
+                </button>
+
+                <p *ngIf="!canProcess && !canShip && !canDeliver && !canCancel" class="no-actions">
+                    <mat-icon>info</mat-icon>
+                    Nessuna azione disponibile per questo ordine nello stato attuale.
+                </p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

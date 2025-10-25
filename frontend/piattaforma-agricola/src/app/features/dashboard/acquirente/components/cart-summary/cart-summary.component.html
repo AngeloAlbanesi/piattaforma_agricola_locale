@@ -16,10 +16,10 @@
             </div>
 
             <div *ngIf="cart">
-                <p>Articoli: {{ cart.numeroArticoli }} — Totale: €{{ cart.totale }}</p>
+                <p>Articoli: {{ cart.totalElementi }} — Totale: €{{ getCartTotal().toFixed(2) }}</p>
                 <div class="cart-items">
-                    <div *ngFor="let r of cart.righeCarrello">
-                        <strong>{{ r.acquistabile.nome }}</strong> x {{ r.quantita }} — €{{ r.prezzoTotale }}
+                    <div *ngFor="let r of cart.elementiCarrello">
+                        <strong>{{ r.nomeAcquistabile }}</strong> x {{ r.quantita }} — €{{ (r.prezzoUnitario * r.quantita).toFixed(2) }}
                     </div>
                 </div>
             </div>

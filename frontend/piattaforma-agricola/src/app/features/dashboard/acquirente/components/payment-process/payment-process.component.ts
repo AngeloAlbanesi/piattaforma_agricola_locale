@@ -210,16 +210,20 @@ export class PaymentProcessComponent implements OnInit, OnDestroy {
         if (this.selectedMethod === MetodoPagamento.CARTA_CREDITO) {
             return {
                 metodoPagamento: MetodoPagamento.CARTA_CREDITO,
-                numeroCarta: this.cardForm.value.numero,
-                intestatarioCarta: this.cardForm.value.intestatario,
-                dataScadenza: this.cardForm.value.dataScadenza,
-                cvv: this.cardForm.value.cvv
+                datiCartaCredito: {
+                    numeroCartaCredito: this.cardForm.value.numero,
+                    intestatario: this.cardForm.value.intestatario,
+                    dataScadenza: this.cardForm.value.dataScadenza,
+                    cvv: this.cardForm.value.cvv
+                }
             };
         } else {
             return {
                 metodoPagamento: MetodoPagamento.PAYPAL,
-                emailPayPal: this.paypalForm.value.email,
-                passwordPayPal: this.paypalForm.value.password
+                datiPayPal: {
+                    emailPayPal: this.paypalForm.value.email,
+                    passwordPayPal: this.paypalForm.value.password
+                }
             };
         }
     }
@@ -267,6 +271,11 @@ export class PaymentProcessComponent implements OnInit, OnDestroy {
     }
 
     // === UTILITIES ===
+
+    getCartTotal(): number {
+        if (!this.cart || !this.cart.elementiCarrello) return 0;
+        return this.cart.elementiCarrello.reduce((sum, item) => sum + (item.prezzoUnitario * item.quantita), 0);
+    }
 
     formatCardNumber(cardNumber: string): string {
         if (!cardNumber) return '';

@@ -61,8 +61,8 @@ import { OrdineVenditoreDTO } from '@core/models/trasformatore.models';
               <th mat-header-cell *matHeaderCellDef>Azioni</th>
               <td mat-cell *matCellDef="let order">
                 <button mat-icon-button (click)="viewOrder(order)"><mat-icon>visibility</mat-icon></button>
-                @if (canAcceptOrder(order.stato)) {
-                  <button mat-icon-button color="primary" (click)="acceptOrder(order)"><mat-icon>check</mat-icon></button>
+                @if (canProcessOrder(order.stato)) {
+                  <button mat-icon-button color="primary" (click)="processOrder(order)"><mat-icon>play_arrow</mat-icon></button>
                 }
               </td>
             </ng-container>
@@ -108,10 +108,10 @@ export class OrdiniManagementComponent implements OnInit {
         });
     }
 
-    acceptOrder(order: OrdineVenditoreDTO): void {
-        this.ordiniService.acceptOrder(order.id).subscribe({
+    processOrder(order: OrdineVenditoreDTO): void {
+        this.ordiniService.processOrder(order.id).subscribe({
             next: () => {
-                this.snackBar.open('Ordine accettato', 'Chiudi', { duration: 3000 });
+                this.snackBar.open('Ordine in lavorazione', 'Chiudi', { duration: 3000 });
                 this.loadOrders();
             },
             error: () => this.snackBar.open('Errore', 'Chiudi', { duration: 3000 })
@@ -122,8 +122,8 @@ export class OrdiniManagementComponent implements OnInit {
         this.router.navigate(['/dashboard/trasformatore/ordini', order.id]);
     }
 
-    canAcceptOrder(stato: string): boolean {
-        return this.ordiniService.canAcceptOrder(stato);
+    canProcessOrder(stato: string): boolean {
+        return this.ordiniService.canProcessOrder(stato);
     }
 
     getStatoLabel(stato: string): string {

@@ -16,18 +16,18 @@
 
                             <div class="cart-summary" *ngIf="cart; else noCart">
                                 <mat-list>
-                                    <mat-list-item *ngFor="let item of cart.righeCarrello">
-                                        <div matListItemTitle>{{ item.acquistabile.nome }}</div>
+                                    <mat-list-item *ngFor="let item of cart.elementiCarrello">
+                                        <div matListItemTitle>{{ item.nomeAcquistabile }}</div>
                                         <div matListItemLine>
                                             Quantità: {{ item.quantita }} |
-                                            Prezzo: €{{ item.acquistabile.prezzo.toFixed(2) }} |
-                                            Totale: €{{ item.prezzoTotale.toFixed(2) }}
+                                            Prezzo: €{{ item.prezzoUnitario.toFixed(2) }} |
+                                            Totale: €{{ (item.prezzoUnitario * item.quantita).toFixed(2) }}
                                         </div>
                                     </mat-list-item>
                                 </mat-list>
 
                                 <div class="cart-total">
-                                    <h3>Totale: €{{ cart ? cart.totale.toFixed(2) : '0.00' }}</h3>
+                                    <h3>Totale: €{{ cart ? getCartTotal().toFixed(2) : '0.00' }}</h3>
                                 </div>
                             </div>
 
@@ -42,7 +42,7 @@
                         </div>
 
                         <div class="step-actions">
-                            <button mat-button matStepperNext [disabled]="!cart || cart.righeCarrello.length === 0">
+                            <button mat-button matStepperNext [disabled]="!cart || cart.elementiCarrello.length === 0">
                                 Continua
                             </button>
                         </div>
@@ -158,7 +158,7 @@
                             <h4>Dettagli Ordine</h4>
                             <div class="summary-item">
                                 <span>Totale Prodotti:</span>
-                                <span>€{{ cart ? cart.totale.toFixed(2) : '0.00' }}</span>
+                                <span>€{{ cart ? getCartTotal().toFixed(2) : '0.00' }}</span>
                             </div>
                             <div class="summary-item">
                                 <span>Metodo di Pagamento:</span>
@@ -166,7 +166,7 @@
                             </div>
                             <div class="summary-item total">
                                 <span>Totale:</span>
-                                <span>€{{ cart ? cart.totale.toFixed(2) : '0.00' }}</span>
+                                <span>€{{ cart ? getCartTotal().toFixed(2) : '0.00' }}</span>
                             </div>
                         </div>
 

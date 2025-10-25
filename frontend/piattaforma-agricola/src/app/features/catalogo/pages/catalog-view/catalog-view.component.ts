@@ -9,9 +9,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { CatalogService } from '../../../../core/services/catalog.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { AcquirenteService } from '../../../../core/services/acquirente.service';
 import {
     CatalogItem,
     CatalogFilters,
@@ -21,6 +24,7 @@ import {
     CatalogSortBy,
     CatalogViewMode
 } from '../../../../core/models/catalog.models';
+import { AddToCartRequestDTO } from '../../../../core/models/acquirente.models';
 
 import { CatalogItemCardComponent } from '../../components/catalog-item-card/catalog-item-card.component';
 import { CatalogFiltersComponent } from '../../components/catalog-filters/catalog-filters.component';
@@ -42,6 +46,8 @@ import { CatalogSortHeaderComponent } from '../../components/catalog-sort-header
         MatIconModule,
         MatSnackBarModule,
         MatSidenavModule,
+        MatBadgeModule,
+        MatTooltipModule,
         CatalogItemCardComponent,
         CatalogFiltersComponent,
         CatalogSearchBarComponent,
@@ -57,6 +63,7 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
     // Stato
     isLoading = false;
     isAuthenticated = false;
+    cartItemsCount = 0;
     filters: CatalogFilters = { ...DEFAULT_CATALOG_FILTERS };
     filterOptions: CatalogFilterOptions = {
         categorie: [],
@@ -72,6 +79,7 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
     constructor(
         private catalogService: CatalogService,
         private authService: AuthService,
+        private acquirenteService: AcquirenteService,
         private route: ActivatedRoute,
         private router: Router,
         private snackBar: MatSnackBar,
@@ -83,6 +91,11 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
         this.loadFilterOptions();
         this.loadQueryParams();
         this.performSearch();
+        
+        // Carica il carrello se l'utente è autenticato
+        if (this.isAuthenticated) {
+            this.loadCartCount();
+        }
     }
 
     ngOnDestroy(): void {
@@ -312,17 +325,83 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
      * Gestisce l'aggiunta al carrello
      */
     onAddToCart(item: CatalogItem): void {
-        // TODO: Implementare logica carrello
-        this.snackBar.open(
-            `${item.nome} aggiunto al carrello!`,
-            'Chiudi',
-            {
-                duration: 3000,
-                horizontalPosition: 'end',
-                verticalPosition: 'bottom',
-                panelClass: ['success-snackbar']
-            }
-        );
+        // Verifica autenticazione
+        if (!this.isAuthenticated) {
+            this.snackBar.open(
+                'Effettua il login per aggiungere prodotti al carrello',
+                'Login',
+                {
+                    duration: 5000,
+                    horizontalPosition: 'end',
+                    verticalPosition: 'bottom',
+                    panelClass: ['warning-snackbar']
+                }
+            ).onAction().subscribe(() => {
+                this.router.navigate(['/auth/login'], {
+                    queryParams: { returnUrl: this.router.url }
+                });
+            });
+            return;
+        }
+
+        // Verifica disponibilità
+        if (!item.quantitaDisponibile || item.quantitaDisponibile === 0) {
+            this.snackBar.open(
+                'Prodotto non disponibile',
+                'Chiudi',
+                {
+                    duration: 3000,
+                    horizontalPosition: 'end',
+                    verticalPosition: 'bottom',
+                    panelClass: ['error-snackbar']
+                }
+            );
+            return;
+        }
+
+        // Prepara richiesta
+        const request: AddToCartRequestDTO = {
+            tipoAcquistabile: item.tipo,
+            idAcquistabile: item.id,
+            quantita: 1
+        };
+
+        // Aggiungi al carrello
+        this.acquirenteService.addToCart(request)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (carrello) => {
+                    // Aggiorna il contatore carrello
+                    this.cartItemsCount = carrello.totalElementi || 0;
+                    this.cdr.markForCheck();
+                    
+                    this.snackBar.open(
+                        `${item.nome} aggiunto al carrello!`,
+                        'Vai al Carrello',
+                        {
+                            duration: 5000,
+                            horizontalPosition: 'end',
+                            verticalPosition: 'bottom',
+                            panelClass: ['success-snackbar']
+                        }
+                    ).onAction().subscribe(() => {
+                        this.router.navigate(['/carrello-ordini/overview']);
+                    });
+                },
+                error: (error) => {
+                    console.error('Errore aggiunta al carrello:', error);
+                    this.snackBar.open(
+                        error.message || 'Errore durante l\'aggiunta al carrello',
+                        'Chiudi',
+                        {
+                            duration: 5000,
+                            horizontalPosition: 'end',
+                            verticalPosition: 'bottom',
+                            panelClass: ['error-snackbar']
+                        }
+                    );
+                }
+            });
     }
 
     /**
@@ -372,6 +451,31 @@ export class CatalogViewComponent implements OnInit, OnDestroy {
      */
     toggleFilters(): void {
         this.filtersOpened = !this.filtersOpened;
+    }
+
+    /**
+     * Carica il conteggio degli articoli nel carrello
+     */
+    private loadCartCount(): void {
+        this.acquirenteService.getCart()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (carrello) => {
+                    this.cartItemsCount = carrello.totalElementi || 0;
+                    this.cdr.markForCheck();
+                },
+                error: (error) => {
+                    console.error('Errore caricamento carrello:', error);
+                    // Non mostriamo errore all'utente, il contatore rimane a 0
+                }
+            });
+    }
+
+    /**
+     * Naviga alla pagina del carrello
+     */
+    navigateToCart(): void {
+        this.router.navigate(['/carrello-ordini/overview']);
     }
 
     // === GETTERS ===

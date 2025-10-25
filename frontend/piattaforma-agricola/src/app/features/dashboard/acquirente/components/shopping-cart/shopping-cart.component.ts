@@ -82,13 +82,13 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
       });
   }
 
-  updateQuantity(rigaId: number, newQuantity: number): void {
+  updateQuantity(elementoId: number, newQuantity: number): void {
     if (newQuantity < 1 || !this.cartData) return;
 
     this.isUpdating = true;
     const request: UpdateCartItemRequestDTO = { quantita: newQuantity };
 
-    this.acquirenteService.updateCartItemQuantity(rigaId, request)
+    this.acquirenteService.updateCartItemQuantity(elementoId, request)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => this.isUpdating = false)
@@ -110,12 +110,12 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
       });
   }
 
-  removeItem(rigaId: number): void {
+  removeItem(elementoId: number): void {
     if (!this.cartData) return;
 
     this.isUpdating = true;
 
-    this.acquirenteService.removeCartItem(rigaId)
+    this.acquirenteService.removeCartItem(elementoId)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => this.isUpdating = false)
@@ -138,7 +138,7 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   }
 
   clearCart(): void {
-    if (!this.cartData || this.cartData.righeCarrello.length === 0) return;
+    if (!this.cartData || this.cartData.elementiCarrello.length === 0) return;
 
     if (confirm('Sei sicuro di voler svuotare completamente il carrello?')) {
       this.isUpdating = true;
@@ -185,21 +185,23 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
   }
 
   getProductImage(riga: RigaCarrelloDTO): string {
-    return riga.acquistabile.immagineUrl || '/assets/images/default-product.png';
+    return '/assets/images/default-product.png'; // Immagine di default
   }
 
   // === GETTERS PER TEMPLATE ===
 
   get isCartEmpty(): boolean {
-    return !this.cartData || this.cartData.righeCarrello.length === 0;
+    return !this.cartData || this.cartData.elementiCarrello.length === 0;
   }
 
   get cartTotal(): number {
-    return this.cartData?.totale || 0;
+    // Calcola il totale sommando i prezzi totali di ogni elemento
+    if (!this.cartData || !this.cartData.elementiCarrello) return 0;
+    return this.cartData.elementiCarrello.reduce((sum, item) => sum + (item.prezzoUnitario * item.quantita), 0);
   }
 
   get cartItemsCount(): number {
-    return this.cartData?.numeroArticoli || 0;
+    return this.cartData?.totalElementi || 0;
   }
 
   onImageError(event: Event): void {

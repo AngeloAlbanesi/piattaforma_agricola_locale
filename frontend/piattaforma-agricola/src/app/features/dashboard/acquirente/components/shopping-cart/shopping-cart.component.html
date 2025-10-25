@@ -37,17 +37,17 @@
 
             <!-- Cart Items -->
             <div class="cart-content" *ngIf="!isLoading && !isCartEmpty">
-                <table mat-table [dataSource]="cartData?.righeCarrello || []" class="cart-table">
+                <table mat-table [dataSource]="cartData?.elementiCarrello || []" class="cart-table">
                     <!-- Product Column -->
                     <ng-container matColumnDef="prodotto">
                         <th mat-header-cell *matHeaderCellDef>Prodotto</th>
                         <td mat-cell *matCellDef="let riga">
                             <div class="product-info">
-                                <img [src]="getProductImage(riga)" [alt]="riga.acquistabile.nome" class="product-image"
+                                <img [src]="getProductImage(riga)" [alt]="riga.nomeAcquistabile" class="product-image"
                                     (error)="onImageError($event)">
                                 <div class="product-details">
-                                    <div class="product-name">{{ riga.acquistabile.nome }}</div>
-                                    <div class="product-type">{{ riga.acquistabile.tipo }}</div>
+                                    <div class="product-name">{{ riga.nomeAcquistabile }}</div>
+                                    <div class="product-type">{{ riga.tipoAcquistabile }}</div>
                                 </div>
                             </div>
                         </td>
@@ -57,7 +57,7 @@
                     <ng-container matColumnDef="prezzo">
                         <th mat-header-cell *matHeaderCellDef>Prezzo</th>
                         <td mat-cell *matCellDef="let riga">
-                            <span class="price">{{ formatCurrency(riga.acquistabile.prezzo) }}</span>
+                            <span class="price">{{ formatCurrency(riga.prezzoUnitario) }}</span>
                         </td>
                     </ng-container>
 
@@ -66,12 +66,12 @@
                         <th mat-header-cell *matHeaderCellDef>Quantità</th>
                         <td mat-cell *matCellDef="let riga">
                             <div class="quantity-controls">
-                                <button mat-icon-button (click)="updateQuantity(riga.idRiga, riga.quantita - 1)"
+                                <button mat-icon-button (click)="updateQuantity(riga.idElemento, riga.quantita - 1)"
                                     [disabled]="riga.quantita <= 1 || isUpdating">
                                     <mat-icon>remove</mat-icon>
                                 </button>
                                 <span class="quantity-value">{{ riga.quantita }}</span>
-                                <button mat-icon-button (click)="updateQuantity(riga.idRiga, riga.quantita + 1)"
+                                <button mat-icon-button (click)="updateQuantity(riga.idElemento, riga.quantita + 1)"
                                     [disabled]="isUpdating">
                                     <mat-icon>add</mat-icon>
                                 </button>
@@ -83,7 +83,7 @@
                     <ng-container matColumnDef="totale">
                         <th mat-header-cell *matHeaderCellDef>Totale</th>
                         <td mat-cell *matCellDef="let riga">
-                            <span class="total-price">{{ formatCurrency(riga.prezzoTotale) }}</span>
+                            <span class="total-price">{{ formatCurrency(riga.prezzoUnitario * riga.quantita) }}</span>
                         </td>
                     </ng-container>
 
@@ -91,7 +91,7 @@
                     <ng-container matColumnDef="azioni">
                         <th mat-header-cell *matHeaderCellDef>Azioni</th>
                         <td mat-cell *matCellDef="let riga">
-                            <button mat-icon-button (click)="removeItem(riga.idRiga)" [disabled]="isUpdating"
+                            <button mat-icon-button (click)="removeItem(riga.idElemento)" [disabled]="isUpdating"
                                 matTooltip="Rimuovi articolo" color="warn">
                                 <mat-icon>delete</mat-icon>
                             </button>

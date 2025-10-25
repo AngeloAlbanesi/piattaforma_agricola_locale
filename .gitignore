@@ -98,3 +98,5 @@ Api/api curatore.json
 Api/api trasformatore.json
 frontend/piattaforma-agricola/opencode.json
 Api/api animatore.json
+Api/api acquirente.json
+Api/api ordini venditori.json

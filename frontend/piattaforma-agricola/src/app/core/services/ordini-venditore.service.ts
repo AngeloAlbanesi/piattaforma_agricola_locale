@@ -31,7 +31,7 @@ export class OrdiniVenditoreService {
     getReceivedOrders(filters?: OrdineFilters): Observable<PaginatedResponse<OrdineVenditoreDTO>> {
         let params = this.buildParamsFromFilters(filters);
         return this.http.get<PaginatedResponse<OrdineVenditoreDTO>>(
-            `${this.apiUrl}/ordini-venditore/ricevuti`,
+            `${this.apiUrl}/ordini/venditori`,
             { params }
         );
     }
@@ -40,45 +40,42 @@ export class OrdiniVenditoreService {
      * Ottiene i dettagli di un ordine specifico
      */
     getOrderById(id: number): Observable<OrdineVenditoreDetailDTO> {
-        return this.http.get<OrdineVenditoreDetailDTO>(`${this.apiUrl}/ordini-venditore/${id}`);
+        return this.http.get<OrdineVenditoreDetailDTO>(`${this.apiUrl}/ordini/venditori/${id}`);
     }
 
     /**
-     * Accetta un ordine ricevuto
+     * Ottiene le statistiche degli ordini del venditore
      */
-    acceptOrder(id: number): Observable<OrdineVenditoreDTO> {
-        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini-venditore/${id}/accetta`, {});
+    getStatistiche(): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/ordini/venditori/statistiche`);
     }
 
     /**
-     * Segna un ordine come pronto per la spedizione
+     * Inizia la lavorazione di un ordine
      */
-    markAsReadyForShipment(id: number): Observable<OrdineVenditoreDTO> {
-        return this.http.put<OrdineVenditoreDTO>(
-            `${this.apiUrl}/ordini-venditore/${id}/pronto-spedizione`,
-            {}
-        );
+    processOrder(id: number): Observable<OrdineVenditoreDTO> {
+        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini/venditori/${id}/process`, {});
     }
 
     /**
      * Spedisce un ordine
      */
     shipOrder(id: number, request: SpedizioneRequestDTO): Observable<OrdineVenditoreDTO> {
-        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini-venditore/${id}/spedisci`, request);
+        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini/venditori/${id}/ship`, request);
     }
 
     /**
      * Conferma la consegna di un ordine
      */
-    confirmDelivery(id: number): Observable<OrdineVenditoreDTO> {
-        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini-venditore/${id}/consegna`, {});
+    deliverOrder(id: number): Observable<OrdineVenditoreDTO> {
+        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini/venditori/${id}/deliver`, {});
     }
 
     /**
      * Annulla un ordine
      */
-    cancelOrder(id: number, request: AnnullaOrdineRequestDTO): Observable<OrdineVenditoreDTO> {
-        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini-venditore/${id}/annulla`, request);
+    cancelOrder(id: number): Observable<OrdineVenditoreDTO> {
+        return this.http.put<OrdineVenditoreDTO>(`${this.apiUrl}/ordini/venditori/${id}/cancel`, {});
     }
 
     // === UTILITIES ===
@@ -154,45 +151,43 @@ export class OrdiniVenditoreService {
 
     getStatoLabel(stato: string): string {
         const labels: Record<string, string> = {
-            'PENDING': 'In Attesa',
+            'ATTESA_PAGAMENTO': 'Attesa Pagamento',
+            'PRONTO_PER_LAVORAZIONE': 'Pronto per Lavorazione',
             'IN_LAVORAZIONE': 'In Lavorazione',
-            'PRONTO_SPEDIZIONE': 'Pronto per Spedizione',
             'SPEDITO': 'Spedito',
             'CONSEGNATO': 'Consegnato',
-            'ANNULLATO': 'Annullato'
+            'ANNULLATO': 'Annullato',
+            'RIMBORSATO': 'Rimborsato'
         };
         return labels[stato] || stato;
     }
 
     getStatoColor(stato: string): 'primary' | 'accent' | 'warn' | undefined {
         const colors: Record<string, 'primary' | 'accent' | 'warn' | undefined> = {
-            'PENDING': 'accent',
-            'IN_LAVORAZIONE': 'accent',
-            'PRONTO_SPEDIZIONE': 'primary',
+            'ATTESA_PAGAMENTO': 'accent',
+            'PRONTO_PER_LAVORAZIONE': 'accent',
+            'IN_LAVORAZIONE': 'primary',
             'SPEDITO': 'primary',
             'CONSEGNATO': 'primary',
-            'ANNULLATO': 'warn'
+            'ANNULLATO': 'warn',
+            'RIMBORSATO': 'warn'
         };
         return colors[stato];
     }
 
-    canAcceptOrder(stato: string): boolean {
-        return stato === 'PENDING';
-    }
-
-    canPrepareShipment(stato: string): boolean {
-        return stato === 'IN_LAVORAZIONE';
+    canProcessOrder(stato: string): boolean {
+        return stato === 'PRONTO_PER_LAVORAZIONE';
     }
 
     canShipOrder(stato: string): boolean {
-        return stato === 'PRONTO_SPEDIZIONE';
+        return stato === 'IN_LAVORAZIONE';
     }
 
-    canConfirmDelivery(stato: string): boolean {
+    canDeliverOrder(stato: string): boolean {
         return stato === 'SPEDITO';
     }
 
     canCancelOrder(stato: string): boolean {
-        return ['PENDING', 'IN_LAVORAZIONE', 'PRONTO_SPEDIZIONE'].includes(stato);
+        return ['PRONTO_PER_LAVORAZIONE', 'IN_LAVORAZIONE'].includes(stato);
     }
 }

@@ -50,6 +50,15 @@ const routes: Routes = [
             expectedRole: ROLES.DISTRIBUTORE_TIPICITA,
             title: 'Gestione Ordini'
         }
+    },
+    {
+        path: 'ordini/:id',
+        loadComponent: () => import('../shared/pages/ordine-venditore-detail/ordine-venditore-detail.component').then(m => m.OrdineVenditoreDetailComponent),
+        canActivate: [authGuard, roleGuard],
+        data: {
+            expectedRole: ROLES.DISTRIBUTORE_TIPICITA,
+            title: 'Dettaglio Ordine'
+        }
     }
 ];
 

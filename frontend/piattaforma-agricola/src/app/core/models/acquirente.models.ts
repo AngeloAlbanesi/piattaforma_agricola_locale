@@ -64,17 +64,28 @@ export interface UserUpdateDTO {
 
 // === CARRELLO ===
 export interface CarrelloDTO {
-    idCarrello: number;
-    righeCarrello: RigaCarrelloDTO[];
-    totale: number;
-    numeroArticoli: number;
+    idCarrello: number | null;
+    elementiCarrello: RigaCarrelloDTO[];
+    totalElementi: number;
+    totale?: number;
+    acquirente?: {
+        idUtente: number;
+        nome: string;
+        cognome: string;
+        tipoRuolo: string;
+    };
+    ultimaModifica?: string;
 }
 
 export interface RigaCarrelloDTO {
-    idRiga: number;
-    acquistabile: AcquistabileDTO;
+    idElemento: number;
     quantita: number;
-    prezzoTotale: number;
+    prezzoUnitario: number;
+    tipoAcquistabile: 'PRODOTTO' | 'PACCHETTO' | 'EVENTO';
+    idAcquistabile: number;
+    nomeAcquistabile: string;
+    descrizioneAcquistabile?: string;
+    nomeVenditore: string;
 }
 
 export interface AcquistabileDTO {
@@ -86,6 +97,8 @@ export interface AcquistabileDTO {
 }
 
 export interface AddToCartRequestDTO {
+    tipoAcquistabile: 'PRODOTTO' | 'PACCHETTO' | 'EVENTO';
+    idAcquistabile: number;
     quantita: number;
 }
 
@@ -133,7 +146,8 @@ export interface RigaOrdineDTO {
 }
 
 export interface CreateOrdineRequestDTO {
-    metodoPagamento: 'CARTA_CREDITO' | 'PAYPAL' | 'BONIFICO';
+    metodoPagamento: 'CARTA_CREDITO' | 'PAYPAL' | 'SIMULATO';
+    noteAggiuntive?: string;
 }
 
 export interface OrderStatusDTO {
@@ -159,18 +173,14 @@ export interface CancelOrderRequestDTO {
 
 // === PAGAMENTO ===
 export interface PagamentoRequestDTO {
-    metodoPagamento: 'CARTA_CREDITO' | 'PAYPAL';
-    numeroCarta?: string;
-    intestatarioCarta?: string;
-    dataScadenza?: string;
-    cvv?: string;
-    emailPayPal?: string;
-    passwordPayPal?: string;
+    metodoPagamento: 'CARTA_CREDITO' | 'PAYPAL' | 'SIMULATO';
+    datiCartaCredito?: DatiCartaCreditoDTO;
+    datiPayPal?: DatiPayPalDTO;
 }
 
 export interface DatiCartaCreditoDTO {
-    numeroCarta: string;
-    intestatarioCarta: string;
+    numeroCartaCredito: string;
+    intestatario: string;
     dataScadenza: string;
     cvv: string;
 }

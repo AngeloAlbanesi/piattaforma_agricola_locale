@@ -4,6 +4,7 @@ import { authGuard } from '@core/guards/auth.guard';
 import { roleGuard } from '@core/guards/role.guard';
 import { ROLES } from '@core/services/auth.service';
 import { ProduttoreDashboardComponent } from './pages/produttore-dashboard/produttore-dashboard.component';
+import { OrdineVenditoreDetailComponent } from '../shared/pages/ordine-venditore-detail/ordine-venditore-detail.component';
 
 const routes: Routes = [
     {
@@ -13,6 +14,15 @@ const routes: Routes = [
         data: {
             expectedRole: ROLES.PRODUTTORE,
             title: 'Dashboard Produttore'
+        }
+    },
+    {
+        path: 'ordini/:id',
+        component: OrdineVenditoreDetailComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+            expectedRole: ROLES.PRODUTTORE,
+            title: 'Dettaglio Ordine'
         }
     }
 ];

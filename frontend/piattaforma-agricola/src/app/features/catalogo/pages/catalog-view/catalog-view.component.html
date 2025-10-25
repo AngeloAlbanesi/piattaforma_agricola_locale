@@ -13,6 +13,12 @@
         </div>
     </header>
 
+    <!-- Floating Cart Button -->
+    <button *ngIf="isAuthenticated" mat-fab color="accent" class="cart-fab" (click)="navigateToCart()" 
+            matTooltip="Vai al carrello" matTooltipPosition="left" aria-label="Vai al carrello">
+        <mat-icon [matBadge]="cartItemsCount" [matBadgeHidden]="cartItemsCount === 0" matBadgeColor="warn" matBadgeSize="small">shopping_cart</mat-icon>
+    </button>
+
     <!-- Search Bar -->
     <section class="search-section">
         <app-catalog-search-bar (search)="onSearch($event)" (clear)="onClearSearch()">

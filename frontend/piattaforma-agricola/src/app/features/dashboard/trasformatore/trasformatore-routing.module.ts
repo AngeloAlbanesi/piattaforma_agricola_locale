@@ -7,6 +7,7 @@ import { TrasformatoreDashboardComponent } from './pages/trasformatore-dashboard
 import { ProdottiPageComponent } from './pages/prodotti-page/prodotti-page.component';
 import { OrdiniPageComponent } from './pages/ordini-page/ordini-page.component';
 import { ProcessoDetailPageComponent } from './pages/processo-detail-page/processo-detail-page.component';
+import { OrdineVenditoreDetailComponent } from '../shared/pages/ordine-venditore-detail/ordine-venditore-detail.component';
 
 const routes: Routes = [
     {
@@ -34,6 +35,15 @@ const routes: Routes = [
         data: {
             expectedRole: ROLES.TRASFORMATORE,
             title: 'Gestione Ordini'
+        }
+    },
+    {
+        path: 'ordini/:id',
+        component: OrdineVenditoreDetailComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+            expectedRole: ROLES.TRASFORMATORE,
+            title: 'Dettaglio Ordine'
         }
     },
     {

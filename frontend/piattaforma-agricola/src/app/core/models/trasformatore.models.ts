@@ -377,7 +377,7 @@ export interface OrdineVenditoreDTO {
     id: number;
     numeroOrdine: string;
     dataOrdine: string;
-    stato: 'PENDING' | 'IN_LAVORAZIONE' | 'PRONTO_SPEDIZIONE' | 'SPEDITO' | 'CONSEGNATO' | 'ANNULLATO';
+    stato: 'ATTESA_PAGAMENTO' | 'PRONTO_PER_LAVORAZIONE' | 'IN_LAVORAZIONE' | 'SPEDITO' | 'CONSEGNATO' | 'ANNULLATO' | 'RIMBORSATO';
     totale: number;
     clienteId: number;
     clienteNome: string;
@@ -428,10 +428,9 @@ export interface SpedizioneDTO {
 }
 
 export interface SpedizioneRequestDTO {
-    corriere: string;
     trackingNumber: string;
-    dataSpedizione: string;
-    dataConsegnaPrevista: string;
+    courier: string;
+    estimatedDelivery: string;
 }
 
 export interface PagamentoDTO {

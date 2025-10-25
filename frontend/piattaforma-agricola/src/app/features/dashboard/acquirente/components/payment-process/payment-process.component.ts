@@ -140,8 +140,17 @@ export class PaymentProcessComponent implements OnInit, OnDestroy {
             return;
         }
 
+        if (!this.cart?.idCarrello) {
+            this.snackBar.open('Errore: carrello non valido', 'Chiudi', {
+                duration: 3000,
+                panelClass: 'error-snackbar'
+            });
+            return;
+        }
+
         this.isProcessing = true;
         const orderRequest: CreateOrdineRequestDTO = {
+            idCarrello: this.cart.idCarrello,
             metodoPagamento: this.paymentForm.value.metodoPagamento
         };
 

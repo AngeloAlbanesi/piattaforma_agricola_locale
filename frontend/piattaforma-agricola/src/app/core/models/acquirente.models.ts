@@ -146,6 +146,7 @@ export interface RigaOrdineDTO {
 }
 
 export interface CreateOrdineRequestDTO {
+    idCarrello: number;
     metodoPagamento: 'CARTA_CREDITO' | 'PAYPAL' | 'SIMULATO';
     noteAggiuntive?: string;
 }

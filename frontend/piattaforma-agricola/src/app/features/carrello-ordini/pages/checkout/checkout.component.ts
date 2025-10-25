@@ -157,11 +157,17 @@ export class CheckoutComponent implements OnInit, OnDestroy {
             return;
         }
 
+        if (!this.carrello?.idCarrello) {
+            this.showError('Errore: carrello non valido');
+            return;
+        }
+
         this.isProcessing = true;
         this.cdr.markForCheck();
 
         // Step 1: Crea ordini
         const createOrderRequest: CreateOrdineRequestDTO = {
+            idCarrello: this.carrello.idCarrello,
             metodoPagamento: metodoPagamento,
             noteAggiuntive: this.notesForm.value.noteAggiuntive || undefined
         };

@@ -83,6 +83,11 @@ const routes: Routes = [
         loadChildren: () => import('./features/catalogo/catalogo.module').then(m => m.CatalogoModule),
     },
     {
+        path: 'carrello-ordini',
+        loadChildren: () => import('./features/carrello-ordini/carrello-ordini.module').then(m => m.CarrelloOrdiniModule),
+        canActivate: [authGuard]
+    },
+    {
         path: 'dashboard',
         loadChildren: () => import('./features/dashboard/dashboard-routing.module').then(m => m.DashboardRoutingModule),
     },

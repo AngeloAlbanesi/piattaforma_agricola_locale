@@ -118,7 +118,7 @@ export class OrdineVenditoreDetailComponent implements OnInit, OnDestroy {
         this.isProcessing = true;
         this.cdr.markForCheck();
 
-        this.ordiniService.processOrder(this.ordine.id)
+        this.ordiniService.processOrder(this.ordine.idOrdine)
             .pipe(
                 takeUntil(this.destroy$),
                 finalize(() => {
@@ -129,7 +129,7 @@ export class OrdineVenditoreDetailComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: () => {
                     this.showSuccess('Ordine in lavorazione');
-                    this.loadOrder(this.ordine!.id);
+                    this.loadOrder(this.ordine!.idOrdine);
                 },
                 error: (error) => {
                     console.error('Errore:', error);
@@ -160,7 +160,7 @@ export class OrdineVenditoreDetailComponent implements OnInit, OnDestroy {
 
         const request: SpedizioneRequestDTO = this.shippingForm.value;
 
-        this.ordiniService.shipOrder(this.ordine.id, request)
+        this.ordiniService.shipOrder(this.ordine.idOrdine, request)
             .pipe(
                 takeUntil(this.destroy$),
                 finalize(() => {
@@ -173,7 +173,7 @@ export class OrdineVenditoreDetailComponent implements OnInit, OnDestroy {
                     this.showSuccess('Ordine spedito');
                     this.showShippingForm = false;
                     this.shippingForm.reset();
-                    this.loadOrder(this.ordine!.id);
+                    this.loadOrder(this.ordine!.idOrdine);
                 },
                 error: (error) => {
                     console.error('Errore:', error);
@@ -195,7 +195,7 @@ export class OrdineVenditoreDetailComponent implements OnInit, OnDestroy {
         this.isProcessing = true;
         this.cdr.markForCheck();
 
-        this.ordiniService.deliverOrder(this.ordine.id)
+        this.ordiniService.deliverOrder(this.ordine.idOrdine)
             .pipe(
                 takeUntil(this.destroy$),
                 finalize(() => {
@@ -206,7 +206,7 @@ export class OrdineVenditoreDetailComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: () => {
                     this.showSuccess('Consegna confermata');
-                    this.loadOrder(this.ordine!.id);
+                    this.loadOrder(this.ordine!.idOrdine);
                 },
                 error: (error) => {
                     console.error('Errore:', error);
@@ -229,7 +229,7 @@ export class OrdineVenditoreDetailComponent implements OnInit, OnDestroy {
         this.isProcessing = true;
         this.cdr.markForCheck();
 
-        this.ordiniService.cancelOrder(this.ordine.id)
+        this.ordiniService.cancelOrder(this.ordine.idOrdine)
             .pipe(
                 takeUntil(this.destroy$),
                 finalize(() => {
@@ -240,7 +240,7 @@ export class OrdineVenditoreDetailComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: () => {
                     this.showSuccess('Ordine annullato');
-                    this.loadOrder(this.ordine!.id);
+                    this.loadOrder(this.ordine!.idOrdine);
                 },
                 error: (error) => {
                     console.error('Errore:', error);
@@ -311,19 +311,19 @@ export class OrdineVenditoreDetailComponent implements OnInit, OnDestroy {
     // === GETTERS ===
 
     get canProcess(): boolean {
-        return this.ordine ? this.ordiniService.canProcessOrder(this.ordine.stato) : false;
+        return this.ordine ? this.ordiniService.canProcessOrder(this.ordine.statoCorrente) : false;
     }
 
     get canShip(): boolean {
-        return this.ordine ? this.ordiniService.canShipOrder(this.ordine.stato) : false;
+        return this.ordine ? this.ordiniService.canShipOrder(this.ordine.statoCorrente) : false;
     }
 
     get canDeliver(): boolean {
-        return this.ordine ? this.ordiniService.canDeliverOrder(this.ordine.stato) : false;
+        return this.ordine ? this.ordiniService.canDeliverOrder(this.ordine.statoCorrente) : false;
     }
 
     get canCancel(): boolean {
-        return this.ordine ? this.ordiniService.canCancelOrder(this.ordine.stato) : false;
+        return this.ordine ? this.ordiniService.canCancelOrder(this.ordine.statoCorrente) : false;
     }
 }
 

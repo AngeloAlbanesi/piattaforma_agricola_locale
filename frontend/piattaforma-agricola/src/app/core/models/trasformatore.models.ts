@@ -387,7 +387,7 @@ export interface OrdineVenditoreDTO {
     emailVenditore: string;
     nomeAziendaVenditore: string;
     articoli?: ArticoloOrdineDTO[];
-    
+
     // Proprietà alias per compatibilità frontend
     id: number;
     totale: number;
@@ -396,15 +396,68 @@ export interface OrdineVenditoreDTO {
     clienteEmail: string;
 }
 
-export interface OrdineVenditoreDetailDTO extends OrdineVenditoreDTO {
-    articoli: ArticoloOrdineDTO[];
-    indirizzoSpedizione: IndirizzoDTO;
-    indirizzoFatturazione: IndirizzoDTO;
+export interface OrdineVenditoreDetailDTO {
+    // Fields from backend OrdineVenditoreDetailDTO
+    idOrdine: number;
+    dataOrdine: string;
+    importoTotale: number;
+    statoCorrente: string;
+    idVenditore: number;
+
+    // Buyer information
+    nomeAcquirente: string;
+    cognomeAcquirente: string;
+    emailAcquirente: string;
+    telefonoAcquirente?: string;
+    idAcquirente: number;
+
+    // Order items
+    numeroArticoli: number;
+    articoliAcquistati: ArticoloAcquistatoDTO[];
+
+    // Optional fields (might be added later)
+    indirizzoSpedizione?: IndirizzoDTO;
+    indirizzoFatturazione?: IndirizzoDTO;
     spedizione?: SpedizioneDTO;
-    pagamento: PagamentoDTO;
+    pagamento?: PagamentoDTO;
     note?: string;
-    storicoStati: StoricoStatoOrdineDTO[];
+    storicoStati?: StoricoStatoOrdineDTO[];
     numeroOrdine?: string;
+
+    // Alias properties for backward compatibility
+    get id(): number;
+    get totale(): number;
+    get stato(): string;
+    get clienteNome(): string;
+    get clienteEmail(): string;
+    get articoli(): ArticoloAcquistatoDTO[];
+}
+
+export interface ArticoloAcquistatoDTO {
+    idRiga: number;
+    quantitaOrdinata: number;
+    prezzoUnitario: number;
+    prezzoTotale: number;
+
+    // Acquistabile information
+    tipoAcquistabile: 'PRODOTTO' | 'PACCHETTO' | 'EVENTO';
+    idAcquistabile: number;
+    nomeAcquistabile: string;
+    descrizioneAcquistabile?: string;
+    categoriaAcquistabile?: string;
+    quantitaDisponibile?: number;
+
+    // Additional product fields
+    unitaMisura?: string;
+    origine?: string;
+    dataProduzione?: string;
+    dataScadenza?: string;
+
+    // Alias properties for compatibility with HTML template
+    get prodottoNome(): string;
+    get prodottoImmagine(): string | undefined;
+    get quantita(): number;
+    get subtotale(): number;
 }
 
 export interface ArticoloOrdineDTO {

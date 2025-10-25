@@ -7,10 +7,10 @@
         <div class="header-content">
             <h1 class="page-title">
                 <mat-icon>receipt</mat-icon>
-                Ordine #{{ ordine?.numeroOrdine || ordine?.id }}
+                Ordine #{{ ordine?.numeroOrdine || ordine?.idOrdine }}
             </h1>
-            <mat-chip *ngIf="ordine" [color]="getStatoColor(ordine.stato)">
-                {{ getStatoLabel(ordine.stato) }}
+            <mat-chip *ngIf="ordine" [color]="getStatoColor(ordine.statoCorrente)">
+                {{ getStatoLabel(ordine.statoCorrente) }}
             </mat-chip>
         </div>
     </header>
@@ -34,11 +34,15 @@
             <mat-card-content>
                 <div class="info-row">
                     <span class="label">Nome:</span>
-                    <span class="value">{{ ordine.clienteNome }}</span>
+                    <span class="value">{{ ordine.nomeAcquirente }} {{ ordine.cognomeAcquirente }}</span>
                 </div>
                 <div class="info-row">
                     <span class="label">Email:</span>
-                    <span class="value">{{ ordine.clienteEmail }}</span>
+                    <span class="value">{{ ordine.emailAcquirente }}</span>
+                </div>
+                <div class="info-row" *ngIf="ordine.telefonoAcquirente">
+                    <span class="label">Telefono:</span>
+                    <span class="value">{{ ordine.telefonoAcquirente }}</span>
                 </div>
                 <div class="info-row">
                     <span class="label">Data Ordine:</span>
@@ -77,16 +81,15 @@
                 </mat-card-title>
             </mat-card-header>
             <mat-card-content>
-                <table mat-table [dataSource]="ordine.articoli" class="items-table">
+                <table mat-table [dataSource]="ordine.articoliAcquistati" class="items-table">
                     <ng-container matColumnDef="prodotto">
                         <th mat-header-cell *matHeaderCellDef>Prodotto</th>
                         <td mat-cell *matCellDef="let item">
                             <div class="product-cell">
-                                <img *ngIf="item.prodottoImmagine" [src]="item.prodottoImmagine"
-                                    [alt]="item.prodottoNome" class="product-image">
                                 <div>
-                                    <strong>{{ item.prodottoNome }}</strong>
-                                    <p class="unit">{{ item.unitaMisura }}</p>
+                                    <strong>{{ item.nomeAcquistabile }}</strong>
+                                    <p class="unit" *ngIf="item.unitaMisura">{{ item.unitaMisura }}</p>
+                                    <p class="type-badge">{{ item.tipoAcquistabile }}</p>
                                 </div>
                             </div>
                         </td>
@@ -94,7 +97,7 @@
 
                     <ng-container matColumnDef="quantita">
                         <th mat-header-cell *matHeaderCellDef>Quantità</th>
-                        <td mat-cell *matCellDef="let item">{{ item.quantita }}</td>
+                        <td mat-cell *matCellDef="let item">{{ item.quantitaOrdinata }}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="prezzoUnitario">
@@ -105,7 +108,7 @@
                     <ng-container matColumnDef="subtotale">
                         <th mat-header-cell *matHeaderCellDef>Subtotale</th>
                         <td mat-cell *matCellDef="let item">
-                            <strong>{{ formatPrice(item.subtotale) }}</strong>
+                            <strong>{{ formatPrice(item.prezzoTotale) }}</strong>
                         </td>
                     </ng-container>
 
@@ -118,7 +121,7 @@
                 <div class="total-section">
                     <div class="total-row">
                         <span>Totale Ordine:</span>
-                        <strong class="total-amount">{{ formatPrice(ordine.totale) }}</strong>
+                        <strong class="total-amount">{{ formatPrice(ordine.importoTotale) }}</strong>
                     </div>
                 </div>
             </mat-card-content>

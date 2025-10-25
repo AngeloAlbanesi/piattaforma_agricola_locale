@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { PaginatedResponse } from '../models/common.models';
 import {
@@ -40,7 +41,33 @@ export class OrdiniVenditoreService {
      * Ottiene i dettagli di un ordine specifico
      */
     getOrderById(id: number): Observable<OrdineVenditoreDetailDTO> {
-        return this.http.get<OrdineVenditoreDetailDTO>(`${this.apiUrl}/ordini/venditori/${id}`);
+        return this.http.get<any>(`${this.apiUrl}/ordini/venditori/${id}`).pipe(
+            map(order => this.mapOrderDetailDTO(order))
+        );
+    }
+
+    /**
+     * Maps order detail DTO to add computed properties for template compatibility
+     */
+    private mapOrderDetailDTO(order: any): OrdineVenditoreDetailDTO {
+        return {
+            ...order,
+            // Add computed getters for backward compatibility
+            get id() { return this.idOrdine; },
+            get totale() { return this.importoTotale; },
+            get stato() { return this.statoCorrente; },
+            get clienteNome() { return `${this.nomeAcquirente} ${this.cognomeAcquirente}`; },
+            get clienteEmail() { return this.emailAcquirente; },
+            get articoli() {
+                return this.articoliAcquistati?.map((item: any) => ({
+                    ...item,
+                    get prodottoNome() { return this.nomeAcquistabile; },
+                    get prodottoImmagine() { return undefined; }, // Not provided by backend
+                    get quantita() { return this.quantitaOrdinata; },
+                    get subtotale() { return this.prezzoTotale; }
+                })) || [];
+            }
+        };
     }
 
     /**

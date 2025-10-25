@@ -194,18 +194,29 @@
                     </div>
 
                     <!-- Order Items -->
-                    <div class="order-items-section" *ngIf="selectedOrder.articoli">
-                        <h3>Articoli Ordinati</h3>
+                    <div class="order-items-section"
+                        *ngIf="selectedOrder.righeOrdine && selectedOrder.righeOrdine.length > 0">
+                        <h3>Articoli Ordinati ({{ selectedOrder.totalArticoli }})</h3>
                         <div class="items-list">
-                            <div class="item-row" *ngFor="let item of selectedOrder.articoli">
+                            <div class="item-row" *ngFor="let item of selectedOrder.righeOrdine">
                                 <div class="item-info">
                                     <span class="item-name">{{ item.nomeAcquistabile }}</span>
-                                    <span class="item-quantity">Qty: {{ item.quantitaOrdinata }}</span>
+                                    <span class="item-type" *ngIf="item.tipoAcquistabile">{{ item.tipoAcquistabile
+                                        }}</span>
+                                    <span class="item-quantity">Quantità: {{ item.quantitaOrdinata }}</span>
+                                    <span class="item-description" *ngIf="item.descrizioneAcquistabile">{{
+                                        item.descrizioneAcquistabile }}</span>
                                 </div>
                                 <div class="item-prices">
-                                    <span class="item-price">{{ formatCurrency(item.prezzoUnitario) }}</span>
-                                    <span class="item-total">{{ formatCurrency(item.prezzoTotale) }}</span>
+                                    <span class="item-price-unit">{{ formatCurrency(item.prezzoUnitario) }} × {{
+                                        item.quantitaOrdinata }}</span>
+                                    <span class="item-total">{{ formatCurrency(item.prezzoUnitario *
+                                        item.quantitaOrdinata) }}</span>
                                 </div>
+                            </div>
+                            <div class="items-total">
+                                <span class="total-label">Totale Ordine:</span>
+                                <span class="total-amount">{{ formatCurrency(selectedOrder.importoTotale) }}</span>
                             </div>
                         </div>
                     </div>

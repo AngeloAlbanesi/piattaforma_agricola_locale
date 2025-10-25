@@ -143,29 +143,47 @@ export interface OrdineExtendedSummaryDTO extends OrdineSummaryDTO {
     metodoPagamento?: string;
 }
 
-export interface OrdineDetailDTO extends OrdineSummaryDTO {
-    // Proprietà alias per compatibilità frontend
-    id: number;
-    totale: number;
-    articoli: ArticoloOrdineDTO[];
-    
-    venditore: {
-        id: number;
+export interface OrdineDetailDTO {
+    // Struttura esatta dal backend GET /api/ordini/{id}
+    idOrdine: number;
+    dataOrdine: string;
+    importoTotale: number;
+    statoCorrente: string;
+    acquirente: {
+        idUtente: number;
         nome: string;
+        cognome: string;
+        tipoRuolo: string;
+        statoAccreditamento: string | null;
+        isAttivo: boolean;
     };
+    idVenditore: number;
     righeOrdine: RigaOrdineDTO[];
-    indirizzoSpedizione: string;
-    metodoPagamento: string;
+    totalArticoli: number;
+
+    // Campi opzionali che potrebbero essere aggiunti
+    nomeVenditore?: string;
+    metodoPagamento?: string;
+    indirizzoSpedizione?: string;
     trackingNumber?: string;
     dataConsegnaPrevista?: string;
+
+    // Computed property per compatibilità con template
+    get articoli(): RigaOrdineDTO[];
 }
 
 export interface RigaOrdineDTO {
-    id: number;
-    prodotto: ProductSummaryDTO;
-    quantita: number;
+    idRiga: number;
+    quantitaOrdinata: number;
     prezzoUnitario: number;
-    sottoTotale: number;
+    tipoAcquistabile: 'PRODOTTO' | 'PACCHETTO' | 'EVENTO';
+    idAcquistabile: number;
+    nomeAcquistabile: string;
+    descrizioneAcquistabile?: string;
+    nomeVenditore: string;
+
+    // Computed properties per compatibilità
+    prezzoTotale?: number;
 }
 
 export interface CreateOrdineRequestDTO {

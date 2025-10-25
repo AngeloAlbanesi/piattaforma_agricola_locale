@@ -41,27 +41,27 @@ import { OrdineVenditoreDTO } from '@core/models/trasformatore.models';
           <table mat-table [dataSource]="dataSource" class="orders-table">
             <ng-container matColumnDef="numeroOrdine">
               <th mat-header-cell *matHeaderCellDef>Numero Ordine</th>
-              <td mat-cell *matCellDef="let order">{{ order.numeroOrdine }}</td>
+              <td mat-cell *matCellDef="let order">#{{ order.idOrdine }}</td>
             </ng-container>
             <ng-container matColumnDef="cliente">
               <th mat-header-cell *matHeaderCellDef>Cliente</th>
-              <td mat-cell *matCellDef="let order">{{ order.clienteNome }}</td>
+              <td mat-cell *matCellDef="let order">{{ order.nomeAcquirente }}</td>
             </ng-container>
             <ng-container matColumnDef="totale">
               <th mat-header-cell *matHeaderCellDef>Totale</th>
-              <td mat-cell *matCellDef="let order">{{ formatCurrency(order.totale) }}</td>
+              <td mat-cell *matCellDef="let order">{{ formatCurrency(order.importoTotale) }}</td>
             </ng-container>
             <ng-container matColumnDef="stato">
               <th mat-header-cell *matHeaderCellDef>Stato</th>
               <td mat-cell *matCellDef="let order">
-                <mat-chip [color]="getStatoColor(order.stato)">{{ getStatoLabel(order.stato) }}</mat-chip>
+                <mat-chip [color]="getStatoColor(order.statoCorrente)">{{ getStatoLabel(order.statoCorrente) }}</mat-chip>
               </td>
             </ng-container>
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>Azioni</th>
               <td mat-cell *matCellDef="let order">
                 <button mat-icon-button (click)="viewOrder(order)"><mat-icon>visibility</mat-icon></button>
-                @if (canProcessOrder(order.stato)) {
+                @if (canProcessOrder(order.statoCorrente)) {
                   <button mat-icon-button color="primary" (click)="processOrder(order)"><mat-icon>play_arrow</mat-icon></button>
                 }
               </td>
@@ -109,7 +109,7 @@ export class OrdiniManagementComponent implements OnInit {
     }
 
     processOrder(order: OrdineVenditoreDTO): void {
-        this.ordiniService.processOrder(order.id).subscribe({
+        this.ordiniService.processOrder(order.idOrdine).subscribe({
             next: () => {
                 this.snackBar.open('Ordine in lavorazione', 'Chiudi', { duration: 3000 });
                 this.loadOrders();
@@ -119,7 +119,7 @@ export class OrdiniManagementComponent implements OnInit {
     }
 
     viewOrder(order: OrdineVenditoreDTO): void {
-        this.router.navigate(['/dashboard/trasformatore/ordini', order.id]);
+        this.router.navigate(['/dashboard/trasformatore/ordini', order.idOrdine]);
     }
 
     canProcessOrder(stato: string): boolean {

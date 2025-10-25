@@ -191,7 +191,7 @@ export class PaymentProcessComponent implements OnInit, OnDestroy {
         // Processa ogni ordine creato
         const paymentPromises = this.createdOrders.map(order => {
             const paymentRequest: PagamentoRequestDTO = this.buildPaymentRequest();
-            return this.acquirenteService.confirmOrderPayment(order.id, paymentRequest);
+            return this.acquirenteService.confirmOrderPayment(order.idOrdine, paymentRequest);
         });
 
         // Esegui tutti i pagamenti in parallelo
@@ -319,7 +319,7 @@ export class PaymentProcessComponent implements OnInit, OnDestroy {
     }
 
     get totalAmount(): number {
-        return this.createdOrders.reduce((total, order) => total + order.totale, 0);
+        return this.createdOrders.reduce((total, order) => total + order.importoTotale, 0);
     }
 
     get ordersCount(): number {
@@ -353,7 +353,7 @@ export class PaymentProcessComponent implements OnInit, OnDestroy {
     }
 
     getTotalPaymentAmount(): number {
-        return this.createdOrders.reduce((total, order) => total + order.totale, 0);
+        return this.createdOrders.reduce((total, order) => total + order.importoTotale, 0);
     }
 
     cancelMultiOrderPayment(): void {
@@ -379,7 +379,7 @@ export class PaymentProcessComponent implements OnInit, OnDestroy {
     private executeMultiOrderPayment(pagamentoData: PagamentoRequestDTO): void {
         // Processa ogni ordine singolarmente
         const paymentPromises = this.createdOrders.map(order => {
-            return this.acquirenteService.confirmOrderPayment(order.id, pagamentoData).toPromise();
+            return this.acquirenteService.confirmOrderPayment(order.idOrdine, pagamentoData).toPromise();
         });
 
         Promise.all(paymentPromises)

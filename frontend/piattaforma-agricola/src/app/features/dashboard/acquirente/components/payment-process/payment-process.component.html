@@ -201,10 +201,10 @@
 
             <mat-list>
                 <mat-list-item *ngFor="let order of createdOrders">
-                    <div matListItemTitle>Ordine #{{ order.id }}</div>
+                    <div matListItemTitle>Ordine #{{ order.idOrdine }}</div>
                     <div matListItemLine>
-                        Importo: €{{ order.totale.toFixed(2) }} |
-                        Stato: {{ order.stato }}
+                        Importo: €{{ order.importoTotale.toFixed(2) }} |
+                        Stato: {{ order.statoCorrente }}
                     </div>
                 </mat-list-item>
             </mat-list>

@@ -374,16 +374,26 @@ export interface RecensioneDTO {
 
 // === GESTIONE ORDINI VENDITORE ===
 export interface OrdineVenditoreDTO {
-    id: number;
-    numeroOrdine: string;
+    // Proprietà backend
+    idOrdine: number;
     dataOrdine: string;
-    stato: 'ATTESA_PAGAMENTO' | 'PRONTO_PER_LAVORAZIONE' | 'IN_LAVORAZIONE' | 'SPEDITO' | 'CONSEGNATO' | 'ANNULLATO' | 'RIMBORSATO';
+    importoTotale: number;
+    statoCorrente: 'ATTESA_PAGAMENTO' | 'PRONTO_PER_LAVORAZIONE' | 'IN_LAVORAZIONE' | 'SPEDITO' | 'CONSEGNATO' | 'ANNULLATO' | 'RIMBORSATO';
+    nomeAcquirente: string;
+    idAcquirente: number;
+    numeroArticoli: number;
+    idVenditore: number;
+    nomeVenditore: string;
+    emailVenditore: string;
+    nomeAziendaVenditore: string;
+    articoli?: ArticoloOrdineDTO[];
+    
+    // Proprietà alias per compatibilità frontend
+    id: number;
     totale: number;
-    clienteId: number;
+    stato: string;
     clienteNome: string;
     clienteEmail: string;
-    numeroArticoli: number;
-    dataPrevistaConsegna?: string;
 }
 
 export interface OrdineVenditoreDetailDTO extends OrdineVenditoreDTO {
@@ -394,6 +404,7 @@ export interface OrdineVenditoreDetailDTO extends OrdineVenditoreDTO {
     pagamento: PagamentoDTO;
     note?: string;
     storicoStati: StoricoStatoOrdineDTO[];
+    numeroOrdine?: string;
 }
 
 export interface ArticoloOrdineDTO {

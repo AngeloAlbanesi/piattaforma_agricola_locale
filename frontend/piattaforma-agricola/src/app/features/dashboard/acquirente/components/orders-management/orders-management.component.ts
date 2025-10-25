@@ -197,7 +197,7 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
                                 panelClass: 'success-snackbar'
                             });
                             this.loadOrders();
-                            if (this.selectedOrder?.id === orderId) {
+                            if (this.selectedOrder?.idOrdine === orderId) {
                                 this.showDetails = false;
                                 this.selectedOrder = null;
                             }
@@ -267,7 +267,11 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
     }
 
     canCancelOrder(order: OrdineExtendedSummaryDTO): boolean {
-        return order.stato === 'ATTESA_PAGAMENTO' || order.stato === 'PRONTO_PER_LAVORAZIONE';
+        return order.statoCorrente === 'ATTESA_PAGAMENTO' || order.statoCorrente === 'PRONTO_PER_LAVORAZIONE';
+    }
+
+    canCancelOrderById(orderId: number, stato: string): boolean {
+        return stato === 'ATTESA_PAGAMENTO' || stato === 'PRONTO_PER_LAVORAZIONE';
     }
 
     // === PAGINAZIONE ===

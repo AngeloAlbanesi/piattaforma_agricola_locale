@@ -176,7 +176,7 @@ export class OrdiniManagementComponent implements OnInit {
     }
 
     viewOrderDetails(ordine: OrdineRiepilogoDTO): void {
-        this.router.navigate(['/dashboard/produttore/ordini', ordine.id]);
+        this.router.navigate(['/dashboard/produttore/ordini', ordine.idOrdine]);
     }
 
     updateStatus(ordine: OrdineRiepilogoDTO, nuovoStato: StatoOrdineProduttore): void {
@@ -184,9 +184,9 @@ export class OrdiniManagementComponent implements OnInit {
         switch (nuovoStato) {
             case StatoOrdineProduttore.IN_LAVORAZIONE:
                 // Metti in lavorazione
-                this.produttoreService.processOrder(ordine.id).subscribe({
+                this.produttoreService.processOrder(ordine.idOrdine).subscribe({
                     next: (updated) => {
-                        this.snackBar.open(`Ordine ${ordine.id} impostato in lavorazione`, 'Chiudi', { duration: 3000 });
+                        this.snackBar.open(`Ordine #${ordine.idOrdine} impostato in lavorazione`, 'Chiudi', { duration: 3000 });
                         this.loadOrdini();
                     },
                     error: () => {
@@ -199,9 +199,9 @@ export class OrdiniManagementComponent implements OnInit {
                 const shipRef = this.dialog.open(ShipOrderDialogComponent, { width: '480px' });
                 shipRef.afterClosed().subscribe(result => {
                     if (result) {
-                        this.produttoreService.shipOrder(ordine.id, result).subscribe({
+                        this.produttoreService.shipOrder(ordine.idOrdine, result).subscribe({
                             next: () => {
-                                this.snackBar.open(`Ordine ${ordine.id} segnato come spedito`, 'Chiudi', { duration: 3000 });
+                                this.snackBar.open(`Ordine #${ordine.idOrdine} segnato come spedito`, 'Chiudi', { duration: 3000 });
                                 this.loadOrdini();
                             },
                             error: () => {
@@ -212,9 +212,9 @@ export class OrdiniManagementComponent implements OnInit {
                 });
                 break;
             case StatoOrdineProduttore.CONSEGNATO:
-                this.produttoreService.deliverOrder(ordine.id).subscribe({
+                this.produttoreService.deliverOrder(ordine.idOrdine).subscribe({
                     next: () => {
-                        this.snackBar.open(`Ordine ${ordine.id} segnato come consegnato`, 'Chiudi', { duration: 3000 });
+                        this.snackBar.open(`Ordine #${ordine.idOrdine} segnato come consegnato`, 'Chiudi', { duration: 3000 });
                         this.loadOrdini();
                     },
                     error: () => {
@@ -226,9 +226,9 @@ export class OrdiniManagementComponent implements OnInit {
                 const cancelRef = this.dialog.open(CancelOrderDialogComponent, { width: '480px' });
                 cancelRef.afterClosed().subscribe(result => {
                     if (result) {
-                        this.produttoreService.cancelOrder(ordine.id, result).subscribe({
+                        this.produttoreService.cancelOrder(ordine.idOrdine, result).subscribe({
                             next: () => {
-                                this.snackBar.open(`Ordine ${ordine.id} annullato`, 'Chiudi', { duration: 3000 });
+                                this.snackBar.open(`Ordine #${ordine.idOrdine} annullato`, 'Chiudi', { duration: 3000 });
                                 this.loadOrdini();
                             },
                             error: () => {
@@ -240,9 +240,9 @@ export class OrdiniManagementComponent implements OnInit {
                 break;
             default:
                 // Per altri stati, logica generica
-                this.produttoreService.updateOrderStatus(ordine.id, nuovoStato).subscribe({
+                this.produttoreService.updateOrderStatus(ordine.idOrdine, nuovoStato).subscribe({
                     next: () => {
-                        this.snackBar.open(`Stato ordine ${ordine.id} aggiornato`, 'Chiudi', { duration: 2000 });
+                        this.snackBar.open(`Stato ordine #${ordine.idOrdine} aggiornato`, 'Chiudi', { duration: 2000 });
                         this.loadOrdini();
                     },
                     error: () => {

@@ -82,22 +82,40 @@ export interface CreateMetodoDiColtivazioneRequestDTO {
 
 // === ORDINI ===
 export interface OrdineRiepilogoDTO {
-    id: number;
+    // Proprietà backend
+    idOrdine: number;
     dataOrdine: string;
-    stato: string;
-    acquirente: {
-        id: number;
-        nome: string;
-        cognome: string;
-        email: string;
-    };
+    importoTotale: number;
+    statoCorrente: string;
+    nomeAcquirente: string;
+    idAcquirente: number;
+    numeroArticoli: number;
+    idVenditore: number;
+    nomeVenditore: string;
+    emailVenditore: string;
+    nomeAziendaVenditore: string;
+    articoli?: Array<{
+        idRiga: number;
+        nomeAcquistabile: string;
+        quantitaOrdinata: number;
+        prezzoUnitario: number;
+    }>;
+    
+    // Proprietà alias per compatibilità frontend
+    id: number;
     totale: number;
-    prodotti: Array<{
+    stato: string;
+    prodotti?: Array<{
         id: number;
         nome: string;
         quantita: number;
         prezzo: number;
     }>;
+    acquirente?: {
+        nome: string;
+        cognome: string;
+        email: string;
+    };
 }
 
 // === STATISTICHE PRODUTTORE ===

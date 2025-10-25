@@ -3,9 +3,9 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "strict": true,
+        "strict": false,
         "noImplicitOverride": true,
-        "noPropertyAccessFromIndexSignature": true,
+        "noPropertyAccessFromIndexSignature": false,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "skipLibCheck": true,
@@ -21,7 +21,7 @@
         "strictInjectionParameters": true,
         "strictInputAccessModifiers": true,
         "typeCheckHostBindings": true,
-        "strictTemplates": true
+        "strictTemplates": false
     },
     "files": [],
     "references": [

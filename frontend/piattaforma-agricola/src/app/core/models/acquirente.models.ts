@@ -108,24 +108,47 @@ export interface UpdateCartItemRequestDTO {
 
 // === ORDINI ===
 export interface OrdineSummaryDTO {
-    id: number;
+    idOrdine: number;  // Allineato con backend
     dataOrdine: string;
-    stato: string;
-    totale: number;
-    numeroElementi: number;
-    venditoreNome: string;
+    importoTotale: number;  // Allineato con backend (era 'totale')
+    statoCorrente: string;  // Allineato con backend (era 'stato')
+    nomeAcquirente: string;
+    idAcquirente: number;
+    numeroArticoli: number;  // Allineato con backend (era 'numeroElementi')
+    idVenditore: number;
+    nomeVenditore: string;
+    emailVenditore: string;
+    nomeAziendaVenditore: string;
+}
+
+export interface ArticoloOrdineDTO {
+    idRiga: number;
+    quantitaOrdinata: number;
+    prezzoUnitario: number;
+    prezzoTotale: number;
+    tipoAcquistabile: string;
+    idAcquistabile: number;
+    nomeAcquistabile: string;
+    descrizioneAcquistabile: string;
+    categoriaAcquistabile: string;
+    nomeVenditoreArticolo: string;
+    emailVenditoreArticolo: string;
+    nomeAziendaVenditoreArticolo: string;
 }
 
 export interface OrdineExtendedSummaryDTO extends OrdineSummaryDTO {
-    venditore: {
-        id: number;
-        nome: string;
-    };
-    indirizzoSpedizione: string;
-    metodoPagamento: string;
+    articoli: ArticoloOrdineDTO[];
+    // Campi opzionali che potrebbero arrivare in dettaglio
+    indirizzoSpedizione?: string;
+    metodoPagamento?: string;
 }
 
 export interface OrdineDetailDTO extends OrdineSummaryDTO {
+    // Proprietà alias per compatibilità frontend
+    id: number;
+    totale: number;
+    articoli: ArticoloOrdineDTO[];
+    
     venditore: {
         id: number;
         nome: string;

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CarrelloOverviewComponent } from './pages/overview/carrello-overview.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
+import { OrdiniListComponent } from './pages/ordini-list/ordini-list.component';
 
 const routes: Routes = [
     {
@@ -16,6 +17,10 @@ const routes: Routes = [
     {
         path: 'checkout',
         component: CheckoutComponent,
+    },
+    {
+        path: 'ordini',
+        component: OrdiniListComponent,
     },
 ];
 

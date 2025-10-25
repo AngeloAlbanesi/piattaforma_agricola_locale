@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
@@ -74,7 +74,8 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         private fb: FormBuilder,
         private acquirenteService: AcquirenteService,
         private snackBar: MatSnackBar,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private cdr: ChangeDetectorRef
     ) {
         this.initializeFilterForm();
     }
@@ -120,18 +121,23 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         this.acquirenteService.getOrders(this.pagination)
             .pipe(
                 takeUntil(this.destroy$),
-                finalize(() => this.isLoading = false)
+                finalize(() => {
+                    this.isLoading = false;
+                    this.cdr.markForCheck();
+                })
             )
             .subscribe({
                 next: (response) => {
                     this.ordersList = response.content;
                     this.totalElements = response.totalElements;
+                    this.cdr.markForCheck();
                 },
                 error: (error) => {
                     this.snackBar.open('Errore nel caricamento degli ordini', 'Chiudi', {
                         duration: 3000,
                         panelClass: 'error-snackbar'
                     });
+                    this.cdr.markForCheck();
                 }
             });
     }
@@ -142,19 +148,24 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
         this.acquirenteService.getOrderById(orderId)
             .pipe(
                 takeUntil(this.destroy$),
-                finalize(() => this.isUpdating = false)
+                finalize(() => {
+                    this.isUpdating = false;
+                    this.cdr.markForCheck();
+                })
             )
             .subscribe({
                 next: (order) => {
                     this.selectedOrder = order;
                     this.showDetails = true;
                     this.loadOrderStatus(orderId);
+                    this.cdr.markForCheck();
                 },
                 error: (error) => {
                     this.snackBar.open('Errore nel caricamento dei dettagli dell\'ordine', 'Chiudi', {
                         duration: 3000,
                         panelClass: 'error-snackbar'
                     });
+                    this.cdr.markForCheck();
                 }
             });
     }
@@ -165,9 +176,11 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: (status) => {
                     this.orderStatus = status;
+                    this.cdr.markForCheck();
                 },
                 error: (error) => {
                     console.error('Errore nel caricamento dello stato ordine:', error);
+                    this.cdr.markForCheck();
                 }
             });
     }
@@ -188,7 +201,10 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
                 this.acquirenteService.cancelOrderWithReason(orderId, request)
                     .pipe(
                         takeUntil(this.destroy$),
-                        finalize(() => this.isUpdating = false)
+                        finalize(() => {
+                            this.isUpdating = false;
+                            this.cdr.markForCheck();
+                        })
                     )
                     .subscribe({
                         next: () => {
@@ -201,12 +217,14 @@ export class OrdersManagementComponent implements OnInit, OnDestroy {
                                 this.showDetails = false;
                                 this.selectedOrder = null;
                             }
+                            this.cdr.markForCheck();
                         },
                         error: (error) => {
                             this.snackBar.open('Errore nell\'annullamento dell\'ordine', 'Chiudi', {
                                 duration: 3000,
                                 panelClass: 'error-snackbar'
                             });
+                            this.cdr.markForCheck();
                         }
                     });
             }

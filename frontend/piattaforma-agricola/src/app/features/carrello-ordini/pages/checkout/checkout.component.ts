@@ -184,12 +184,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                 next: (ordini) => {
                     this.ordiniCreati = ordini;
 
-                    // Step 2: Se non è simulato, processa i pagamenti
-                    if (metodoPagamento !== 'SIMULATO') {
-                        this.processPayments(ordini, metodoPagamento);
-                    } else {
-                        this.completeCheckout();
-                    }
+                    // Step 2: Conferma pagamento per tutti gli ordini creati
+                    this.processPayments(ordini, metodoPagamento);
                 },
                 error: (error) => {
                     console.error('Errore creazione ordini:', error);
@@ -217,8 +213,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                 datiPayPal: datiPayPal
             };
         } else {
-            this.completeCheckout();
-            return;
+            // Per pagamento simulato, crea una richiesta semplice
+            paymentRequest = {
+                metodoPagamento: 'SIMULATO'
+            };
         }
 
         // Processa pagamento per ogni ordine
@@ -226,7 +224,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         const total = ordini.length;
 
         ordini.forEach(ordine => {
-            this.acquirenteService.confirmOrderPayment(ordine.id, paymentRequest)
+            this.acquirenteService.confirmOrderPayment(ordine.idOrdine, paymentRequest)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                     next: () => {
@@ -236,8 +234,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                         }
                     },
                     error: (error) => {
-                        console.error(`Errore pagamento ordine ${ordine.id}:`, error);
-                        this.showError(`Errore nel pagamento dell'ordine ${ordine.id}`);
+                        console.error(`Errore pagamento ordine #${ordine.idOrdine}:`, error);
+                        this.showError(`Errore nel pagamento dell'ordine #${ordine.idOrdine}`);
                     }
                 });
         });

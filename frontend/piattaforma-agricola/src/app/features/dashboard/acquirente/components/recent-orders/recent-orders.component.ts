@@ -75,12 +75,13 @@ export class RecentOrdersComponent implements OnInit, OnDestroy {
     }
 
     viewAllOrders(): void {
-        this.router.navigate(['/dashboard/acquirente'], { fragment: 'ordini' });
+        // Naviga alla pagina dedicata con tutti gli ordini
+        this.router.navigate(['/carrello-ordini/ordini']);
     }
 
     viewOrderDetails(orderId: number): void {
-        // Per ora navighiamo al tab ordini con il filtro
-        this.router.navigate(['/dashboard/acquirente'], { fragment: 'ordini' });
+        // Naviga alla pagina di tutti gli ordini (il dettaglio sarà implementato lì)
+        this.router.navigate(['/carrello-ordini/ordini']);
     }
 
     formatCurrency(value: number): string {

@@ -97,4 +97,12 @@ export class ShellComponent {
         const currentUrl = this.router.url;
         return currentUrl === '/eventi' || currentUrl.startsWith('/eventi?');
     }
+
+    /**
+     * Verifica se l'utente è su una pagina di carrello/ordini
+     */
+    isCarrelloOrdiniPage(): boolean {
+        const currentUrl = this.router.url;
+        return currentUrl.startsWith('/carrello-ordini');
+    }
 }

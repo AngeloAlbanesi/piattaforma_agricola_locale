@@ -1,0 +1,402 @@
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+
+import { PublicProdottiService } from '../../../../core/services/public-prodotti.service';
+import { PublicProcessiService } from '../../../../core/services/public-processi.service';
+import { PublicProdottoDetailDTO, PublicProdottoSummaryDTO, getProdottoId } from '../../../../core/models/public.models';
+import { PublicAziendaSummaryDTO, ProcessoTrasformazionePublicDTO } from '../../../../core/models/public.models';
+
+@Component({
+    selector: 'app-prodotto-detail',
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+        MatSnackBarModule,
+        MatChipsModule,
+        MatTabsModule,
+        MatExpansionModule,
+        MatDividerModule,
+        MatListModule
+    ],
+    templateUrl: './prodotto-detail.component.html',
+    styleUrls: ['./prodotto-detail.component.scss']
+})
+export class ProdottoDetailComponent implements OnInit, OnDestroy {
+    prodotto: PublicProdottoDetailDTO | null = null;
+    loading = false;
+    error: string | null = null;
+    prodottoId: number | null = null;
+
+    // Prodotti correlati
+    prodottiCorrelati: PublicProdottoSummaryDTO[] = [];
+    loadingCorrelati = false;
+
+    // Azienda del produttore
+    aziendaProduttrice: PublicAziendaSummaryDTO | null = null;
+    loadingAzienda = false;
+
+    // Processo di trasformazione
+    processo: ProcessoTrasformazionePublicDTO | null = null;
+    loadingProcesso = false;
+
+    private subscriptions = new Map<string, any>();
+
+    constructor(
+        private prodottiService: PublicProdottiService,
+        private processiService: PublicProcessiService,
+        private route: ActivatedRoute,
+        private router: Router,
+        private snackBar: MatSnackBar,
+        private cdr: ChangeDetectorRef
+    ) { }
+
+    ngOnInit(): void {
+        this.route.paramMap.subscribe(params => {
+            const id = params.get('id');
+            if (id) {
+                this.prodottoId = parseInt(id, 10);
+                this.loadProdottoDetail();
+            } else {
+                this.error = 'ID prodotto non valido';
+                this.snackBar.open(this.error, 'Chiudi', {
+                    duration: 5000,
+                    panelClass: ['error-snackbar']
+                });
+            }
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.forEach(subscription => {
+            if (subscription && subscription.unsubscribe) {
+                subscription.unsubscribe();
+            }
+        });
+        this.subscriptions.clear();
+    }
+
+    loadProdottoDetail(): void {
+        if (!this.prodottoId) return;
+
+        this.loading = true;
+        this.error = null;
+
+        const prodottoSub = this.prodottiService.getProdottoById(this.prodottoId).subscribe({
+            next: (prodotto) => {
+                this.prodotto = prodotto;
+                this.loading = false;
+                this.cdr.detectChanges();
+
+                // Carica processo se prodotto trasformato
+                if (this.isTrasformato() && prodotto.idProcessoTrasformazioneOriginario) {
+                    this.loadProcessoDettagli(prodotto.idProcessoTrasformazioneOriginario);
+                }
+
+                // Carica dati correlati
+                this.loadProdottiCorrelati();
+                this.loadAziendaProduttrice();
+            },
+            error: (error: any) => {
+                console.error('Errore nel caricamento dettaglio prodotto:', error);
+                this.error = 'Impossibile caricare i dettagli del prodotto. Riprova più tardi.';
+                this.loading = false;
+                this.cdr.detectChanges();
+                this.snackBar.open(this.error, 'Chiudi', {
+                    duration: 5000,
+                    panelClass: ['error-snackbar']
+                });
+            }
+        });
+
+        this.subscriptions.set('prodotto', prodottoSub);
+    }
+
+    loadProdottiCorrelati(): void {
+        if (!this.prodotto?.categoria) return;
+
+        this.loadingCorrelati = true;
+
+        const correlatiSub = this.prodottiService.getProdotti({
+            categoria: this.prodotto.categoria,
+            page: 0,
+            size: 4
+        }).subscribe({
+            next: (response) => {
+                // Filtra il prodotto corrente dai risultati
+                this.prodottiCorrelati = (response.content || [])
+                    .filter(p => p.id !== this.prodotto?.id)
+                    .slice(0, 3);
+                this.loadingCorrelati = false;
+            },
+            error: (error: any) => {
+                console.error('Errore nel caricamento prodotti correlati:', error);
+                this.loadingCorrelati = false;
+            }
+        });
+
+        this.subscriptions.set('correlati', correlatiSub);
+    }
+
+    loadAziendaProduttrice(): void {
+        if (!this.prodotto?.produttore?.id) return;
+
+        this.loadingAzienda = true;
+
+        // Nota: Questo servizio dovrebbe essere implementato nel PublicAziendeService
+        // Per ora simuliamo il caricamento
+        setTimeout(() => {
+            this.aziendaProduttrice = {
+                id: this.prodotto!.produttore!.id,
+                nomeAzienda: this.prodotto!.produttore!.nomeAzienda,
+                descrizione: 'Azienda agricola specializzata in prodotti di alta qualità',
+                tipologia: 'Agricola',
+                indirizzo: {
+                    via: 'Via Agricola, 1',
+                    citta: 'Città',
+                    provincia: 'Provincia',
+                    cap: '12345'
+                },
+                numeroProdotti: 15,
+                rating: 4.5
+            };
+            this.loadingAzienda = false;
+        }, 500);
+    }
+
+    navigateToProdotto(prodottoId: number): void {
+        this.router.navigate(['/prodotti', prodottoId]);
+    }
+
+    /**
+     * Helper per navigare ai dettagli del prodotto da oggetto prodotto
+     */
+    navigateToProdottoObj(prodotto: PublicProdottoSummaryDTO): void {
+        const id = getProdottoId(prodotto);
+        this.navigateToProdotto(id);
+    }
+
+    navigateToAzienda(aziendaId: number): void {
+        this.router.navigate(['/aziende', aziendaId]);
+    }
+
+    addToCart(): void {
+        if (!this.prodotto) return;
+
+        // TODO: Implementare logica carrello
+        this.snackBar.open(`"${this.prodotto.nome}" aggiunto al carrello`, 'OK', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+        });
+    }
+
+    retryLoad(): void {
+        this.loadProdottoDetail();
+    }
+
+    goBack(): void {
+        this.router.navigate(['/prodotti']);
+    }
+
+    // Metodi helper per il template
+    formatCurrency(prezzo: number): string {
+        return `€${prezzo.toFixed(2)}`;
+    }
+
+    formatDate(dataString: string): string {
+        return new Date(dataString).toLocaleDateString('it-IT', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    isAvailable(quantita: number): boolean {
+        return quantita > 0;
+    }
+
+    getAvailabilityText(quantita: number): string {
+        if (quantita === 0) return 'Non disponibile';
+        if (quantita < 5) return `Solo ${quantita} pezzi disponibili`;
+        return 'Disponibile';
+    }
+
+    getAvailabilityColor(quantita: number): string {
+        if (quantita === 0) return 'warn';
+        if (quantita < 5) return 'accent';
+        return 'primary';
+    }
+
+    hasImages(): boolean {
+        return !!(this.prodotto?.immagineUrl);
+    }
+
+    getMainImage(): string {
+        return this.prodotto?.immagineUrl || '/assets/images/placeholder-product.jpg';
+    }
+
+    hasTracciabilita(): boolean {
+        return !!(this.prodotto?.tracciabilita);
+    }
+
+    hasMetodoColtivazione(): boolean {
+        return !!(this.prodotto?.metodoColtivazione);
+    }
+
+    getStatoCertificazione(dataScadenza: string): 'valid' | 'expiring' | 'expired' {
+        const oggi = new Date();
+        const scadenza = new Date(dataScadenza);
+        const giorniAllaScadenza = Math.ceil((scadenza.getTime() - oggi.getTime()) / (1000 * 60 * 60 * 24));
+
+        if (giorniAllaScadenza < 0) return 'expired';
+        if (giorniAllaScadenza <= 30) return 'expiring';
+        return 'valid';
+    }
+
+    getStatoCertificazioneText(dataScadenza: string): string {
+        const stato = this.getStatoCertificazione(dataScadenza);
+        switch (stato) {
+            case 'valid': return 'Valida';
+            case 'expiring': return 'In scadenza';
+            case 'expired': return 'Scaduta';
+            default: return 'Sconosciuto';
+        }
+    }
+
+    getStatoCertificazioneColor(dataScadenza: string): string {
+        const stato = this.getStatoCertificazione(dataScadenza);
+        switch (stato) {
+            case 'valid': return 'primary';
+            case 'expiring': return 'warn';
+            case 'expired': return 'warn';
+            default: return 'primary';
+        }
+    }
+
+    // === Metodi per processi di trasformazione ===
+
+    loadProcessoDettagli(processoId: number): void {
+        this.loadingProcesso = true;
+        const processoSub = this.processiService.getProcessoById(processoId).subscribe({
+            next: (processo) => {
+                this.processo = processo;
+                this.loadingProcesso = false;
+                this.cdr.detectChanges();
+            },
+            error: (error: any) => {
+                console.error('Errore caricamento processo:', error);
+                this.loadingProcesso = false;
+                this.cdr.detectChanges();
+            }
+        });
+        this.subscriptions.set('processo', processoSub);
+    }
+
+    // === Helper methods per tipi prodotto ===
+
+    isProduttore(): boolean {
+        return this.prodotto?.tipoOrigine === 'COLTIVATO' ||
+            this.prodotto?.tipoOrigine === 'COLTIVATO_ALLEVATO';
+    }
+
+    isTrasformato(): boolean {
+        return this.prodotto?.tipoOrigine === 'TRASFORMATO';
+    }
+
+    showMetodiColtivazione(): boolean {
+        return this.isProduttore();
+    }
+
+    showProcessiTrasformazione(): boolean {
+        return this.isTrasformato();
+    }
+
+    hasMetodiColtivazione(): boolean {
+        return !!(this.prodotto?.metodoColtivazione || this.prodotto?.metodoDiColtivazione);
+    }
+
+    getMetodoColtivazione() {
+        return this.prodotto?.metodoColtivazione || this.prodotto?.metodoDiColtivazione;
+    }
+
+    hasProcessiTrasformazione(): boolean {
+        return !!this.processo;
+    }
+
+    showCertificazioni(): boolean {
+        return true; // Mostra sempre la tab certificazioni
+    }
+
+    hasCertificazioni(): boolean {
+        const certifDettagli = this.prodotto?.certificazioniDettagli;
+        const certifBackend = this.prodotto?.certificazioni;
+        return !!(certifDettagli?.length || certifBackend?.length);
+    }
+
+    getCertificazioni(): any[] {
+        return this.prodotto?.certificazioniDettagli || this.prodotto?.certificazioni || [];
+    }
+
+    getTipoOrigineLabel(): string {
+        const tipo = this.prodotto?.tipoOrigine;
+        switch (tipo) {
+            case 'COLTIVATO': return 'Coltivato';
+            case 'COLTIVATO_ALLEVATO': return 'Coltivato/Allevato';
+            case 'TRASFORMATO': return 'Trasformato';
+            default: return 'N/D';
+        }
+    }
+
+    // === Helper methods per fasi di lavorazione ===
+
+    getFonteColor(fase: any): string {
+        // Per il public DTO, le fasi hanno fontiMateriePrime[] array
+        if (fase?.fontiMateriePrime && fase.fontiMateriePrime.length > 0) {
+            // Usa la prima fonte per determinare il colore
+            const tipo = fase.fontiMateriePrime[0].tipoFonte;
+            return tipo === 'INTERNA' ? 'accent' : 'primary';
+        }
+        return 'primary';
+    }
+
+    getFonteIcon(fase: any): string {
+        if (fase?.fontiMateriePrime && fase.fontiMateriePrime.length > 0) {
+            const tipo = fase.fontiMateriePrime[0].tipoFonte;
+            return tipo === 'INTERNA' ? 'home' : 'public';
+        }
+        return 'help';
+    }
+
+    getFonteLabel(fase: any): string {
+        if (fase?.fontiMateriePrime && fase.fontiMateriePrime.length > 0) {
+            const tipo = fase.fontiMateriePrime[0].tipoFonte;
+            const label = tipo === 'INTERNA' ? 'Interna' : 'Esterna';
+            // Se ci sono più fonti, aggiungi il conteggio
+            if (fase.fontiMateriePrime.length > 1) {
+                return `${label} (+${fase.fontiMateriePrime.length - 1})`;
+            }
+            return label;
+        }
+        return 'N/D';
+    }
+
+    getFonteName(fase: any): string {
+        // Non più utilizzato con la nuova struttura
+        return 'Non specificato';
+    }
+}

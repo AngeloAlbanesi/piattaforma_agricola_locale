@@ -1,0 +1,634 @@
+.order-details-dialog {
+    min-width: 800px;
+    max-width: 1000px;
+    max-height: 90vh;
+
+    .dialog-header {
+        padding: 20px 24px 0 24px;
+        margin-bottom: 0;
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            .title-section {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                mat-icon {
+                    color: #9b59b6;
+                    font-size: 28px;
+                    width: 28px;
+                    height: 28px;
+                }
+
+                .title-info {
+                    h2 {
+                        margin: 0;
+                        font-size: 1.6rem;
+                        font-weight: 500;
+                        color: #333;
+                    }
+
+                    .order-date {
+                        color: #666;
+                        font-size: 0.9rem;
+                    }
+                }
+            }
+
+            .status-section {
+                .status-badge {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 10px 16px;
+                    border-radius: 20px;
+                    color: white;
+                    font-weight: 500;
+                    font-size: 0.9rem;
+
+                    mat-icon {
+                        font-size: 18px;
+                        width: 18px;
+                        height: 18px;
+                    }
+                }
+            }
+        }
+    }
+
+    .dialog-content {
+        padding: 20px 0;
+        overflow-y: auto;
+        max-height: calc(90vh - 160px);
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: #666;
+
+            p {
+                margin-top: 16px;
+                margin-bottom: 0;
+            }
+        }
+
+        .order-content {
+            padding: 0 24px;
+
+            .mat-tab-group {
+                .tab-content {
+                    padding: 20px 0;
+
+                    // Summary Section
+                    .summary-section {
+                        margin-bottom: 24px;
+
+                        .summary-cards {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                            gap: 20px;
+                            margin-bottom: 24px;
+
+                            .info-card {
+                                .mat-card-header {
+                                    .mat-card-title {
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 8px;
+                                        font-size: 1.1rem;
+
+                                        mat-icon {
+                                            color: #9b59b6;
+                                        }
+                                    }
+                                }
+
+                                .customer-details,
+                                .delivery-details,
+                                .order-summary {
+                                    .detail-row,
+                                    .summary-row {
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        margin-bottom: 8px;
+
+                                        &:last-child {
+                                            margin-bottom: 0;
+                                        }
+
+                                        label,
+                                        span:first-child {
+                                            font-weight: 500;
+                                            color: #666;
+                                        }
+
+                                        span:last-child {
+                                            color: #333;
+                                        }
+
+                                        &.total {
+                                            border-top: 1px solid #e0e0e0;
+                                            padding-top: 8px;
+                                            margin-top: 8px;
+
+                                            span {
+                                                font-weight: 600;
+                                                font-size: 1.1rem;
+
+                                                &:last-child {
+                                                    color: #27ae60;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    .address,
+                                    .delivery-date,
+                                    .delivery-notes {
+                                        margin-bottom: 12px;
+
+                                        &:last-child {
+                                            margin-bottom: 0;
+                                        }
+
+                                        strong {
+                                            color: #666;
+                                            font-weight: 500;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Order Items
+                    .items-card {
+                        .mat-card-header {
+                            .mat-card-title {
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+
+                                mat-icon {
+                                    color: #9b59b6;
+                                }
+                            }
+                        }
+
+                        .order-items {
+                            .order-item {
+                                border: 1px solid #e0e0e0;
+                                border-radius: 8px;
+                                padding: 16px;
+                                margin-bottom: 16px;
+
+                                &:last-child {
+                                    margin-bottom: 0;
+                                }
+
+                                .item-main {
+                                    display: flex;
+                                    gap: 16px;
+
+                                    .item-image {
+                                        width: 100px;
+                                        height: 100px;
+                                        border-radius: 6px;
+                                        overflow: hidden;
+                                        flex-shrink: 0;
+
+                                        img {
+                                            width: 100%;
+                                            height: 100%;
+                                            object-fit: cover;
+                                        }
+                                    }
+
+                                    .item-details {
+                                        flex: 1;
+
+                                        h4 {
+                                            margin: 0 0 8px 0;
+                                            color: #333;
+                                            font-weight: 500;
+                                        }
+
+                                        .item-description {
+                                            color: #666;
+                                            margin: 0 0 12px 0;
+                                            line-height: 1.4;
+                                        }
+
+                                        .item-products {
+                                            strong {
+                                                color: #555;
+                                                font-size: 0.9rem;
+                                            }
+
+                                            .products-list {
+                                                margin-top: 8px;
+                                                display: flex;
+                                                flex-direction: column;
+                                                gap: 4px;
+
+                                                .product-item {
+                                                    display: grid;
+                                                    grid-template-columns: 2fr 1fr 1fr;
+                                                    gap: 8px;
+                                                    font-size: 0.85rem;
+                                                    padding: 4px 8px;
+                                                    background-color: #f8f9fa;
+                                                    border-radius: 4px;
+
+                                                    .product-name {
+                                                        font-weight: 500;
+                                                        color: #333;
+                                                    }
+
+                                                    .product-quantity {
+                                                        color: #666;
+                                                        text-align: center;
+                                                    }
+
+                                                    .product-producer {
+                                                        color: #666;
+                                                        text-align: right;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    .item-pricing {
+                                        text-align: right;
+                                        min-width: 120px;
+
+                                        .quantity {
+                                            font-size: 1.2rem;
+                                            font-weight: 600;
+                                            color: #333;
+                                            margin-bottom: 4px;
+                                        }
+
+                                        .unit-price {
+                                            color: #666;
+                                            font-size: 0.9rem;
+                                            margin-bottom: 4px;
+                                        }
+
+                                        .total-price {
+                                            font-size: 1.3rem;
+                                            font-weight: 600;
+                                            color: #27ae60;
+                                        }
+                                    }
+                                }
+
+                                .item-notes {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    margin-top: 12px;
+                                    padding-top: 12px;
+                                    border-top: 1px solid #e0e0e0;
+                                    color: #666;
+                                    font-style: italic;
+
+                                    mat-icon {
+                                        font-size: 16px;
+                                        width: 16px;
+                                        height: 16px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // History Timeline
+                    .history-card {
+                        .mat-card-header {
+                            .mat-card-title {
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+
+                                mat-icon {
+                                    color: #9b59b6;
+                                }
+                            }
+                        }
+
+                        .history-timeline {
+                            position: relative;
+
+                            &::before {
+                                content: '';
+                                position: absolute;
+                                left: 20px;
+                                top: 0;
+                                bottom: 0;
+                                width: 2px;
+                                background-color: #e0e0e0;
+                            }
+
+                            .history-item {
+                                display: flex;
+                                gap: 16px;
+                                margin-bottom: 20px;
+                                position: relative;
+
+                                &:last-child {
+                                    margin-bottom: 0;
+                                }
+
+                                .timeline-marker {
+                                    width: 40px;
+                                    height: 40px;
+                                    border-radius: 50%;
+                                    background-color: white;
+                                    border: 2px solid #e0e0e0;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    flex-shrink: 0;
+                                    z-index: 1;
+
+                                    mat-icon {
+                                        font-size: 20px;
+                                        width: 20px;
+                                        height: 20px;
+                                    }
+                                }
+
+                                .timeline-content {
+                                    flex: 1;
+                                    padding-top: 4px;
+
+                                    .status-change {
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        margin-bottom: 4px;
+
+                                        .new-status {
+                                            font-weight: 600;
+                                            font-size: 1.1rem;
+                                        }
+
+                                        .change-date {
+                                            color: #666;
+                                            font-size: 0.9rem;
+                                        }
+                                    }
+
+                                    .change-author {
+                                        color: #666;
+                                        font-size: 0.85rem;
+                                        margin-bottom: 4px;
+                                    }
+
+                                    .change-notes {
+                                        color: #333;
+                                        font-style: italic;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Communications
+                    .communications-card {
+                        .mat-card-header {
+                            .mat-card-title {
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+
+                                mat-icon {
+                                    color: #9b59b6;
+                                }
+
+                                .unread-badge {
+                                    background-color: #f44336;
+                                    color: white;
+                                    font-size: 0.75rem;
+                                }
+                            }
+                        }
+
+                        .communications-list {
+                            .communication-item {
+                                border: 1px solid #e0e0e0;
+                                border-radius: 8px;
+                                padding: 16px;
+                                margin-bottom: 12px;
+
+                                &:last-child {
+                                    margin-bottom: 0;
+                                }
+
+                                &.unread {
+                                    border-color: #2196f3;
+                                    background-color: #f3f9ff;
+                                }
+
+                                .comm-header {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    margin-bottom: 8px;
+
+                                    .comm-type {
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 6px;
+
+                                        .type-label {
+                                            font-weight: 500;
+                                            font-size: 0.85rem;
+                                            text-transform: uppercase;
+                                        }
+                                    }
+
+                                    .comm-meta {
+                                        text-align: right;
+                                        font-size: 0.85rem;
+                                        color: #666;
+
+                                        .comm-date {
+                                            display: block;
+                                        }
+
+                                        .comm-author {
+                                            font-weight: 500;
+                                        }
+                                    }
+                                }
+
+                                .comm-content {
+                                    color: #333;
+                                    line-height: 1.6;
+                                    margin-bottom: 8px;
+                                }
+
+                                .comm-actions {
+                                    text-align: right;
+                                }
+                            }
+                        }
+                    }
+
+                    // Documents
+                    .documents-card {
+                        .mat-card-header {
+                            .mat-card-title {
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+
+                                mat-icon {
+                                    color: #9b59b6;
+                                }
+                            }
+                        }
+
+                        .documents-list {
+                            .document-item {
+                                display: flex;
+                                align-items: center;
+                                gap: 12px;
+                                padding: 12px;
+                                border: 1px solid #e0e0e0;
+                                border-radius: 6px;
+                                margin-bottom: 8px;
+
+                                &:last-child {
+                                    margin-bottom: 0;
+                                }
+
+                                .doc-icon {
+                                    width: 40px;
+                                    height: 40px;
+                                    border-radius: 6px;
+                                    background-color: #f5f5f5;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    flex-shrink: 0;
+
+                                    mat-icon {
+                                        color: #666;
+                                    }
+                                }
+
+                                .doc-info {
+                                    flex: 1;
+
+                                    .doc-name {
+                                        font-weight: 500;
+                                        color: #333;
+                                        margin-bottom: 4px;
+                                    }
+
+                                    .doc-meta {
+                                        display: flex;
+                                        gap: 12px;
+                                        font-size: 0.85rem;
+                                        color: #666;
+                                    }
+                                }
+
+                                .doc-actions {
+                                    display: flex;
+                                    gap: 4px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .dialog-actions {
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #e0e0e0;
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+
+            button {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .order-details-dialog {
+        min-width: 100%;
+        max-width: 100%;
+
+        .dialog-header .header-content {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .order-content .tab-content {
+            .summary-section .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .items-card .order-items .order-item .item-main {
+                flex-direction: column;
+
+                .item-image {
+                    width: 100%;
+                    height: 200px;
+                }
+
+                .item-pricing {
+                    text-align: left;
+                }
+            }
+
+            .history-card .history-timeline .history-item {
+                flex-direction: column;
+                align-items: flex-start;
+
+                .timeline-marker {
+                    position: relative;
+                }
+            }
+        }
+
+        .dialog-actions {
+            flex-direction: column;
+            gap: 12px;
+
+            .action-buttons {
+                width: 100%;
+                flex-direction: column;
+
+                button {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+        }
+    }
+}

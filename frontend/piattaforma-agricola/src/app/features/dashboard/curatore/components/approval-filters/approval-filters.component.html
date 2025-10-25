@@ -1,0 +1,95 @@
+<div class="approval-filters">
+    <mat-card appearance="outlined" class="filters-card">
+        <mat-card-content>
+            <form [formGroup]="filterForm" class="filters-form">
+                <!-- Search Bar -->
+                <div class="search-section">
+                    <mat-form-field appearance="outline" class="search-field">
+                        <mat-label>Cerca per nome</mat-label>
+                        <input matInput formControlName="search" placeholder="Cerca prodotto o azienda..."
+                            (input)="onSearchChange()">
+                        <mat-icon matPrefix>search</mat-icon>
+                        <button mat-icon-button matSuffix *ngIf="filterForm.get('search')?.value"
+                            (click)="filterForm.patchValue({search: ''}); onSearchChange()" type="button">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                    </mat-form-field>
+
+                    <!-- Quick Filters -->
+                    <div class="quick-filters">
+                        <mat-form-field appearance="outline" class="filter-select">
+                            <mat-label>Stato</mat-label>
+                            <mat-select formControlName="stato" (selectionChange)="onApplyFilters()">
+                                <mat-option *ngFor="let option of statoOptions" [value]="option.value">
+                                    {{ option.label }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-icon matPrefix>filter_list</mat-icon>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="filter-select">
+                            <mat-label>Tipo</mat-label>
+                            <mat-select formControlName="tipo" (selectionChange)="onApplyFilters()">
+                                <mat-option *ngFor="let option of tipoOptions" [value]="option.value">
+                                    {{ option.label }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-icon matPrefix>category</mat-icon>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- Advanced Filters (Collapsible) -->
+                <mat-expansion-panel [expanded]="isExpanded" class="advanced-filters">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <mat-icon>tune</mat-icon>
+                            Filtri Avanzati
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div class="advanced-filters-content">
+                        <div class="date-filters">
+                            <mat-form-field appearance="outline" class="date-field">
+                                <mat-label>Data da</mat-label>
+                                <input matInput [matDatepicker]="pickerDa" formControlName="dataDa"
+                                    placeholder="GG/MM/AAAA">
+                                <mat-datepicker-toggle matSuffix [for]="pickerDa"></mat-datepicker-toggle>
+                                <mat-datepicker #pickerDa></mat-datepicker>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="date-field">
+                                <mat-label>Data a</mat-label>
+                                <input matInput [matDatepicker]="pickerA" formControlName="dataA"
+                                    placeholder="GG/MM/AAAA">
+                                <mat-datepicker-toggle matSuffix [for]="pickerA"></mat-datepicker-toggle>
+                                <mat-datepicker #pickerA></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="filter-actions">
+                            <button mat-raised-button color="primary" (click)="onApplyFilters()" type="button">
+                                <mat-icon>done</mat-icon>
+                                Applica Filtri
+                            </button>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+
+                <!-- Action Buttons -->
+                <div class="main-actions">
+                    <button mat-stroked-button color="warn" (click)="onResetFilters()" type="button"
+                        [disabled]="!hasActiveFilters">
+                        <mat-icon>refresh</mat-icon>
+                        Reset Filtri
+                    </button>
+
+                    <div class="filter-indicator" *ngIf="hasActiveFilters">
+                        <mat-icon>info</mat-icon>
+                        <span>Filtri attivi</span>
+                    </div>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

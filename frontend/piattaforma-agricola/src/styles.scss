@@ -1,0 +1,656 @@
+@use '@angular/material' as mat;
+@use './styles/variables' as *;
+@use './styles/mixins' as *;
+@use './styles/accessibility' as *;
+@use './styles/notifications' as *;
+
+html {
+    @include mat.theme((color: (primary: mat.$azure-palette,
+                tertiary: mat.$blue-palette,
+            ),
+            typography: Roboto,
+            density: 0,
+        ));
+}
+
+body {
+    color-scheme: light;
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--mat-sys-surface);
+    color: var(--mat-sys-on-surface);
+    font: var(--mat-sys-body-medium);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    /* usare min-height per permettere al contenuto di crescere e allo scroll di funzionare */
+    min-height: 100%;
+    height: auto;
+}
+
+#root,
+app-root {
+    /* evitare di forzare l'altezza a 100%: usare min-height consente al contenuto di scrollare correttamente */
+    min-height: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Utility per contenitori di pagina che devono essere scrollabili */
+.page-scrollable {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* scorrimento più fluido su iOS */
+}
+
+/* Supporto per viewport mobile: usare --vh impostato da JS (main.ts)
+   Per elementi che devono occupare esattamente l'altezza della viewport usare:
+   height: calc(var(--vh) * 100);
+   Alternativa: usare sempre min-height: 100vh per consentire lo scroll quando necessario. */
+.full-vh {
+    height: calc(var(--vh, 1vh) * 100);
+    min-height: 100vh;
+}
+
+/* Tipografia responsive globale (valori base, override dove necessario nei componenti) */
+h1,
+.page-title {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+h2,
+.section-title {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+}
+
+/* Piccoli aggiustamenti per testi numerici/statistiche globali */
+.stat-value {
+    font-size: clamp(1.25rem, 3.2vw, 2.5rem);
+    font-weight: 700;
+}
+
+/* Estensione: applicare clamp() in modo più aggressivo ai titoli H3/H4 e ad alias comuni */
+h3 {
+    font-size: clamp(1.05rem, 2.2vw, 1.5rem);
+}
+
+h4 {
+    font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+}
+
+/* Titoli specifici usati nei componenti */
+.welcome-title {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+}
+
+.mat-card-title {
+    font-size: clamp(1rem, 1.8vw, 1.4rem);
+}
+
+/* Se vuoi regole ancora più specifiche per landing/auth/dashboard, posso aggiungerle component-scoped */
+
+/* Regola generica per classi che terminano con -title (orders-title, details-title, profile-title, ecc.) */
+[class$="-title"],
+.title,
+.page-header-title {
+    font-size: clamp(1.05rem, 2.6vw, 2rem);
+    line-height: 1.2;
+}
+
+/* Skip links per accessibilità */
+.skip-links {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+
+    a {
+        @include skip-link;
+    }
+}
+
+/* Stili per il layout principale migliorati */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    padding-top: $spacing-lg;
+    padding-bottom: $spacing-lg;
+    @include container;
+}
+
+/* Stili per le card migliorati con mixin */
+.card {
+    @include card;
+
+    & {
+        margin-bottom: $spacing-lg;
+        transform: translateY(0);
+    }
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+}
+
+/* Stili per i form migliorati */
+.form-container {
+    @include card;
+
+    & {
+        padding: $spacing-lg;
+        margin-bottom: $spacing-lg;
+    }
+
+    @include mobile-only {
+        padding: $spacing-md;
+    }
+}
+
+/* Stili per i pulsanti accessibili */
+.action-buttons {
+    display: flex;
+    gap: $spacing-md;
+    margin-top: $spacing-lg;
+
+    @include mobile-only {
+        flex-direction: column;
+        gap: $spacing-sm;
+    }
+
+    button {
+        @include button-base;
+
+        & {
+            min-height: 44px; // Touch target size
+        }
+
+        @include mobile-only {
+            width: 100%;
+        }
+    }
+}
+
+/* Stili per le tabelle accessibili */
+.responsive-table {
+    width: 100%;
+    overflow-x: auto;
+
+    table {
+        width: 100%;
+        min-width: 600px;
+
+        @include mobile-only {
+            min-width: 300px;
+        }
+    }
+}
+
+/* Stili per il loading accessibile */
+.loading-spinner {
+    @include flex-center;
+
+    & {
+        height: 200px;
+    }
+
+    .loading-text {
+        @include sr-only;
+    }
+}
+
+/* Stili per i messaggi migliorati */
+.message {
+    padding: $spacing-md;
+    border-radius: $border-radius-sm;
+    margin: $spacing-md 0;
+    border-left: 4px solid;
+
+    &.error-message {
+        color: $warn-color;
+        background-color: #ffebee;
+        border-color: $warn-color;
+    }
+
+    &.success-message {
+        color: $success-color;
+        background-color: #e8f5e8;
+        border-color: $success-color;
+    }
+
+    &.warning-message {
+        color: #ff9800;
+        background-color: #fff3e0;
+        border-color: #ff9800;
+    }
+
+    &.info-message {
+        color: $info-color;
+        background-color: #e3f2fd;
+        border-color: $info-color;
+    }
+}
+
+/* Stili per le sezioni */
+.section {
+    margin-bottom: $spacing-xl;
+
+    .section-title {
+        @include heading-2;
+
+        & {
+            margin-bottom: $spacing-lg;
+        }
+    }
+
+    .section-subtitle {
+        @include heading-3;
+
+        & {
+            margin-bottom: $spacing-md;
+            color: $text-secondary;
+        }
+    }
+}
+
+/* Stili per le griglie responsive */
+.grid {
+    display: grid;
+    gap: $spacing-md;
+
+    &.grid-2 {
+        @include grid-responsive(2);
+    }
+
+    &.grid-3 {
+        @include grid-responsive(3);
+    }
+
+    &.grid-4 {
+        @include grid-responsive(4);
+    }
+
+    &.grid-auto {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: $spacing-md;
+
+        @include mobile-only {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+/* Stili per i layout flex */
+.flex {
+    display: flex;
+
+    &.flex-center {
+        @include flex-center;
+    }
+
+    &.flex-between {
+        @include flex-between;
+    }
+
+    &.flex-column {
+        @include flex-column;
+    }
+
+    &.flex-wrap {
+        flex-wrap: wrap;
+    }
+
+    &.flex-gap-sm {
+        gap: $spacing-sm;
+    }
+
+    &.flex-gap-md {
+        gap: $spacing-md;
+    }
+
+    &.flex-gap-lg {
+        gap: $spacing-lg;
+    }
+}
+
+/* Stili per il testo */
+.text {
+    &.text-center {
+        text-align: center;
+    }
+
+    &.text-left {
+        text-align: left;
+    }
+
+    &.text-right {
+        text-align: right;
+    }
+
+    &.text-primary {
+        color: $primary-color;
+    }
+
+    &.text-secondary {
+        color: $text-secondary;
+    }
+
+    &.text-muted {
+        color: $text-disabled;
+    }
+
+    &.text-uppercase {
+        text-transform: uppercase;
+    }
+
+    &.text-bold {
+        font-weight: 600;
+    }
+
+    &.text-light {
+        font-weight: 300;
+    }
+}
+
+/* Stili per lo spacing */
+.m-0 {
+    margin: 0;
+}
+
+.m-1 {
+    margin: $spacing-xs;
+}
+
+.m-2 {
+    margin: $spacing-sm;
+}
+
+.m-3 {
+    margin: $spacing-md;
+}
+
+.m-4 {
+    margin: $spacing-lg;
+}
+
+.m-5 {
+    margin: $spacing-xl;
+}
+
+.mt-0 {
+    margin-top: 0;
+}
+
+.mt-1 {
+    margin-top: $spacing-xs;
+}
+
+.mt-2 {
+    margin-top: $spacing-sm;
+}
+
+.mt-3 {
+    margin-top: $spacing-md;
+}
+
+.mt-4 {
+    margin-top: $spacing-lg;
+}
+
+.mt-5 {
+    margin-top: $spacing-xl;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.mb-1 {
+    margin-bottom: $spacing-xs;
+}
+
+.mb-2 {
+    margin-bottom: $spacing-sm;
+}
+
+.mb-3 {
+    margin-bottom: $spacing-md;
+}
+
+.mb-4 {
+    margin-bottom: $spacing-lg;
+}
+
+.mb-5 {
+    margin-bottom: $spacing-xl;
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.p-1 {
+    padding: $spacing-xs;
+}
+
+.p-2 {
+    padding: $spacing-sm;
+}
+
+.p-3 {
+    padding: $spacing-md;
+}
+
+.p-4 {
+    padding: $spacing-lg;
+}
+
+.p-5 {
+    padding: $spacing-xl;
+}
+
+/* Stili per la visibilità responsive */
+.d-none {
+    display: none;
+}
+
+.d-block {
+    display: block;
+}
+
+.d-inline {
+    display: inline;
+}
+
+.d-inline-block {
+    display: inline-block;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.d-grid {
+    display: grid;
+}
+
+@include mobile-only {
+    .d-mobile-none {
+        display: none;
+    }
+
+    .d-mobile-block {
+        display: block;
+    }
+
+    .d-mobile-flex {
+        display: flex;
+    }
+}
+
+@include tablet-and-up {
+    .d-tablet-none {
+        display: none;
+    }
+
+    .d-tablet-block {
+        display: block;
+    }
+
+    .d-tablet-flex {
+        display: flex;
+    }
+}
+
+@include desktop-and-up {
+    .d-desktop-none {
+        display: none;
+    }
+
+    .d-desktop-block {
+        display: block;
+    }
+
+    .d-desktop-flex {
+        display: flex;
+    }
+}
+
+/* Stili per le animazioni */
+.fade-in {
+    @include fade-in;
+}
+
+.slide-up {
+    @include slide-up;
+}
+
+/* Stili per i componenti Material personalizzati */
+.mat-card {
+    @include card;
+}
+
+.mat-button,
+.mat-raised-button,
+.mat-stroked-button,
+.mat-flat-button {
+    @include button-base;
+
+    & {
+        min-height: 44px; // Touch target size
+    }
+}
+
+.mat-form-field-appearance-outline {
+    .mat-form-field-outline {
+        border-radius: $border-radius-sm;
+    }
+}
+
+.mat-chip {
+    border-radius: $border-radius-sm;
+    min-height: 32px;
+}
+
+.mat-paginator {
+    @include mobile-only {
+        .mat-paginator-container {
+            flex-direction: column;
+            align-items: center;
+            gap: $spacing-sm;
+        }
+    }
+}
+
+/* Stili per il tema scuro migliorato */
+@include dark-mode {
+    .form-container {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .message {
+        &.error-message {
+            background-color: rgba(244, 67, 54, 0.1);
+            border-color: #f44336;
+        }
+
+        &.success-message {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-color: #4caf50;
+        }
+
+        &.warning-message {
+            background-color: rgba(255, 152, 0, 0.1);
+            border-color: #ff9800;
+        }
+
+        &.info-message {
+            background-color: rgba(33, 150, 243, 0.1);
+            border-color: #2196f3;
+        }
+    }
+}
+
+/* Stili per high contrast mode migliorati */
+@include high-contrast {
+    .mat-card {
+        border: 2px solid $text-primary;
+    }
+
+    .mat-button,
+    .mat-raised-button,
+    .mat-stroked-button,
+    .mat-flat-button {
+        border: 2px solid $text-primary;
+    }
+
+    .form-container {
+        border: 2px solid $text-primary;
+    }
+}
+
+/* Stili per animazioni ridotte migliorati */
+@include reduced-motion {
+    .card {
+        &:hover {
+            transform: none;
+        }
+    }
+
+    .mat-button,
+    .mat-raised-button,
+    .mat-stroked-button,
+    .mat-flat-button {
+        transition: none;
+    }
+
+    .mat-card {
+        transition: none;
+    }
+}
+
+// Stili globali per i dialog di dettaglio prodotto
+.product-detail-dialog-container {
+    .mat-mdc-dialog-container {
+        --mdc-dialog-container-shape: 12px;
+        padding: 0;
+    }
+    
+    .mat-mdc-dialog-content {
+        padding: 0;
+        margin: 0;
+        max-height: none;
+    }
+}

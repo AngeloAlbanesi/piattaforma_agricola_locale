@@ -1,0 +1,291 @@
+.gestore-platforma-dashboard {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+
+    // === HEADER ===
+    .dashboard-header {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 1.5rem 0;
+        box-shadow: 0 2px 10px rgba(231, 76, 60, 0.3);
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .welcome-section {
+                .welcome-title {
+                    margin: 0 0 0.5rem 0;
+                    font-size: 2rem;
+                    font-weight: 600;
+                }
+
+                .welcome-subtitle {
+                    margin: 0;
+                    opacity: 0.9;
+                    font-size: 1.1rem;
+                }
+            }
+
+            .header-actions {
+                display: flex;
+                gap: 0.5rem;
+
+                button {
+                    color: white;
+
+                    &:hover {
+                        background-color: rgba(255, 255, 255, 0.1);
+                    }
+                }
+            }
+        }
+    }
+
+    // === TAB ICONS ===
+    ::ng-deep .mat-mdc-tab-label {
+        mat-icon {
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+    }
+
+    // === LOADING ===
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        gap: 1rem;
+
+        mat-spinner {
+            width: 50px;
+            height: 50px;
+
+            ::ng-deep circle {
+                stroke: #e74c3c;
+            }
+        }
+
+        p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+    }
+
+    // === MAIN CONTENT ===
+    .dashboard-content {
+        flex: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        width: 100%;
+
+        .personal-data-section {
+            margin-bottom: 2rem;
+        }
+
+        .stats-section {
+            margin-bottom: 2rem;
+        }
+
+        // Placeholder per statistiche non disponibili
+        .stats-placeholder-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+
+            mat-card {
+                max-width: 640px;
+                width: 100%;
+            }
+
+            .placeholder-text {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 1rem;
+                color: #7f8c8d;
+                font-size: 1.05rem;
+                text-align: center;
+
+                mat-icon {
+                    font-size: 1.5rem;
+                    width: 1.5rem;
+                    height: 1.5rem;
+                    color: #bdc3c7;
+                }
+            }
+        }
+
+        .quick-actions-section {
+            margin-bottom: 2rem;
+        }
+
+        .tabs-section {
+            margin-bottom: 2rem;
+
+            .tab-content {
+                padding: 1rem 0;
+
+                .placeholder-section {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 200px;
+
+                    .placeholder-text {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 1rem;
+                        padding: 2rem;
+                        color: #7f8c8d;
+                        text-align: center;
+
+                        mat-icon {
+                            font-size: 3rem;
+                            width: 3rem;
+                            height: 3rem;
+                            color: #bdc3c7;
+                        }
+                    }
+                }
+            }
+
+            ::ng-deep .mat-tab-header {
+                border-bottom: 2px solid #e74c3c;
+            }
+
+            ::ng-deep .mat-ink-bar {
+                background-color: #e74c3c;
+            }
+
+            ::ng-deep .mat-tab-label {
+                color: #666;
+                font-weight: 500;
+
+                &.mat-tab-label-active {
+                    color: #e74c3c;
+                }
+            }
+        }
+
+        .summary-section {
+            .summary-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+
+                .summary-card {
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+                    &:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 8px 25px rgba(231, 76, 60, 0.15);
+                    }
+
+                    mat-card-header {
+                        background-color: rgba(231, 76, 60, 0.05);
+
+                        mat-card-title {
+                            color: #e74c3c;
+                            font-weight: 600;
+                        }
+
+                        mat-card-subtitle {
+                            color: #666;
+                        }
+                    }
+
+                    .card-action {
+                        margin-top: 1rem;
+
+                        button {
+                            width: 100%;
+                            padding: 0.75rem;
+                            font-weight: 500;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // === FOOTER ===
+    .dashboard-footer {
+        background-color: #34495e;
+        color: white;
+        padding: 2rem 0;
+        margin-top: auto;
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .footer-links {
+                display: flex;
+                gap: 1rem;
+
+                a {
+                    color: white;
+                    text-decoration: none;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// === RESPONSIVE ===
+@media (max-width: 768px) {
+    .gestore-platforma-dashboard {
+        .dashboard-header {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+
+                .welcome-section {
+                    .welcome-title {
+                        font-size: 1.5rem;
+                    }
+                }
+            }
+        }
+
+        .dashboard-content {
+            padding: 1rem;
+
+            .summary-section {
+                .summary-grid {
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
+                }
+            }
+        }
+
+        .dashboard-footer {
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    }
+}

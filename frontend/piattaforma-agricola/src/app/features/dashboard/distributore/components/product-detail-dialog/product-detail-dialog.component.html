@@ -1,0 +1,152 @@
+<div class="product-detail-dialog">
+    <div class="dialog-header" mat-dialog-title>
+        <div class="header-content">
+            <div class="title-section">
+                <mat-icon>info</mat-icon>
+                <h2 *ngIf="hasProduct">{{ productDetails!.nome }}</h2>
+                <h2 *ngIf="!hasProduct">Dettagli Prodotto</h2>
+            </div>
+            
+            <div class="status-section" *ngIf="hasProduct">
+                <div class="availability-status" [style.color]="getAvailabilityStatus(productDetails!.quantitaDisponibile).color">
+                    <mat-icon>{{ getAvailabilityStatus(productDetails!.quantitaDisponibile).icon }}</mat-icon>
+                    {{ getAvailabilityStatus(productDetails!.quantitaDisponibile).label }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <!-- Loading -->
+        <div class="loading-container" *ngIf="isLoading">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Caricamento dettagli prodotto...</p>
+        </div>
+
+        <!-- Content -->
+        <div class="product-content" *ngIf="!isLoading && hasProduct">
+            <mat-tab-group>
+                <!-- Tab Informazioni Generali -->
+                <mat-tab label="Informazioni Generali">
+                    <div class="tab-content">
+                        <!-- Product Summary -->
+                        <div class="product-summary">
+                            <div class="basic-info">
+                                <h3>{{ productDetails!.nome }}</h3>
+                                <p class="description" *ngIf="productDetails!.descrizione">
+                                    {{ productDetails!.descrizione }}
+                                </p>
+                            </div>
+
+                            <div class="key-details">
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <label>Prezzo:</label>
+                                        <span class="price">{{ formatCurrency(productDetails!.prezzo) }}</span>
+                                        <span class="unit" *ngIf="productDetails!.unitaMisura">/ {{ productDetails!.unitaMisura }}</span>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <label>Disponibilità:</label>
+                                        <span [style.color]="getAvailabilityStatus(productDetails!.quantitaDisponibile).color">
+                                            {{ productDetails!.quantitaDisponibile }} {{ productDetails!.unitaMisura || 'unità' }}
+                                        </span>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <label>Unità di misura:</label>
+                                        <span>{{ productDetails!.unitaMisura || 'Non specificata' }}</span>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <label>Tipo di origine:</label>
+                                        <span>{{ getTipoOrigineDisplay(productDetails!.tipoOrigine) }}</span>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <label>Stato:</label>
+                                        <span class="status-badge {{ getStatusClass(productDetails!.stato) }}">
+                                            {{ getStatusDisplay(productDetails!.stato) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Distributor Info -->
+                            <div class="distributor-section" *ngIf="productDetails!.venditore">
+                                <h4>
+                                    <mat-icon>business</mat-icon>
+                                    Distributore
+                                </h4>
+                                <div class="distributor-info">
+                                    <div class="distributor-name">{{ productDetails!.venditore.nome }} {{ productDetails!.venditore.cognome }}</div>
+                                    <div class="distributor-piva">Ruolo: {{ productDetails!.venditore.tipoRuolo }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Certificazioni -->
+                <mat-tab label="Certificazioni" *ngIf="hasCertifications">
+                    <div class="tab-content">
+                        <div class="certifications-list">
+                            <mat-card 
+                                class="certification-card" 
+                                *ngFor="let certification of productDetails!.certificazioni; trackBy: trackByCertificationId">
+                                <mat-card-content>
+                                    <div class="certification-header">
+                                        <div class="certification-name">
+                                            <mat-icon class="cert-icon">verified</mat-icon>
+                                            {{ certification.nomeCertificazione }}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="certification-details">
+                                        <div class="cert-detail-item">
+                                            <label>Ente di rilascio:</label>
+                                            <span>{{ certification.enteRilascio }}</span>
+                                        </div>
+                                        
+                                        <div class="cert-detail-item">
+                                            <label>Data rilascio:</label>
+                                            <span>{{ formatDate(certification.dataRilascio) }}</span>
+                                        </div>
+                                        
+                                        <div class="cert-detail-item">
+                                            <label>Data scadenza:</label>
+                                            <span>{{ formatDate(certification.dataScadenza) }}</span>
+                                        </div>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+
+                        <!-- Empty state per certificazioni -->
+                        <div class="empty-certifications" *ngIf="!hasCertifications">
+                            <mat-icon class="empty-icon">gpp_bad</mat-icon>
+                            <h3>Nessuna certificazione</h3>
+                            <p>Questo prodotto non ha certificazioni associate.</p>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="dialog-actions">
+        <button mat-button (click)="onClose()">
+            Chiudi
+        </button>
+        
+        <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="onAddToPackage()"
+            [disabled]="!hasProduct || productDetails!.quantitaDisponibile === 0"
+            *ngIf="hasProduct">
+            <mat-icon>add_box</mat-icon>
+            Aggiungi a Pacchetto
+        </button>
+    </mat-dialog-actions>
+</div>

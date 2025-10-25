@@ -1,0 +1,89 @@
+<div class="gestore-stats-overview">
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Panoramica Statistiche Piattaforma</mat-card-title>
+      <mat-card-subtitle>Dati aggregati su utenti, prodotti, aziende ed eventi</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="stats-grid">
+        <!-- Utenti -->
+        <div class="stat-item">
+          <mat-icon class="stat-icon users">people</mat-icon>
+          <div class="stat-content">
+            <div class="stat-value">{{ totalUsers }}</div>
+            <div class="stat-label">Utenti Totali</div>
+            <div class="stat-detail">
+              <span class="active-users">{{ activeUsers }} attivi</span> |
+              <span class="new-users">{{ newUsersThisMonth }} nuovi questo mese</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prodotti -->
+        <div class="stat-item">
+          <mat-icon class="stat-icon products">inventory_2</mat-icon>
+          <div class="stat-content">
+            <div class="stat-value">{{ totalProducts }}</div>
+            <div class="stat-label">Prodotti Totali</div>
+            <div class="stat-detail">
+              <span class="approved-products">{{ approvedProducts }} approvati</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aziende -->
+        <div class="stat-item">
+          <mat-icon class="stat-icon companies">business</mat-icon>
+          <div class="stat-content">
+            <div class="stat-value">{{ totalCompanies }}</div>
+            <div class="stat-label">Aziende Totali</div>
+            <div class="stat-detail">
+              <span class="approved-companies">{{ approvedCompanies }} approvate</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eventi -->
+        <div class="stat-item">
+          <mat-icon class="stat-icon events">event</mat-icon>
+          <div class="stat-content">
+            <div class="stat-value">{{ totalEvents }}</div>
+            <div class="stat-label">Eventi Totali</div>
+            <div class="stat-detail">
+              <span class="published-events">{{ publishedEvents }} pubblicati</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transazioni -->
+        <div class="stat-item">
+          <mat-icon class="stat-icon transactions">paid</mat-icon>
+          <div class="stat-content">
+            <div class="stat-value">{{ totalTransactions }}</div>
+            <div class="stat-label">Transazioni Totali</div>
+            <div class="stat-detail">
+              <span class="total-revenue">Ricavo: {{ totalRevenue | currency:'EUR':'symbol':'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="growth-rates">
+        <div class="growth-item">
+          <mat-icon>trending_up</mat-icon>
+          <span>Crescita Utenti: {{ userGrowthRate | percent:'1.1-1' }}</span>
+        </div>
+        <div class="growth-item">
+          <mat-icon>trending_up</mat-icon>
+          <span>Crescita Prodotti: {{ productGrowthRate | percent:'1.1-1' }}</span>
+        </div>
+        <div class="growth-item">
+          <mat-icon>trending_up</mat-icon>
+          <span>Crescita Eventi: {{ eventGrowthRate | percent:'1.1-1' }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

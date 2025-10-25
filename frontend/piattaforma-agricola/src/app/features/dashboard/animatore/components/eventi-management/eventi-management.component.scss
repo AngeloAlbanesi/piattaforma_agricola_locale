@@ -1,0 +1,86 @@
+.controls-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-field {
+  width: 300px;
+}
+
+.status-select {
+  width: 200px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.mat-table {
+  width: 100%;
+  min-width: 900px;
+}
+
+.mat-column-titolo {
+  flex: 0 0 250px;
+}
+
+.mat-column-stato {
+  flex: 0 0 150px;
+}
+
+.mat-column-dataInizio {
+  flex: 0 0 120px;
+}
+
+.mat-column-partecipanti {
+  flex: 0 0 120px;
+}
+
+.mat-column-costo {
+  flex: 0 0 100px;
+}
+
+.mat-column-actions {
+  flex: 0 0 120px;
+  text-align: right;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+}
+
+.no-data-row {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}
+
+/* Stili per gli stati */
+.status-published {
+  background-color: #e8f5e9; /* Light green */
+  color: #27ae60; /* Dark green */
+}
+
+.status-pending {
+  background-color: #fffde7; /* Light yellow */
+  color: #f39c12; /* Dark yellow */
+}
+
+.status-cancelled {
+  background-color: #fbe9e7; /* Light red */
+  color: #c0392b; /* Dark red */
+}
+
+.mat-chip-listbox {
+  height: auto;
+}
+
+.mat-chip {
+  font-weight: 500;
+}

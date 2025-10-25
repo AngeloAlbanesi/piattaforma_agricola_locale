@@ -1,0 +1,74 @@
+<mat-card class="personal-data-card" appearance="outlined">
+    <mat-card-header class="card-header">
+        <mat-card-title class="card-title">
+            <mat-icon class="title-icon">person</mat-icon>
+            Dati personali
+        </mat-card-title>
+        <mat-card-subtitle class="card-subtitle">
+            Informazioni del tuo profilo
+        </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="card-content">
+        <!-- Stato di caricamento -->
+        <div *ngIf="isLoading" class="loading-container">
+            <mat-progress-spinner mode="indeterminate" diameter="40" color="primary">
+            </mat-progress-spinner>
+            <span class="loading-text">Caricamento dati...</span>
+        </div>
+
+        <!-- Stato di errore -->
+        <div *ngIf="hasError && !isLoading" class="error-container">
+            <mat-icon class="error-icon">error_outline</mat-icon>
+            <span class="error-text">Impossibile caricare i dati personali</span>
+            <button mat-icon-button (click)="refreshProfile()" matTooltip="Riprova a caricare" class="refresh-button">
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </div>
+
+        <!-- Dati del profilo -->
+        <div *ngIf="!isLoading && !hasError && profile" class="profile-data">
+            <div class="data-grid">
+                <!-- Nome -->
+                <div class="data-item">
+                    <span class="data-label">Nome:</span>
+                    <span class="data-value">{{ hasValue(profile.nome) ? profile.nome : 'Non specificato' }}</span>
+                </div>
+
+                <!-- Cognome -->
+                <div class="data-item">
+                    <span class="data-label">Cognome:</span>
+                    <span class="data-value">{{ hasValue(profile.cognome) ? profile.cognome : 'Non specificato'
+                        }}</span>
+                </div>
+
+                <!-- Email -->
+                <div class="data-item">
+                    <span class="data-label">Email:</span>
+                    <span class="data-value">{{ profile.email }}</span>
+                </div>
+
+                <!-- Telefono -->
+                <div class="data-item">
+                    <span class="data-label">Numero di telefono:</span>
+                    <span class="data-value">{{ hasValue(profile.numeroTelefono) ? profile.numeroTelefono : 'Non
+                        specificato' }}</span>
+                </div>
+
+                <!-- Tipo Ruolo -->
+                <div class="data-item">
+                    <span class="data-label">Tipo Ruolo:</span>
+                    <span class="data-value role-badge">{{ getUserRole() }}</span>
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+
+    <mat-card-actions class="card-actions" align="end">
+        <button mat-raised-button color="primary" (click)="editProfile()" matTooltip="Modifica i dati del tuo profilo"
+            class="edit-profile-button">
+            <mat-icon>edit</mat-icon>
+            Modifica profilo
+        </button>
+    </mat-card-actions>
+</mat-card>

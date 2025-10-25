@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>{{ data.attivo ? 'Attiva' : 'Disattiva' }} Utente</h2>
+<div mat-dialog-content>
+    <p>Utente: <strong>{{ data.displayName }}</strong></p>
+    <p>Sei sicuro di voler {{ data.attivo ? 'attivare' : 'disattivare' }} questo utente?</p>
+
+    <!-- Mostra il select del tipo solo se NON è skipTipoSelection -->
+    <mat-form-field *ngIf="!data.skipTipoSelection" appearance="outline" class="full-width">
+        <mat-label>Tipo</mat-label>
+        <mat-select [formControl]="tipoCtrl">
+            <mat-option value="ACQUIRENTE">Acquirente</mat-option>
+            <mat-option value="VENDITORE">Venditore</mat-option>
+            <mat-option value="CURATORE">Curatore</mat-option>
+            <mat-option value="ANIMATORE">Animatore</mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-stroked-button (click)="cancel()">Annulla</button>
+    <button mat-flat-button color="primary" (click)="confirm()"
+        [disabled]="!data.skipTipoSelection && tipoCtrl.invalid">Conferma</button>
+</div>

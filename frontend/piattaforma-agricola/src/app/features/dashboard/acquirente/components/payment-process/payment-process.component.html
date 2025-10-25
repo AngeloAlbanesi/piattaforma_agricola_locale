@@ -1,0 +1,226 @@
+<div class="payment-process-container">
+    <mat-card class="payment-card">
+        <mat-card-header>
+            <mat-card-title>Processo di Pagamento</mat-card-title>
+            <mat-card-subtitle>Completa il tuo ordine in pochi semplici passaggi</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <!-- Stepper per guidare l'utente nel processo -->
+            <mat-stepper [linear]="true" #stepper>
+
+                <!-- Step 1: Riepilogo Carrello -->
+                <mat-step [stepControl]="cartForm" label="Riepilogo Ordine">
+                    <form [formGroup]="cartForm">
+                        <div class="step-content">
+                            <h3>Riepilogo del tuo ordine</h3>
+
+                            <div class="cart-summary" *ngIf="cart; else noCart">
+                                <mat-list>
+                                    <mat-list-item *ngFor="let item of cart.elementiCarrello">
+                                        <div matListItemTitle>{{ item.nomeAcquistabile }}</div>
+                                        <div matListItemLine>
+                                            Quantità: {{ item.quantita }} |
+                                            Prezzo: €{{ item.prezzoUnitario.toFixed(2) }} |
+                                            Totale: €{{ (item.prezzoUnitario * item.quantita).toFixed(2) }}
+                                        </div>
+                                    </mat-list-item>
+                                </mat-list>
+
+                                <div class="cart-total">
+                                    <h3>Totale: €{{ cart ? getCartTotal().toFixed(2) : '0.00' }}</h3>
+                                </div>
+                            </div>
+
+                            <ng-template #noCart>
+                                <div class="no-cart">
+                                    <p>Il tuo carrello è vuoto.</p>
+                                    <button mat-raised-button color="primary" routerLink="/">
+                                        Vai al Catalogo
+                                    </button>
+                                </div>
+                            </ng-template>
+                        </div>
+
+                        <div class="step-actions">
+                            <button mat-button matStepperNext [disabled]="!cart || cart.elementiCarrello.length === 0">
+                                Continua
+                            </button>
+                        </div>
+                    </form>
+                </mat-step>
+
+                <!-- Step 2: Metodo di Pagamento -->
+                <mat-step [stepControl]="paymentForm" label="Metodo di Pagamento">
+                    <form [formGroup]="paymentForm">
+                        <div class="step-content">
+                            <h3>Scegli il metodo di pagamento</h3>
+
+                            <mat-radio-group formControlName="metodoPagamento" class="payment-methods">
+                                <mat-radio-button [value]="MetodoPagamento.CARTA_CREDITO">
+                                    Carta di Credito
+                                </mat-radio-button>
+                                <mat-radio-button [value]="MetodoPagamento.PAYPAL">
+                                    PayPal
+                                </mat-radio-button>
+                            </mat-radio-group>
+
+                            <!-- Form per Carta di Credito -->
+                            <div class="payment-form"
+                                *ngIf="paymentForm.value.metodoPagamento === MetodoPagamento.CARTA_CREDITO">
+                                <form [formGroup]="cardForm">
+                                    <mat-form-field appearance="outline" class="full-width">
+                                        <mat-label>Numero Carta</mat-label>
+                                        <input matInput formControlName="numero" placeholder="1234 5678 9012 3456">
+                                        <mat-error *ngIf="cardForm.get('numero')?.hasError('required')">
+                                            Il numero della carta è obbligatorio
+                                        </mat-error>
+                                        <mat-error *ngIf="cardForm.get('numero')?.hasError('pattern')">
+                                            Inserisci un numero di carta valido
+                                        </mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="full-width">
+                                        <mat-label>Intestatario</mat-label>
+                                        <input matInput formControlName="intestatario" placeholder="Mario Rossi">
+                                        <mat-error *ngIf="cardForm.get('intestatario')?.hasError('required')">
+                                            L'intestatario è obbligatorio
+                                        </mat-error>
+                                    </mat-form-field>
+
+                                    <div class="form-row">
+                                        <mat-form-field appearance="outline" class="half-width">
+                                            <mat-label>Data Scadenza</mat-label>
+                                            <input matInput formControlName="dataScadenza" placeholder="MM/AA">
+                                            <mat-error *ngIf="cardForm.get('dataScadenza')?.hasError('required')">
+                                                La data di scadenza è obbligatoria
+                                            </mat-error>
+                                            <mat-error *ngIf="cardForm.get('dataScadenza')?.hasError('pattern')">
+                                                Formato non valido (MM/AA)
+                                            </mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" class="half-width">
+                                            <mat-label>CVV</mat-label>
+                                            <input matInput formControlName="cvv" placeholder="123">
+                                            <mat-error *ngIf="cardForm.get('cvv')?.hasError('required')">
+                                                Il CVV è obbligatorio
+                                            </mat-error>
+                                            <mat-error *ngIf="cardForm.get('cvv')?.hasError('pattern')">
+                                                CVV non valido
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Form per PayPal -->
+                            <div class="payment-form"
+                                *ngIf="paymentForm.value.metodoPagamento === MetodoPagamento.PAYPAL">
+                                <form [formGroup]="paypalForm">
+                                    <mat-form-field appearance="outline" class="full-width">
+                                        <mat-label>Email PayPal</mat-label>
+                                        <input matInput formControlName="email" type="email"
+                                            placeholder="mario.rossi@example.com">
+                                        <mat-error *ngIf="paypalForm.get('email')?.hasError('required')">
+                                            L'email è obbligatoria
+                                        </mat-error>
+                                        <mat-error *ngIf="paypalForm.get('email')?.hasError('email')">
+                                            Inserisci un'email valida
+                                        </mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="full-width">
+                                        <mat-label>Password PayPal</mat-label>
+                                        <input matInput formControlName="password" type="password">
+                                        <mat-error *ngIf="paypalForm.get('password')?.hasError('required')">
+                                            La password è obbligatoria
+                                        </mat-error>
+                                    </mat-form-field>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="step-actions">
+                            <button mat-button matStepperPrevious>Indietro</button>
+                            <button mat-button matStepperNext [disabled]="!isPaymentFormValid()">
+                                Continua
+                            </button>
+                        </div>
+                    </form>
+                </mat-step>
+
+                <!-- Step 3: Conferma e Pagamento -->
+                <mat-step label="Conferma">
+                    <div class="step-content">
+                        <h3>Riepilogo finale e conferma</h3>
+
+                        <div class="order-summary">
+                            <h4>Dettagli Ordine</h4>
+                            <div class="summary-item">
+                                <span>Totale Prodotti:</span>
+                                <span>€{{ cart ? getCartTotal().toFixed(2) : '0.00' }}</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Metodo di Pagamento:</span>
+                                <span>{{ getPaymentMethodLabel() }}</span>
+                            </div>
+                            <div class="summary-item total">
+                                <span>Totale:</span>
+                                <span>€{{ cart ? getCartTotal().toFixed(2) : '0.00' }}</span>
+                            </div>
+                        </div>
+
+                        <div class="payment-confirmation">
+                            <mat-checkbox [(ngModel)]="termsAccepted" name="termsAccepted">
+                                Accetto i termini e condizioni di vendita
+                            </mat-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button mat-button matStepperPrevious>Indietro</button>
+                        <button mat-raised-button color="primary" [disabled]="!termsAccepted || isProcessing"
+                            (click)="processPayment()">
+                            <span *ngIf="!isProcessing">Paga Ora</span>
+                            <span *ngIf="isProcessing">
+                                <mat-spinner diameter="20"></mat-spinner>
+                                Elaborazione...
+                            </span>
+                        </button>
+                    </div>
+                </mat-step>
+            </mat-stepper>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Dialog per ordini multipli -->
+    <div class="multi-order-dialog" *ngIf="showMultiOrderDialog">
+        <div class="dialog-content">
+            <h2>Ordini Creati</h2>
+            <p>Sono stati creati {{ createdOrders.length }} ordini dal tuo carrello:</p>
+
+            <mat-list>
+                <mat-list-item *ngFor="let order of createdOrders">
+                    <div matListItemTitle>Ordine #{{ order.idOrdine }}</div>
+                    <div matListItemLine>
+                        Importo: €{{ order.importoTotale.toFixed(2) }} |
+                        Stato: {{ order.statoCorrente }}
+                    </div>
+                </mat-list-item>
+            </mat-list>
+
+            <p>Totale da pagare: €{{ getTotalPaymentAmount().toFixed(2) }}</p>
+        </div>
+
+        <div class="dialog-actions">
+            <button mat-button (click)="cancelMultiOrderPayment()">Annulla</button>
+            <button mat-raised-button color="primary" [disabled]="isProcessing" (click)="confirmMultiOrderPayment()">
+                <span *ngIf="!isProcessing">Conferma Pagamento</span>
+                <span *ngIf="isProcessing">
+                    <mat-spinner diameter="20"></mat-spinner>
+                    Elaborazione...
+                </span>
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,250 @@
+<div class="eventi-page-container">
+    <!-- Header Section -->
+    <section class="page-header">
+        <div class="header-background"></div>
+        <div class="header-content">
+            <div class="header-text">
+                <h1 class="page-title">
+                    <mat-icon class="title-icon">agriculture</mat-icon>
+                    Eventi Agricoli
+                </h1>
+                <p class="page-subtitle">Scopri gli eventi, workshop e degustazioni organizzati dalle aziende agricole locali</p>
+            </div>
+            
+            <!-- Search Card -->
+            <div class="search-card">
+                <div class="search-section">
+                    <app-search-box placeholder="Cerca eventi per nome, luogo o categoria..." appearance="outline"
+                        (search)="onSearch($event)" class="search-input">
+                    </app-search-box>
+
+                    <button mat-raised-button (click)="toggleFilters()" class="filters-toggle" color="primary">
+                        <mat-icon>tune</mat-icon>
+                        Filtri
+                        <mat-chip *ngIf="getActiveFiltersCount() > 0" color="accent" class="filters-count">
+                            {{ getActiveFiltersCount() }}
+                        </mat-chip>
+                    </button>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <mat-icon class="stat-icon">event</mat-icon>
+                        <span class="stat-value">{{ totalCount }}+</span>
+                        <span class="stat-label">Eventi</span>
+                    </div>
+                    <div class="stat-item">
+                        <mat-icon class="stat-icon">location_on</mat-icon>
+                        <span class="stat-value">Tutta Italia</span>
+                        <span class="stat-label">Località</span>
+                    </div>
+                    <div class="stat-item">
+                        <mat-icon class="stat-icon">groups</mat-icon>
+                        <span class="stat-value">5000+</span>
+                        <span class="stat-label">Partecipanti</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Panel -->
+    <section class="filters-section" *ngIf="showFilters">
+        <div class="filters-content">
+            <div class="custom-filters">
+                <div class="filters-header">
+                    <mat-icon class="filters-icon">tune</mat-icon>
+                    <h3>Filtri Eventi</h3>
+                    <button mat-icon-button (click)="toggleFilters()" class="close-filters" aria-label="Chiudi filtri">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+
+                <!-- Date Range Filter -->
+                <div class="filter-group">
+                    <mat-label class="filter-label">
+                        <mat-icon>date_range</mat-icon>
+                        Periodo
+                    </mat-label>
+                    <mat-form-field appearance="outline" class="date-field">
+                        <mat-date-range-picker [formGroup]="dateRangeForm" (change)="onDataRangeChange()">
+                            <input matStartDate formControlName="dataInizio" placeholder="Data inizio">
+                            <input matEndDate formControlName="dataFine" placeholder="Data fine">
+                        </mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="filter-group">
+                    <mat-label class="filter-label">
+                        <mat-icon>location_on</mat-icon>
+                        Luogo
+                    </mat-label>
+                    <mat-form-field appearance="outline" class="location-field">
+                        <input matInput placeholder="Città o località" (input)="onLuogoChange($event.target.value)">
+                        <mat-icon matSuffix>search</mat-icon>
+                    </mat-form-field>
+                </div>
+
+                <!-- Toggle Filters -->
+                <div class="filter-group">
+                    <mat-label class="filter-label">
+                        <mat-icon>filter_list</mat-icon>
+                        Preferenze
+                    </mat-label>
+                    <div class="toggle-filters">
+                        <mat-chip-listbox aria-label="Eventi gratuiti">
+                            <mat-chip-option
+                                (click)="onGratuitoChange(!filters.gratuito)"
+                                [selected]="filters.gratuito"
+                                class="filter-chip">
+                                <mat-icon>card_giftcard</mat-icon>
+                                Solo eventi gratuiti
+                            </mat-chip-option>
+                        </mat-chip-listbox>
+                        
+                        <mat-chip-listbox aria-label="Disponibilità">
+                            <mat-chip-option
+                                (click)="onDisponibilitaChange(!filters.disponibilita)"
+                                [selected]="filters.disponibilita"
+                                class="filter-chip">
+                                <mat-icon>event_available</mat-icon>
+                                Solo con disponibilità
+                            </mat-chip-option>
+                        </mat-chip-listbox>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="filter-actions">
+                    <button mat-stroked-button (click)="resetAllFilters()" class="reset-btn">
+                        <mat-icon>refresh</mat-icon>
+                        Resetta filtri
+                    </button>
+                    <button mat-raised-button color="primary" (click)="toggleFilters()" class="apply-btn">
+                        <mat-icon>check</mat-icon>
+                        Applica filtri
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="loading">
+        <mat-progress-spinner mode="indeterminate" aria-label="Caricamento in corso"></mat-progress-spinner>
+        <p>Caricamento eventi...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !loading">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <h3>Oops! Qualcosa è andato storto</h3>
+        <p>{{ error }}</p>
+        <button mat-raised-button color="primary" (click)="retryLoad()">
+            Riprova
+        </button>
+    </div>
+
+    <!-- Results Section -->
+    <section class="results-section" *ngIf="!loading && !error">
+        <!-- Results Header -->
+        <div class="results-header">
+            <div class="results-info">
+                <h2 class="results-title">
+                    {{ totalCount }} {{ totalCount === 1 ? 'Evento' : 'Eventi' }} Trovati
+                </h2>
+                <p class="results-subtitle" *ngIf="filters.query">
+                    Ricerca per: <strong>"{{ filters.query }}"</strong>
+                </p>
+                <!-- Active filters chips -->
+                <div class="active-filters" *ngIf="getActiveFiltersCount() > 0">
+                    <mat-chip-set aria-label="Filtri attivi">
+                        <mat-chip *ngFor="let chip of getActiveFilterChips()" (removed)="clearFilter(chip.key)"
+                            removable>
+                            <span class="chip-label">{{ chip.label }}:</span> {{ chip.value }}
+                            <button matChipRemove aria-label="Rimuovi filtro {{ chip.label }}">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-chip>
+                        <button mat-button color="primary" class="clear-all" (click)="resetAllFilters()">Rimuovi
+                            tutti</button>
+                    </mat-chip-set>
+                </div>
+            </div>
+
+            <!-- Quick Filters -->
+            <div class="quick-filters">
+                <mat-form-field appearance="outline" class="quick-filter">
+                    <mat-label>Ordina per</mat-label>
+                    <mat-select (selectionChange)="onOrdinamentoChange($event.value)">
+                        <mat-option value="">Rilevanza</mat-option>
+                        <mat-option *ngFor="let option of ordinamentoOptions" [value]="option.value">
+                            {{ option.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- Events Grid -->
+        <div class="events-grid" *ngIf="eventi.length > 0">
+            <app-event-card *ngFor="let evento of eventi" [evento]="evento" [isAuthenticated]="isAuthenticated()"
+                [isRegistered]="isRegisteredToEvent(evento.idEvento || evento.id!)" [showRegistrationStatus]="true"
+                (registerClick)="onRegisterClick(evento)" (cancelRegistrationClick)="onCancelRegistration($event)"
+                (viewDetails)="onViewEventDetails($event)">
+            </app-event-card>
+        </div>
+
+        <!-- Skeleton while loading next page or first load -->
+        <div class="events-grid skeleton" *ngIf="loading">
+            <div class="event-skeleton" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12]">
+                <div class="sk-image"></div>
+                <div class="sk-content">
+                    <div class="sk-line w-70"></div>
+                    <div class="sk-line w-40"></div>
+                    <div class="sk-line w-90"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="eventi.length === 0 && !loading">
+            <mat-icon class="empty-icon">event</mat-icon>
+            <h3>Nessun evento trovato</h3>
+            <p *ngIf="getActiveFiltersCount() > 0">
+                Prova a modificare i filtri di ricerca o
+                <button mat-button color="primary" (click)="resetAllFilters()">rimuovi tutti i filtri</button>
+            </p>
+            <p *ngIf="getActiveFiltersCount() === 0">
+                Non ci sono eventi disponibili al momento. Riprova più tardi.
+            </p>
+
+            <div class="empty-actions">
+                <button mat-raised-button color="primary" (click)="resetAllFilters()"
+                    *ngIf="getActiveFiltersCount() > 0">
+                    Rimuovi Filtri
+                </button>
+                <button mat-stroked-button color="primary" routerLink="/">
+                    <mat-icon>home</mat-icon>
+                    Torna alla Home
+                </button>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container" *ngIf="totalCount > pageSize">
+            <mat-paginator [length]="totalCount" [pageSize]="pageSize" [pageSizeOptions]="[6, 12, 24, 48]"
+                (page)="onPageChange($event)" showFirstLastButtons>
+            </mat-paginator>
+        </div>
+    </section>
+
+    <!-- Quick Actions (Floating) -->
+    <div class="quick-actions" *ngIf="!loading && !error && eventi.length > 0">
+        <button mat-fab color="primary" class="scroll-to-top" (click)="scrollToTop()">
+            <mat-icon>keyboard_arrow_up</mat-icon>
+        </button>
+    </div>
+</div>

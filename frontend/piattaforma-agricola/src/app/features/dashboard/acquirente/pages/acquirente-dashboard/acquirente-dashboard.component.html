@@ -1,0 +1,152 @@
+<div class="acquirente-dashboard" role="main" aria-label="Dashboard Acquirente">
+  <!-- Header Dashboard -->
+  <header class="dashboard-header" role="banner">
+    <div class="header-content">
+      <div class="welcome-section">
+        <h1 class="welcome-title" aria-level="1">{{ welcomeMessage }}</h1>
+        <p class="welcome-subtitle">La tua dashboard personale per scoprire i migliori prodotti locali</p>
+      </div>
+      
+      <div class="header-actions" role="toolbar" aria-label="Azioni rapide">
+        <button mat-icon-button (click)="navigateToHome()" matTooltip="Home" aria-label="Vai alla home">
+          <mat-icon>home</mat-icon>
+        </button>
+        <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati" aria-label="Aggiorna dati">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button mat-icon-button (click)="logout()" matTooltip="Logout" aria-label="Esci dal sistema">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading" role="status" aria-live="polite">
+    <mat-spinner aria-label="Caricamento in corso"></mat-spinner>
+    <p>Caricamento dashboard...</p>
+  </div>
+
+  <!-- Main Content -->
+  <main class="dashboard-content" *ngIf="!isLoading" role="main" aria-label="Contenuto principale">
+    <!-- Statistiche Overview -->
+    <section class="stats-section" *ngIf="hasStats">
+      <app-stats-overview 
+        [totalOrders]="totalOrders"
+        [totalSpent]="totalSpent"
+        [productsPurchased]="productsPurchased"
+        [eventsAttended]="eventsAttended">
+      </app-stats-overview>
+    </section>
+
+    <!-- Dati Personali -->
+    <section class="personal-data-section">
+      <div class="cards-grid">
+        <app-personal-data-card></app-personal-data-card>
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions-section">
+      <app-quick-actions (action)="onQuickAction($event)"></app-quick-actions>
+    </section>
+
+    <!-- Tab Navigation -->
+    <section class="tabs-section">
+      <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event.index)">
+        <!-- Tab Catalogo Prodotti -->
+        <mat-tab label="Catalogo Prodotti">
+          <div class="tab-content">
+            <app-product-catalog></app-product-catalog>
+          </div>
+        </mat-tab>
+
+        <!-- Tab Carrello -->
+        <mat-tab label="Carrello">
+          <div class="tab-content">
+            <app-cart-summary></app-cart-summary>
+          </div>
+        </mat-tab>
+
+        <!-- Tab Ordini Recenti -->
+        <mat-tab label="Ordini Recenti">
+          <div class="tab-content">
+            <app-recent-orders></app-recent-orders>
+          </div>
+        </mat-tab>
+
+        <!-- Tab Eventi -->
+        <mat-tab label="Eventi">
+          <div class="tab-content">
+            <app-upcoming-events></app-upcoming-events>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </section>
+
+    <!-- Sezione Riepilogo -->
+    <section class="summary-section" *ngIf="hasStats">
+      <div class="summary-grid">
+        <!-- Card Ordini Recenti -->
+        <mat-card class="summary-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Ordini Recenti</mat-card-title>
+            <mat-card-subtitle>{{ recentOrdersCount }} ordini</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="card-action">
+              <button mat-raised-button color="primary" (click)="navigateToOrders()">
+                Vedi tutti gli ordini
+                <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Card Eventi Prossimi -->
+        <mat-card class="summary-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Eventi Prossimi</mat-card-title>
+            <mat-card-subtitle>{{ upcomingEventsCount }} eventi</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="card-action">
+              <button mat-raised-button color="accent" (click)="navigateToEvents()">
+                Scopri eventi
+                <mat-icon>event</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Card Prodotti Consigliati -->
+        <mat-card class="summary-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Prodotti Consigliati</mat-card-title>
+            <mat-card-subtitle>Basati sui tuoi interessi</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="card-action">
+              <button mat-raised-button color="warn" (click)="navigateToCatalog()">
+                Esplora catalogo
+                <mat-icon>shopping_basket</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer Dashboard -->
+  <footer class="dashboard-footer">
+    <div class="footer-content">
+      <p>&copy; 2024 Piattaforma Agricola Locale. Tutti i diritti riservati.</p>
+      <div class="footer-links">
+        <a mat-button color="primary" href="/help">Aiuto</a>
+        <a mat-button color="primary" href="/terms">Termini</a>
+        <a mat-button color="primary" href="/privacy">Privacy</a>
+      </div>
+    </div>
+  </footer>
+</div>

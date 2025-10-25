@@ -1,0 +1,28 @@
+<div class="cart-summary">
+    <mat-card appearance="outlined">
+        <mat-card-header>
+            <mat-card-title>Carrello</mat-card-title>
+            <mat-card-subtitle>Riepilogo rapido del carrello</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <div *ngIf="isLoading" class="loading-row">
+                <mat-spinner diameter="32"></mat-spinner>
+                <span>Caricamento carrello...</span>
+            </div>
+
+            <div *ngIf="!isLoading && !cart" class="placeholder-text">
+                <mat-icon>shopping_cart</mat-icon>
+                Il tuo carrello è vuoto o non accessibile al momento.
+            </div>
+
+            <div *ngIf="cart">
+                <p>Articoli: {{ cart.totalElementi }} — Totale: €{{ getCartTotal().toFixed(2) }}</p>
+                <div class="cart-items">
+                    <div *ngFor="let r of cart.elementiCarrello">
+                        <strong>{{ r.nomeAcquistabile }}</strong> x {{ r.quantita }} — €{{ (r.prezzoUnitario * r.quantita).toFixed(2) }}
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

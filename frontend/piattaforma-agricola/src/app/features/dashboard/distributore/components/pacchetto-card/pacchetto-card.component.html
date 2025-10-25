@@ -1,0 +1,75 @@
+<div class="pacchetto-card" *ngIf="pacchetto" role="group">
+    <!-- Overlay immagine con gradiente -->
+    <div class="card-image-container">
+        <div *ngIf="pacchetto.immagineUrl" class="image-wrapper">
+            <img [src]="pacchetto.immagineUrl" 
+                 [alt]="pacchetto.nome"
+                 class="package-image">
+        </div>
+        <div *ngIf="!pacchetto.immagineUrl" class="default-image-placeholder"></div>
+        <div class="image-overlay"></div>
+        
+        <!-- Contenuto sovrapposto sull'immagine -->
+        <div class="overlay-content">
+            <h3 class="package-title">{{ pacchetto.nome }}</h3>
+            <div class="package-price">{{ formatCurrency(pacchetto.prezzo) }}</div>
+        </div>
+    </div>
+
+    <!-- Contenuto principale -->
+    <div class="card-content">
+        <p class="package-description">{{ pacchetto.descrizione }}</p>
+        
+        <!-- Divider -->
+        <div class="content-divider"></div>
+        
+        <!-- Informazioni strutturate -->
+        <div class="package-specs">
+            <div class="spec-item">
+                <div class="spec-icon">
+                    <mat-icon>inventory_2</mat-icon>
+                </div>
+                <div class="spec-details">
+                    <span class="spec-label">Prodotti</span>
+                    <span class="spec-value">{{ getProdottiCount() }}</span>
+                </div>
+            </div>
+            
+            <div class="spec-item" *ngIf="pacchetto.distributore">
+                <div class="spec-icon">
+                    <mat-icon>business</mat-icon>
+                </div>
+                <div class="spec-details">
+                    <span class="spec-label">Distributore</span>
+                    <span class="spec-value">{{ pacchetto.distributore.nomeAzienda }}</span>
+                </div>
+            </div>
+            
+            <div class="spec-item">
+                <div class="spec-icon">
+                    <mat-icon>calendar_today</mat-icon>
+                </div>
+                <div class="spec-details">
+                    <span class="spec-label">Creato il</span>
+                    <span class="spec-value">{{ formatDate(pacchetto.dataCreazione) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Azioni -->
+    <div class="card-actions">
+        <button mat-stroked-button class="action-btn" (click)="onViewDetails()">
+            <mat-icon>visibility</mat-icon>
+            Dettagli
+        </button>
+        <button mat-stroked-button class="action-btn" (click)="onEdit()">
+            <mat-icon>edit</mat-icon>
+            Modifica
+        </button>
+        <button mat-stroked-button class="action-btn danger" (click)="onDelete()">
+            <mat-icon>delete</mat-icon>
+            Elimina
+        </button>
+    </div>
+</div>

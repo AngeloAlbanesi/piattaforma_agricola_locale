@@ -1,0 +1,348 @@
+.event-card {
+    height: 100%;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+}
+
+.event-image-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+
+    .event-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    &:hover .event-image {
+        transform: scale(1.05);
+    }
+
+    // Status Badge
+    .status-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: white;
+        backdrop-filter: blur(4px);
+
+        &.status-programmato {
+            background-color: rgba(33, 150, 243, 0.9);
+        }
+
+        &.status-in-corso {
+            background-color: rgba(255, 152, 0, 0.9);
+        }
+
+        &.status-completato {
+            background-color: rgba(76, 175, 80, 0.9);
+        }
+
+        &.status-annullato {
+            background-color: rgba(244, 67, 54, 0.9);
+        }
+
+        &.status-default {
+            background-color: rgba(158, 158, 158, 0.9);
+        }
+    }
+
+    // Registered Badge
+    .registered-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background-color: rgba(76, 175, 80, 0.95);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        backdrop-filter: blur(4px);
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+        }
+    }
+
+    // Ongoing Badge
+    .ongoing-badge {
+        position: absolute;
+        bottom: 12px;
+        left: 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background-color: rgba(255, 152, 0, 0.95);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        backdrop-filter: blur(4px);
+        animation: pulse 2s infinite;
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+        }
+    }
+}
+
+.event-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.event-header {
+    margin-bottom: 12px;
+
+    .event-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 8px 0;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .event-organizer {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        .organizer-icon {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+            color: #666;
+        }
+
+        .organizer-name {
+            font-size: 0.85rem;
+            color: #666;
+        }
+    }
+}
+
+.event-description {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+    margin: 0 0 12px 0;
+    flex-grow: 1;
+}
+
+.event-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .info-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            color: #666;
+        }
+
+        .info-text {
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        &.participants-info {
+            &.warning .info-text {
+                color: #ff9800;
+                font-weight: 600;
+            }
+
+            &.full .info-text {
+                color: #f44336;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+.event-actions {
+    padding: 8px 16px 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    button {
+        flex: 1;
+        min-width: 120px;
+
+        mat-icon {
+            margin-right: 4px;
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    .register-btn {
+        flex: 2;
+    }
+
+    .cancel-btn {
+        flex: 2;
+    }
+
+    .login-required-btn {
+        flex: 2;
+        opacity: 0.6;
+    }
+
+    .view-details-btn {
+        mat-icon {
+            margin-left: 4px;
+            margin-right: 0;
+        }
+    }
+
+    .full-event-badge {
+        flex: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 16px;
+        background-color: rgba(244, 67, 54, 0.1);
+        color: #f44336;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 500;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+    }
+}
+
+// Animation for pulse effect
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+// Animation for card appearance
+.event-card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .event-card {
+        .event-image-container {
+            height: 160px;
+        }
+
+        .event-content {
+            padding: 12px;
+        }
+
+        .event-title {
+            font-size: 1rem;
+        }
+
+        .event-actions {
+            flex-direction: column;
+
+            button {
+                width: 100%;
+                min-width: unset;
+            }
+
+            .full-event-badge {
+                width: 100%;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .event-card {
+        .event-image-container {
+            height: 140px;
+        }
+
+        .event-content {
+            padding: 10px;
+        }
+
+        .event-title {
+            font-size: 0.95rem;
+        }
+
+        .event-description {
+            font-size: 0.85rem;
+        }
+
+        .info-item {
+            .info-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+            }
+
+            .info-text {
+                font-size: 0.8rem;
+            }
+        }
+    }
+}

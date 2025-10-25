@@ -1,0 +1,85 @@
+<div class="distributore-stats-overview">
+  <div class="stats-grid">
+    <!-- Card Pacchetti Totali -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Pacchetti Totali</h3>
+          <p class="stat-value">{{ totalPackages }}</p>
+          <p class="stat-subtitle">Creati e gestiti</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card Pacchetti Attivi -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Pacchetti Attivi</h3>
+          <p class="stat-value">{{ activePackages }}</p>
+          <p class="stat-subtitle">Disponibili alla vendita</p>
+        </div>
+        <div class="stat-progress">
+          <mat-progress-bar 
+            mode="determinate" 
+            [value]="packageCompletionRate"
+            [ngStyle]="{ 'background': getProgressColor(packageCompletionRate) }">
+          </mat-progress-bar>
+          <span class="progress-text">{{ formatPercentage(packageCompletionRate) }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card Pacchetti Venduti -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>shopping_cart</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Pacchetti Venduti</h3>
+          <p class="stat-value">{{ soldPackages }}</p>
+          <p class="stat-subtitle">Totale vendite</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card Ricavi Totali -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>payments</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Ricavi Totali</h3>
+          <p class="stat-value">{{ formatCurrency(totalRevenue) }}</p>
+          <p class="stat-subtitle">Incasso totale</p>
+        </div>
+        <div class="stat-trend" *ngIf="revenueGrowth > 0">
+          <mat-icon>trending_up</mat-icon>
+          <span class="trend-text">+{{ formatPercentage(revenueGrowth) }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card Prezzo Medio -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>price_check</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Prezzo Medio</h3>
+          <p class="stat-value">{{ formatCurrency(averagePackagePrice) }}</p>
+          <p class="stat-subtitle">Per pacchetto</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

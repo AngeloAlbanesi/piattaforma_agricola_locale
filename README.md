@@ -2,18 +2,26 @@
 
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.java.net/projects/jdk/21/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Angular](https://img.shields.io/badge/Angular-20-red.svg)](https://angular.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-success.svg)]()
 
 ## Indice
 
 - [Descrizione del Progetto](#descrizione-del-progetto)
-- [Funzionalita Principali](#funzionalita-principali)
+- [Funzionalità Principali](#funzionalità-principali)
+- [Architettura del Sistema](#architettura-del-sistema)
 - [Tecnologie Utilizzate](#tecnologie-utilizzate)
 - [Attori del Sistema](#attori-del-sistema)
 - [Installazione e Avvio](#installazione-e-avvio)
+  - [Backend (Spring Boot)](#backend-spring-boot)
+  - [Frontend (Angular)](#frontend-angular)
 - [Come Usare il Progetto](#come-usare-il-progetto)
-- [Architettura e Design Pattern](#architettura-e-design-pattern)
+- [Struttura del Progetto](#struttura-del-progetto)
+- [API Documentation](#api-documentation)
+- [Design Pattern e Architettura](#design-pattern-e-architettura)
+- [Testing](#testing)
 - [Come Contribuire](#come-contribuire)
 - [Crediti](#crediti)
 - [Licenza](#licenza)
@@ -22,86 +30,149 @@
 
 ### Cosa fa il progetto?
 
-La **Piattaforma di Digitalizzazione e Valorizzazione della Filiera Agricola Locale** è un sistema web completo che permette la gestione, valorizzazione e tracciabilita dei prodotti agricoli di un territorio comunale. La piattaforma facilita la connessione tra tutti gli attori della filiera agricola locale, dalla produzione alla vendita finale.
+La **Piattaforma di Digitalizzazione e Valorizzazione della Filiera Agricola Locale** è un'applicazione web full-stack moderna che permette la gestione, valorizzazione e tracciabilità dei prodotti agricoli di un territorio comunale. La piattaforma facilita la connessione tra tutti gli attori della filiera agricola locale, dalla produzione alla vendita finale, attraverso un'interfaccia web intuitiva e responsive.
 
 ### Perché è stato creato?
 
 Il progetto nasce dall'esigenza di:
 
-- **Promuovere il territorio** e i suoi prodotti tipici
-- **Garantire la tracciabilita** completa dei prodotti agricoli
-- **Facilitare la commercializzazione** diretta tra produttori e consumatori
+- **Promuovere il territorio** e i suoi prodotti tipici attraverso un'interfaccia web moderna
+- **Garantire la tracciabilità** completa dei prodotti agricoli con visualizzazione interattiva
+- **Facilitare la commercializzazione** diretta tra produttori e consumatori tramite e-commerce integrato
 - **Valorizzare le tradizioni locali** e i metodi di produzione sostenibili
 - **Creare una rete** tra tutti gli attori della filiera agricola
+- **Offrire un'esperienza utente** ottimale su tutti i dispositivi (desktop, tablet, mobile)
 
 ### Quali tecnologie sono state usate e perché?
 
-- **Java 21**: Linguaggio principale per performance e robustezza
+#### Backend
+
+- **Java 21**: Linguaggio principale per performance, robustezza e funzionalità moderne
 - **Spring Boot 3.4.6**: Framework per sviluppo rapido e configurazione automatica
 - **Spring Security**: Gestione sicurezza e autenticazione con JWT
-- **Spring Data JPA**: Persistenza dati e gestione database
-- **H2 Database**: Database per sviluppo
-- **MapStruct**: Mapping automatico tra DTO e entita
-- **Lombok**: Riduzione boilerplate code
+- **Spring Data JPA**: Persistenza dati e gestione database relazionale
+- **H2 Database**: Database embedded per sviluppo e testing
+- **MapStruct**: Mapping automatico tra DTO e entità con code generation
+- **Lombok**: Riduzione boilerplate code e miglioramento leggibilità
 - **Maven**: Gestione dipendenze e build automation
 
-### Sfide affrontate e funzionalita future
+#### Frontend
+
+- **Angular 20**: Framework moderno per SPA (Single Page Application) con signals e performance ottimizzate
+- **TypeScript 5.7**: Type safety e developer experience migliorata
+- **Angular Material**: UI component library per design coerente e accessibile
+- **NgRx**: State management reattivo per gestione stato centralizzata
+- **RxJS**: Programmazione reattiva per gestione asincrona
+- **SCSS**: Preprocessore CSS per stili modulari e manutenibili
+- **Angular Router**: Navigazione client-side con lazy loading
+
+### Architettura del Sistema
+
+Il progetto adotta un'architettura **client-server** con:
+
+- **Backend REST API**: Espone endpoint RESTful per tutte le operazioni
+- **Frontend SPA**: Single Page Application per esperienza utente fluida
+- **Autenticazione JWT**: Token-based authentication per sicurezza stateless
+- **Comunicazione asincrona**: HTTP/REST con gestione reattiva delle risposte
+
+### Sfide affrontate e soluzioni
 
 **Sfide principali:**
 
-- Implementazione di un sistema di tracciabilita completo
-- Gestione di ruoli e permessi complessi
+- ✅ **Sistema di tracciabilità completo**: Implementato con relazioni JPA e visualizzazione su mappa interattiva
+- ✅ **Gestione ruoli e permessi complessi**: Risolto con Spring Security e guards Angular
+- ✅ **State management frontend**: Implementato pattern Redux con NgRx per gestione stato prevedibile
+- ✅ **Responsive design**: Utilizzato Angular Material con layout flessibili
+- ✅ **Performance**: Lazy loading moduli Angular e ottimizzazione bundle size
 
-## Funzionalita Principali
+## Funzionalità Principali
 
-### E-commerce e Marketplace
+### 🛒 E-commerce e Marketplace
 
+- Catalogo prodotti con ricerca avanzata e filtri
 - Vendita diretta di prodotti agricoli
-- Gestione carrello e ordini
-- Sistema di pagamento integrato
+- Gestione carrello con calcolo automatico totali
+- Sistema di ordini con tracking stato
 - Creazione di pacchetti prodotto personalizzati
+- Interfaccia responsive per shopping da qualsiasi dispositivo
 
-### Tracciabilita e Geolocalizzazione
+### 📍 Tracciabilità e Geolocalizzazione
 
 - Tracciamento completo della filiera produttiva
-- Visualizzazione su mappa interattiva
 - Collegamento tra fasi di produzione e trasformazione
-- Certificazioni di qualita e origine
+- Certificazioni di qualità e origine
 
-### Gestione Multi-Ruolo
+### 👥 Gestione Multi-Ruolo
 
-- Sistema di autenticazione e autorizzazione avanzato
-- Gestione permessi granulari per ogni tipologia di utente
+- Sistema di autenticazione JWT con refresh token
+- Autenticazione e autorizzazione avanzata
+- Dashboard personalizzate per ogni tipologia di utente
+- Gestione permessi granulari (RBAC - Role-Based Access Control)
 - Workflow di approvazione contenuti
+- Interfaccia amministrazione completa
 
-### Processi di Trasformazione
+### 🏭 Processi di Trasformazione
 
 - Documentazione completa dei processi produttivi
 - Collegamento tra materie prime e prodotti finiti
-- Gestione fasi di lavorazione
+- Gestione fasi di lavorazione con timeline
+- Caricamento documenti e certificazioni
+- Visualizzazione genealogia prodotti
 
-### Condivisione Social
+### 📅 Gestione Eventi
 
-- Promozione eventi e prodotti
-
-### Gestione Eventi
-
+- Calendario eventi con visualizzazione mensile/settimanale
 - Organizzazione fiere e mercati locali
-- Prenotazione ad eventi
+- Sistema di prenotazione ad eventi
+
+### 🎨 User Experience
+
+- Design moderno e intuitivo con Angular Material
+- Accessibilità WCAG compliant
+- Performance ottimizzate con lazy loading
+- Notifiche in-app e feedback visivi
 
 ## Tecnologie Utilizzate
 
+### Backend Stack
+
 | Categoria | Tecnologia | Versione | Scopo |
 |-----------|------------|----------|-------|
-| **Backend** | Java | 21 | Linguaggio principale |
-| **Framework** | Spring Boot | 3.4.6 | Framework applicativo |
-| **Sicurezza** | Spring Security | - | Autenticazione e autorizzazione |
-| **Database** | Spring Data JPA | - | Persistenza dati |
-| **Database** | H2 Database | - | Database in-memory |
-| **Mapping** | MapStruct | 1.6.3 | Mapping DTO-Entity |
-| **Utility** | Lombok | - | Riduzione boilerplate |
-| **Auth** | JWT | 0.12.6 | Token-based authentication |
-| **Build** | Maven | - | Gestione dipendenze |
+| **Linguaggio** | Java | 21 | Linguaggio principale con features moderne |
+| **Framework** | Spring Boot | 3.4.6 | Framework applicativo enterprise |
+| **Sicurezza** | Spring Security | 6.x | Autenticazione e autorizzazione |
+| **Persistenza** | Spring Data JPA | 3.x | ORM e gestione database |
+| **Database** | H2 Database | 2.x | Database embedded per dev/test |
+| **Mapping** | MapStruct | 1.6.3 | Mapping DTO ↔ Entity |
+| **Boilerplate** | Lombok | 1.18.x | Riduzione codice ripetitivo |
+| **JWT** | JJWT | 0.12.6 | Token-based authentication |
+| **Validation** | Jakarta Validation | 3.x | Validazione dati |
+| **Build Tool** | Maven | 3.9+ | Gestione dipendenze e build |
+
+### Frontend Stack
+
+| Categoria | Tecnologia | Versione | Scopo |
+|-----------|------------|----------|-------|
+| **Framework** | Angular | 20.3 | Framework SPA moderno |
+| **Linguaggio** | TypeScript | 5.7+ | Type-safe JavaScript |
+| **UI Library** | Angular Material | 20.2 | Component library Material Design |
+| **State Management** | NgRx | 20.0 | Redux pattern per Angular |
+| **Router** | Angular Router | 20.3 | Navigazione client-side |
+| **HTTP Client** | Angular HttpClient | 20.3 | Comunicazione con backend |
+| **Reactive** | RxJS | 7.8 | Programmazione reattiva |
+| **Forms** | Angular Forms | 20.3 | Gestione form reattivi |
+| **Styling** | SCSS | - | Preprocessore CSS |
+| **Build Tool** | Angular CLI | 20.3 | Build e development server |
+| **Internazionalization** | ngx-translate | 17.0 | Supporto multi-lingua |
+
+### Tools & DevOps
+
+| Categoria | Tecnologia | Scopo |
+|-----------|------------|-------|
+| **Version Control** | Git | Controllo versione |
+| **API Testing** | Postman / Swagger UI | Test e documentazione API |
+| **Proxy** | Angular Proxy | Proxy dev per evitare CORS |
+| **Package Manager** | npm | Gestione dipendenze frontend |
 
 ## Attori del Sistema
 
@@ -127,769 +198,853 @@ Il progetto nasce dall'esigenza di:
 
 ### Prerequisiti
 
-- **Java 21** o superiore
-- **Maven 3.6+**
+#### Per il Backend
+
+- **Java 21** o superiore ([Download](https://adoptium.net/))
+- **Maven 3.9+** (incluso con wrapper `./mvnw`)
 - **Git**
 
-### Installazione
+#### Per il Frontend
 
-1. **Clona il repository**
+- **Node.js 18+** ([Download](https://nodejs.org/))
+- **npm 10+** (incluso con Node.js)
+- **Angular CLI 20+** (installato automaticamente)
+
+### Quick Start 🚀
+
+Il modo più rapido per avviare l'applicazione completa:
 
 ```bash
-git clone https://github.com/your-username/piattaforma-agricola-locale.git
-cd piattaforma-agricola-locale
+# 1. Clona il repository
+git clone https://github.com/AngeloAlbanesi/piattaforma_agricola_locale.git
+cd piattaforma_agricola_locale
+
+# 2. Avvia il backend (terminale 1)
+./mvnw spring-boot:run
+
+# 3. Avvia il frontend (terminale 2)
+cd frontend/piattaforma-agricola
+npm install
+npm start
 ```
 
-2. **Installa le dipendenze**
+Poi apri il browser su: **<http://localhost:4200>**
+
+---
+
+### Backend (Spring Boot)
+
+#### Installazione Backend
+
+1. **Naviga nella directory principale del progetto**
+
+```bash
+cd piattaforma_agricola_locale
+```
+
+2. **Installa le dipendenze Maven**
 
 ```bash
 ./mvnw clean install
 ```
 
-3. **Configura il database** (opzionale)
+3. **Configura il database (opzionale)**
 
-```bash
-# Il progetto usa H2 in-memory di default
-# Per configurazione personalizzata, modifica src/main/resources/application.properties
+Il progetto usa H2 in-memory di default. Per personalizzare, modifica:
+`src/main/resources/application.properties`
+
+```properties
+# Configurazione H2 Database
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+# JPA/Hibernate
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=create-drop
+
+# Server
+server.port=8080
+
+# JWT Configuration
+jwt.secret=your-secret-key-here
+jwt.expiration=86400000
 ```
 
-4. **Avvia l'applicazione**
+#### Avvio Backend
+
+**Modalità Development:**
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-5. **Accedi all'applicazione**
+**Modalità Production:**
 
+```bash
+./mvnw clean package
+java -jar target/piattaforma_agricola_locale-0.0.1-SNAPSHOT.jar
 ```
-http://localhost:8080
+
+**Con profilo personalizzato:**
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
 ```
 
-### Configurazione Rapida
+#### Verifica Backend
 
-```properties
-# application.properties
-server.port=8080
-spring.datasource.url=jdbc:h2:mem:testdb
+- **API Base URL**: <http://localhost:8080>
+- **H2 Console**: <http://localhost:8080/h2-console>
+- **Swagger UI**: <http://localhost:8080/swagger-ui.html>
+- **Health Check**: <http://localhost:8080/actuator/health>
+
+---
+
+### Frontend (Angular)
+
+#### Installazione Frontend
+
+1. **Naviga nella directory frontend**
+
+```bash
+cd frontend/piattaforma-agricola
+```
+
+2. **Installa le dipendenze npm**
+
+```bash
+npm install
+```
+
+3. **Configura il proxy (già configurato)**
+
+Il file `proxy.conf.json` è già configurato per puntare al backend:
+
+```json
+{
+  "/api": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "changeOrigin": true
+  }
+}
+```
+
+#### Avvio Frontend
+
+**Modalità Development (con proxy):**
+
+```bash
+npm start
+# oppure
+ng serve --proxy-config proxy.conf.json
+```
+
+**Modalità Production:**
+
+```bash
+npm run start:prod
+```
+
+**Build per Production:**
+
+```bash
+npm run build
+# Output in: dist/piattaforma-agricola/browser/
+```
+
+#### Verifica Frontend
+
+- **Applicazione**: <http://localhost:4200>
+- **Dev Server**: in ascolto sulla porta 4200
+- **Auto-reload**: abilitato su modifica file
+
+---
+
+### Configurazione Ambiente di Sviluppo
+
+#### Environment Files (Frontend)
+
+**Development** (`src/environments/environment.ts`):
+
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: '/api', // Usa proxy
+  apiBaseUrl: 'http://localhost:8080'
+};
+```
+
+**Production** (`src/environments/environment.prod.ts`):
+
+```typescript
+export const environment = {
+  production: true,
+  apiUrl: 'https://your-production-api.com/api',
+  apiBaseUrl: 'https://your-production-api.com'
+};
+```
+
+#### Scripts NPM Disponibili
+
+```bash
+npm start              # Dev server con proxy
+npm run build          # Build production
+npm run build:dev      # Build development
+npm run watch          # Build in watch mode
+npm test               # Esegui test
+npm run lint           # Lint del codice
+```
+
+---
+
+### Troubleshooting
+
+#### Backend
+
+**Problema**: Porta 8080 già in uso
+
+```bash
+# Cambia porta in application.properties
+server.port=8081
+```
+
+**Problema**: Database H2 non accessibile
+
+```bash
+# Verifica in application.properties
 spring.h2.console.enabled=true
-spring.jpa.show-sql=true
+```
+
+#### Frontend
+
+**Problema**: Errori CORS
+
+```bash
+# Verifica che il proxy sia configurato correttamente
+# e che il backend sia in esecuzione
+```
+
+**Problema**: Moduli Node mancanti
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+**Problema**: Errori di compilazione TypeScript
+
+```bash
+# Cancella cache e ricompila
+rm -rf .angular
+npm start
 ```
 
 ## Come Usare il Progetto
 
-### Strumenti per Testare le API
+### 🌐 Accesso all'Applicazione Web
 
-Per testare le API REST del progetto, puoi utilizzare:
+Una volta avviati sia backend che frontend:
 
-1. **Swagger UI** (Raccomandato)
-   - Accedi a `http://localhost:8080/swagger-ui.html`
-   - Interfaccia interattiva per testare tutte le API
-   - Documentazione automatica degli endpoint
+1. **Apri il browser** su: `http://localhost:4200`
+2. **Homepage pubblica**: accesso a catalogo prodotti e informazioni territorio
+3. **Registrazione**: crea un nuovo account selezionando il ruolo appropriato
+4. **Login**: accedi con le credenziali create
+5. **Dashboard**: interfaccia personalizzata in base al ruolo utente
 
-2. **Postman**
-   - Importa la collection delle API
-   - Testa gli endpoint con richieste personalizzate
-   - Gestione dell'autenticazione JWT
+### 👤 Ruoli e Funzionalità
 
-### Registrazione e Autenticazione
+#### Acquirente (Cliente)
 
-#### Registrazione Utente
+- Browse del catalogo prodotti con filtri avanzati
+- Aggiungi prodotti al carrello
+- Effettua ordini e traccia lo stato
+- Visualizza storico acquisti
+- Prenotazione eventi e fiere
+
+#### Produttore
+
+- Dashboard con statistiche vendite
+- Gestione prodotti (CRUD)
+- Caricamento certificazioni e documenti
+- Gestione inventario
+- Creazione processi produttivi
+- Visualizzazione ordini ricevuti
+
+#### Trasformatore
+
+- Gestione prodotti trasformati
+- Collegamento materie prime → prodotto finito
+- Documentazione processi di trasformazione
+- Gestione filiera produttiva
+
+#### Distributore/Rivenditore
+
+- Vendita prodotti locali
+- Creazione pacchetti promozionali
+- Gestione inventario multi-produttore
+- Dashboard ordini
+
+#### Animatore (Organizzatore Eventi)
+
+- Creazione e gestione eventi
+- Calendario manifestazioni
+- Gestione prenotazioni
+- Promozione territorio
+
+#### Curatore (Moderatore Contenuti)
+
+- Revisione contenuti inseriti
+- Approvazione/rifiuto prodotti
+- Controllo qualità informazioni
+- Moderazione recensioni
+
+#### Gestore Piattaforma (Admin)
+
+- Gestione utenti e ruoli
+- Configurazioni di sistema
+- Monitoring e analytics
+- Gestione permessi avanzati
+
+---
+
+### 🔧 Testare le API Backend
+
+Per testare le API REST del progetto:
+
+#### 1. Swagger UI (Raccomandato) 📋
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+- ✅ Interfaccia interattiva per testare tutte le API
+- ✅ Documentazione automatica degli endpoint
+- ✅ Esempi di request/response
+- ✅ Test immediato senza tools esterni
+
+#### 2. Postman / Insomnia 🚀
+
+Importa le collection delle API dalla cartella `/Api`:
+
+- `api pubbliche.json` - Endpoint pubblici (catalogo, info)
+- `api produttore.json` - Endpoint specifici produttore
+- `api acquirente.json` - Endpoint specifici acquirente
+- `api trasformatore.json` - Endpoint trasformatore
+- ... (altri ruoli)
+
+---
+
+### 🔐 Autenticazione e Sicurezza
+
+#### Registrazione Nuovo Utente
+
+**Via Frontend:**
+
+1. Clicca su "Registrati" nella homepage
+2. Compila il form di registrazione
+3. Seleziona il ruolo desiderato
+4. Conferma email (se abilitato)
+
+**Via API (cURL):**
 
 ```bash
-POST http://localhost:8080/api/auth/register
-Content-Type: application/json
-
-{
-  "username": "mario.rossi",
-  "email": "mario.rossi@email.com",
-  "password": "password123",
-  "nome": "Mario",
-  "cognome": "Rossi",
-  "ruolo": "PRODUTTORE",
-  "telefono": "+39 123 456 7890",
-  "indirizzo": "Via Roma 1, 12345 Citta"
-}
+curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "mario.rossi",
+    "email": "mario.rossi@example.com",
+    "password": "SecurePass123!",
+    "nome": "Mario",
+    "cognome": "Rossi",
+    "ruolo": "PRODUTTORE",
+    "telefono": "+39 123 456 7890",
+    "indirizzo": "Via Roma 1, 12345 Città"
+  }'
 ```
 
 #### Login
 
-```bash
-POST http://localhost:8080/api/auth/login
-Content-Type: application/json
+**Via Frontend:**
 
+1. Clicca su "Accedi"
+2. Inserisci username/email e password
+3. Redirect automatico alla dashboard
+
+**Via API:**
+
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "mario.rossi",
+    "password": "SecurePass123!"
+  }'
+```
+
+**Risposta:**
+
+```json
 {
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "type": "Bearer",
+  "refreshToken": "refresh-token-here",
   "username": "mario.rossi",
-  "password": "password123"
+  "email": "mario.rossi@example.com",
+  "roles": ["ROLE_PRODUTTORE"]
 }
 ```
 
-### Utilizzo del Token JWT
+#### Utilizzo Token JWT
 
-Per le API protette, includi il token nell'header:
+Per chiamate API protette, includi il token nell'header:
 
 ```bash
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-### Esempi di API per Produttore
+Il frontend gestisce automaticamente l'autenticazione tramite interceptor HTTP.
 
-#### Aggiungere un Prodotto
+---
 
-```bash
-POST http://localhost:8080/api/prodotti
-Authorization: Bearer YOUR_JWT_TOKEN
-Content-Type: application/json
+### 📝 Esempi di Utilizzo API
 
-{
-  "nome": "Pomodori Bio",
-  "descrizione": "Pomodori biologici coltivati localmente",
-  "prezzo": 3.50,
-  "quantitaDisponibile": 100,
-  "categoria": "VERDURA",
-  "metodoColtivazione": {
-    "tipo": "BIOLOGICO",
-    "descrizione": "Coltivazione senza pesticidi"
-  },
-  "certificazioni": ["BIO", "KM0"]
-}
-```
-
-#### Creare un Processo di Trasformazione
+#### Aggiungere un Prodotto (Produttore)
 
 ```bash
-POST http://localhost:8080/api/processi
-Authorization: Bearer YOUR_JWT_TOKEN
-Content-Type: application/json
-
-{
-  "nome": "Produzione Passata di Pomodoro",
-  "descrizione": "Trasformazione pomodori freschi in passata",
-  "fasi": [
-    {
-      "nome": "Lavaggio",
-      "descrizione": "Lavaggio accurato dei pomodori",
-      "ordine": 1
+curl -X POST http://localhost:8080/api/prodotti \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome": "Pomodori Bio del Vesuvio",
+    "descrizione": "Pomodori biologici certificati, coltivati alle pendici del Vesuvio",
+    "prezzo": 3.50,
+    "quantitaDisponibile": 100,
+    "unitaMisura": "KG",
+    "categoria": "VERDURA",
+    "sottocategoria": "ORTAGGI",
+    "metodoColtivazione": {
+      "tipo": "BIOLOGICO",
+      "descrizione": "Coltivazione senza pesticidi chimici"
     },
-    {
-      "nome": "Cottura",
-      "descrizione": "Cottura a bassa temperatura",
-      "ordine": 2
+    "certificazioni": ["BIO", "KM0", "DOP"],
+    "coordinate": {
+      "latitudine": 40.8218,
+      "longitudine": 14.4264
     }
-  ]
-}
+  }'
 ```
 
-### Console H2 (Sviluppo)
+#### Ricerca Prodotti (Pubblico)
 
-Accedi al database H2 per debugging:
-
-```
-# Database configuration (H2 in-memory for development)
-spring.datasource.url=jdbc:h2:file:./data/piattaforma_agricola
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
+```bash
+curl -X GET "http://localhost:8080/api/prodotti/ricerca?categoria=VERDURA&prezzoMax=5.00&certificazione=BIO"
 ```
 
-## Architettura e Design Pattern
+#### Creare un Ordine (Acquirente)
 
-### Architettura a Livelli
-
-```
-┌─────────────────┐
-│   Presentation  │ ←  REST Controllers
-├─────────────────┤
-│    Service      │ ← Business Logic, Transaction Management
-├─────────────────┤
-│   Repository    │ ← Data Access Layer, JPA Repositories
-├─────────────────┤
-│     Model       │ ← Domain Entities, DTOs
-└─────────────────┘
-```
-
-## Design Pattern Implementati
-
-Questo progetto implementa numerosi design pattern enterprise per garantire un'architettura robusta, scalabile e manutenibile. Ogni pattern è stato scelto per risolvere problemi specifici dell'architettura e migliorare la qualità del codice.
-
-### 1. Factory Method Pattern ⭐⭐⭐
-
-**Implementazione**: Gestione creazione utenti con validazione e type safety
-
-**Ubicazione**: `src/main/java/it/unicam/cs/ids/piattaforma_agricola_locale/service/factory/`
-
-**Problema risolto**: La creazione di utenti di diversi tipi (Produttore, Trasformatore, Distributore, etc.) richiede validazioni specifiche, configurazioni diverse e gestione di dati aziendali opzionali. Un approccio diretto porterebbe a duplicazione di codice e logica di validazione sparsa.
-
-**Struttura Implementata**:
-
-```java
-// Factory Interface - Definisce metodi type-safe
-public interface UtenteFactory {
-    Acquirente creaAcquirente(String nome, String cognome, String email, 
-                              String passwordHash, String numeroTelefono);
-    
-    Produttore creaProduttore(String nome, String cognome, String email, 
-                              String passwordHash, String numeroTelefono, 
-                              DatiAzienda datiAzienda);
-    
-    // Metodo generico per creazione runtime
-    Utente creaUtente(TipoRuolo tipoRuolo, String nome, String cognome, 
-                      String email, String passwordHash, String numeroTelefono, 
-                      DatiAzienda datiAzienda);
-}
-
-// Abstract Factory - Validazioni comuni
-public abstract class AbstractUtenteFactory implements UtenteFactory {
-    protected void validateUserData(String nome, String cognome, String email, String passwordHash) {
-        if (nome == null || nome.trim().isEmpty()) {
-            throw new IllegalArgumentException("Il nome non può essere vuoto");
-        }
-        if (!isValidEmail(email)) {
-            throw new IllegalArgumentException("Formato email non valido");
-        }
-    }
-    
-    protected boolean requiresDatiAzienda(TipoRuolo tipoRuolo) {
-        return tipoRuolo == TipoRuolo.PRODUTTORE || 
-               tipoRuolo == TipoRuolo.TRASFORMATORE || 
-               tipoRuolo == TipoRuolo.DISTRIBUTORE_DI_TIPICITA;
-    }
-}
+```bash
+curl -X POST http://localhost:8080/api/ordini \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "articoli": [
+      {
+        "prodottoId": 1,
+        "quantita": 5
+      },
+      {
+        "prodottoId": 3,
+        "quantita": 2
+      }
+    ],
+    "indirizzoConsegna": "Via Roma 10, 12345 Città",
+    "note": "Consegna preferibilmente al mattino"
+  }'
 ```
 
-**Concrete Factory con Spring Integration**:
+#### Creare un Evento (Animatore)
 
-```java
-@Component
-@Primary
-public class SpringReadyUtenteFactory extends AbstractUtenteFactory {
-    private final IUtenteBaseRepository utenteRepository;
-    private final PasswordEncoder passwordEncoder;
-    
-    @Override
-    public Utente creaUtente(TipoRuolo tipoRuolo, String nome, String cognome, 
-                             String email, String password, String numeroTelefono, 
-                             DatiAzienda datiAzienda) {
-        validateUserData(nome, cognome, email, password);
-        
-        // Encoding automatico della password
-        String passwordHash = passwordEncoder.encode(password);
-        
-        // Creazione dinamica basata sul tipo
-        switch (tipoRuolo) {
-            case PRODUTTORE:
-                validateDatiAzienda(datiAzienda);
-                return new Produttore(nome, cognome, email, passwordHash, 
-                                      numeroTelefono, datiAzienda, tipoRuolo);
-            case ACQUIRENTE:
-                return new Acquirente(nome, cognome, email, passwordHash, 
-                                      numeroTelefono, tipoRuolo);
-            // Altri casi...
-        }
+```bash
+curl -X POST http://localhost:8080/api/eventi \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "titolo": "Fiera del Biologico 2024",
+    "descrizione": "Grande fiera dedicata ai prodotti biologici locali",
+    "dataInizio": "2024-05-15T09:00:00",
+    "dataFine": "2024-05-15T18:00:00",
+    "luogo": "Piazza del Comune",
+    "maxPartecipanti": 500,
+    "tipoEvento": "FIERA",
+    "coordinate": {
+      "latitudine": 40.8218,
+      "longitudine": 14.4264
     }
-}
+  }'
 ```
 
-**Rationale**:
+---
 
-- **Type Safety**: Metodi dedicati prevengono errori a compile-time
-- **Validazione Centralizzata**: Logica comune in AbstractUtenteFactory
-- **Estensibilità**: Facile aggiunta di nuovi tipi utente
-- **Integrazione Spring**: Dependency injection ready
+### 🗄️ Console H2 Database (Development)
 
-### 2. Facade Pattern ⭐⭐⭐
+Per ispezionare il database durante lo sviluppo:
 
-**Implementazione**: Semplificazione di interfacce complesse per subsistemi
+**URL:** `http://localhost:8080/h2-console`
 
-**Problema risolto**: I client devono interagire con multiple classi repository e service per operazioni complesse. Senza facade, il codice client diventa accoppiato a implementazioni interne.
+**Credenziali:**
 
-#### 2.1 AcquistabileService Facade
-
-**Ubicazione**: `src/main/java/it/unicam/cs/ids/piattaforma_agricola_locale/service/impl/AcquistabileService.java`
-
-```java
-@Service
-public class AcquistabileService implements IAcquistabileService {
-    
-    // Nasconde la complessità di 3 repository diversi
-    private final IProdottoRepository prodottoRepository;
-    private final IPacchettoRepository pacchettoRepository;
-    private final IEventoRepository eventoRepository;
-    
-    // Interfaccia unificata per tutti i tipi acquistabili
-    @Override
-    public Acquistabile findByTipoAndId(TipoAcquistabile tipo, Long id) {
-        switch (tipo) {
-            case PRODOTTO:
-                return prodottoRepository.findById(id).orElse(null);
-            case PACCHETTO:
-                return pacchettoRepository.findById(id).orElse(null);
-            case EVENTO:
-                return eventoRepository.findById(id).orElse(null);
-            default:
-                throw new IllegalArgumentException("Tipo acquistabile non supportato: " + tipo);
-        }
-    }
-}
+```properties
+JDBC URL: jdbc:h2:mem:testdb
+Username: sa
+Password: (lascia vuoto)
 ```
 
-#### 2.2 OrdineService Facade
+**Query utili:**
 
-```java
-@Service
-public class OrdineService implements IOrdineService, IOrdineObservable {
-    
-    // Coordina multiple dependencies
-    private final IOrdineRepository ordineRepository;
-    private final IRigaOrdineRepository rigaOrdineRepository;
-    private final CarrelloService carrelloService;
-    private final List<IVenditoreObserver> observers;
-    
-    // Facade per operazione complessa di creazione ordini
-    @Override
-    public List<Ordine> creaOrdiniDaCarrello(Acquirente acquirente) {
-        // 1. Recupera carrello
-        Optional<Carrello> carrelloOpt = carrelloService.getCarrelloAcquirente(acquirente);
-        
-        // 2. Raggruppa per venditore
-        Map<Venditore, List<ElementoCarrello>> elementiPerVenditore = raggruppaPer Venditore(carrello);
-        
-        // 3. Crea ordini separati
-        List<Ordine> ordiniCreati = new ArrayList<>();
-        for (Map.Entry<Venditore, List<ElementoCarrello>> entry : elementiPerVenditore.entrySet()) {
-            Ordine ordine = new Ordine(dataOrdine, acquirente, entry.getKey());
-            ordineRepository.save(ordine);
-            ordiniCreati.add(ordine);
-        }
-        
-        // 4. Pulisce carrello
-        carrelloService.svuotaCarrello(acquirente);
-        
-        return ordiniCreati;
-    }
-}
+```sql
+-- Visualizza tutti gli utenti
+SELECT * FROM UTENTE;
+
+-- Conta prodotti per categoria
+SELECT categoria, COUNT(*) FROM PRODOTTO GROUP BY categoria;
+
+-- Ordini recenti
+SELECT * FROM ORDINE ORDER BY data_creazione DESC LIMIT 10;
+
+-- Prodotti con certificazione BIO
+SELECT * FROM PRODOTTO WHERE certificazioni LIKE '%BIO%';
 ```
 
-**Rationale**:
+---
 
-- **Semplificazione**: Client usano interfaccia semplice invece di multiple classi
-- **Disaccoppiamento**: Nasconde implementazioni interne
-- **Coordinamento**: Gestisce interazioni tra subsistemi
+### 🎨 Personalizzazione Frontend
 
-### 3. Strategy Pattern ⭐⭐⭐
+#### Cambiare tema colori
 
-**Implementazione**: Sistema di pagamento modulare e estensibile
+Modifica `src/styles/_variables.scss`:
 
-**Ubicazione**: `src/main/java/it/unicam/cs/ids/piattaforma_agricola_locale/service/pagamento/`
-
-**Problema risolto**: Il sistema deve supportare diversi metodi di pagamento senza modificare il codice esistente quando si aggiungono nuovi metodi.
-
-**Struttura**:
-
-```java
-// Strategy Interface
-public interface IMetodoPagamentoStrategy {
-    boolean elaboraPagamento(Ordine ordine) throws PagamentoException;
-    boolean elaboraPagamento(Ordine ordine, PagamentoRequestDTO datiPagamento) throws PagamentoException;
-}
-
-// Concrete Strategy - Carta di Credito
-public class PagamentoCartaCreditoStrategy implements IMetodoPagamentoStrategy {
-    
-    @Override
-    public boolean elaboraPagamento(Ordine ordine, PagamentoRequestDTO datiPagamento) {
-        DatiCartaCreditoDTO datiCarta = datiPagamento.getDatiCartaCredito();
-        
-        // Validazione specifica per carta di credito
-        if (!validaDatiCarta(datiCarta)) {
-            return false;
-        }
-        
-        // Simulazione comunicazione con gateway
-        return simulaAutorizzazionePagamento(datiCarta, ordine.getImportoTotale());
-    }
-    
-    private boolean validaDatiCarta(DatiCartaCreditoDTO datiCarta) {
-        // Validazione numero carta (13-19 cifre)
-        if (!datiCarta.getNumeroCartaCredito().matches("^[0-9]{13,19}$")) {
-            return false;
-        }
-        // Validazione data scadenza
-        return validaDataScadenza(datiCarta.getDataScadenza());
-    }
-}
-
-// Context - Usage nel Controller
-@RestController
-public class OrdineController {
-    
-    private IMetodoPagamentoStrategy getPaymentStrategy(String metodoPagamento) {
-        switch (metodoPagamento.toUpperCase()) {
-            case "CARTA_CREDITO":
-                return new PagamentoCartaCreditoStrategy();
-            case "PAYPAL":
-                return new PagamentoPayPalStrategy();
-            default:
-                throw new IllegalArgumentException("Metodo non supportato: " + metodoPagamento);
-        }
-    }
-}
+```scss
+$primary-color: #4CAF50;  // Verde per tema agricolo
+$secondary-color: #FF9800; // Arancione per accenti
+$accent-color: #2196F3;    // Blu per link e azioni
 ```
 
-**Rationale**:
+#### Abilitare Dark Mode
 
-- **Estensibilità**: Nuovi metodi di pagamento senza modificare codice esistente
-- **Runtime Selection**: Scelta del metodo a runtime
-- **Single Responsibility**: Ogni strategia gestisce un solo tipo di pagamento
+Nel component settings o profilo utente, utilizza il toggle tema che modifica automaticamente il Material Theme.
 
-### 4. State Pattern ⭐⭐⭐
+---
 
-**Implementazione**: Gestione stati ordine con transizioni controllate
 
-**Ubicazione**: `src/main/java/it/unicam/cs/ids/piattaforma_agricola_locale/model/ordine/stateOrdine/`
+## Struttura del Progetto
 
-**Problema risolto**: Gli ordini hanno stati complessi con transizioni specifiche permesse. Un approccio if/else porterebbe a codice difficile da mantenere.
+Il progetto segue una struttura modulare ben organizzata:
 
-**Struttura**:
+### 📂 Struttura Backend (Spring Boot)
 
-```java
-// State Interface
-public interface IStatoOrdine {
-    void processaOrdine(Ordine ordine);
-    void spedisciOrdine(Ordine ordine);
-    void annullaOrdine(Ordine ordine);
-    void consegnaOrdine(Ordine ordine);
-    StatoCorrente getStatoCorrente();
-    
-    // Template method per transizioni
-    default void cambiaStato(Ordine ordine, IStatoOrdine nuovoStato) {
-        ordine.setStato(nuovoStato);
-        ordine.setStatoCorrente(nuovoStato.getStatoCorrente());
-    }
-}
-
-// Context - Ordine Entity
-@Entity
-public class Ordine {
-    @Enumerated(EnumType.STRING)
-    private StatoCorrente statoCorrente;
-    
-    @Transient
-    private IStatoOrdine stato;
-    
-    // Delegazione allo stato corrente
-    public void processa() {
-        if (stato == null) {
-            stato = createStateFromEnum(statoCorrente);
-        }
-        stato.processaOrdine(this);
-    }
-    
-    public void paga() {
-        processa(); // In "AttesaPagamento", processa() esegue il pagamento
-    }
-}
+```text
+piattaforma_agricola_locale/
+│
+├── src/main/java/it/unicam/cs/ids/
+│   └── piattaforma_agricola_locale/
+│       ├── config/              # Configurazioni (Security, CORS, JWT)
+│       ├── controller/          # REST Controllers
+│       │   ├── auth/           # Autenticazione endpoints
+│       │   ├── prodotto/       # CRUD prodotti
+│       │   ├── ordine/         # Gestione ordini
+│       │   ├── evento/         # Eventi e prenotazioni
+│       │   └── ...
+│       ├── model/              # Domain Model
+│       │   ├── entity/         # JPA Entities
+│       │   ├── dto/            # Data Transfer Objects
+│       │   └── enums/          # Enumerazioni
+│       ├── repository/         # JPA Repositories
+│       ├── service/            # Business Logic
+│       │   ├── impl/           # Service implementations
+│       │   └── factory/        # Factory patterns
+│       ├── security/           # JWT, Filters, Security Config
+│       ├── exception/          # Custom Exceptions & Handlers
+│       ├── mapper/             # MapStruct Mappers
+│       └── util/               # Utility classes
+│
+├── src/main/resources/
+│   ├── application.properties           # Configurazione principale
+│   ├── application-dev.properties       # Profilo development
+│   ├── application-prod.properties      # Profilo production
+│   └── db/
+│       └── performance-indexes.sql      # Ottimizzazioni DB
+│
+└── src/test/                            # Test unitari e integrazione
 ```
 
-**Concrete States**:
+### 📂 Struttura Frontend (Angular)
 
-```java
-// Stato: In Attesa di Pagamento
-public class StatoOrdineNuovoInAttesaDiPagamento implements IStatoOrdine {
-    
-    @Override
-    public void processaOrdine(Ordine ordine) {
-        // Transizione permessa: pagamento -> pronto per lavorazione
-        IStatoOrdine nuovoStato = new StatoOrdinePagatoProntoPerLavorazione();
-        cambiaStato(ordine, nuovoStato);
-    }
-    
-    @Override
-    public void spedisciOrdine(Ordine ordine) {
-        throw new UnsupportedOperationException("Non è possibile spedire un ordine non pagato");
-    }
-    
-    @Override
-    public StatoCorrente getStatoCorrente() {
-        return StatoCorrente.ATTESA_PAGAMENTO;
-    }
-}
+```text
+frontend/piattaforma-agricola/
+│
+├── src/
+│   ├── app/
+│   │   ├── core/                      # Servizi e componenti core
+│   │   │   ├── guards/               # Route guards (Auth, Role)
+│   │   │   ├── interceptors/         # HTTP Interceptors (JWT, Error)
+│   │   │   ├── services/             # Servizi globali
+│   │   │   │   ├── auth.service.ts
+│   │   │   │   ├── api.service.ts
+│   │   │   │   └── notification.service.ts
+│   │   │   ├── models/               # Interfaces e Types
+│   │   │   └── layout/               # Layout components
+│   │   │       ├── header/
+│   │   │       ├── sidebar/
+│   │   │       └── footer/
+│   │   │
+│   │   ├── features/                  # Feature Modules (Lazy Loaded)
+│   │   │   ├── auth/                 # Login, Registrazione
+│   │   │   │   ├── login/
+│   │   │   │   ├── register/
+│   │   │   │   └── auth.routes.ts
+│   │   │   ├── catalogo/             # Catalogo prodotti pubblico
+│   │   │   ├── dashboard/            # Dashboard multi-ruolo
+│   │   │   ├── carrello-ordini/      # Carrello e gestione ordini
+│   │   │   ├── eventi/               # Eventi e prenotazioni
+│   │   │   ├── processi/             # Processi trasformazione
+│   │   │   ├── profilo/              # Gestione profilo utente
+│   │   │   ├── gestione-utenti/      # Admin - gestione utenti
+│   │   │   ├── landing/              # Homepage pubblica
+│   │   │   └── public/               # Pagine pubbliche
+│   │   │
+│   │   ├── shared/                    # Componenti condivisi
+│   │   │   ├── components/           # UI Components riusabili
+│   │   │   ├── directives/           # Custom Directives
+│   │   │   └── pipes/                # Custom Pipes
+│   │   │
+│   │   ├── store/                     # NgRx State Management
+│   │   │   ├── auth/                 # Auth state
+│   │   │   ├── cart/                 # Carrello state
+│   │   │   ├── products/             # Prodotti state
+│   │   │   └── app.state.ts          # Root state
+│   │   │
+│   │   ├── app.config.ts             # App configuration
+│   │   ├── app.routes.ts             # Routing configuration
+│   │   └── app.component.ts          # Root component
+│   │
+│   ├── environments/                  # Environment configs
+│   │   ├── environment.ts            # Development
+│   │   └── environment.prod.ts       # Production
+│   │
+│   ├── styles/                        # Global styles
+│   │   ├── _variables.scss           # SCSS variables
+│   │   ├── _mixins.scss              # SCSS mixins
+│   │   └── _themes.scss              # Material themes
+│   │
+│   ├── assets/                        # Static assets
+│   │   ├── images/
+│   │   ├── icons/
+│   │   └── i18n/                     # Traduzioni
+│   │
+│   ├── index.html                     # HTML principale
+│   ├── main.ts                        # Bootstrap applicazione
+│   └── styles.scss                    # Styles globali
+│
+├── angular.json                       # Angular CLI config
+├── package.json                       # Dependencies npm
+├── tsconfig.json                      # TypeScript config
+└── proxy.conf.json                    # Proxy configuration
+
 ```
 
-**Rationale**:
+### 🗂️ Cartelle Principali Progetto
 
-- **Controllo Transizioni**: Ogni stato definisce transizioni permesse
-- **Eliminazione Condizionali**: No più if/else complessi
-- **Estensibilità**: Facile aggiunta di nuovi stati
-
-### 5. Observer Pattern ⭐⭐⭐
-
-**Implementazione**: Sistema di notifiche per eventi asincroni
-
-**Ubicazione**: `src/main/java/it/unicam/cs/ids/piattaforma_agricola_locale/service/observer/`
-
-**Problema risolto**: Quando avvengono eventi importanti (creazione ordini, nuovi prodotti), multiple parti del sistema devono essere notificate senza creare accoppiamento diretto.
-
-#### 5.1 Observer per Ordini
-
-```java
-// Observable Interface
-public interface IOrdineObservable {
-    void aggiungiObserver(IVenditoreObserver observer);
-    void rimuoviObserver(IVenditoreObserver observer);
-    void notificaObservers(Ordine ordine, Venditore venditoreSpecifico);
-}
-
-// Observer Interface
-public interface IVenditoreObserver {
-    void update(Ordine ordine, List<RigaOrdine> righeDiCompetenza);
-}
-
-// Concrete Observable
-@Service
-public class OrdineService implements IOrdineService, IOrdineObservable {
-    
-    private final List<IVenditoreObserver> observers = new ArrayList<>();
-    
-    @Override
-    public void notificaObservers(Ordine ordine, Venditore venditoreSpecifico) {
-        // Raggruppa righe per venditore
-        Map<Venditore, List<RigaOrdine>> righePeerVenditore = raggruppaPer Venditore(ordine);
-        
-        // Notifica ogni venditore con le sue righe
-        for (Map.Entry<Venditore, List<RigaOrdine>> entry : righePeerVenditore.entrySet()) {
-            List<RigaOrdine> righeDiCompetenza = entry.getValue();
-            
-            observers.forEach(obs -> {
-                try {
-                    obs.update(ordine, righeDiCompetenza);
-                } catch (Exception e) {
-                    logger.error("Errore notifica observer", e);
-                }
-            });
-        }
-    }
-    
-    // Trigger della notifica
-    public void confermaPagamento(Ordine ordine, IMetodoPagamentoStrategy strategiaPagamento) {
-        boolean successo = strategiaPagamento.elaboraPagamento(ordine);
-        
-        if (successo) {
-            ordine.paga(); // State transition
-            ordineRepository.save(ordine);
-            
-            // Notifica tutti gli observer interessati
-            notificaObservers(ordine, null);
-        }
-    }
-}
-
-// Concrete Observer
-@Service
-public class VenditoreObserverService implements IVenditoreObserver {
-    
-    @Override
-    public void update(Ordine ordine, List<RigaOrdine> righeDiCompetenza) {
-        for (RigaOrdine riga : righeDiCompetenza) {
-            Acquistabile acquistabile = riga.getAcquistabile();
-            int quantitaOrdinata = riga.getQuantitaOrdinata();
-            
-            // Decrementa inventario
-            if (acquistabile instanceof Prodotto) {
-                Prodotto prodotto = (Prodotto) acquistabile;
-                int nuovaQuantita = prodotto.getQuantitaDisponibile() - quantitaOrdinata;
-                prodottoService.aggiornaQuantitaDisponibile(prodotto.getId(), nuovaQuantita);
-            }
-        }
-    }
-}
+```text
+piattaforma_agricola_locale/
+├── Api/                               # Collection Postman/Insomnia
+├── docs/                              # Documentazione API
+├── frontend/                          # Applicazione Angular
+├── src/                               # Codice sorgente backend
+├── target/                            # Build output (Maven)
+├── data/                              # Database file (H2 persistente)
+├── logs/                              # Application logs
+├── pom.xml                            # Maven configuration
+├── mvnw / mvnw.cmd                    # Maven wrapper
+└── README.md                          # Questo file
 ```
 
-**Configurazione Automatica Spring**:
+### 🎯 Pattern di Organizzazione
 
-```java
-@Configuration
-public class ObserverConfig {
-    
-    @PostConstruct
-    public void registerObservers() {
-        // Registrazione automatica degli observer
-        ordineService.aggiungiObserver(venditoreObserverService);
-        prodottoService.aggiungiObserver(curatoreObserverService);
-        
-        logger.info("Observer registrati con successo");
-    }
-}
+#### Backend
+
+- **Package by Layer**: Organizzazione per layer architetturale
+- **Separation of Concerns**: Separazione netta tra presentation, business logic, data access
+- **DTO Pattern**: Trasferimento dati senza esporre entità
+
+#### Frontend
+
+- **Feature-Based**: Moduli organizzati per funzionalità business
+- **Lazy Loading**: Caricamento moduli on-demand
+- **Smart/Dumb Components**: Separazione componenti container e presentation
+- **Reactive State Management**: NgRx per stato centralizzato
+
+---
+
+### 🔗 Swagger/OpenAPI
+
+Swagger UI interattivo disponibile a:
+
+```text
+http://localhost:8080/swagger-ui.html
 ```
 
-**Rationale**:
+Con:
 
-- **Disaccoppiamento**: Oggetti osservati non conoscono i loro observer
-- **Estensibilità**: Facile aggiunta di nuovi observer
-- **Reattività**: Notifiche immediate su eventi importanti
+- Schema OpenAPI 3.0
+- Try-it-out per test immediato
+- Esempi request/response
+- Modelli dati completi
 
-### 6. DTO Pattern ⭐⭐⭐
 
-**Implementazione**: Oggetti per trasferimento dati tra layer
+---
 
-**Ubicazione**: `src/main/java/it/unicam/cs/ids/piattaforma_agricola_locale/dto/`
+## Design Pattern e Architettura
 
-**Problema risolto**: Evitare esposizione di entità interne, controllo dei dati trasferiti, validazione input.
+### 🏗️ Architettura del Sistema
 
-**Struttura Organizzata per Dominio**:
+#### Architettura Full-Stack
 
-```java
-// DTO per richieste di creazione
-public class CreateProductRequestDTO {
-    
-    @NotBlank(message = "Il nome del prodotto è obbligatorio")
-    @Size(min = 3, max = 100, message = "Il nome deve essere tra 3 e 100 caratteri")
-    private String nome;
-    
-    @NotNull(message = "Il prezzo è obbligatorio")
-    @DecimalMin(value = "0.01", message = "Il prezzo deve essere maggiore di 0")
-    @DecimalMax(value = "9999.99", message = "Il prezzo non può superare €9999.99")
-    private Double prezzo;
-    
-    @NotNull(message = "La quantità è obbligatoria")
-    @Min(value = 0, message = "La quantità non può essere negativa")
-    private Integer quantitaDisponibile;
-    
-    @Valid
-    private MetodoDiColtivazioneDTO metodoColtivazione;
-    
-    private List<@Valid CreateCertificazioneRequestDTO> certificazioni;
-}
-
-// DTO per response dettagliate
-public class ProductDetailDTO {
-    private Long id;
-    private String nome;
-    private String descrizione;
-    private Double prezzo;
-    private StatoVerificaValori statoVerifica;
-    
-    // Informazioni del venditore (nested DTO)
-    private UserPublicDTO venditore;
-    
-    // Certificazioni
-    private List<CertificazioneDTO> certificazioni;
-    
-    // Tracciabilità (se disponibile)
-    private TraceabilityDTO tracciabilita;
-    
-    // Timestamp
-    private LocalDateTime dataCreazione;
-}
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                        CLIENT LAYER                         │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │         Angular SPA (http://localhost:4200)          │  │
+│  │  Components │ Services │ Guards │ Interceptors       │  │
+│  │            NgRx State Management                     │  │
+│  └──────────────────────┬───────────────────────────────┘  │
+└─────────────────────────┼───────────────────────────────────┘
+                          │ HTTP/REST + JWT
+                          │
+┌─────────────────────────▼───────────────────────────────────┐
+│                      SERVER LAYER                           │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │     Spring Boot API (http://localhost:8080)          │  │
+│  │                                                       │  │
+│  │  ┌─────────────────────────────────────────────┐   │  │
+│  │  │        Presentation Layer                   │   │  │
+│  │  │  REST Controllers │ JWT Filter │ CORS       │   │  │
+│  │  └──────────────────┬──────────────────────────┘   │  │
+│  │                     │                               │  │
+│  │  ┌──────────────────▼──────────────────────────┐   │  │
+│  │  │          Service Layer                      │   │  │
+│  │  │  Business Logic │ Validation │ Transactions│   │  │
+│  │  └──────────────────┬──────────────────────────┘   │  │
+│  │                     │                               │  │
+│  │  ┌──────────────────▼──────────────────────────┐   │  │
+│  │  │        Repository Layer                     │   │  │
+│  │  │  Spring Data JPA │ Query Methods           │   │  │
+│  │  └──────────────────┬──────────────────────────┘   │  │
+│  │                     │                               │  │
+│  │  ┌──────────────────▼──────────────────────────┐   │  │
+│  │  │          Model Layer                        │   │  │
+│  │  │  Entities │ DTOs │ Mappers (MapStruct)     │   │  │
+│  │  └─────────────────────────────────────────────┘   │  │
+│  └──────────────────────┬────────────────────────────┘  │
+└─────────────────────────┼───────────────────────────────┘
+                          │ JDBC
+                          │
+┌─────────────────────────▼───────────────────────────────────┐
+│                     DATABASE LAYER                          │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │              H2 Database (In-Memory/File)            │  │
+│  │  Tables │ Indexes │ Constraints                      │  │
+│  └──────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**Mapping con MapStruct**:
+#### Backend - Layered Architecture
 
-```java
-@Mapper(
-    componentModel = "spring",
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    uses = {UtenteMapper.class, CertificazioneMapper.class}
-)
-@Component
-public abstract class ProdottoMapper {
-    
-    // Mapping da Entity a DTO
-    @Mapping(target = "idVenditore", source = "venditore.idUtente")
-    @Mapping(target = "nomeVenditore", source = "venditore.nome")
-    public abstract ProductSummaryDTO toSummaryDTO(Prodotto prodotto);
-    
-    @Mapping(target = "tracciabilita", source = "processoTrasformazione", qualifiedByName = "mapToTraceability")
-    public abstract ProductDetailDTO toDetailDTO(Prodotto prodotto);
-    
-    // Mapping da DTO a Entity
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "statoVerifica", constant = "IN_REVISIONE")
-    @Mapping(target = "dataCreazione", expression = "java(java.time.LocalDateTime.now())")
-    public abstract Prodotto toEntity(CreateProductRequestDTO dto);
-}
+```text
+┌─────────────────────────────────────────────────────────┐
+│                   PRESENTATION LAYER                    │
+│  REST Controllers - Gestione HTTP Request/Response      │
+│  • @RestController                                      │
+│  • Request/Response DTOs                                │
+│  • Input Validation (@Valid)                            │
+│  • Exception Handling (@ExceptionHandler)               │
+└────────────────────┬────────────────────────────────────┘
+                     │
+                     ├── Dependency Injection (Spring IoC)
+                     │
+┌────────────────────▼────────────────────────────────────┐
+│                    SERVICE LAYER                        │
+│  Business Logic - Orchestrazione e Regole Business      │
+│  • @Service                                             │
+│  • Transaction Management (@Transactional)              │
+│  • Business Validation                                  │
+│  • DTO ↔ Entity Mapping (MapStruct)                    │
+└────────────────────┬────────────────────────────────────┘
+                     │
+                     ├── Dependency Injection
+                     │
+┌────────────────────▼────────────────────────────────────┐
+│                  REPOSITORY LAYER                       │
+│  Data Access - Persistenza e Query Database             │
+│  • @Repository                                          │
+│  • JpaRepository<Entity, ID>                            │
+│  • Query Methods / @Query                               │
+│  • Specification API (filtri complessi)                 │
+└────────────────────┬────────────────────────────────────┘
+                     │
+                     ├── JPA/Hibernate ORM
+                     │
+┌────────────────────▼────────────────────────────────────┐
+│                     MODEL LAYER                         │
+│  Domain Model - Rappresentazione Dati                   │
+│  • @Entity (JPA Entities)                               │
+│  • DTOs (Data Transfer Objects)                         │
+│  • Enums                                                │
+│  • Value Objects                                        │
+└─────────────────────────────────────────────────────────┘
 ```
 
-**Rationale**:
+#### Frontend - Component Architecture
 
-- **Sicurezza**: Non espone entità interne
-- **Validazione**: Validazione centralizzata input
-- **Versioning**: Supporto per diverse versioni API
-- **Performance**: Controllo dati trasferiti
-
-### 7. Aspect-Oriented Programming (AOP) ⭐⭐
-
-**Implementazione**: Cross-cutting concerns con Spring AOP
-
-**Ubicazione**: `src/main/java/it/unicam/cs/ids/piattaforma_agricola_locale/security/AccreditamentoAspect.java`
-
-**Problema risolto**: Gestire funzionalità trasversali (security, logging, caching) senza duplicare codice.
-
-**Implementazione**:
-
-```java
-// Custom Annotation
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface RequiresAccreditation {
-    TipoRuolo[] roles() default {};
-}
-
-// Aspect Implementation
-@Aspect
-@Component
-@RequiredArgsConstructor
-public class AccreditamentoAspect {
-    
-    private final IUtenteService utenteService;
-    
-    @Before("@annotation(requiresAccreditation)")
-    public void checkAccreditation(JoinPoint joinPoint, RequiresAccreditation requiresAccreditation) {
-        
-        // Ottieni l'utente corrente dal SecurityContext
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        
-        // Verifica accreditamento
-        Optional<Utente> utenteOpt = utenteService.findByEmail(userEmail);
-        if (utenteOpt.isEmpty()) {
-            throw new UtenteNonAccreditatoException("Utente non trovato: " + userEmail);
-        }
-        
-        Utente utente = utenteOpt.get();
-        
-        // Verifica se è un venditore e se è accreditato
-        if (utente instanceof Venditore) {
-            Venditore venditore = (Venditore) utente;
-            if (venditore.getStatoAccreditamento() != StatoAccreditamento.APPROVED) {
-                throw new UtenteNonAccreditatoException(
-                    "Venditore non accreditato. Stato attuale: " + venditore.getStatoAccreditamento()
-                );
-            }
-        }
-        
-        // Verifica ruoli se specificati
-        TipoRuolo[] requiredRoles = requiresAccreditation.roles();
-        if (requiredRoles.length > 0) {
-            boolean hasRequiredRole = Arrays.asList(requiredRoles).contains(utente.getTipoRuolo());
-            if (!hasRequiredRole) {
-                throw new AccessDeniedException("Ruolo non autorizzato per questa operazione");
-            }
-        }
-    }
-}
-
-// Usage negli endpoints
-@RestController
-public class ProdottoController {
-    
-    @PostMapping
-    @RequiresAccreditation(roles = {TipoRuolo.PRODUTTORE, TipoRuolo.TRASFORMATORE})
-    public ResponseEntity<ProductDetailDTO> creaProdotto(@RequestBody CreateProductRequestDTO request) {
-        // Metodo eseguito solo se l'utente è accreditato e ha il ruolo corretto
-        // La verifica avviene automaticamente tramite l'aspect
-    }
-}
+```text
+┌─────────────────────────────────────────────────────────┐
+│                  PRESENTATION LAYER                     │
+│  Components - UI e User Interaction                     │
+│  • Smart Components (Container)                         │
+│  • Dumb Components (Presentational)                     │
+│  • Templates (HTML + Angular directives)                │
+│  • Material UI Components                               │
+└────────────────────┬────────────────────────────────────┘
+                     │
+                     ├── Dependency Injection
+                     │
+┌────────────────────▼────────────────────────────────────┐
+│                    SERVICE LAYER                        │
+│  Business Logic Frontend                                │
+│  • API Services (HTTP Client)                           │
+│  • State Management Services                            │
+│  • Utility Services                                     │
+│  • Authentication Service                               │
+└────────────────────┬────────────────────────────────────┘
+                     │
+                     ├── HTTP/REST
+                     │
+┌────────────────────▼────────────────────────────────────┐
+│                   STATE MANAGEMENT                      │
+│  NgRx Store - Redux Pattern                             │
+│  • Store (stato centralizzato)                          │
+│  • Actions (eventi)                                     │
+│  • Reducers (logica stato)                              │
+│  • Effects (side effects asincroni)                     │
+│  • Selectors (query stato)                              │
+└─────────────────────────────────────────────────────────┘
 ```
+
+---
+
+
 
 **Rationale**:
 
@@ -919,73 +1074,364 @@ public class ProdottoController {
 
 Il progetto segue i principi SOLID per garantire:
 
-- **S**ingle Responsibility Principle
-- **O**pen/Closed Principle
-- **L**iskov Substitution Principle
-- **I**nterface Segregation Principle
-- **D**ependency Inversion Principle
+- **S**ingle Responsibility Principle - Ogni classe ha una singola responsabilità
+- **O**pen/Closed Principle - Aperto per estensione, chiuso per modifica
+- **L**iskov Substitution Principle - Sostituibilità delle sottoclassi
+- **I**nterface Segregation Principle - Interfacce specifiche e mirate
+- **D**ependency Inversion Principle - Dipendenze su astrazioni
+
+---
 
 ## Come Contribuire
 
-### Processo di Contribuzione
+Siamo felici di accogliere contributi dalla community! Ecco come puoi aiutare:
 
-1. **Fork** del repository
-2. **Crea** un branch per la feature (`git checkout -b feature/nuova-funzionalita`)
-3. **Commit** delle modifiche (`git commit -m 'Aggiunge nuova funzionalita'`)
-4. **Push** del branch (`git push origin feature/nuova-funzionalita`)
-5. **Apri** una Pull Request
+### 🚀 Processo di Contribuzione
 
-### Linee Guida
+1. **Fork** del repository su GitHub
+2. **Clona** il tuo fork localmente
 
-- Segui le convenzioni di codice Java
-- Scrivi test per ogni nuova funzionalita
-- Documenta le API con JavaDoc
-- Usa commit message descrittivi
-- Aggiorna la documentazione se necessario
+   ```bash
+   git clone https://github.com/TUO-USERNAME/piattaforma_agricola_locale.git
+   cd piattaforma_agricola_locale
+   ```
 
-### Aree di Contribuzione
+3. **Crea** un branch per la tua feature/fix
 
-- **Bug Fix**: Correzione errori
-- **Nuove Funzionalita**: Implementazione features
-- **Documentazione**: Miglioramento docs
-- **UI/UX**: Miglioramento interfaccia
-- **Performance**: Ottimizzazioni
-- **Sicurezza**: Miglioramenti security
+   ```bash
+   git checkout -b feature/nuova-funzionalita
+   # oppure
+   git checkout -b fix/correzione-bug
+   ```
+
+4. **Implementa** le modifiche seguendo le linee guida
+5. **Testa** le tue modifiche
+
+   ```bash
+   # Backend
+   ./mvnw clean verify
+   
+   # Frontend
+   cd frontend/piattaforma-agricola
+   npm test -- --watch=false
+   ```
+
+6. **Commit** con messaggi descrittivi
+
+   ```bash
+   git add .
+   git commit -m "feat: aggiunge filtro avanzato catalogo prodotti"
+   ```
+
+7. **Push** del branch
+
+   ```bash
+   git push origin feature/nuova-funzionalita
+   ```
+
+8. **Apri** una Pull Request su GitHub con descrizione dettagliata
+
+### 📋 Linee Guida Codice
+
+#### Backend (Java/Spring Boot)
+
+```java
+// ✅ Buone pratiche
+@Service
+@Transactional
+public class ProdottoServiceImpl implements IProdottoService {
+    
+    private final IProdottoRepository prodottoRepository;
+    
+    // Dependency Injection via costruttore
+    public ProdottoServiceImpl(IProdottoRepository prodottoRepository) {
+        this.prodottoRepository = prodottoRepository;
+    }
+    
+    // JavaDoc per metodi pubblici
+    /**
+     * Recupera tutti i prodotti per categoria.
+     * @param categoria la categoria da filtrare
+     * @return lista di prodotti
+     */
+    @Override
+    public List<ProdottoDTO> findByCategoria(Categoria categoria) {
+        // Implementazione...
+    }
+}
+```
+
+**Convenzioni:**
+
+- ✅ Nomi classi: `PascalCase`
+- ✅ Nomi metodi: `camelCase`
+- ✅ Costanti: `UPPER_SNAKE_CASE`
+- ✅ Package: lowercase
+- ✅ JavaDoc per API pubbliche
+- ✅ Dependency Injection via costruttore
+- ✅ Usare `@Override` quando appropriato
+- ✅ Gestione eccezioni appropriata
+
+#### Frontend (TypeScript/Angular)
+
+```typescript
+// ✅ Buone pratiche
+@Component({
+  selector: 'app-catalogo',
+  standalone: true,
+  imports: [CommonModule, MaterialModule],
+  templateUrl: './catalogo.component.html',
+  styleUrls: ['./catalogo.component.scss']
+})
+export class CatalogoComponent implements OnInit {
+  // Signals per stato reattivo
+  products = signal<Prodotto[]>([]);
+  loading = signal<boolean>(false);
+  
+  private prodottoService = inject(ProdottoService);
+  
+  ngOnInit(): void {
+    this.loadProducts();
+  }
+  
+  /**
+   * Carica la lista dei prodotti dal backend
+   */
+  private loadProducts(): void {
+    this.loading.set(true);
+    this.prodottoService.getAll().subscribe({
+      next: (products) => this.products.set(products),
+      error: (err) => console.error('Errore caricamento', err),
+      complete: () => this.loading.set(false)
+    });
+  }
+}
+```
+
+**Convenzioni:**
+
+- ✅ Nomi componenti: `kebab-case.component.ts`
+- ✅ Classi: `PascalCase`
+- ✅ Variabili/metodi: `camelCase`
+- ✅ Costanti: `UPPER_SNAKE_CASE`
+- ✅ Usare signals per stato reattivo (Angular 20+)
+- ✅ Dependency injection con `inject()`
+- ✅ Standalone components
+- ✅ Template type-safe
+- ✅ Unsubscribe dagli observable (o usare `async` pipe)
+
+### 🎯 Commit Message Convention
+
+Seguiamo la [Conventional Commits](https://www.conventionalcommits.org/):
+
+```bash
+<tipo>(<scope>): <descrizione>
+
+[corpo opzionale]
+
+[footer opzionale]
+```
+
+**Tipi:**
+
+- `feat`: nuova funzionalità
+- `fix`: correzione bug
+- `docs`: solo documentazione
+- `style`: formattazione, punto e virgola, etc
+- `refactor`: refactoring codice
+- `test`: aggiunta test
+- `chore`: manutenzione
+
+**Esempi:**
+
+```bash
+feat(catalogo): aggiunge filtro per certificazioni bio
+fix(auth): corregge refresh token expiration
+docs(readme): aggiorna sezione installazione frontend
+test(prodotto): aggiunge test per validazione prezzi
+refactor(service): migliora gestione errori API
+```
+
+### 📝 Pull Request Guidelines
+
+La tua PR dovrebbe:
+
+- ✅ Avere un titolo chiaro e descrittivo
+- ✅ Includere una descrizione dettagliata delle modifiche
+- ✅ Referenziare issue correlate (es. "Fixes #123")
+- ✅ Passare tutti i test CI/CD
+- ✅ Avere coverage >= 70% per nuovo codice
+- ✅ Seguire le convenzioni di codice
+- ✅ Includere documentazione aggiornata se necessario
+- ✅ Screenshot/GIF per modifiche UI
+
+**Template PR:**
+
+```markdown
+## Descrizione
+Breve descrizione delle modifiche
+
+## Tipo di modifica
+- [ ] Bug fix
+- [ ] Nuova feature
+- [ ] Breaking change
+- [ ] Documentazione
+
+## Checklist
+- [ ] Test eseguiti e passano
+- [ ] Documentazione aggiornata
+- [ ] Codice segue style guide
+- [ ] Auto-review completata
+```
+
+### 🐛 Segnalazione Bug
+
+Usa il template issue per bug:
+
+**Informazioni necessarie:**
+
+- Versione applicazione
+- Browser/OS (per frontend)
+- Java version (per backend)
+- Passi per riprodurre
+- Comportamento atteso vs effettivo
+- Screenshot/logs
+
+### 💡 Proporre Nuove Feature
+
+Apri una issue di tipo "Feature Request":
+
+1. Descrivi il problema che risolve
+2. Proponi una soluzione
+3. Discuti alternative considerate
+4. Indica impatto e priorità
+
+### 🎨 Aree di Contribuzione
+
+#### Backend
+
+- 🐛 **Bug Fix**: Correzione errori logica business
+- ✨ **Features**: Nuovi endpoint API, servizi
+- 🔒 **Security**: Miglioramenti sicurezza
+- ⚡ **Performance**: Ottimizzazioni query, caching
+- 📚 **Docs**: JavaDoc, API documentation
+
+#### Frontend
+
+- 🐛 **Bug Fix**: Correzione UI/UX
+- ✨ **Features**: Nuovi componenti, pagine
+- 🎨 **UI/UX**: Miglioramenti design
+- ♿ **Accessibility**: WCAG compliance
+- 🌐 **I18n**: Traduzioni, localizzazione
+- 📱 **Responsive**: Mobile optimization
+
+#### Documentazione
+
+- 📖 README miglioramenti
+- 📋 Guide utente
+- 🎓 Tutorial e esempi
+- 🗺️ Diagrammi architettura
+
+#### Testing
+
+- 🧪 Unit tests
+- 🔗 Integration tests
+- 🚀 E2E tests
+- 📊 Migliorare coverage
+
+### 👥 Codice di Condotta
+
+Ci aspettiamo che tutti i contributori:
+
+- Siano rispettosi e inclusivi
+- Forniscano feedback costruttivo
+- Accettino critiche costruttive
+- Collaborino in modo professionale
+
+
+
+
+---
 
 ## Crediti
 
-### Sviluppatori
+### 👨‍💻 Team di Sviluppo
 
-- **Team di Sviluppo** - Universita di Camerino
-- **Corso**: Ingegneria del Software (IDS)
-- **Sviluppatori**:
-- - [Angelo Albanesi](https://github.com/angeloalbanesi)
-- - [Paolo Campanari](https://github.com/PaoloCampanari)
-- - [Lorenzo Donadio](https://github.com/Lor3Don4)
+Questo progetto è stato sviluppato come parte del corso di **Ingegneria del Software (IDS)** presso l'**Università di Camerino**.
 
-### Risorse e Riferimenti
+**Sviluppatori Principali:**
 
-- [Spring Boot Documentation](https://spring.io/projects/spring-boot)
-- [Spring Security Reference](https://spring.io/projects/spring-security)
-- [OpenStreetMap API](https://wiki.openstreetmap.org/wiki/API)
+- **[Angelo Albanesi](https://github.com/AngeloAlbanesi)** - Full-Stack Development
+  - Backend architecture & API design
+  - Frontend implementation (Angular)
+  - Database design & optimization
+  
+- **[Paolo Campanari](https://github.com/PaoloCampanari)** - Backend Development
+  - Business logic implementation
+  - Design patterns integration
+  - Testing & quality assurance
 
-### Librerie Open Source
+- **[Lorenzo Donadio](https://github.com/Lor3Don4)** - Backend Development & Documentation
+  - Service layer implementation
+  - API documentation
+  - Technical documentation
 
-Ringraziamo tutti i maintainer delle librerie utilizzate:
+### 🏫 Istituzione
 
-- Spring Framework Team
-- Hibernate Team
-- MapStruct Contributors
-- Lombok Project
+**Università degli Studi di Camerino**
+
+- Scuola di Scienze e Tecnologie
+- Corso di Laurea in Informatica
+- A.A. 2024/2025
+
+### 📚 Risorse e Riferimenti
+
+#### Framework e Librerie
+
+**Backend:**
+
+- [Spring Boot](https://spring.io/projects/spring-boot) - Application framework
+- [Spring Security](https://spring.io/projects/spring-security) - Security framework
+- [Spring Data JPA](https://spring.io/projects/spring-data-jpa) - Data persistence
+- [Hibernate ORM](https://hibernate.org/) - Object-relational mapping
+- [MapStruct](https://mapstruct.org/) - Bean mapping
+- [Lombok](https://projectlombok.org/) - Boilerplate reduction
+- [H2 Database](https://www.h2database.com/) - Embedded database
+- [JJWT](https://github.com/jwtk/jjwt) - JWT library
+
+**Frontend:**
+
+- [Angular](https://angular.dev/) - Web application framework
+- [Angular Material](https://material.angular.io/) - UI component library
+- [NgRx](https://ngrx.io/) - State management
+- [RxJS](https://rxjs.dev/) - Reactive programming
+- [TypeScript](https://www.typescriptlang.org/) - Programming language
+
+#### Documentazione Tecnica
+
+- [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/)
+- [Angular Documentation](https://angular.dev/overview)
+- [Material Design Guidelines](https://m3.material.io/)
+- [REST API Design Best Practices](https://restfulapi.net/)
+- [JWT Introduction](https://jwt.io/introduction)
+
+#### Servizi Esterni
+
+- [OpenStreetMap](https://www.openstreetmap.org/) - Mappe e geolocalizzazione
+- [OSM Nominatim API](https://nominatim.org/) - Geocoding
+
+
+---
 
 ## Licenza
 
-Questo progetto e rilasciato sotto la **Licenza MIT**.
+Questo progetto è rilasciato sotto la **Licenza MIT**.
 
-```
+```text
 MIT License
 
-Copyright (c) 2024 Piattaforma Agricola Locale
+Copyright (c) 2024-2025 Università di Camerino - Piattaforma Agricola Locale
+Angelo Albanesi, Paolo Campanari, Lorenzo Donadio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1005,3 +1451,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+---
+
+
+
+### Repository
+
+- **Repository GitHub**: [https://github.com/AngeloAlbanesi/piattaforma_agricola_locale](https://github.com/AngeloAlbanesi/piattaforma_agricola_locale)
+- **Wiki**: [Documentazione estesa](https://github.com/AngeloAlbanesi/piattaforma_agricola_locale/wiki)
+
+---
+
+
+<div align="center">
+
+### Made with ❤️ by Team ExIng
+
+**Università di Camerino - Ingegneria del Software**
+
+
+
+---
+
+**© 2024-2025 Università di Camerino. Rilasciato sotto Licenza MIT.**
+
+</div>

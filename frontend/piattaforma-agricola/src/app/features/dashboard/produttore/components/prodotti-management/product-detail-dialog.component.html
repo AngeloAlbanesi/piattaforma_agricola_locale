@@ -1,0 +1,333 @@
+<div class="product-detail-dialog">
+    <!-- Header -->
+    <div class="dialog-header">
+        <h2 mat-dialog-title class="dialog-title">
+            <mat-icon class="title-icon">visibility</mat-icon>
+            Dettagli Prodotto
+        </h2>
+        <button mat-icon-button class="close-button" (click)="onClose()" aria-label="Chiudi dialog">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading" role="status" aria-live="polite">
+        <mat-spinner diameter="50" aria-label="Caricamento dettagli prodotto"></mat-spinner>
+        <p class="loading-text">Caricamento dettagli prodotto...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !isLoading" role="alert">
+        <mat-icon class="error-icon">error</mat-icon>
+        <p class="error-text">{{ error }}</p>
+        <button mat-raised-button color="primary" (click)="loadProductDetails()">
+            <mat-icon>refresh</mat-icon>
+            Riprova
+        </button>
+    </div>
+
+    <!-- Content -->
+    <div mat-dialog-content class="dialog-content" *ngIf="product && !isLoading && !error">
+
+        <!-- Informazioni Base Prodotto -->
+        <mat-card class="product-overview-card" appearance="outlined">
+            <mat-card-header>
+                <div class="product-header-info">
+                    <div class="product-title-section">
+                        <h3 class="product-name">{{ product.nome }}</h3>
+                        <div class="product-meta">
+                            <span class="product-id">ID: {{ product.idProdotto }}</span>
+                            <mat-chip [class]="getStatoClass(product.statoVerifica)"
+                                [attr.aria-label]="'Stato verifica: ' + product.statoVerifica">
+                                <mat-icon>{{ getStatoIcon(product.statoVerifica) }}</mat-icon>
+                                {{ product.statoVerifica }}
+                            </mat-chip>
+                        </div>
+                    </div>
+                    <div class="product-image" *ngIf="product.immagineUrl">
+                        <img [src]="product.immagineUrl" [alt]="'Immagine di ' + product.nome" />
+                    </div>
+                </div>
+            </mat-card-header>
+
+            <mat-card-content>
+                <div class="product-key-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <mat-icon class="info-icon">euro</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Prezzo</span>
+                                <span class="info-value price">{{ formatCurrency(product.prezzo) }}</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <mat-icon class="info-icon">inventory_2</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Quantità Disponibile</span>
+                                <span class="info-value">{{ product.quantitaDisponibile }}</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <mat-icon class="info-icon">{{ getOriginIcon(product.tipoOrigine) }}</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Tipo Origine</span>
+                                <span class="info-value">{{ product.tipoOrigine }}</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <mat-icon class="info-icon">visibility</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Visualizzazioni</span>
+                                <span class="info-value">{{ product.visualizzazioni || 0 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <mat-divider class="section-divider"></mat-divider>
+
+                <div class="product-description">
+                    <h4 class="section-title">Descrizione</h4>
+                    <p class="description-text">{{ product.descrizione }}</p>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Tab Navigation -->
+        <mat-tab-group class="detail-tabs" dynamicHeight>
+
+            <!-- Tab Certificazioni -->
+            <mat-tab label="Certificazioni"
+                [disabled]="!product.certificazioniDettagli || !product.certificazioniDettagli.length">
+                <div class="tab-content">
+                    <div class="certifications-section"
+                        *ngIf="product.certificazioniDettagli?.length; else noCertifications">
+                        <div class="certifications-grid">
+                            <mat-card class="certification-card" appearance="outlined"
+                                *ngFor="let cert of product.certificazioniDettagli">
+                                <mat-card-header>
+                                    <mat-card-title class="cert-name">{{ cert.nomeCertificazione }}</mat-card-title>
+                                    <mat-card-subtitle class="cert-entity">{{ cert.enteRilascio }}</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <div class="cert-dates">
+                                        <div class="cert-date">
+                                            <mat-icon>event</mat-icon>
+                                            <span>Rilascio: {{ formatDate(cert.dataRilascio) }}</span>
+                                        </div>
+                                        <div class="cert-date">
+                                            <mat-icon>event_available</mat-icon>
+                                            <span>Scadenza: {{ formatDate(cert.dataScadenza) }}</span>
+                                        </div>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+
+                    <ng-template #noCertifications>
+                        <div class="empty-state">
+                            <mat-icon class="empty-icon">verified</mat-icon>
+                            <h4>Nessuna certificazione</h4>
+                            <p>Questo prodotto non ha ancora certificazioni associate.</p>
+                        </div>
+                    </ng-template>
+                </div>
+            </mat-tab>
+
+            <!-- Tab Metodo di Coltivazione -->
+            <mat-tab label="Metodo di Coltivazione" [disabled]="!product.metodoDiColtivazione">
+                <div class="tab-content">
+                    <div class="cultivation-section" *ngIf="product.metodoDiColtivazione; else noCultivation">
+                        <mat-card class="cultivation-card" appearance="outlined">
+                            <mat-card-header>
+                                <mat-card-title>{{ product.metodoDiColtivazione.nome }}</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="cultivation-description">
+                                    <h4>Descrizione</h4>
+                                    <p>{{ product.metodoDiColtivazione.descrizione }}</p>
+                                </div>
+
+                                <div class="cultivation-techniques"
+                                    *ngIf="product.metodoDiColtivazione.tecniche?.length">
+                                    <h4>Tecniche Utilizzate</h4>
+                                    <mat-chip-listbox>
+                                        <mat-chip *ngFor="let tecnica of product.metodoDiColtivazione.tecniche">
+                                            {{ tecnica }}
+                                        </mat-chip>
+                                    </mat-chip-listbox>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+
+                    <ng-template #noCultivation>
+                        <div class="empty-state">
+                            <mat-icon class="empty-icon">eco</mat-icon>
+                            <h4>Nessun metodo di coltivazione</h4>
+                            <p>Questo prodotto non ha un metodo di coltivazione specificato.</p>
+                        </div>
+                    </ng-template>
+                </div>
+            </mat-tab>
+
+            <!-- Tab Statistiche Vendite -->
+            <mat-tab label="Statistiche Vendite">
+                <div class="tab-content">
+                    <div class="stats-section">
+
+                        <!-- Riepilogo Vendite -->
+                        <mat-card class="stats-summary-card" appearance="outlined">
+                            <mat-card-header>
+                                <mat-card-title>Riepilogo Vendite</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <mat-icon class="stat-icon">receipt_long</mat-icon>
+                                        <div class="stat-content">
+                                            <span class="stat-label">Ordini Totali</span>
+                                            <span class="stat-value">{{ product.ordiniRicevuti ?
+                                                product.ordiniRicevuti.length : 0 }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="stat-item">
+                                        <mat-icon class="stat-icon">shopping_cart</mat-icon>
+                                        <div class="stat-content">
+                                            <span class="stat-label">Prodotti Venduti</span>
+                                            <span class="stat-value">{{ getTotalProductsSold() }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="stat-item">
+                                        <mat-icon class="stat-icon">euro</mat-icon>
+                                        <div class="stat-content">
+                                            <span class="stat-label">Fatturato Totale</span>
+                                            <span class="stat-value">{{ formatCurrency(getTotalOrderValue()) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+
+                        <!-- Lista Ordini -->
+                        <mat-card class="orders-list-card" appearance="outlined" *ngIf="product.ordiniRicevuti?.length">
+                            <mat-card-header>
+                                <mat-card-title>Ordini Recenti</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <mat-list class="orders-list">
+                                    <mat-list-item
+                                        *ngFor="let ordine of product.ordiniRicevuti; trackBy: trackByOrderId; let last = last">
+                                        <div class="order-item">
+                                            <div class="order-header">
+                                                <span class="order-id">Ordine #{{ ordine.id }}</span>
+                                                <mat-chip [color]="getOrderStatusColor(ordine.stato)">
+                                                    {{ ordine.stato }}
+                                                </mat-chip>
+                                            </div>
+                                            <div class="order-details">
+                                                <div class="order-info">
+                                                    <mat-icon>person</mat-icon>
+                                                    <span>{{ ordine.acquirente.nome }} {{ ordine.acquirente.cognome
+                                                        }}</span>
+                                                </div>
+                                                <div class="order-info">
+                                                    <mat-icon>event</mat-icon>
+                                                    <span>{{ formatDate(ordine.dataOrdine) }}</span>
+                                                </div>
+                                                <div class="order-info">
+                                                    <mat-icon>euro</mat-icon>
+                                                    <span>{{ formatCurrency(ordine.totale) }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <mat-divider *ngIf="!last"></mat-divider>
+                                    </mat-list-item>
+                                </mat-list>
+                            </mat-card-content>
+                        </mat-card>
+
+                        <div class="empty-state" *ngIf="!product.ordiniRicevuti?.length">
+                            <mat-icon class="empty-icon">shopping_cart_checkout</mat-icon>
+                            <h4>Nessun ordine</h4>
+                            <p>Questo prodotto non ha ancora ricevuto ordini.</p>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Tab Informazioni Azienda -->
+            <mat-tab label="Info Azienda">
+                <div class="tab-content">
+                    <mat-card class="company-info-card" appearance="outlined">
+                        <mat-card-header>
+                            <mat-card-title>Informazioni Azienda</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="company-details">
+                                <div class="company-detail">
+                                    <mat-icon>business</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Nome Azienda</span>
+                                        <span class="detail-value">{{ getNomeAzienda() }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="company-detail">
+                                    <mat-icon>assignment_ind</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Partita IVA</span>
+                                        <span class="detail-value">{{ getPartitaIva() }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="company-detail">
+                                    <mat-icon>location_on</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Indirizzo Azienda</span>
+                                        <span class="detail-value">{{ getIndirizzoAzienda() }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="company-detail">
+                                    <mat-icon>description</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Descrizione Azienda</span>
+                                        <span class="detail-value">{{ getDescrizioneAzienda() }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+
+    <!-- Actions -->
+    <div mat-dialog-actions class="dialog-actions">
+        <div class="product-dates">
+            <div class="date-info">
+                <mat-icon>add</mat-icon>
+                <span>Creato: {{ product && formatDateTime(product.dataCreazione) }}</span>
+            </div>
+            <div class="date-info" *ngIf="product && product.dataUltimaModifica !== product.dataCreazione">
+                <mat-icon>edit</mat-icon>
+                <span>Modificato: {{ product && formatDateTime(product.dataUltimaModifica) }}</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button mat-button (click)="onClose()">
+                <mat-icon>close</mat-icon>
+                Chiudi
+            </button>
+        </div>
+    </div>
+</div>

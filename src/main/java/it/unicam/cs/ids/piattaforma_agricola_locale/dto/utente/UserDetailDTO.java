@@ -4,6 +4,7 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.TipoRuolo;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -45,5 +46,6 @@ public class UserDetailDTO {
     @NotNull(message = "Il tipo di ruolo è obbligatorio")
     private TipoRuolo tipoRuolo;
     
+    @JsonProperty("isAttivo")
     private boolean isAttivo;
 }

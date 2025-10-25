@@ -1,0 +1,122 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>Gestione Metodi di Coltivazione</mat-card-title>
+        <mat-card-subtitle>Visualizza e gestisci i metodi di coltivazione associati ai tuoi prodotti</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <!-- Product Selector -->
+        <div class="product-selector-container" *ngIf="!isLoadingProducts">
+            <mat-form-field appearance="outline" class="product-select">
+                <mat-label>Seleziona Prodotto</mat-label>
+                <mat-select [(ngModel)]="selectedProductId" (ngModelChange)="onProductSelected($event)">
+                    <mat-option *ngFor="let product of products" [value]="product.idProdotto">
+                        {{ product.nome }} ({{ product.statoVerifica }})
+                    </mat-option>
+                </mat-select>
+                <mat-hint>Seleziona un prodotto per visualizzare il suo metodo di coltivazione</mat-hint>
+            </mat-form-field>
+
+            <!-- Product Status Alert -->
+            <div class="product-status-alert" *ngIf="selectedProduct && !canManageCultivationMethod">
+                <mat-card appearance="outlined" class="warning-card">
+                    <mat-card-content>
+                        <div class="warning-content">
+                            <mat-icon class="warning-icon">warning</mat-icon>
+                            <div class="warning-text">
+                                <strong>Prodotto non disponibile per gestione metodi</strong>
+                                <p>Il prodotto "{{ selectedProductName }}" ha stato: <strong>{{
+                                        selectedProduct.statoVerifica }}</strong></p>
+                                <p>I metodi di coltivazione possono essere gestiti solo per prodotti con stato
+                                    "APPROVATO" o "IN_REVISIONE".</p>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+        </div>
+
+        <!-- Loading Products -->
+        <div class="loading-container" *ngIf="isLoadingProducts">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Caricamento prodotti...</p>
+        </div>
+
+        <!-- Loading Method -->
+        <div class="loading-container" *ngIf="isLoading && selectedProductId">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Caricamento metodo di coltivazione...</p>
+        </div>
+
+        <!-- No Product Selected -->
+        <div class="empty-state" *ngIf="!isLoadingProducts && !selectedProductId && !isLoading">
+            <mat-icon>eco</mat-icon>
+            <p>Seleziona un prodotto per iniziare</p>
+        </div>
+
+        <!-- No Method Found -->
+        <div class="empty-state" *ngIf="!isLoading && selectedProductId && !hasMethod && canManageCultivationMethod">
+            <mat-icon>info</mat-icon>
+            <p>Nessun metodo di coltivazione associato a questo prodotto</p>
+            <button mat-raised-button color="primary" (click)="aggiungiMetodo()">
+                <mat-icon>add</mat-icon>
+                Crea Metodo di Coltivazione
+            </button>
+        </div>
+
+        <!-- Method Details Card -->
+        <div class="method-details" *ngIf="!isLoading && hasMethod && cultivationMethod && selectedProductId">
+            <mat-card appearance="outlined" class="method-card">
+                <mat-card-header>
+                    <mat-card-title>{{ cultivationMethod.nome }}</mat-card-title>
+                    <mat-card-subtitle>ID: {{ cultivationMethod.id }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="detail-row">
+                        <strong>Descrizione:</strong>
+                        <p>{{ cultivationMethod.descrizione }}</p>
+                    </div>
+
+                    <mat-divider></mat-divider>
+
+                    <div class="detail-grid">
+                        <div class="detail-item" *ngIf="cultivationMethod.superficie">
+                            <strong>Superficie:</strong>
+                            <span>{{ cultivationMethod.superficie }} ha</span>
+                        </div>
+
+                        <div class="detail-item" *ngIf="cultivationMethod.ubicazione">
+                            <strong>Ubicazione:</strong>
+                            <span>{{ cultivationMethod.ubicazione }}</span>
+                        </div>
+                    </div>
+
+                    <mat-divider
+                        *ngIf="cultivationMethod.tecniche && cultivationMethod.tecniche.length > 0"></mat-divider>
+
+                    <div class="detail-row" *ngIf="cultivationMethod.tecniche && cultivationMethod.tecniche.length > 0">
+                        <strong>Tecniche:</strong>
+                        <div class="techniques-list">
+                            <span class="technique-chip" *ngFor="let tecnica of cultivationMethod.tecniche">
+                                {{ tecnica }}
+                            </span>
+                        </div>
+                    </div>
+                </mat-card-content>
+                <mat-card-actions align="end">
+                    <button mat-button color="primary" (click)="modificaMetodo()"
+                        [disabled]="!canManageCultivationMethod"
+                        [matTooltip]="canManageCultivationMethod ? 'Modifica Metodo' : 'Disponibile solo per prodotti approvati o IN_REVISIONE'">
+                        <mat-icon>edit</mat-icon>
+                        Modifica
+                    </button>
+                    <button mat-button color="warn" (click)="eliminaMetodo()" [disabled]="!canManageCultivationMethod"
+                        [matTooltip]="canManageCultivationMethod ? 'Elimina Metodo' : 'Disponibile solo per prodotti approvati o IN_REVISIONE'">
+                        <mat-icon>delete</mat-icon>
+                        Elimina
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </mat-card-content>
+</mat-card>

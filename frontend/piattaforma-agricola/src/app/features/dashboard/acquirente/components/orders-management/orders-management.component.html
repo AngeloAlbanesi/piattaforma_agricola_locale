@@ -1,0 +1,253 @@
+<div class="orders-management-container">
+    <mat-card class="orders-card" appearance="outlined">
+        <mat-card-header>
+            <mat-card-title class="orders-title">
+                <span>I Miei Ordini</span>
+                <div class="orders-actions">
+                    <button mat-icon-button (click)="loadOrders()" matTooltip="Aggiorna ordini">
+                        <mat-icon>refresh</mat-icon>
+                    </button>
+                </div>
+            </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <!-- Loading State -->
+            <div class="loading-container" *ngIf="isLoading">
+                <mat-spinner></mat-spinner>
+                <p>Caricamento ordini...</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-section" *ngIf="!isLoading">
+                <form [formGroup]="filterForm" class="filters-form">
+                    <div class="filters-row">
+                        <mat-form-field appearance="outline" class="filter-field">
+                            <mat-label>Cerca</mat-label>
+                            <input matInput formControlName="search" placeholder="Cerca ordini...">
+                            <mat-icon matSuffix>search</mat-icon>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="filter-field">
+                            <mat-label>Stato</mat-label>
+                            <mat-select formControlName="stato">
+                                <mat-option value="">Tutti gli stati</mat-option>
+                                <mat-option value="ATTESA_PAGAMENTO">Attesa Pagamento</mat-option>
+                                <mat-option value="PRONTO_PER_LAVORAZIONE">Pronto per Lavorazione</mat-option>
+                                <mat-option value="IN_LAVORAZIONE">In Lavorazione</mat-option>
+                                <mat-option value="SPEDITO">Spedito</mat-option>
+                                <mat-option value="CONSEGNATO">Consegnato</mat-option>
+                                <mat-option value="ANNULLATO">Annullato</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="filter-field">
+                            <mat-label>Ordina per</mat-label>
+                            <mat-select formControlName="sortBy">
+                                <mat-option value="dataOrdine">Data Ordine</mat-option>
+                                <mat-option value="totale">Totale</mat-option>
+                                <mat-option value="stato">Stato</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="filter-field">
+                            <mat-label>Direzione</mat-label>
+                            <mat-select formControlName="sortDirection">
+                                <mat-option value="desc">Decrescente</mat-option>
+                                <mat-option value="asc">Crescente</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-orders" *ngIf="!isLoading && !hasOrders">
+                <mat-icon class="empty-icon">receipt_long</mat-icon>
+                <h3>Nessun ordine trovato</h3>
+                <p *ngIf="!isFilterActive">Non hai ancora effettuato nessun ordine.</p>
+                <p *ngIf="isFilterActive">Nessun ordine corrisponde ai filtri selezionati.</p>
+                <button mat-raised-button color="primary" routerLink="/" *ngIf="!isFilterActive">
+                    Inizia Shopping
+                </button>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="orders-content" *ngIf="!isLoading && hasOrders">
+                <table mat-table [dataSource]="ordersList" class="orders-table">
+                    <!-- ID Column -->
+                    <ng-container matColumnDef="id">
+                        <th mat-header-cell *matHeaderCellDef>#</th>
+                        <td mat-cell *matCellDef="let order">
+                            <span class="order-id">#{{ order.idOrdine }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Date Column -->
+                    <ng-container matColumnDef="data">
+                        <th mat-header-cell *matHeaderCellDef>Data</th>
+                        <td mat-cell *matCellDef="let order">
+                            <span class="order-date">{{ formatDate(order.dataOrdine) }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Vendor Column -->
+                    <ng-container matColumnDef="venditore">
+                        <th mat-header-cell *matHeaderCellDef>Venditore</th>
+                        <td mat-cell *matCellDef="let order">
+                            <span class="vendor-name">{{ order.nomeVenditore }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Status Column -->
+                    <ng-container matColumnDef="stato">
+                        <th mat-header-cell *matHeaderCellDef>Stato</th>
+                        <td mat-cell *matCellDef="let order">
+                            <mat-chip [color]="getStatusColor(order.statoCorrente)" class="status-chip">
+                                {{ getStatusLabel(order.statoCorrente) }}
+                            </mat-chip>
+                        </td>
+                    </ng-container>
+
+                    <!-- Total Column -->
+                    <ng-container matColumnDef="totale">
+                        <th mat-header-cell *matHeaderCellDef>Totale</th>
+                        <td mat-cell *matCellDef="let order">
+                            <span class="order-total">{{ formatCurrency(order.importoTotale) }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Actions Column -->
+                    <ng-container matColumnDef="azioni">
+                        <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                        <td mat-cell *matCellDef="let order">
+                            <div class="action-buttons">
+                                <button mat-icon-button (click)="loadOrderDetails(order.idOrdine)"
+                                    [disabled]="isUpdating" matTooltip="Visualizza dettagli">
+                                    <mat-icon>visibility</mat-icon>
+                                </button>
+                                <button mat-icon-button *ngIf="canCancelOrder(order)"
+                                    (click)="cancelOrder(order.idOrdine)" [disabled]="isUpdating"
+                                    matTooltip="Annulla ordine" color="warn">
+                                    <mat-icon>cancel</mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+
+                <!-- Pagination -->
+                <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="onPageChange($event)" showFirstLastButtons class="orders-paginator">
+                </mat-paginator>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Order Details Dialog/Panel -->
+    <div class="order-details-panel" *ngIf="showDetails && selectedOrder">
+        <mat-card class="details-card" appearance="outlined">
+            <mat-card-header>
+                <mat-card-title class="details-title">
+                    <span>Dettagli Ordine #{{ selectedOrder.idOrdine }}</span>
+                    <button mat-icon-button (click)="showDetails = false" matTooltip="Chiudi dettagli">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-card-title>
+                <mat-card-subtitle>
+                    {{ formatDateTime(selectedOrder.dataOrdine) }} - {{ selectedOrder.nomeVenditore }}
+                </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+                <div class="order-details-content">
+                    <!-- Order Info -->
+                    <div class="order-info-section">
+                        <h3>Informazioni Ordine</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Stato:</span>
+                                <mat-chip [color]="getStatusColor(selectedOrder.statoCorrente)">
+                                    {{ getStatusLabel(selectedOrder.statoCorrente) }}
+                                </mat-chip>
+                            </div>
+                            <div class="info-item" *ngIf="selectedOrder.metodoPagamento">
+                                <span class="info-label">Metodo Pagamento:</span>
+                                <span>{{ selectedOrder.metodoPagamento }}</span>
+                            </div>
+                            <div class="info-item" *ngIf="selectedOrder.indirizzoSpedizione">
+                                <span class="info-label">Indirizzo Spedizione:</span>
+                                <span>{{ selectedOrder.indirizzoSpedizione }}</span>
+                            </div>
+                            <div class="info-item" *ngIf="selectedOrder.trackingNumber">
+                                <span class="info-label">Tracking:</span>
+                                <span>{{ selectedOrder.trackingNumber }}</span>
+                            </div>
+                            <div class="info-item" *ngIf="selectedOrder.dataConsegnaPrevista">
+                                <span class="info-label">Consegna Prevista:</span>
+                                <span>{{ formatDate(selectedOrder.dataConsegnaPrevista) }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items -->
+                    <div class="order-items-section"
+                        *ngIf="selectedOrder.righeOrdine && selectedOrder.righeOrdine.length > 0">
+                        <h3>Articoli Ordinati ({{ selectedOrder.totalArticoli }})</h3>
+                        <div class="items-list">
+                            <div class="item-row" *ngFor="let item of selectedOrder.righeOrdine">
+                                <div class="item-info">
+                                    <span class="item-name">{{ item.nomeAcquistabile }}</span>
+                                    <span class="item-type" *ngIf="item.tipoAcquistabile">{{ item.tipoAcquistabile
+                                        }}</span>
+                                    <span class="item-quantity">Quantità: {{ item.quantitaOrdinata }}</span>
+                                    <span class="item-description" *ngIf="item.descrizioneAcquistabile">{{
+                                        item.descrizioneAcquistabile }}</span>
+                                </div>
+                                <div class="item-prices">
+                                    <span class="item-price-unit">{{ formatCurrency(item.prezzoUnitario) }} × {{
+                                        item.quantitaOrdinata }}</span>
+                                    <span class="item-total">{{ formatCurrency(item.prezzoUnitario *
+                                        item.quantitaOrdinata) }}</span>
+                                </div>
+                            </div>
+                            <div class="items-total">
+                                <span class="total-label">Totale Ordine:</span>
+                                <span class="total-amount">{{ formatCurrency(selectedOrder.importoTotale) }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Status History -->
+                    <div class="status-history-section" *ngIf="orderStatus">
+                        <h3>Cronologia Stati</h3>
+                        <div class="status-timeline">
+                            <div class="status-item" *ngFor="let status of orderStatus.storicoStati; let last = last">
+                                <div class="status-dot"></div>
+                                <div class="status-content">
+                                    <div class="status-name">{{ getStatusLabel(status.stato) }}</div>
+                                    <div class="status-time">{{ formatDateTime(status.dataOra) }}</div>
+                                </div>
+                                <div class="status-line" *ngIf="!last"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+
+            <mat-card-actions class="details-actions">
+                <button mat-stroked-button (click)="showDetails = false">
+                    Chiudi
+                </button>
+                <button mat-raised-button color="warn"
+                    *ngIf="selectedOrder && canCancelOrderById(selectedOrder.idOrdine, selectedOrder.statoCorrente)"
+                    (click)="cancelOrder(selectedOrder.idOrdine)" [disabled]="isUpdating">
+                    Annulla Ordine
+                </button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="stats-overview">
+  <div class="stats-grid">
+    <!-- Stat Card Ordini -->
+    <mat-card class="stat-card" appearance="outlined" [class.has-data]="hasOrders">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>shopping_cart</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ formattedTotalOrders }}</h3>
+          <p class="stat-label">Ordini Totali</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Stat Card Spesa -->
+    <mat-card class="stat-card" appearance="outlined" [class.has-data]="hasSpent">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>euro_symbol</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ formattedTotalSpent }}</h3>
+          <p class="stat-label">Spesa Totale</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Stat Card Prodotti -->
+    <mat-card class="stat-card" appearance="outlined" [class.has-data]="hasProducts">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ formattedProductsPurchased }}</h3>
+          <p class="stat-label">Prodotti Acquistati</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Stat Card Eventi -->
+    <mat-card class="stat-card" appearance="outlined" [class.has-data]="hasEvents">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>event</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ formattedEventsAttended }}</h3>
+          <p class="stat-label">Eventi Partecipati</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

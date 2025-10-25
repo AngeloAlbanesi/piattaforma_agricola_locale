@@ -1,0 +1,114 @@
+<div class="produttore-stats-overview">
+  <div class="stats-grid">
+    <!-- Stat Card Prodotti Totali -->
+    <mat-card class="stat-card" appearance="outlined" [class.has-data]="hasProducts">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ formattedTotalProducts }}</h3>
+          <p class="stat-label">Prodotti Totali</p>
+          <div class="stat-breakdown">
+            <div class="breakdown-item approved">
+              <span class="breakdown-value">{{ approvedProducts }}</span>
+              <span class="breakdown-label">Approvati</span>
+            </div>
+            <div class="breakdown-item pending">
+              <span class="breakdown-value">{{ pendingProducts }}</span>
+              <span class="breakdown-label">In Attesa</span>
+            </div>
+            <div class="breakdown-item rejected">
+              <span class="breakdown-value">{{ rejectedProducts }}</span>
+              <span class="breakdown-label">Respinti</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Stat Card Ordini -->
+    <mat-card class="stat-card" appearance="outlined" [class.has-data]="hasOrders">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>receipt_long</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ formattedTotalOrders }}</h3>
+          <p class="stat-label">Ordini Totali</p>
+          <div class="stat-breakdown">
+            <div class="breakdown-item completed">
+              <span class="breakdown-value">{{ completedOrders }}</span>
+              <span class="breakdown-label">Completati</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-value">{{ totalOrders - completedOrders }}</span>
+              <span class="breakdown-label">In Corso</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Stat Card Fatturato -->
+    <mat-card class="stat-card" appearance="outlined" [class.has-data]="hasRevenue">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>euro_symbol</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ formattedTotalRevenue }}</h3>
+          <p class="stat-label">Fatturato Totale</p>
+          <div class="stat-metric">
+            <span class="metric-label">Prodotti Venduti:</span>
+            <span class="metric-value">{{ formattedProductsSold }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Stat Card Visualizzazioni -->
+    <mat-card class="stat-card" appearance="outlined" [class.has-data]="hasViews">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>visibility</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ formattedTotalViews }}</h3>
+          <p class="stat-label">Visualizzazioni Totali</p>
+          <div class="stat-metric">
+            <span class="metric-label">Certificazioni:</span>
+            <span class="metric-value">{{ totalCertifications }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Progress Bars Section -->
+  <div class="progress-section">
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-label">Tasso Approvazione Prodotti</span>
+        <span class="progress-value">{{ approvalRate }}%</span>
+      </div>
+      <mat-progress-bar 
+        mode="determinate" 
+        [value]="approvalProgress" 
+        color="primary">
+      </mat-progress-bar>
+    </div>
+
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-label">Tasso Completamento Ordini</span>
+        <span class="progress-value">{{ completionRate }}%</span>
+      </div>
+      <mat-progress-bar 
+        mode="determinate" 
+        [value]="completionProgress" 
+        color="accent">
+      </mat-progress-bar>
+    </div>
+  </div>
+</div>

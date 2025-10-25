@@ -26,6 +26,10 @@ public class ElementoPacchettoRequestDTO {
     @NotNull(message = "L'ID dell'elemento è obbligatorio")
     private Long idElemento;
 
+    @Min(value = 1, message = "La quantità deve essere almeno 1")
+    @Builder.Default
+    private Integer quantita = 1; // Quantità dell'elemento da includere
+
     /**
      * Restituisce l'ID del prodotto (alias per idElemento per compatibilità).
      */

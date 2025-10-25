@@ -1,0 +1,92 @@
+@use '../../../../../../styles/_variables' as *;
+
+.utente-card {
+    width: 100%;
+    max-width: 400px;
+    margin: 16px auto;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-elevation-2;
+    background-color: $card-background-color;
+    color: $text-color-primary;
+
+    mat-card-header {
+        padding: 16px 24px;
+
+        .user-avatar {
+            background-color: $primary-color-light;
+            color: $primary-color;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            mat-icon {
+                font-size: 28px;
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        .mat-card-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: $primary-color;
+        }
+
+        .mat-card-subtitle {
+            color: $text-color-secondary;
+        }
+    }
+
+    mat-card-content {
+        padding: 0 24px 16px;
+
+        p {
+            margin: 8px 0;
+            font-size: 0.95em;
+            color: $text-color-dark;
+
+            strong {
+                color: $text-color-primary;
+            }
+        }
+
+        mat-chip-listbox {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 8px;
+
+            .mat-chip {
+                font-size: 0.75em;
+                height: 24px;
+                padding: 0 8px;
+                border-radius: 12px;
+
+                &.mat-primary {
+                    background-color: rgba($primary-color, 0.1);
+                    color: $primary-color;
+                }
+
+                &.mat-accent {
+                    background-color: rgba($accent-color, 0.1);
+                    color: $accent-color;
+                }
+
+                &.mat-warn {
+                    background-color: rgba($warn-color, 0.1);
+                    color: $warn-color;
+                }
+            }
+        }
+    }
+
+    mat-card-actions {
+        padding: 8px 16px 16px;
+
+        button {
+            margin-left: 8px;
+        }
+    }
+}

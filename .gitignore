@@ -91,3 +91,12 @@ context-engineering-intro/
 data/piattaforma_agricola.mv.db
 data/piattaforma_agricola.trace.db
 data/piattaforma_agricola.mv.db
+Api pubbliche/api pubbliche.json
+frontend/piattaforma-agricola/ACCESSIBILITY_GUIDE.md
+frontend/piattaforma-agricola/GESTORE_IMPLEMENTATION_SUMMARY.md
+Api/api curatore.json
+Api/api trasformatore.json
+frontend/piattaforma-agricola/opencode.json
+Api/api animatore.json
+Api/api acquirente.json
+Api/api ordini venditori.json

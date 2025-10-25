@@ -1,0 +1,387 @@
+{
+    "name": "Gestore Piattaforma",
+    "item": [
+        {
+            "name": "Visualizza Tutti gli utenti",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "localhost:8080/api/admin/gestore/utenti/search",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "admin",
+                        "gestore",
+                        "utenti",
+                        "search"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Visualizza Utenti per tipo",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/admin/gestore/utenti/tipo?tipoUtente=TRASFORMATORE",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "admin",
+                        "gestore",
+                        "utenti",
+                        "tipo"
+                    ],
+                    "query": [
+                        {
+                            "key": "tipoUtente",
+                            "value": "TRASFORMATORE"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Visualizza Tutti gli utenti con filtro opzionale",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/admin/gestore/utenti/search?search=mario",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "admin",
+                        "gestore",
+                        "utenti",
+                        "search"
+                    ],
+                    "query": [
+                        {
+                            "key": "search",
+                            "value": "mario"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Visualizza dati azienda di un venditore",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/admin/gestore/venditori/3/azienda",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "admin",
+                        "gestore",
+                        "venditori",
+                        "3",
+                        "azienda"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Visualizza Animatori in Attesa di Accreditamento",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/admin/gestore/animatori/pending",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "admin",
+                        "gestore",
+                        "animatori",
+                        "pending"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Visualizza Venditori in Attesa di Accreditamento",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/admin/gestore/venditori/pending",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "admin",
+                        "gestore",
+                        "venditori",
+                        "pending"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Visualizza Curatori in Attesa di Accreditamento",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/admin/gestore/curatori/pending",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "admin",
+                        "gestore",
+                        "curatori",
+                        "pending"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Attivazione/Disattivazione Utente",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJmcmFuY28ubHVuZ29AZW1haWwuY29tIiwiaWF0IjoxNzUxOTkyNzgxLCJleHAiOjE3NTIwMjE1ODF9.T4MlDq1gfGQSI4vWHp85yByDHqntu8asuPoYGeREe0iBG0bLi0ghyzNKFthq7qwJ",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "PUT",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/gestore/utenti/123/attivazione?tipo=ACQUIRENTE&attivo=true",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "gestore",
+                        "utenti",
+                        "123",
+                        "attivazione"
+                    ],
+                    "query": [
+                        {
+                            "key": "tipo",
+                            "value": "ACQUIRENTE",
+                            "description": "ACQUIRENTE\nVENDITORE\nCURATORE\nANIMATORE"
+                        },
+                        {
+                            "key": "attivo",
+                            "value": "true",
+                            "description": "true or false"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Accredita Animatore",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/admin/gestore/animatori/13/accreditamento?stato=ACCREDITATO",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "admin",
+                        "gestore",
+                        "animatori",
+                        "13",
+                        "accreditamento"
+                    ],
+                    "query": [
+                        {
+                            "key": "stato",
+                            "value": "ACCREDITATO",
+                            "description": "ACCREDITATO o RIFIUTATO o IN_ATTESA"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Accredita Venditore",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/admin/gestore/venditori/4/accreditamento?stato=ACCREDITATO",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "admin",
+                        "gestore",
+                        "venditori",
+                        "4",
+                        "accreditamento"
+                    ],
+                    "query": [
+                        {
+                            "key": "stato",
+                            "value": "ACCREDITATO",
+                            "description": "ACCREDITATO o RIFIUTATO o IN_ATTESA"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Accredita Curatore",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/admin/gestore/curatori/{id}/accreditamento?stato=ACCREDITATO",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "admin",
+                        "gestore",
+                        "curatori",
+                        "{id}",
+                        "accreditamento"
+                    ],
+                    "query": [
+                        {
+                            "key": "stato",
+                            "value": "ACCREDITATO",
+                            "description": "ACCREDITATO o RIFIUTATO o IN_ATTESA"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Banna Utente",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJmcmFuY28ubHVuZ29AZW1haWwuY29tIiwiaWF0IjoxNzUxOTkyNzgxLCJleHAiOjE3NTIwMjE1ODF9.T4MlDq1gfGQSI4vWHp85yByDHqntu8asuPoYGeREe0iBG0bLi0ghyzNKFthq7qwJ",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"motivazione\": \"Violazione ripetuta delle linee guida della comunità\"\n}\n",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "http://localhost:8080/utenti/{id}/ban",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "utenti",
+                        "{id}",
+                        "ban"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzYW11ZWxlLnZpdGVsbGlAZW1haWwuY29tIiwiaWF0IjoxNzUyNDQxMjMwLCJleHAiOjE3NTI0NzAwMzB9.Juqn6LDK8IP5dxENDP3LGPRGkbL95qETzTNzAkOBNkBEd7j0J1ACo_QY0D0RhJPb",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ]
+}

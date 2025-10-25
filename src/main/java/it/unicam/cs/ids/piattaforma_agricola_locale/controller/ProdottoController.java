@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2025 Angelo Albanesi
+ *   All rights reserved.
+ */
 package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo.*;
@@ -12,6 +16,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOriginePr
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.coltivazione.MetodoDiColtivazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione.ProcessoTrasformazione;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.OwnershipValidationService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
@@ -39,6 +44,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -146,17 +152,62 @@ public class ProdottoController {
 
     @GetMapping("/miei-prodotti")
     @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE_TIPICITA')")
-    public ResponseEntity<List<ProductSummaryDTO>> getMyProducts(Authentication authentication) {
+    public ResponseEntity<Page<ProductSummaryDTO>> getMyProducts(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int elementiPerPagina,
+            @RequestParam(defaultValue = "nome") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @RequestParam(required = false) String statoVerifica,
+            @RequestParam(required = false) String tipoOrigine,
+            @RequestParam(required = false) String search) {
+
         String email = authentication.getName();
         Venditore venditore = (Venditore) utenteService.getUtenteByEmail(email);
 
+        Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(pagina, elementiPerPagina, sort);
+
         List<Prodotto> myProducts = prodottoService.getProdottiByVenditore(venditore.getId());
+
+        // Applica filtri opzionali
+        if (statoVerifica != null && !statoVerifica.isEmpty()) {
+            StatoVerificaValori statoEnum = StatoVerificaValori.valueOf(statoVerifica);
+            myProducts = myProducts.stream()
+                    .filter(p -> p.getStatoVerifica() == statoEnum)
+                    .collect(Collectors.toList());
+        }
+
+        if (tipoOrigine != null && !tipoOrigine.isEmpty()) {
+            TipoOrigineProdotto tipoEnum = TipoOrigineProdotto.valueOf(tipoOrigine);
+            myProducts = myProducts.stream()
+                    .filter(p -> p.getTipoOrigine() == tipoEnum)
+                    .collect(Collectors.toList());
+        }
+
+        if (search != null && !search.trim().isEmpty()) {
+            String searchLower = search.toLowerCase();
+            myProducts = myProducts.stream()
+                    .filter(p -> p.getNome().toLowerCase().contains(searchLower) ||
+                            (p.getDescrizione() != null && p.getDescrizione().toLowerCase().contains(searchLower)))
+                    .collect(Collectors.toList());
+        }
+
         List<ProductSummaryDTO> summaryDTOs = myProducts.stream()
                 .map(prodottoMapper::toSummaryDTO)
                 .collect(Collectors.toList());
 
-        log.info("Retrieved {} products for authenticated vendor: {}", summaryDTOs.size(), email);
-        return ResponseEntity.ok(summaryDTOs);
+        // Calcola la paginazione manualmente sulla lista
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), summaryDTOs.size());
+        List<ProductSummaryDTO> pagedContent = start < summaryDTOs.size() ? summaryDTOs.subList(start, end)
+                : new ArrayList<>();
+
+        Page<ProductSummaryDTO> pagedResult = new PageImpl<>(pagedContent, pageable, summaryDTOs.size());
+
+        log.info("Retrieved {} products (page {}, size {}) for authenticated vendor: {}",
+                pagedResult.getTotalElements(), pagina, elementiPerPagina, email);
+        return ResponseEntity.ok(pagedResult);
     }
 
     @PostMapping
@@ -180,6 +231,11 @@ public class ProdottoController {
                 request.getPrezzo(),
                 request.getQuantitaDisponibile(),
                 venditore);
+
+        // Imposta l'unità di misura dal DTO della richiesta
+        if (request.getUnitaMisura() != null) {
+            nuovoProdotto.setUnitaMisura(request.getUnitaMisura());
+        }
 
         // Imposta il tipo di origine dal DTO della richiesta
         if (request.getTipoOrigine() != null) {
@@ -236,6 +292,9 @@ public class ProdottoController {
                     }
                     if (request.getQuantitaDisponibile() != null) {
                         prodotto.setQuantitaDisponibile(request.getQuantitaDisponibile());
+                    }
+                    if (request.getUnitaMisura() != null) {
+                        prodotto.setUnitaMisura(request.getUnitaMisura());
                     }
 
                     // Save the updated product to persist changes
@@ -387,6 +446,50 @@ public class ProdottoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Get all certifications for all products of the authenticated vendor.
+     *
+     * @param authentication The authentication object
+     * @return List of all certifications for all products of the vendor
+     */
+    @GetMapping("/miei-prodotti/certificazioni")
+    @PreAuthorize("hasAnyRole('PRODUTTORE', 'TRASFORMATORE', 'DISTRIBUTORE')")
+    public ResponseEntity<List<CertificazioneDTO>> getAllMyCertifications(Authentication authentication) {
+        try {
+            String email = authentication.getName();
+            log.info("Vendor {} requesting all certifications for their products", email);
+
+            // Get the vendor by email
+            Utente utente = utenteService.getUtenteByEmail(email);
+            if (!(utente instanceof Venditore)) {
+                log.error("User {} is not a vendor", email);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            Venditore venditore = (Venditore) utente;
+
+            // Get all products of the vendor
+            List<Prodotto> prodotti = prodottoService.getProdottiOfferti(venditore);
+
+            // Collect all certifications from all products
+            List<CertificazioneDTO> allCertifications = new ArrayList<>();
+            for (Prodotto prodotto : prodotti) {
+                List<Certificazione> certificazioni = prodottoService.getCertificazioniDelProdotto(prodotto);
+                List<CertificazioneDTO> dtos = certificazioni.stream()
+                        .map(this::mapCertificazioneToDTO)
+                        .collect(Collectors.toList());
+                allCertifications.addAll(dtos);
+            }
+
+            log.info("Retrieved {} total certifications for vendor {}", allCertifications.size(), email);
+            return ResponseEntity.ok(allCertifications);
+
+        } catch (Exception e) {
+            log.error("Error retrieving all certifications for vendor: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     // Helper method to map Certificazione to DTO
     private CertificazioneDTO mapCertificazioneToDTO(Certificazione certificazione) {
         return CertificazioneDTO.builder()
@@ -454,22 +557,43 @@ public class ProdottoController {
     /**
      * Recupera il metodo di coltivazione associato a un prodotto.
      * Endpoint pubblico accessibile a tutti gli utenti.
+     * Il proprietario può vedere i metodi anche per prodotti IN_REVISIONE.
      */
     @GetMapping("/{id}/metodi-coltivazione")
-    public ResponseEntity<MetodoDiColtivazioneDTO> getCultivationMethod(@PathVariable Long id) {
+    public ResponseEntity<MetodoDiColtivazioneDTO> getCultivationMethod(
+            @PathVariable Long id,
+            Authentication authentication) {
         return prodottoService.getProdottoById(id)
                 .map(prodotto -> {
-                    // Verifica che il prodotto sia approvato prima di mostrare i metodi di
-                    // coltivazione
-                    if (prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO) {
-                        log.warn("Attempt to access cultivation method for non-approved product ID: {}", id);
+                    // Determina se l'utente corrente è il proprietario del prodotto
+                    boolean isOwner = false;
+                    if (authentication != null && authentication.isAuthenticated()) {
+                        String email = authentication.getName();
+                        Venditore venditore = (Venditore) utenteService.getUtenteByEmail(email);
+                        isOwner = prodotto.getVenditore().getIdUtente().equals(venditore.getIdUtente());
+                    }
+
+                    // Se non è il proprietario, verifica che il prodotto sia approvato
+                    if (!isOwner && prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO) {
+                        log.warn("Attempt to access cultivation method for non-approved product ID: {} by non-owner",
+                                id);
+                        return ResponseEntity.notFound().<MetodoDiColtivazioneDTO>build();
+                    }
+
+                    // Se è il proprietario, permetti l'accesso anche per prodotti IN_REVISIONE o
+                    // APPROVATO
+                    if (isOwner && prodotto.getStatoVerifica() != StatoVerificaValori.APPROVATO
+                            && prodotto.getStatoVerifica() != StatoVerificaValori.IN_REVISIONE) {
+                        log.warn(
+                                "Owner attempted to access cultivation method for product ID: {} with invalid state: {}",
+                                id, prodotto.getStatoVerifica());
                         return ResponseEntity.notFound().<MetodoDiColtivazioneDTO>build();
                     }
 
                     MetodoDiColtivazione metodo = produttoreService.getMetodoDiColtivazioneByProdotto(id);
                     if (metodo != null) {
                         MetodoDiColtivazioneDTO dto = metodiColtivazioneMapper.toDTO(metodo);
-                        log.info("Retrieved cultivation method for product ID: {}", id);
+                        log.info("Retrieved cultivation method for product ID: {} (owner: {})", id, isOwner);
                         return ResponseEntity.ok(dto);
                     } else {
                         log.info("No cultivation method found for product ID: {}", id);
@@ -606,7 +730,7 @@ public class ProdottoController {
     public ResponseEntity<?> getProductTraceability(@PathVariable Long id) {
         try {
             log.info("Richiesta tracciabilità per prodotto con ID: {}", id);
-            
+
             // Verifica che il prodotto esista
             Optional<Prodotto> prodottoOpt = prodottoService.getProdottoById(id);
             if (prodottoOpt.isEmpty()) {
@@ -614,18 +738,18 @@ public class ProdottoController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Prodotto con ID " + id + " non trovato");
             }
-            
+
             Prodotto prodotto = prodottoOpt.get();
-            
+
             // Verifica che il prodotto sia di tipo TRASFORMATO
             if (prodotto.getTipoOrigine() != TipoOrigineProdotto.TRASFORMATO) {
-                log.warn("Prodotto con ID {} non è di tipo TRASFORMATO. Tipo attuale: {}", 
+                log.warn("Prodotto con ID {} non è di tipo TRASFORMATO. Tipo attuale: {}",
                         id, prodotto.getTipoOrigine());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Il prodotto con ID " + id + " non è di tipo TRASFORMATO. " +
-                              "La tracciabilità è disponibile solo per prodotti trasformati.");
+                                "La tracciabilità è disponibile solo per prodotti trasformati.");
             }
-            
+
             // Verifica che il prodotto abbia un processo di trasformazione associato
             Long processoId = prodotto.getIdProcessoTrasformazioneOriginario();
             if (processoId == null) {
@@ -633,23 +757,24 @@ public class ProdottoController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body("Errore: il prodotto trasformato non ha un processo di trasformazione associato");
             }
-            
+
             // Recupera il processo di trasformazione con tutte le informazioni necessarie
-            Optional<ProcessoTrasformazione> processoOpt = processoTrasformazioneService.getProcessoTracciabilita(processoId);
+            Optional<ProcessoTrasformazione> processoOpt = processoTrasformazioneService
+                    .getProcessoTracciabilita(processoId);
             if (processoOpt.isEmpty()) {
                 log.warn("Processo di trasformazione con ID {} non trovato per prodotto {}", processoId, id);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body("Errore: processo di trasformazione associato non trovato");
             }
-            
+
             ProcessoTrasformazione processo = processoOpt.get();
-            
+
             // Converte il processo in DTO di tracciabilità
             TraceabilityDTO traceabilityDTO = traceabilityMapper.toTraceabilityDTO(processo);
-            
+
             log.info("Tracciabilità recuperata con successo per prodotto ID: {}", id);
             return ResponseEntity.ok(traceabilityDTO);
-            
+
         } catch (Exception e) {
             log.error("Errore durante il recupero della tracciabilità per prodotto ID {}: {}", id, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

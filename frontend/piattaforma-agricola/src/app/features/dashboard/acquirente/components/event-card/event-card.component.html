@@ -1,0 +1,121 @@
+<mat-card class="event-card" (click)="onCardClick()">
+    <!-- Event Image -->
+    <div class="event-image-container">
+        <img [src]="getImageUrl()" [alt]="evento.nome" class="event-image">
+
+        <!-- Event Status Badge -->
+        <div class="status-badge" [ngClass]="getStatoBadgeClass(evento.statoEvento || evento.stato!)">
+            {{ getStatoEvento(evento.statoEvento || evento.stato!) }}
+        </div>
+
+        <!-- Registration Badge -->
+        @if (isRegistered && showRegistrationStatus) {
+        <div class="registered-badge">
+            <mat-icon>check_circle</mat-icon>
+            <span>Registrato</span>
+        </div>
+        }
+
+        <!-- Event Type Badge (In corso) -->
+        @if (isEventoInCorso()) {
+        <div class="ongoing-badge">
+            <mat-icon>play_circle_filled</mat-icon>
+            In corso
+        </div>
+        }
+    </div>
+
+    <!-- Event Content -->
+    <mat-card-content class="event-content">
+        <div class="event-header">
+            <h3 class="event-title">{{ evento.nomeEvento || evento.nome }}</h3>
+
+            @if (evento.organizzatore || evento.nomeOrganizzatore) {
+            <div class="event-organizer">
+                <mat-icon class="organizer-icon">business</mat-icon>
+                <span class="organizer-name">{{ evento.organizzatore?.nomeAzienda || evento.nomeOrganizzatore }}</span>
+            </div>
+            }
+        </div>
+
+        <!-- Event Description -->
+        <p class="event-description">
+            {{ evento.descrizione ? (evento.descrizione | slice:0:100) + (evento.descrizione.length > 100 ? '...' : '')
+            : 'Nessuna descrizione disponibile' }}
+        </p>
+
+        <!-- Event Info -->
+        <div class="event-info">
+            <!-- Location -->
+            <div class="info-item">
+                <mat-icon class="info-icon">location_on</mat-icon>
+                <span class="info-text">{{ evento.luogoEvento || evento.luogo }}</span>
+            </div>
+
+            <!-- Date and Time -->
+            <div class="info-item">
+                <mat-icon class="info-icon">event</mat-icon>
+                <span class="info-text">
+                    {{ formatDate(evento.dataOraInizio) }} - {{ formatTime(evento.dataOraInizio) }}
+                </span>
+            </div>
+
+            <!-- Participants -->
+            @if ((evento.numeroMassimoPartecipanti !== null && evento.numeroMassimoPartecipanti !== undefined) || (evento.capienzaMassima !== null && evento.capienzaMassima !== undefined)) {
+            <div class="info-item participants-info"
+                [class.warning]="getPostiDisponibili() < 5 && getPostiDisponibili() > 0" [class.full]="isEventoPieno()">
+                <mat-icon class="info-icon">group</mat-icon>
+                <span class="info-text">
+                    @if (evento.postiDisponibili !== null && evento.postiDisponibili !== undefined) {
+                        {{ (evento.capienzaMassima || evento.numeroMassimoPartecipanti || 0) - evento.postiDisponibili }} / {{ evento.capienzaMassima || evento.numeroMassimoPartecipanti }} partecipanti
+                    } @else {
+                        {{ evento.numeroPartecipanti }} / {{ evento.numeroMassimoPartecipanti || evento.capienzaMassima }} partecipanti
+                    }
+                </span>
+            </div>
+            }
+        </div>
+    </mat-card-content>
+
+    <!-- Event Actions -->
+    <mat-card-actions class="event-actions">
+        <!-- Register Button (Authenticated, Not Registered, Future, Not Full) -->
+        @if (canRegister()) {
+        <button mat-raised-button color="primary" class="register-btn" (click)="onRegisterClick($event)">
+            <mat-icon>person_add</mat-icon>
+            Iscriviti
+        </button>
+        }
+
+        <!-- Cancel Registration Button (Authenticated and Registered) -->
+        @if (isAuthenticated && isRegistered) {
+        <button mat-stroked-button color="warn" class="cancel-btn" (click)="onCancelRegistrationClick($event)">
+            <mat-icon>person_remove</mat-icon>
+            Annulla iscrizione
+        </button>
+        }
+
+        <!-- Disabled Button for Non-Authenticated Users -->
+        @if (!isAuthenticated && isEventoFuturo() && !isEventoPieno()) {
+        <button mat-stroked-button disabled class="login-required-btn" [matTooltip]="'Accedi per iscriverti'"
+            matTooltipPosition="above">
+            <mat-icon>lock</mat-icon>
+            Iscriviti
+        </button>
+        }
+
+        <!-- Full Event Badge -->
+        @if (isEventoPieno() && !isRegistered) {
+        <div class="full-event-badge">
+            <mat-icon>event_busy</mat-icon>
+            <span>Evento completo</span>
+        </div>
+        }
+
+        <!-- View Details Button -->
+        <button mat-button color="primary" class="view-details-btn" (click)="onViewDetailsClick($event)">
+            Dettagli
+            <mat-icon>arrow_forward</mat-icon>
+        </button>
+    </mat-card-actions>
+</mat-card>

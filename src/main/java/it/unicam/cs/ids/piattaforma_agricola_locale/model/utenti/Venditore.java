@@ -7,6 +7,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import jakarta.persistence.*;
@@ -16,8 +17,10 @@ import jakarta.persistence.*;
 public abstract class Venditore extends Utente {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_dati_azienda")
+    @JsonIgnoreProperties({"certificazioniAzienda"})
     private DatiAzienda datiAzienda;
     @OneToMany(mappedBy = "venditore", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"venditore", "certificazioniProdotto"})
     private List<Prodotto> prodottiOfferti;
     @Enumerated(EnumType.STRING)
     @Column(name = "stato_accreditamento")

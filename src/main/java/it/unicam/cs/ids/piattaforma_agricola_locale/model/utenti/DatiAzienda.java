@@ -11,6 +11,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazion
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.ElementoVerificabile;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "dati_azienda")
@@ -21,12 +22,19 @@ public class DatiAzienda implements ElementoVerificabile {
     private Long id;
 
     @Column(name = "nome_azienda", nullable = false, length = 255)
+    @JsonProperty("nomeAzienda")
     private String nomeAzienda;
+
     @Column(name = "partita_iva", unique = true, length = 20)
+    @JsonProperty("partitaIva")
     private String partitaIva;
+
     @Column(name = "indirizzo_azienda", length = 500)
+    @JsonProperty("indirizzoAzienda")
     private String indirizzoAzienda;
+
     @Column(name = "descrizione_azienda", columnDefinition = "TEXT")
+    @JsonProperty("descrizioneAzienda")
     private String descrizioneAzienda;
     @Column(name = "logo_url", length = 500)
     private String logoUrl;

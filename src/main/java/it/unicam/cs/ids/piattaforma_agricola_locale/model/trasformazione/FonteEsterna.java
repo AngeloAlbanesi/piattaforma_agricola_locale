@@ -13,10 +13,11 @@ import java.util.Objects;
 @JsonTypeName("ESTERNA")
 public class FonteEsterna extends FonteMateriaPrima {
 
-    @Column(name = "nome_fornitore", nullable = false)
+    @Column(name = "nome_fornitore", nullable = true)
     private String nomeFornitore;
 
-    public FonteEsterna() {}
+    public FonteEsterna() {
+    }
 
     public FonteEsterna(String nomeFornitore) {
         if (nomeFornitore == null || nomeFornitore.trim().isEmpty()) {

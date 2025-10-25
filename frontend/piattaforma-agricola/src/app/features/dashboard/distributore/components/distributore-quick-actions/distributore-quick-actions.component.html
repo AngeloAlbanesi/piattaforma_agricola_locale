@@ -1,0 +1,33 @@
+<div class="distributore-quick-actions">
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Azioni Rapide</mat-card-title>
+      <mat-card-subtitle>Gestisci rapidamente i tuoi pacchetti</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="actions-grid">
+        <div 
+          *ngFor="let action of quickActions" 
+          class="action-item"
+          [ngClass]="action.color"
+          (click)="onActionClick(action.id)"
+          matTooltip="{{ action.description }}"
+          matTooltipPosition="above">
+          
+          <div class="action-icon" [ngStyle]="{ 'background-color': getActionBgColor(action.color) }">
+            <mat-icon [ngStyle]="{ 'color': getActionIconColor(action.color) }">{{ action.icon }}</mat-icon>
+          </div>
+          
+          <div class="action-content">
+            <h4 class="action-title">{{ action.label }}</h4>
+            <p class="action-description">{{ action.description }}</p>
+          </div>
+          
+          <div class="action-arrow">
+            <mat-icon [ngStyle]="{ 'color': getActionIconColor(action.color) }">arrow_forward</mat-icon>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

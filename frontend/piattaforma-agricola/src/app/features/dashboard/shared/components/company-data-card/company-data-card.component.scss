@@ -1,0 +1,255 @@
+@use '../../../../../../styles/variables' as vars;
+@use '../../../../../../styles/mixins' as mixins;
+@use '../../../../../../styles/accessibility' as accessibility;
+
+.company-data-card {
+    transition: vars.$transition-normal;
+
+    &:hover {
+        box-shadow: vars.$shadow-elevation-2;
+    }
+
+    .card-header {
+        padding-bottom: 16px;
+        border-bottom: 1px solid vars.$color-divider;
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            font-size: vars.$font-size-lg;
+            font-weight: vars.$font-weight-semibold;
+            color: #212121 !important;
+
+            .title-icon {
+                margin-right: 8px;
+                color: vars.$color-secondary;
+                font-size: 24px;
+            }
+        }
+
+        .card-subtitle {
+            color: #666666 !important;
+            font-size: vars.$font-size-sm;
+            margin-top: 4px;
+        }
+    }
+
+    .card-content {
+        padding: 16px 20px;
+        min-height: 200px;
+
+        .loading-container,
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            gap: 16px;
+
+            .loading-text,
+            .error-text {
+                color: vars.$color-text-secondary;
+                font-size: vars.$font-size-sm;
+            }
+
+            .error-icon {
+                color: vars.$color-error;
+                font-size: 32px;
+            }
+
+            .refresh-button {
+                @include mixins.focus-visible;
+            }
+        }
+
+        .company-data {
+            .data-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 12px;
+
+                @media (min-width: vars.$breakpoint-md) {
+                    grid-template-columns: 1fr 1fr;
+                }
+
+                .data-item {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+
+                    &.full-width {
+                        grid-column: 1 / -1;
+                    }
+
+                    .data-label {
+                        font-size: vars.$font-size-xs;
+                        font-weight: vars.$font-weight-semibold;
+                        color: #424242 !important;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+
+                    .data-value {
+                        font-size: vars.$font-size-base;
+                        font-weight: vars.$font-weight-medium;
+                        color: #212121 !important;
+                        word-break: break-word;
+
+                        &.company-name {
+                            font-weight: vars.$font-weight-semibold;
+                            font-size: vars.$font-size-base;
+                            color: vars.$color-secondary;
+                        }
+
+                        &.type-badge {
+                            display: inline-flex;
+                            align-items: center;
+                            padding: 4px 8px;
+                            background-color: rgba(vars.$color-secondary, 0.1);
+                            color: vars.$color-secondary;
+                            border-radius: vars.$border-radius-sm;
+                            font-weight: vars.$font-weight-medium;
+                            font-size: vars.$font-size-xs;
+                            width: fit-content;
+                        }
+
+                        &.description {
+                            line-height: 1.5;
+                            white-space: pre-wrap;
+                        }
+
+                        .website-link {
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 4px;
+                            color: vars.$color-primary;
+                            text-decoration: none;
+                            transition: vars.$transition-normal;
+
+                            &:hover {
+                                color: vars.$color-primary-dark;
+                                text-decoration: underline;
+                            }
+
+                            .link-icon {
+                                font-size: 16px;
+                            }
+                        }
+                    }
+
+                    .status-chip {
+                        font-weight: vars.$font-weight-medium;
+                        font-size: vars.$font-size-xs;
+                    }
+                }
+            }
+        }
+    }
+
+    .card-actions {
+        padding: 16px 0 0;
+        border-top: 1px solid vars.$color-divider;
+
+        .manage-company-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: vars.$font-weight-medium;
+            @include mixins.focus-visible;
+        }
+    }
+}
+
+// Tema scuro
+@media (prefers-color-scheme: dark) {
+    .company-data-card {
+        .card-header {
+            .card-title {
+                color: vars.$color-text-primary-dark;
+            }
+
+            .card-subtitle {
+                color: vars.$color-text-secondary-dark;
+            }
+        }
+
+        .card-content {
+
+            .loading-container,
+            .error-container {
+
+                .loading-text,
+                .error-text {
+                    color: vars.$color-text-secondary-dark;
+                }
+            }
+
+            .company-data {
+                .data-grid {
+                    .data-item {
+                        .data-label {
+                            color: rgba(255, 255, 255, 0.75);
+                        }
+
+                        .data-value {
+                            color: rgba(255, 255, 255, 0.95);
+
+                            &.company-name {
+                                color: vars.$color-secondary-light;
+                            }
+
+                            &.type-badge {
+                                background-color: rgba(vars.$color-secondary, 0.2);
+                                color: vars.$color-secondary-light;
+                            }
+
+                            .website-link {
+                                color: vars.$color-primary-light;
+
+                                &:hover {
+                                    color: vars.$color-primary;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Animazioni
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.company-data {
+    animation: fadeIn 0.3s ease-out;
+}
+
+// Stili per chip di stato
+.mat-mdc-chip {
+    &.mat-primary {
+        background-color: rgba(vars.$color-primary, 0.1);
+        color: vars.$color-primary;
+    }
+
+    &.mat-accent {
+        background-color: rgba(vars.$color-accent, 0.1);
+        color: vars.$color-accent;
+    }
+
+    &.mat-warn {
+        background-color: rgba(vars.$color-error, 0.1);
+        color: vars.$color-error;
+    }
+}

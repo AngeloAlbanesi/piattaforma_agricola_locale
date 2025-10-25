@@ -1,0 +1,28 @@
+<mat-card class="utente-card" appearance="outlined" *ngIf="user">
+  <mat-card-header>
+    <div mat-card-avatar class="user-avatar">
+      <mat-icon>person</mat-icon>
+    </div>
+    <mat-card-title>{{ user.nome }} {{ user.cognome }}</mat-card-title>
+    <mat-card-subtitle>{{ user.ruolo }} - {{ user.username }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p *ngIf="user.telefono"><strong>Telefono:</strong> {{ user.telefono }}</p>
+    <p *ngIf="user.indirizzo"><strong>Indirizzo:</strong> {{ user.indirizzo }}</p>
+    <p><strong>Registrato il:</strong> {{ user.dataRegistrazione | date:'shortDate' }}</p>
+    <p><strong>Stato:</strong>
+      <mat-chip-listbox>
+        <mat-chip [color]="getUserStatusColor(user.stato)" selected>
+          {{ user.stato }}
+        </mat-chip>
+      </mat-chip-listbox>
+    </p>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-button color="primary" (click)="onViewDetails()">DETTAGLI</button>
+    <button mat-button color="warn" (click)="onBlockUser()" *ngIf="user.stato !== 'SOSPESO'">BLOCCA</button>
+    <button mat-button color="accent" (click)="onSuspendUser()" *ngIf="user.stato === 'ATTIVO'">SOSPENDI</button>
+    <button mat-button color="primary" (click)="onActivateUser()" *ngIf="user.stato !== 'ATTIVO'">ATTIVA</button>
+  </mat-card-actions>
+</mat-card>

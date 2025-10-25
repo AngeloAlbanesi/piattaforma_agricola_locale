@@ -1,0 +1,106 @@
+<div class="delete-confirmation-dialog">
+    <div class="dialog-header" mat-dialog-title>
+        <div class="title-section">
+            <mat-icon class="warning-icon">{{ dialogIcon }}</mat-icon>
+            <h2>{{ dialogTitle }}</h2>
+        </div>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <div class="confirmation-content">
+            <!-- Messaggio principale -->
+            <div class="main-message">
+                <p class="message-text">{{ dialogMessage }}</p>
+            </div>
+
+            <!-- Dettagli elemento -->
+            <div class="item-details">
+                <div class="item-info">
+                    <div class="info-row">
+                        <span class="label">Nome:</span>
+                        <span class="value">{{ itemName }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Stato:</span>
+                        <span class="value status" [style.color]="getStatusColor(itemStato)">
+                            {{ getStatusLabel(itemStato) }}
+                        </span>
+                    </div>
+                    <div class="info-row" *ngIf="data.type === 'package' && data.package?.prodotti?.length">
+                        <span class="label">Prodotti inclusi:</span>
+                        <span class="value">{{ data.package?.prodotti?.length || 0 }}</span>
+                    </div>
+                    <div class="info-row" *ngIf="data.type === 'product'">
+                        <span class="label">Quantità disponibile:</span>
+                        <span class="value">{{ data.product?.quantitaDisponibile || 0 }} {{ data.product?.unitaMisura || '' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Prezzo:</span>
+                        <span class="value price">{{ formatCurrency(itemPrice) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning principale -->
+            <div class="warning-section">
+                <div class="warning-box">
+                    <mat-icon class="warning-icon">warning</mat-icon>
+                    <p class="warning-text">{{ warningMessage }}</p>
+                </div>
+            </div>
+
+            <!-- Warning ordini se necessario -->
+            <div class="orders-warning" *ngIf="hasOrdersWarning">
+                <div class="orders-warning-box">
+                    <mat-icon class="error-icon">error</mat-icon>
+                    <p class="orders-warning-text">{{ ordersWarningMessage }}</p>
+                </div>
+            </div>
+
+            <!-- Lista prodotti se stiamo eliminando un pacchetto con prodotti -->
+            <div class="products-list" *ngIf="data.type === 'package' && data.package?.prodotti?.length">
+                <h4>Prodotti che verranno interessati:</h4>
+                <div class="products-grid">
+                    <div 
+                        class="product-item" 
+                        *ngFor="let product of data.package?.prodotti?.slice(0, 3) || []">
+                        <span class="product-name">{{ product?.nome || '' }}</span>
+                        <span class="product-quantity">{{ product?.quantita || 0 }} unità</span>
+                    </div>
+                    <div class="more-products" *ngIf="(data.package?.prodotti?.length || 0) > 3">
+                        <span class="more-text">
+                            + {{ (data.package?.prodotti?.length || 0) - 3 }} altri prodotti
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dettagli aggiuntivi per i prodotti -->
+            <div class="product-extra-details" *ngIf="data.type === 'product' && data.product?.descrizione">
+                <h4>Descrizione prodotto:</h4>
+                <p class="product-description">{{ data.product?.descrizione }}</p>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="dialog-actions">
+        <button 
+            mat-button 
+            (click)="onCancel()"
+            [disabled]="isLoading"
+            class="cancel-button">
+            Annulla
+        </button>
+        
+        <button 
+            mat-raised-button 
+            color="warn" 
+            (click)="onConfirm()"
+            [disabled]="isLoading"
+            class="confirm-button">
+            <mat-icon *ngIf="!isLoading">{{ dialogIcon }}</mat-icon>
+            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+            {{ confirmButtonText }}
+        </button>
+    </mat-dialog-actions>
+</div>

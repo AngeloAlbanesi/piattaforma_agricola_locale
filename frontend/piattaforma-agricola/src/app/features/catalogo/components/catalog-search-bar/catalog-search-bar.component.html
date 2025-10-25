@@ -1,0 +1,12 @@
+<div class="catalog-search-bar">
+    <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Cerca prodotti e pacchetti...</mat-label>
+        <input matInput type="text" [formControl]="searchControl" placeholder="Es: olio, vino, pacchetto stagionale..."
+            aria-label="Campo ricerca catalogo">
+        <mat-icon matPrefix class="search-icon">search</mat-icon>
+        <button *ngIf="hasQuery" mat-icon-button matSuffix (click)="onClear()" matTooltip="Pulisci ricerca"
+            aria-label="Pulisci ricerca">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+</div>

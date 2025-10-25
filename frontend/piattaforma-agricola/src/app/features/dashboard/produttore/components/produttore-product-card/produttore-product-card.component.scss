@@ -1,0 +1,78 @@
+.product-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  mat-card-header {
+    padding-bottom: 0;
+  }
+
+  mat-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  mat-card-subtitle {
+    color: #777;
+  }
+
+  img {
+    height: 200px;
+    object-fit: cover;
+    margin-top: 16px;
+  }
+
+  mat-card-content {
+    flex-grow: 1;
+    padding-top: 16px;
+
+    .description {
+      margin-bottom: 16px;
+      color: #555;
+    }
+
+    .details p {
+      display: flex;
+      align-items: center;
+      margin: 4px 0;
+      font-size: 0.9rem;
+
+      mat-icon {
+        margin-right: 8px;
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+        color: #3498db;
+      }
+    }
+
+    .status-chips {
+      margin-top: 16px;
+    }
+  }
+
+  mat-card-actions {
+    padding: 8px 16px 16px;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+/* Colori per gli stati di verifica */
+.mat-chip.primary {
+  background-color: #e8f5e9; /* Light green (Approved) */
+  color: #27ae60; /* Dark green */
+}
+
+.mat-chip.accent {
+  background-color: #fffde7; /* Light yellow (Pending) */
+  color: #f39c12; /* Dark yellow */
+}
+
+.mat-chip.warn {
+  background-color: #fbe9e7; /* Light red (Rejected) */
+  color: #c0392b; /* Dark red */
+}

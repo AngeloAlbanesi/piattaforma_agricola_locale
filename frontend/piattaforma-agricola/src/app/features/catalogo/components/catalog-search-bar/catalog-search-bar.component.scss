@@ -1,0 +1,49 @@
+.catalog-search-bar {
+    width: 100%;
+    padding: 16px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .search-field {
+        width: 100%;
+        font-size: 16px;
+
+        ::ng-deep {
+            .mat-mdc-form-field-infix {
+                padding-top: 16px;
+                padding-bottom: 16px;
+            }
+
+            .mat-mdc-text-field-wrapper {
+                background: #fafafa;
+                border-radius: 8px;
+            }
+
+            input {
+                font-size: 16px;
+            }
+        }
+
+        .search-icon {
+            color: #1976d2;
+            margin-right: 8px;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .catalog-search-bar {
+        padding: 12px;
+        border-radius: 0;
+
+        .search-field {
+            font-size: 14px;
+
+            ::ng-deep input {
+                font-size: 14px;
+            }
+        }
+    }
+}

@@ -1,0 +1,275 @@
+<div class="checkout" role="main" aria-label="Checkout">
+    <!-- Header -->
+    <header class="checkout-header">
+        <h1 class="page-title">
+            <mat-icon>payment</mat-icon>
+            Checkout
+        </h1>
+    </header>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Caricamento...</p>
+    </div>
+
+    <!-- Checkout Steps -->
+    <div *ngIf="!isLoading && !checkoutCompleted" class="checkout-content">
+        <mat-stepper [linear]="true" #stepper>
+            <!-- Step 1: Riepilogo Ordine -->
+            <mat-step [stepControl]="paymentMethodForm" label="Riepilogo Ordine">
+                <mat-card class="step-card">
+                    <mat-card-header>
+                        <mat-card-title>Riepilogo del tuo ordine</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="order-summary">
+                            <div class="summary-items">
+                                <div *ngFor="let riga of carrello?.elementiCarrello" class="summary-item">
+                                    <div class="item-info">
+                                        <strong>{{ riga.nomeAcquistabile }}</strong>
+                                        <span class="item-quantity">x {{ riga.quantita }}</span>
+                                    </div>
+                                    <span class="item-price">{{ formatPrice(riga.prezzoUnitario * riga.quantita) }}</span>
+                                </div>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <div class="summary-total">
+                                <span>Totale ({{ totalItems }} {{ totalItems === 1 ? 'articolo' : 'articoli' }})</span>
+                                <strong>{{ formatPrice(totalPrice) }}</strong>
+                            </div>
+                        </div>
+
+                        <div class="step-actions">
+                            <button mat-button (click)="backToCart()">
+                                <mat-icon>arrow_back</mat-icon>
+                                Torna al Carrello
+                            </button>
+                            <button mat-raised-button color="primary" matStepperNext>
+                                Continua
+                                <mat-icon>arrow_forward</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </mat-step>
+
+            <!-- Step 2: Metodo di Pagamento -->
+            <mat-step [stepControl]="paymentMethodForm" label="Pagamento">
+                <mat-card class="step-card">
+                    <mat-card-header>
+                        <mat-card-title>Seleziona metodo di pagamento</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <form [formGroup]="paymentMethodForm" class="payment-form">
+                            <mat-radio-group formControlName="metodoPagamento" class="payment-methods">
+                                <mat-radio-button value="SIMULATO">
+                                    <div class="payment-option">
+                                        <mat-icon>done_all</mat-icon>
+                                        <div>
+                                            <strong>Pagamento Simulato</strong>
+                                            <p>Per test (nessun dato richiesto)</p>
+                                        </div>
+                                    </div>
+                                </mat-radio-button>
+
+                                <mat-radio-button value="CARTA_CREDITO">
+                                    <div class="payment-option">
+                                        <mat-icon>credit_card</mat-icon>
+                                        <div>
+                                            <strong>Carta di Credito</strong>
+                                            <p>Paga con la tua carta</p>
+                                        </div>
+                                    </div>
+                                </mat-radio-button>
+
+                                <mat-radio-button value="PAYPAL">
+                                    <div class="payment-option">
+                                        <mat-icon>account_balance_wallet</mat-icon>
+                                        <div>
+                                            <strong>PayPal</strong>
+                                            <p>Paga con il tuo account PayPal</p>
+                                        </div>
+                                    </div>
+                                </mat-radio-button>
+                            </mat-radio-group>
+
+                            <!-- Credit Card Form -->
+                            <div *ngIf="selectedPaymentMethod === 'CARTA_CREDITO'" class="payment-details">
+                                <h3>Dati Carta di Credito</h3>
+                                <form [formGroup]="creditCardForm" class="credit-card-form">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Numero Carta</mat-label>
+                                        <input matInput formControlName="numeroCartaCredito"
+                                            placeholder="1234567890123456" maxlength="16">
+                                        <mat-icon matPrefix>credit_card</mat-icon>
+                                        <mat-error
+                                            *ngIf="creditCardForm.get('numeroCartaCredito')?.hasError('required')">
+                                            Campo obbligatorio
+                                        </mat-error>
+                                        <mat-error
+                                            *ngIf="creditCardForm.get('numeroCartaCredito')?.hasError('pattern')">
+                                            Inserisci 16 cifre
+                                        </mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Intestatario</mat-label>
+                                        <input matInput formControlName="intestatario" placeholder="Mario Rossi">
+                                        <mat-icon matPrefix>person</mat-icon>
+                                        <mat-error>Campo obbligatorio</mat-error>
+                                    </mat-form-field>
+
+                                    <div class="form-row">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Scadenza (MM/YY)</mat-label>
+                                            <input matInput formControlName="dataScadenza" placeholder="12/25"
+                                                maxlength="5">
+                                            <mat-icon matPrefix>event</mat-icon>
+                                            <mat-error>Formato: MM/YY</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>CVV</mat-label>
+                                            <input matInput formControlName="cvv" type="password" placeholder="123"
+                                                maxlength="3">
+                                            <mat-icon matPrefix>lock</mat-icon>
+                                            <mat-error>3 cifre</mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- PayPal Form -->
+                            <div *ngIf="selectedPaymentMethod === 'PAYPAL'" class="payment-details">
+                                <h3>Credenziali PayPal</h3>
+                                <form [formGroup]="paypalForm" class="paypal-form">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Email PayPal</mat-label>
+                                        <input matInput formControlName="emailPayPal" type="email"
+                                            placeholder="email@example.com">
+                                        <mat-icon matPrefix>email</mat-icon>
+                                        <mat-error>Email non valida</mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Password PayPal</mat-label>
+                                        <input matInput formControlName="passwordPayPal" type="password">
+                                        <mat-icon matPrefix>lock</mat-icon>
+                                        <mat-error>Campo obbligatorio</mat-error>
+                                    </mat-form-field>
+                                </form>
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="notes-section">
+                                <h3>Note Aggiuntive (opzionale)</h3>
+                                <form [formGroup]="notesForm">
+                                    <mat-form-field appearance="outline" class="full-width">
+                                        <mat-label>Note per il venditore</mat-label>
+                                        <textarea matInput formControlName="noteAggiuntive" rows="3"
+                                            placeholder="Es: Consegna urgente..."></textarea>
+                                    </mat-form-field>
+                                </form>
+                            </div>
+                        </form>
+
+                        <div class="step-actions">
+                            <button mat-button matStepperPrevious>
+                                <mat-icon>arrow_back</mat-icon>
+                                Indietro
+                            </button>
+                            <button mat-raised-button color="primary" matStepperNext>
+                                Continua
+                                <mat-icon>arrow_forward</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </mat-step>
+
+            <!-- Step 3: Conferma -->
+            <mat-step label="Conferma">
+                <mat-card class="step-card">
+                    <mat-card-header>
+                        <mat-card-title>Conferma e Completa l'Ordine</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="confirmation-summary">
+                            <div class="summary-section">
+                                <h3>Totale da Pagare</h3>
+                                <p class="total-amount">{{ formatPrice(totalPrice) }}</p>
+                            </div>
+
+                            <div class="summary-section">
+                                <h3>Metodo di Pagamento</h3>
+                                <p>
+                                    <mat-icon *ngIf="selectedPaymentMethod === 'CARTA_CREDITO'">credit_card</mat-icon>
+                                    <mat-icon
+                                        *ngIf="selectedPaymentMethod === 'PAYPAL'">account_balance_wallet</mat-icon>
+                                    <mat-icon *ngIf="selectedPaymentMethod === 'SIMULATO'">done_all</mat-icon>
+                                    {{ selectedPaymentMethod === 'CARTA_CREDITO' ? 'Carta di Credito' :
+                                    selectedPaymentMethod === 'PAYPAL' ? 'PayPal' : 'Simulato' }}
+                                </p>
+                            </div>
+
+                            <mat-divider></mat-divider>
+
+                            <p class="confirmation-text">
+                                Cliccando su "Completa Ordine" confermi l'acquisto e autorizzi il pagamento.
+                            </p>
+                        </div>
+
+                        <div class="step-actions">
+                            <button mat-button matStepperPrevious [disabled]="isProcessing">
+                                <mat-icon>arrow_back</mat-icon>
+                                Indietro
+                            </button>
+                            <button mat-raised-button color="primary" (click)="processCheckout()"
+                                [disabled]="isProcessing">
+                                <mat-spinner *ngIf="isProcessing" diameter="20"></mat-spinner>
+                                <mat-icon *ngIf="!isProcessing">check_circle</mat-icon>
+                                {{ isProcessing ? 'Elaborazione...' : 'Completa Ordine' }}
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </mat-step>
+        </mat-stepper>
+    </div>
+
+    <!-- Success State -->
+    <div *ngIf="checkoutCompleted" class="success-state">
+        <mat-card>
+            <mat-card-content>
+                <div class="success-icon">
+                    <mat-icon>check_circle</mat-icon>
+                </div>
+                <h2>Ordine Completato con Successo!</h2>
+                <p>Grazie per il tuo acquisto. Hai creato {{ ordiniCreati.length }}
+                    {{ ordiniCreati.length === 1 ? 'ordine' : 'ordini' }}.</p>
+
+                <div class="orders-list">
+                    <h3>I Tuoi Ordini:</h3>
+                    <div *ngFor="let ordine of ordiniCreati" class="order-item">
+                        <mat-icon>receipt</mat-icon>
+                        <span>Ordine #{{ ordine.id }} - {{ formatPrice(ordine.totale) }}</span>
+                    </div>
+                </div>
+
+                <div class="success-actions">
+                    <button mat-raised-button color="primary" (click)="viewOrders()">
+                        <mat-icon>list_alt</mat-icon>
+                        Visualizza i Miei Ordini
+                    </button>
+                    <button mat-button (click)="backToCatalog()">
+                        <mat-icon>storefront</mat-icon>
+                        Torna al Catalogo
+                    </button>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

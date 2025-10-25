@@ -1,0 +1,211 @@
+<div class="curatore-dashboard" role="main" aria-label="Dashboard Curatore">
+    <!-- Header Dashboard -->
+    <header class="dashboard-header" role="banner">
+        <div class="header-content">
+            <div class="welcome-section">
+                <h1 class="welcome-title" aria-level="1">{{ welcomeMessage }}</h1>
+                <p class="welcome-subtitle">La tua dashboard per la gestione delle approvazioni</p>
+            </div>
+
+            <div class="header-actions" role="toolbar" aria-label="Azioni rapide">
+                <button mat-icon-button (click)="navigateToHome()" matTooltip="Home" aria-label="Vai alla home">
+                    <mat-icon>home</mat-icon>
+                </button>
+                <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati" aria-label="Aggiorna dati">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+                <button mat-icon-button (click)="logout()" matTooltip="Logout" aria-label="Esci dal sistema">
+                    <mat-icon>logout</mat-icon>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading" role="status" aria-live="polite">
+        <mat-spinner aria-label="Caricamento in corso"></mat-spinner>
+        <p>Caricamento dashboard...</p>
+    </div>
+
+    <!-- Main Content -->
+    <main class="dashboard-content" *ngIf="!isLoading" role="main" aria-label="Contenuto principale">
+        <!-- Statistiche Overview / Placeholder N/D -->
+        <section class="stats-section">
+            <ng-container *ngIf="hasStats; else statsPlaceholder">
+                <app-curatore-stats-overview [productsToApprove]="productsToApprove"
+                    [companiesToApprove]="companiesToApprove" [contentToModerate]="contentToModerate"
+                    [productsApproved]="productsApproved" [productsRejected]="productsRejected"
+                    [companiesApproved]="companiesApproved" [companiesRejected]="companiesRejected"
+                    [contentModerated]="contentModerated" [approvalTrend]="approvalTrend">
+                </app-curatore-stats-overview>
+            </ng-container>
+
+            <ng-template #statsPlaceholder>
+                <div class="nd-stats-placeholder">
+                    <mat-card class="nd-card" appearance="outlined">
+                        <mat-card-content class="nd-content">
+                            <div class="nd-icon"><mat-icon>inventory_2</mat-icon></div>
+                            <div class="nd-info">
+                                <div class="nd-title">Prodotti da approvare</div>
+                                <div class="nd-badge">N/D</div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+
+                    <mat-card class="nd-card" appearance="outlined">
+                        <mat-card-content class="nd-content">
+                            <div class="nd-icon"><mat-icon>business</mat-icon></div>
+                            <div class="nd-info">
+                                <div class="nd-title">Aziende da approvare</div>
+                                <div class="nd-badge">N/D</div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+
+                    <mat-card class="nd-card" appearance="outlined">
+                        <mat-card-content class="nd-content">
+                            <div class="nd-icon"><mat-icon>article</mat-icon></div>
+                            <div class="nd-info">
+                                <div class="nd-title">Contenuti da moderare</div>
+                                <div class="nd-badge">N/D</div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+
+                    <mat-card class="nd-card" appearance="outlined">
+                        <mat-card-content class="nd-content">
+                            <div class="nd-icon"><mat-icon>check_circle</mat-icon></div>
+                            <div class="nd-info">
+                                <div class="nd-title">Tasso di approvazione</div>
+                                <div class="nd-badge">N/D</div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </ng-template>
+        </section>
+
+        <!-- Dati Personali -->
+        <section class="personal-data-section">
+            <div class="cards-grid">
+                <app-personal-data-card></app-personal-data-card>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions-section">
+            <app-curatore-quick-actions (action)="onQuickAction($event)"></app-curatore-quick-actions>
+        </section>
+
+        <!-- Tab Navigation -->
+        <section class="tabs-section">
+            <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event.index)">
+                <!-- Tab Approvazioni in corso -->
+                <mat-tab label="Approvazioni in corso">
+                    <div class="tab-content">
+                        <app-approvazioni-management></app-approvazioni-management>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Storico approvazioni -->
+                <mat-tab label="Storico approvazioni">
+                    <div class="tab-content">
+                        <div class="placeholder-section">
+                            <mat-card appearance="outlined">
+                                <mat-card-content>
+                                    <p class="placeholder-text">
+                                        <mat-icon>history</mat-icon>
+                                        Storico approvazioni in sviluppo.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Statistiche -->
+                <mat-tab label="Statistiche approvazioni">
+                    <div class="tab-content">
+                        <div class="placeholder-section">
+                            <mat-card appearance="outlined">
+                                <mat-card-content>
+                                    <p class="placeholder-text">
+                                        <mat-icon>bar_chart</mat-icon>
+                                        Statistiche approvazioni in sviluppo.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </section>
+
+        <!-- Sezione Riepilogo -->
+        <section class="summary-section" *ngIf="hasStats">
+            <div class="summary-grid">
+                <!-- Card Approvazioni urgenti -->
+                <mat-card class="summary-card" appearance="outlined">
+                    <mat-card-header>
+                        <mat-card-title>Approvazioni Urgenti</mat-card-title>
+                        <mat-card-subtitle>{{ totalApprovals }} elementi in attesa</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="card-action">
+                            <button mat-raised-button color="primary" (click)="onQuickAction('view-approvals')">
+                                Gestisci approvazioni
+                                <mat-icon>fact_check</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Card Prodotti -->
+                <mat-card class="summary-card" appearance="outlined">
+                    <mat-card-header>
+                        <mat-card-title>Prodotti</mat-card-title>
+                        <mat-card-subtitle>{{ productsToApprove }} in attesa, {{ productsApproved }}
+                            approvati</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="card-action">
+                            <button mat-raised-button color="accent" (click)="onQuickAction('view-products')">
+                                Vedi prodotti
+                                <mat-icon>inventory_2</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Card Aziende -->
+                <mat-card class="summary-card" appearance="outlined">
+                    <mat-card-header>
+                        <mat-card-title>Aziende</mat-card-title>
+                        <mat-card-subtitle>{{ companiesToApprove }} in attesa, {{ companiesApproved }}
+                            approvate</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="card-action">
+                            <button mat-raised-button color="warn" (click)="onQuickAction('view-companies')">
+                                Vedi aziende
+                                <mat-icon>business</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Dashboard -->
+    <footer class="dashboard-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Piattaforma Agricola Locale. Tutti i diritti riservati.</p>
+            <div class="footer-links">
+                <a mat-button color="primary" href="/help">Aiuto</a>
+                <a mat-button color="primary" href="/terms">Termini</a>
+                <a mat-button color="primary" href="/privacy">Privacy</a>
+            </div>
+        </div>
+    </footer>
+</div>

@@ -1,0 +1,989 @@
+<div class="landing-container">
+    <!-- Hero Section Rivoluzionata -->
+    <header class="hero-section" id="hero">
+        <div class="hero-background">
+            <div class="hero-overlay"></div>
+            <div class="hero-particles"></div>
+        </div>
+
+        <nav class="hero-nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <mat-icon class="logo-icon">eco</mat-icon>
+                    <span class="logo-text">Filiera Locale</span>
+                    <span class="logo-badge">Dal 1950</span>
+                </div>
+                <div class="nav-actions">
+                    <button mat-stroked-button class="nav-btn" (click)="scrollToSection('story')">La Nostra
+                        Storia</button>
+                    <button mat-stroked-button class="nav-btn" (click)="navigateToCatalog()">Prodotti</button>
+                    <button mat-stroked-button class="nav-btn" (click)="navigateToLogin()">Accedi</button>
+                    <button mat-raised-button color="primary" class="nav-cta"
+                        (click)="navigateToRegister()">Registrati</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="hero-content">
+            <div class="hero-text">
+                <div class="hero-badges">
+                    <span class="hero-badge">
+                        <mat-icon>verified</mat-icon>
+                        100% Prodotti Locali
+                    </span>
+                    <span class="hero-badge">
+                        <mat-icon>eco</mat-icon>
+                        Agricoltura Sostenibile
+                    </span>
+                </div>
+
+                <h1 class="hero-title">
+                    <span class="title-line">Tradizione Agricola</span>
+                    <span class="title-highlight">Innovazione Locale</span>
+                </h1>
+
+                <p class="hero-subtitle">
+                    Connettiti direttamente con gli agricoltori del tuo territorio.
+                    Scopri il sapore autentico dei prodotti a km zero, tracciati dal campo alla tua tavola
+                    con la tecnologia più avanzata.
+                </p>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">150+</span>
+                        <span class="stat-label">Agricoltori</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label">Prodotti</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">50km</span>
+                        <span class="stat-label">Raggio Max</span>
+                    </div>
+                </div>
+
+                <div class="hero-actions">
+                    <button mat-raised-button color="primary" class="primary-cta" (click)="navigateToCatalog()">
+                        <mat-icon>shopping_basket</mat-icon>
+                        Esplora il Mercato
+                    </button>
+                    <button mat-stroked-button class="secondary-cta" (click)="navigateToLogin()">
+                        <mat-icon>login</mat-icon>
+                        Accedi
+                    </button>
+                    <button mat-stroked-button class="secondary-cta" (click)="navigateToRegister()">
+                        <mat-icon>person_add</mat-icon>
+                        Registrati
+                    </button>
+                </div>
+
+                <div class="hero-trust">
+                    <div class="trust-item">
+                        <mat-icon>verified_user</mat-icon>
+                        <span>Tracciabilità Certificata</span>
+                    </div>
+                    <div class="trust-item">
+                        <mat-icon>handshake</mat-icon>
+                        <span>Prezzo Equo Garantito</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="hero-image-container">
+                    <div class="hero-placeholder">
+                        <mat-icon class="hero-main-icon">landscape</mat-icon>
+                        <div class="hero-text-overlay">Agricoltura Italiana Autentica</div>
+                    </div>
+                    <div class="hero-floating-cards">
+                        <div class="floating-card card-1">
+                            <mat-icon>agriculture</mat-icon>
+                            <span>Campi Coltivati con Passione</span>
+                        </div>
+                        <div class="floating-card card-2">
+                            <mat-icon>local_shipping</mat-icon>
+                            <span>Consegna Fresca e Rapida</span>
+                        </div>
+                        <div class="floating-card card-3">
+                            <mat-icon>favorite</mat-icon>
+                            <span>Amato dalla Comunità</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-scroll-indicator">
+            <mat-icon>expand_more</mat-icon>
+            <span>Scopri di più</span>
+        </div>
+    </header>
+
+    <!-- Story Section - Nuova -->
+    <section class="story-section" id="story">
+        <div class="container">
+            <div class="story-header">
+                <h2 class="section-title">La Nostra Storia</h2>
+                <p class="story-intro">
+                    Una passione tramandata da quattro generazioni, un impegno per la terra
+                    e per la comunità che ci ha scelto ogni giorno.
+                </p>
+            </div>
+
+            <div class="story-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker">
+                        <mat-icon>agriculture</mat-icon>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="timeline-year">1950</span>
+                        <h3>Le Origini</h3>
+                        <p>
+                            Il nonno Antonio inizia coltivando i primi campi nel cuore della campagna italiana,
+                            con pochi attrezzi e tanta passione per la terra.
+                        </p>
+                        <div class="timeline-image">
+                            <mat-icon>photo_camera</mat-icon>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">
+                        <mat-icon>eco</mat-icon>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="timeline-year">1985</span>
+                        <h3>L'Innovazione Verde</h3>
+                        <p>
+                            Papà Mario introduce le prime pratiche di agricoltura sostenibile,
+                            anticipando i tempi e costruendo le basi della nostra filosofia ecologica.
+                        </p>
+                        <div class="timeline-image">
+                            <mat-icon>photo_camera</mat-icon>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">
+                        <mat-icon>public</mat-icon>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="timeline-year">2010</span>
+                        <h3>L'Era Digitale</h3>
+                        <p>
+                            Nasce la piattaforma digitale che connette direttamente i nostri prodotti
+                            con le tavole delle famiglie locali, eliminando gli intermediari.
+                        </p>
+                        <div class="timeline-image">
+                            <mat-icon>computer</mat-icon>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">
+                        <mat-icon>star</mat-icon>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="timeline-year">Oggi</span>
+                        <h3>Eccellenza Locale</h3>
+                        <p>
+                            Siamo una community di oltre 150 agricoltori, con più di 500 prodotti certificati
+                            e migliaia di famiglie che ogni giorno scelgono la qualità della nostra terra.
+                        </p>
+                        <div class="timeline-image">
+                            <mat-icon>groups</mat-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="story-values">
+                <div class="value-proposition">
+                    <div class="value-icon">
+                        <mat-icon>volunteer_activism</mat-icon>
+                    </div>
+                    <h3>Passione Generazionale</h3>
+                    <p>70 anni di esperienza agricola tramandata con amore e rispetto per la tradizione.</p>
+                </div>
+
+                <div class="value-proposition">
+                    <div class="value-icon">
+                        <mat-icon>sync_alt</mat-icon>
+                    </div>
+                    <h3>Filiera Corta</h3>
+                    <p>Dal campo alla tavola in meno di 24 ore, garantendo freschezza e sapore autentico.</p>
+                </div>
+
+                <div class="value-proposition">
+                    <div class="value-icon">
+                        <mat-icon>favorite</mat-icon>
+                    </div>
+                    <h3>Comunità Unità</h3>
+                    <p>Coltiviamo relazioni solide con i nostri clienti e partner agricoli.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Value Proposition Section -->
+    <section class="value-section" id="value">
+        <div class="container">
+            <h2 class="section-title">Perché Scegliere la Nostra Piattaforma</h2>
+            <div class="value-cards">
+                <mat-card class="value-card">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon class="value-icon">eco</mat-icon>
+                            Tracciabilità Completa
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p>Segui l'intero percorso dei prodotti dal campo alla tua tavola,
+                            con certificazioni garantite e processi trasparenti.</p>
+                    </mat-card-content>
+                </mat-card>
+
+                <mat-card class="value-card">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon class="value-icon">shopping_basket</mat-icon>
+                            Vendita Diretta
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p>Acquista direttamente dai produttori locali,
+                            eliminando intermediari e garantendo prezzi equi per tutti.</p>
+                    </mat-card-content>
+                </mat-card>
+
+                <mat-card class="value-card">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <mat-icon class="value-icon">public</mat-icon>
+                            Sostegno Locale
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p>Contribuisci allo sviluppo dell'economia locale e
+                            preserva le tradizioni agricole del nostro territorio.</p>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Gallery Section - Nuova -->
+    <section class="product-gallery-section" id="products">
+        <div class="container">
+            <div class="gallery-header">
+                <h2 class="section-title">I Nostri Tesori della Terra</h2>
+                <p class="gallery-intro">
+                    Scopri la ricchezza dei nostri prodotti, coltivati con passione e certificati
+                    secondo i più alti standard di qualità.
+                </p>
+
+                <div class="product-filters">
+                    <button class="filter-btn active" (click)="filterProducts('all')">Tutti i Prodotti</button>
+                    <button class="filter-btn" (click)="filterProducts('vegetables')">Ortaggi</button>
+                    <button class="filter-btn" (click)="filterProducts('fruits')">Frutta</button>
+                    <button class="filter-btn" (click)="filterProducts('dairy')">Latticini</button>
+                    <button class="filter-btn" (click)="filterProducts('grains')">Cereali</button>
+                    <button class="filter-btn" (click)="filterProducts('special')">Specialità</button>
+                </div>
+            </div>
+
+            <div class="product-carousel">
+                <div class="carousel-container">
+                    <div class="product-cards-grid">
+                        <!-- Product Card 1 -->
+                        <div class="product-card" data-category="vegetables">
+                            <div class="product-image">
+                                <mat-icon class="product-placeholder-icon">spa</mat-icon>
+                                <div class="product-badge">Bio</div>
+                                <div class="product-overlay">
+                                    <button mat-icon-button class="quick-view-btn">
+                                        <mat-icon>visibility</mat-icon>
+                                    </button>
+                                    <button mat-icon-button class="add-to-cart-btn">
+                                        <mat-icon>add_shopping_cart</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h4>Pomodori San Marzano DOP</h4>
+                                <p class="product-description">Pomodori dal sapore dolce e polposo, coltivati nel cuore
+                                    del napoletano.</p>
+                                <div class="product-meta">
+                                    <span class="product-origin"><mat-icon>location_on</mat-icon>Campania</span>
+                                    <span class="product-season"><mat-icon>calendar_today</mat-icon>Estate</span>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price">€4.50</span>
+                                    <span class="unit">/kg</span>
+                                </div>
+                                <div class="product-certifications">
+                                    <span class="certification-badge">DOP</span>
+                                    <span class="certification-badge">Organico</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Card 2 -->
+                        <div class="product-card" data-category="fruits">
+                            <div class="product-image">
+                                <mat-icon class="product-placeholder-icon">nutrition</mat-icon>
+                                <div class="product-badge">Novità</div>
+                                <div class="product-overlay">
+                                    <button mat-icon-button class="quick-view-btn">
+                                        <mat-icon>visibility</mat-icon>
+                                    </button>
+                                    <button mat-icon-button class="add-to-cart-btn">
+                                        <mat-icon>add_shopping_cart</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h4>Mele Golden di Montagna</h4>
+                                <p class="product-description">Mele croccanti e succose, coltivate a 800 metri di
+                                    altitudine.</p>
+                                <div class="product-meta">
+                                    <span class="product-origin"><mat-icon>location_on</mat-icon>Trentino</span>
+                                    <span class="product-season"><mat-icon>calendar_today</mat-icon>Autunno</span>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price">€3.20</span>
+                                    <span class="unit">/kg</span>
+                                </div>
+                                <div class="product-certifications">
+                                    <span class="certification-badge">Montagna</span>
+                                    <span class="certification-badge">IGP</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Card 3 -->
+                        <div class="product-card" data-category="dairy">
+                            <div class="product-image">
+                                <mat-icon class="product-placeholder-icon">opacity</mat-icon>
+                                <div class="product-badge">Artigianale</div>
+                                <div class="product-overlay">
+                                    <button mat-icon-button class="quick-view-btn">
+                                        <mat-icon>visibility</mat-icon>
+                                    </button>
+                                    <button mat-icon-button class="add-to-cart-btn">
+                                        <mat-icon>add_shopping_cart</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h4>Mozzarella di Bufala Campana</h4>
+                                <p class="product-description">Formaggio fresco dal sapore inconfondibile, prodotto
+                                    secondo la tradizione.</p>
+                                <div class="product-meta">
+                                    <span class="product-origin"><mat-icon>location_on</mat-icon>Campania</span>
+                                    <span class="product-season"><mat-icon>all_inclusive</mat-icon>Tutto l'anno</span>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price">€8.90</span>
+                                    <span class="unit">/kg</span>
+                                </div>
+                                <div class="product-certifications">
+                                    <span class="certification-badge">DOP</span>
+                                    <span class="certification-badge">Artigianale</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Card 4 -->
+                        <div class="product-card" data-category="grains">
+                            <div class="product-image">
+                                <mat-icon class="product-placeholder-icon">grain</mat-icon>
+                                <div class="product-badge">Antico</div>
+                                <div class="product-overlay">
+                                    <button mat-icon-button class="quick-view-btn">
+                                        <mat-icon>visibility</mat-icon>
+                                    </button>
+                                    <button mat-icon-button class="add-to-cart-btn">
+                                        <mat-icon>add_shopping_cart</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h4>Farina di Grano Antico</h4>
+                                <p class="product-description">Farina macinata a pietra da grani antichi non trattati
+                                    geneticamente.</p>
+                                <div class="product-meta">
+                                    <span class="product-origin"><mat-icon>location_on</mat-icon>Puglia</span>
+                                    <span class="product-season"><mat-icon>all_inclusive</mat-icon>Tutto l'anno</span>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price">€4.80</span>
+                                    <span class="unit">/kg</span>
+                                </div>
+                                <div class="product-certifications">
+                                    <span class="certification-badge">Bio</span>
+                                    <span class="certification-badge">Macinata a pietra</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="carousel-controls">
+                        <button mat-icon-button class="carousel-nav prev" (click)="previousProduct()">
+                            <mat-icon>chevron_left</mat-icon>
+                        </button>
+                        <button mat-icon-button class="carousel-nav next" (click)="nextProduct()">
+                            <mat-icon>chevron_right</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-cta">
+                <h3>Vuoi scoprire tutti i nostri prodotti?</h3>
+                <p>Oltre 500 prodotti certificati disponibili ogni settimana</p>
+                <button mat-raised-button color="primary" (click)="navigateToCatalog()">
+                    Vedi Tutti i Prodotti
+                    <mat-icon>arrow_forward</mat-icon>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <h2 class="section-title">Funzionalità Principali</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <mat-icon class="feature-icon">storefront</mat-icon>
+                    <h3>E-commerce Marketplace</h3>
+                    <p>Vendita diretta di prodotti agricoli con gestione carrello e ordini</p>
+                </div>
+
+                <div class="feature-item">
+                    <mat-icon class="feature-icon">location_on</mat-icon>
+                    <h3>Tracciabilità e Geolocalizzazione</h3>
+                    <p>Tracciamento completo della filiera con visualizzazione su mappa</p>
+                </div>
+
+                <div class="feature-item">
+                    <mat-icon class="feature-icon">people</mat-icon>
+                    <h3>Gestione Multi-Ruolo</h3>
+                    <p>Sistema avanzato per tutti gli attori della filiera agricola</p>
+                </div>
+
+                <div class="feature-item">
+                    <mat-icon class="feature-icon">sync</mat-icon>
+                    <h3>Processi di Trasformazione</h3>
+                    <p>Documentazione completa dei processi produttivi</p>
+                </div>
+
+                <div class="feature-item">
+                    <mat-icon class="feature-icon">event</mat-icon>
+                    <h3>Eventi Locali</h3>
+                    <p>Organizzazione fiere, mercati e visite guidate</p>
+                </div>
+
+                <div class="feature-item">
+                    <mat-icon class="feature-icon">verified</mat-icon>
+                    <h3>Certificazioni</h3>
+                    <p>Validazione qualità e origine dei prodotti</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Actors Section -->
+    <section class="actors-section" id="actors">
+        <div class="container">
+            <h2 class="section-title">Attori della Filiera</h2>
+            <div class="actors-grid">
+                <div class="actor-card">
+                    <div class="actor-icon">
+                        <mat-icon>agriculture</mat-icon>
+                    </div>
+                    <h3>Produttore</h3>
+                    <p>Agricoltori e allevatori locali che caricano prodotti e gestiscono certificazioni</p>
+                </div>
+
+                <div class="actor-card">
+                    <div class="actor-icon">
+                        <mat-icon>factory</mat-icon>
+                    </div>
+                    <h3>Trasformatore</h3>
+                    <p>Aziende che trasformano materie prime in prodotti finiti</p>
+                </div>
+
+                <div class="actor-card">
+                    <div class="actor-icon">
+                        <mat-icon>store</mat-icon>
+                    </div>
+                    <h3>Distributore</h3>
+                    <p>Negozi e rivenditori che creano pacchetti e gestiscono vendite</p>
+                </div>
+
+                <div class="actor-card">
+                    <div class="actor-icon">
+                        <mat-icon>verified_user</mat-icon>
+                    </div>
+                    <h3>Curatore</h3>
+                    <p>Responsabile qualità che verifica e approva i contenuti</p>
+                </div>
+
+                <div class="actor-card">
+                    <div class="actor-icon">
+                        <mat-icon>celebration</mat-icon>
+                    </div>
+                    <h3>Animatore</h3>
+                    <p>Organizzatore di eventi e coordinatore visite aziendali</p>
+                </div>
+
+                <div class="actor-card">
+                    <div class="actor-icon">
+                        <mat-icon>shopping_cart</mat-icon>
+                    </div>
+                    <h3>Acquirente</h3>
+                    <p>Consumatori finali che acquistano prodotti e partecipano ad eventi</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Traceability Section - Nuova -->
+    <section class="traceability-section" id="traceability">
+        <div class="container">
+            <div class="traceability-header">
+                <h2 class="section-title">Dalla Terra alla Tua Tavola</h2>
+                <p class="traceability-intro">
+                    Segui il viaggio dei nostri prodotti con la nostra tecnologia di tracciabilità unica.
+                    Trasparenza totale dal campo fino alla tua cucina.
+                </p>
+            </div>
+
+            <div class="traceability-journey">
+                <div class="journey-line"></div>
+
+                <!-- Step 1: Semina -->
+                <div class="journey-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <mat-icon>grass</mat-icon>
+                        </div>
+                        <h3>Semina e Coltivazione</h3>
+                        <p>
+                            I nostri agricoltori selezionano i semi migliori e utilizzano tecniche di agricoltura
+                            sostenibile
+                            per garantire prodotti di alta qualità.
+                        </p>
+                        <div class="step-details">
+                            <div class="detail-item">
+                                <mat-icon>calendar_today</mat-icon>
+                                <span>Periodo: Primavera/Autunno</span>
+                            </div>
+                            <div class="detail-item">
+                                <mat-icon>eco</mat-icon>
+                                <span>Metodo: Biologico Certificato</span>
+                            </div>
+                        </div>
+                        <button mat-stroked-button class="step-cta" (click)="showStepDetails(1)">
+                            Scopri le Tecniche di Coltivazione
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Raccolta -->
+                <div class="journey-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <mat-icon>agriculture</mat-icon>
+                        </div>
+                        <h3>Raccolta Manuale</h3>
+                        <p>
+                            Raccolta manuale nel punto perfetto di maturazione per preservare sapore,
+                            freschezza e proprietà nutrizionali.
+                        </p>
+                        <div class="step-details">
+                            <div class="detail-item">
+                                <mat-icon>schedule</mat-icon>
+                                <span>Ora: Prime luci dell'alba</span>
+                            </div>
+                            <div class="detail-item">
+                                <mat-icon>thermostat</mat-icon>
+                                <span>Temperatura: Controllata</span>
+                            </div>
+                        </div>
+                        <button mat-stroked-button class="step-cta" (click)="showStepDetails(2)">
+                            Guarda il Processo di Raccolta
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Controllo Qualità -->
+                <div class="journey-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <mat-icon>verified</mat-icon>
+                        </div>
+                        <h3>Controllo e Certificazione</h3>
+                        <p>
+                            Ogni prodotto viene analizzato dai nostri esperti per garantire il rispetto
+                            degli standard di qualità e sicurezza alimentare.
+                        </p>
+                        <div class="step-details">
+                            <div class="detail-item">
+                                <mat-icon>science</mat-icon>
+                                <span>200+ Test di Laboratorio</span>
+                            </div>
+                            <div class="detail-item">
+                                <mat-icon>badge</mat-icon>
+                                <span>Certificazioni: DOP, IGP, Bio</span>
+                            </div>
+                        </div>
+                        <button mat-stroked-button class="step-cta" (click)="showStepDetails(3)">
+                            Visualizza i Certificati
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Imballaggio -->
+                <div class="journey-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <mat-icon>inventory_2</mat-icon>
+                        </div>
+                        <h3>Imballaggio Sostenibile</h3>
+                        <p>
+                            Confezionamento con materiali ecologici che preservano la freschezza
+                            nel rispetto dell'ambiente.
+                        </p>
+                        <div class="step-details">
+                            <div class="detail-item">
+                                <mat-icon>recycling</mat-icon>
+                                <span>Materiale: 100% Riciclabile</span>
+                            </div>
+                            <div class="detail-item">
+                                <mat-icon>ac_unit</mat-icon>
+                                <span>Conservazione: Catena del Freddo</span>
+                            </div>
+                        </div>
+                        <button mat-stroked-button class="step-cta" (click)="showStepDetails(4)">
+                            Scopri le Soluzioni Eco-friendly
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Consegna -->
+                <div class="journey-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <mat-icon>local_shipping</mat-icon>
+                        </div>
+                        <h3>Consegna a Domicilio</h3>
+                        <p>
+                            Trasporto rapido e controllato per garantire che i prodotti arrivino
+                            freschi e pronti da consumare.
+                        </p>
+                        <div class="step-details">
+                            <div class="detail-item">
+                                <mat-icon>speed</mat-icon>
+                                <span>Tempi: 24/48h</span>
+                            </div>
+                            <div class="detail-item">
+                                <mat-icon>track_changes</mat-icon>
+                                <span>Tracking: Real-time GPS</span>
+                            </div>
+                        </div>
+                        <button mat-stroked-button class="step-cta" (click)="showStepDetails(5)">
+                            Traccia la Tua Consegna
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Map -->
+            <div class="traceability-map">
+                <h3>I Nostri Campi nella Mappa</h3>
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <mat-icon class="map-icon">map</mat-icon>
+                        <div class="map-overlay">
+                            <h4>Mappa Interattiva dei Produttori</h4>
+                            <p>Clicca sui punti per scoprire le aziende agricole della nostra community</p>
+                            <button mat-raised-button color="primary" (click)="openInteractiveMap()">
+                                Esplora la Mappa
+                            </button>
+                        </div>
+                    </div>
+                    <div class="map-stats">
+                        <div class="map-stat">
+                            <span class="stat-number">150+</span>
+                            <span class="stat-label">Aziende Partner</span>
+                        </div>
+                        <div class="map-stat">
+                            <span class="stat-number">8,000+</span>
+                            <span class="stat-label">Ettari Coltivati</span>
+                        </div>
+                        <div class="map-stat">
+                            <span class="stat-number">12</span>
+                            <span class="stat-label">Regioni Italiane</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section" id="stats">
+        <div class="container">
+            <h2 class="section-title">Il Nostro Impatto</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="150">0</div>
+                    <div class="stat-label">Produttori Connessi</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="500">0</div>
+                    <div class="stat-label">Prodotti Tracciati</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="50">0</div>
+                    <div class="stat-label">Eventi Organizzati</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="1000000">0</div>
+                    <div class="stat-label">€ Valore Generato</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section - Nuova -->
+    <section class="testimonials-section" id="testimonials">
+        <div class="container">
+            <div class="testimonials-header">
+                <h2 class="section-title">La Voce dei Nostri Clienti</h2>
+                <p class="testimonials-intro">
+                    Scopri perché migliaia di famiglie hanno scelto i nostri prodotti
+                    per la loro tavola ogni giorno.
+                </p>
+            </div>
+
+            <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                    </div>
+                    <div class="testimonial-content">
+                        <p class="testimonial-text">
+                            "Finalmente un servizio che mi permette di conoscere esattamente da dove vengono
+                            i prodotti che porto in tavola. La qualità è eccezionale e il sapore mi ricorda
+                            quello di una volta."
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <mat-icon>person</mat-icon>
+                            </div>
+                            <div class="author-info">
+                                <h4>Maria Rossi</h4>
+                                <p class="author-role">Cliente da 2 anni - Milano</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-product">
+                        <span class="product-tag">Ortaggi di Stagione</span>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card featured">
+                    <div class="featured-badge">
+                        <mat-icon>workspace_premium</mat-icon>
+                        <span>Cliente del Mese</span>
+                    </div>
+                    <div class="testimonial-rating">
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                    </div>
+                    <div class="testimonial-content">
+                        <p class="testimonial-text">
+                            "Sono un agricoltore partner della piattaforma da 3 anni e grazie a Filiera Locale
+                            ho raddoppiato il mio fatturato. La cosa più bella? Potere parlare direttamente
+                            con le persone che consumano i miei prodotti."
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <mat-icon>agriculture</mat-icon>
+                            </div>
+                            <div class="author-info">
+                                <h4>Giuseppe Bianchi</h4>
+                                <p class="author-role">Produttore Partner - Emilia Romagna</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-product">
+                        <span class="product-tag">Frutta e Verdura Bio</span>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star_half</mat-icon>
+                    </div>
+                    <div class="testimonial-content">
+                        <p class="testimonial-text">
+                            "La tracciabilità offerta è un valore aggiunto enorme. Posso mostrare ai miei figli
+                            esattamente il percorso del cibo che mangiamo, rendendoli più consapevoli.
+                            Il servizio clienti è impeccabile."
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <mat-icon>family_restroom</mat-icon>
+                            </div>
+                            <div class="author-info">
+                                <h4>Laura Verdi</h4>
+                                <p class="author-role">Famiglia con 3 figli - Roma</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-product">
+                        <span class="product-tag">Box Famiglia Completo</span>
+                    </div>
+                </div>
+
+                <!-- Testimonial 4 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                        <mat-icon class="rating-star">star</mat-icon>
+                    </div>
+                    <div class="testimonial-content">
+                        <p class="testimonial-text">
+                            "Ristoratore da 15 anni, la qualità degli ingredienti è fondamentale.
+                            Con Filiera Locale ho trovato partner affidabili che mi garantiscono
+                            prodotti freschi e di qualità superiore per i miei clienti."
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <mat-icon>restaurant</mat-icon>
+                            </div>
+                            <div class="author-info">
+                                <h4>Marco Galli</h4>
+                                <p class="author-role">Ristoratore - Firenze</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-product">
+                        <span class="product-tag">Servizio HORECA</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial Stats -->
+            <div class="testimonial-stats">
+                <div class="testimonial-stat">
+                    <div class="stat-number">4.9/5</div>
+                    <div class="stat-label">Valutazione Media</div>
+                    <div class="stat-subtitle">Basata su 2,847 recensioni</div>
+                </div>
+                <div class="testimonial-stat">
+                    <div class="stat-number">96%</div>
+                    <div class="stat-label">Clienti Soddisfatti</div>
+                    <div class="stat-subtitle">Ci consiglierebbero</div>
+                </div>
+                <div class="testimonial-stat">
+                    <div class="stat-number">12,000+</div>
+                    <div class="stat-label">Famiglie Italiane</div>
+                    <div class="stat-subtitle">Credono in noi</div>
+                </div>
+            </div>
+
+            <div class="testimonials-cta">
+                <h3>Vuoi condividere la tua esperienza?</h3>
+                <p>La tua opinione ci aiuta a migliorare ogni giorno</p>
+                <button mat-stroked-button (click)="openTestimonialForm()">
+                    Lascia una Recensione
+                    <mat-icon>rate_review</mat-icon>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section" id="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Unisciti alla Filiera Agricola Locale</h2>
+                <p class="cta-subtitle">
+                    Scegli il tuo ruolo e inizia a far parte della nostra community
+                </p>
+                <div class="cta-buttons">
+                    <button mat-raised-button color="primary" (click)="navigateToRegister()">
+                        Registrati Ora
+                    </button>
+                    <button mat-stroked-button (click)="navigateToLogin()">
+                        Accedi
+                    </button>
+                    <button mat-stroked-button (click)="scrollToSection('features')">
+                        Scopri di Più
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Piattaforma Filiera Locale</h4>
+                    <p>Connettendo produttori e consumatori per un'agricoltura sostenibile</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Link Utili</h4>
+                    <ul>
+                        <li><a href="#" (click)="scrollToSection('hero')">Home</a></li>
+                        <li><a href="#" (click)="scrollToSection('features')">Funzionalità</a></li>
+                        <li><a href="#" (click)="scrollToSection('actors')">Attori</a></li>
+                        <li><a href="#" (click)="navigateToLogin()">Accedi</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contatti</h4>
+                    <p>Email: info@filieralocale.it</p>
+                    <p>Tel: +39 123 456 7890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Piattaforma Filiera Locale. Tutti i diritti riservati.</p>
+            </div>
+        </div>
+    </footer>
+</div>

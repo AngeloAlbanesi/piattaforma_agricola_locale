@@ -1,0 +1,108 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>Gestione Fasi di Lavorazione</mat-card-title>
+        <mat-card-subtitle>Visualizza e gestisci le fasi del processo selezionato</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <!-- Selettore Processo -->
+        <div class="processo-selector-container">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Seleziona Processo</mat-label>
+                <mat-select [(value)]="selectedProcessoId" (selectionChange)="onProcessoSelected()">
+                    <mat-option [value]="null">-- Seleziona un processo --</mat-option>
+                    <mat-option *ngFor="let processo of processi" [value]="processo.id">
+                        {{ processo.nome }} (ID: {{ processo.id }})
+                    </mat-option>
+                </mat-select>
+                <mat-icon matSuffix>account_tree</mat-icon>
+            </mat-form-field>
+        </div>
+
+        <!-- Pulsante Nuova Fase -->
+        <div class="controls-container">
+            <button mat-raised-button color="primary" (click)="aggiungiFase()" [disabled]="!selectedProcessoId">
+                <mat-icon>add</mat-icon> Nuova Fase
+            </button>
+        </div>
+
+        <!-- Spinner di caricamento -->
+        <div *ngIf="isLoading || isLoadingFasi" class="loading-container">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p>Caricamento in corso...</p>
+        </div>
+
+        <!-- Messaggio quando nessun processo è selezionato -->
+        <div *ngIf="!selectedProcessoId && !isLoading" class="no-selection-message">
+            <mat-icon color="accent">info</mat-icon>
+            <p>Seleziona un processo per visualizzare e gestire le sue fasi di lavorazione.</p>
+        </div>
+
+        <!-- Messaggio quando non ci sono fasi -->
+        <div *ngIf="selectedProcessoId && !isLoadingFasi && fasi.length === 0" class="no-data-message">
+            <mat-icon color="primary">work_off</mat-icon>
+            <p>Nessuna fase trovata per questo processo.</p>
+            <p>Clicca su "Nuova Fase" per aggiungerne una.</p>
+        </div>
+
+        <!-- Tabella Fasi -->
+        <div class="table-container" *ngIf="selectedProcessoId && !isLoadingFasi && fasi.length > 0">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+
+                <!-- Ordine Esecuzione Column -->
+                <ng-container matColumnDef="ordineEsecuzione">
+                    <th mat-header-cell *matHeaderCellDef> Ordine </th>
+                    <td mat-cell *matCellDef="let element"> {{ element.ordineEsecuzione }} </td>
+                </ng-container>
+
+                <!-- Nome Column -->
+                <ng-container matColumnDef="nome">
+                    <th mat-header-cell *matHeaderCellDef> Nome </th>
+                    <td mat-cell *matCellDef="let element"> {{ element.nome }} </td>
+                </ng-container>
+
+                <!-- Descrizione Column -->
+                <ng-container matColumnDef="descrizione">
+                    <th mat-header-cell *matHeaderCellDef> Descrizione </th>
+                    <td mat-cell *matCellDef="let element" class="description-cell">
+                        {{ element.descrizione.length > 50 ? (element.descrizione | slice:0:50) + '...' :
+                        element.descrizione }}
+                    </td>
+                </ng-container>
+
+                <!-- Materia Prima Column -->
+                <ng-container matColumnDef="materiaPrimaUtilizzata">
+                    <th mat-header-cell *matHeaderCellDef> Materia Prima </th>
+                    <td mat-cell *matCellDef="let element"> {{ element.materiaPrimaUtilizzata || 'N/A' }} </td>
+                </ng-container>
+
+                <!-- Fonte Column -->
+                <ng-container matColumnDef="fonte">
+                    <th mat-header-cell *matHeaderCellDef> Fonte </th>
+                    <td mat-cell *matCellDef="let element">
+                        <mat-chip-listbox>
+                            <mat-chip [color]="element.fonte?.tipo === 'INTERNA' ? 'primary' : 'accent'" selected>
+                                {{ getFonteLabel(element.fonte) }}
+                            </mat-chip>
+                        </mat-chip-listbox>
+                    </td>
+                </ng-container>
+
+                <!-- Azioni Column -->
+                <ng-container matColumnDef="azioni">
+                    <th mat-header-cell *matHeaderCellDef> Azioni </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button color="primary" (click)="modificaFase(element)" matTooltip="Modifica">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="eliminaFase(element)" matTooltip="Elimina">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,66 @@
+.stats-card {
+  margin-bottom: 20px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.stat-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+
+  &.processes {
+    color: #3498db;
+  }
+  &.active {
+    color: #2ecc71;
+  }
+  &.completed {
+    color: #27ae60;
+  }
+  &.products {
+    color: #9b59b6;
+  }
+  &.revenue {
+    color: #f39c12;
+  }
+  &.costs {
+    color: #e74c3c;
+  }
+  &.margin {
+    color: #1abc9c;
+  }
+  &.certs {
+    color: #34495e;
+  }
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #777;
+}

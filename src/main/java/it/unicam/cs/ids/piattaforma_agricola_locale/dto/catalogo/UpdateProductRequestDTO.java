@@ -4,6 +4,7 @@
  */
 package it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo;
 
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.UnitaMisura;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +32,8 @@ public class UpdateProductRequestDTO {
 
     @Min(value = 0, message = "La quantità deve essere non negativa")
     private Integer quantitaDisponibile;
+
+    private UnitaMisura unitaMisura;
 
     private Boolean attivo;
 }

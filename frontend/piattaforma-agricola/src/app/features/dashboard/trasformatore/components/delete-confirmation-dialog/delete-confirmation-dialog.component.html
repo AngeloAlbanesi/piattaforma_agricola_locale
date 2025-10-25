@@ -1,0 +1,21 @@
+<div class="delete-dialog-container">
+    <div class="dialog-header">
+        <mat-icon class="warning-icon">warning</mat-icon>
+        <h2 mat-dialog-title>{{ data.title }}</h2>
+    </div>
+
+    <mat-dialog-content>
+        <p class="dialog-message">{{ data.message }}</p>
+        <p class="dialog-warning">Questa azione non può essere annullata.</p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button (click)="onCancel()" class="cancel-button">
+            {{ data.cancelText }}
+        </button>
+        <button mat-raised-button color="warn" (click)="onConfirm()" class="confirm-button">
+            <mat-icon>delete</mat-icon>
+            {{ data.confirmText }}
+        </button>
+    </mat-dialog-actions>
+</div>

@@ -1,0 +1,191 @@
+<div class="distributore-dashboard">
+    <!-- Header Dashboard -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="welcome-section">
+                <h1 class="welcome-title">{{ welcomeMessage }}</h1>
+                <p class="welcome-subtitle">La tua dashboard per gestire i pacchetti di tipicità</p>
+            </div>
+
+            <div class="header-actions">
+                <button mat-icon-button (click)="navigateToHome()" matTooltip="Home">
+                    <mat-icon>home</mat-icon>
+                </button>
+                <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+                <button mat-icon-button (click)="logout()" matTooltip="Logout">
+                    <mat-icon>logout</mat-icon>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner></mat-spinner>
+        <p>Caricamento dashboard...</p>
+    </div>
+
+    <!-- Main Content -->
+    <main class="dashboard-content" *ngIf="!isLoading">
+        <!-- Dati Personali e Aziendali Section -->
+        <section class="data-section">
+            <div class="data-cards-container">
+                <app-personal-data-card></app-personal-data-card>
+                <app-company-data-card></app-company-data-card>
+            </div>
+        </section>
+
+        <!-- Statistiche Overview -->
+        <section class="stats-section" *ngIf="hasStats">
+            <app-distributore-stats-overview [totalPackages]="totalPackages" [activePackages]="activePackages"
+                [soldPackages]="soldPackages" [totalRevenue]="totalRevenue" [averagePackagePrice]="averagePackagePrice">
+            </app-distributore-stats-overview>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions-section">
+            <app-distributore-quick-actions (action)="onQuickAction($event)"></app-distributore-quick-actions>
+        </section>
+
+        <!-- Tab Navigation -->
+        <section class="tabs-section">
+            <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event.index)">
+                <!-- Tab Catalogo Prodotti -->
+                <mat-tab label="I Miei Pacchetti">
+                    <div class="tab-content">
+                        <app-pacchetti-management></app-pacchetti-management>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab I Miei Prodotti -->
+                <mat-tab label="I Miei Prodotti">
+                    <div class="tab-content">
+                        <app-distributore-prodotti-management></app-distributore-prodotti-management>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Certificazioni -->
+                <mat-tab label="Certificazioni">
+                    <div class="tab-content">
+                        <app-certificazioni-distributore></app-certificazioni-distributore>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Carrello -->
+                <mat-tab label="Statistiche Vendite">
+                    <div class="tab-content">
+                        <div class="placeholder-section">
+                            <mat-card appearance="outlined">
+                                <mat-card-content>
+                                    <p class="placeholder-text">
+                                        <mat-icon>bar_chart</mat-icon>
+                                        Statistiche vendite in sviluppo.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Ordini Recenti -->
+                <mat-tab label="Prodotti Disponibili">
+                    <div class="tab-content">
+                        <div class="placeholder-section">
+                            <mat-card appearance="outlined">
+                                <mat-card-content>
+                                    <p class="placeholder-text">
+                                        <mat-icon>inventory_2</mat-icon>
+                                        Prodotti disponibili per i pacchetti in sviluppo.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Eventi -->
+                <mat-tab label="Ordini">
+                    <div class="tab-content">
+                        <div class="placeholder-section">
+                            <mat-card appearance="outlined">
+                                <mat-card-content>
+                                    <p class="placeholder-text">
+                                        <mat-icon>receipt</mat-icon>
+                                        Gestione ordini in sviluppo.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </section>
+
+        <!-- Sezione Riepilogo -->
+        <section class="summary-section" *ngIf="hasStats">
+            <div class="summary-grid">
+                <!-- Card Crea Nuovo Pacchetto -->
+                <mat-card class="summary-card" appearance="outlined">
+                    <mat-card-header>
+                        <mat-card-title>Crea Nuovo Pacchetto</mat-card-title>
+                        <mat-card-subtitle>Componi un pacchetto di tipicità</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="card-action">
+                            <button mat-raised-button color="primary" (click)="onQuickAction('create-package')">
+                                Crea pacchetto
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Card Pacchetti Popolari -->
+                <mat-card class="summary-card" appearance="outlined">
+                    <mat-card-header>
+                        <mat-card-title>Pacchetti Popolari</mat-card-title>
+                        <mat-card-subtitle>I più venduti</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="card-action">
+                            <button mat-raised-button color="accent" (click)="navigateToPackages()">
+                                Vedi tutti
+                                <mat-icon>trending_up</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Card Ricavi Totali -->
+                <mat-card class="summary-card" appearance="outlined">
+                    <mat-card-header>
+                        <mat-card-title>Ricavi Totali</mat-card-title>
+                        <mat-card-subtitle>{{ formatCurrency(totalRevenue) }}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="card-action">
+                            <button mat-raised-button color="warn" (click)="onQuickAction('view-orders')">
+                                Vendi di più
+                                <mat-icon>payments</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Dashboard -->
+    <footer class="dashboard-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Piattaforma Agricola Locale. Tutti i diritti riservati.</p>
+            <div class="footer-links">
+                <a mat-button color="primary" href="/help">Aiuto</a>
+                <a mat-button color="primary" href="/terms">Termini</a>
+                <a mat-button color="primary" href="/privacy">Privacy</a>
+            </div>
+        </div>
+    </footer>
+</div>

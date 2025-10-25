@@ -1,0 +1,755 @@
+{"name": "API Pubbliche",
+			"item": [
+				{
+					"name": "Prodotti",
+					"item": [
+						{
+							"name": "Visualizza Tutti i Prodotti",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/prodotti",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"prodotti"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dettagli Prodotto Specifico",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/prodotti/2",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"prodotti",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cerca Prodotti",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/prodotti/cercaProdotti?query=olio",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"prodotti",
+										"cercaProdotti"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "olio"
+										}
+									]
+								},
+								"description": "cambiare olio con cio che si vuole cercare"
+							},
+							"response": []
+						},
+						{
+							"name": "Prodotti per Venditore",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/prodotti/venditori/{venditorId}",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"prodotti",
+										"venditori",
+										"{venditorId}"
+									]
+								},
+								"description": "cambiare olio con cio che si vuole cercare"
+							},
+							"response": []
+						},
+						{
+							"name": "Recupera Certificazioni del Prodotto",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/prodotti/1/certificazioni",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"prodotti",
+										"1",
+										"certificazioni"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recupera Metodo di Coltivazione",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/prodotti/34/metodi-coltivazione",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"prodotti",
+										"34",
+										"metodi-coltivazione"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Pacchetti",
+					"item": [
+						{
+							"name": "Visualizza Tutti i Pacchetti",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/pacchetti",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"pacchetti"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Visualizza Tutti i Pacchetti di un distributore",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/pacchetti?distributorId={id_del_distributore}",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"pacchetti"
+									],
+									"query": [
+										{
+											"key": "distributorId",
+											"value": "{id_del_distributore}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dettagli Pacchetto Specifico",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/pacchetti/{id}",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"pacchetti",
+										"{id}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cerca Pacchetti",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/pacchetti/cercaPacchetti?query={nomePacchetto}",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"pacchetti",
+										"cercaPacchetti"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "{nomePacchetto}",
+											"description": "Inserire il nome del pacchetto"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Pacchetti per Distributore",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/pacchetti/distributori/{distributorId}",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"pacchetti",
+										"distributori",
+										"{distributorId}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Composizione Pacchetto",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/pacchetti/{id}/composizione",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"pacchetti",
+										"{id}",
+										"composizione"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Eventi",
+					"item": [
+						{
+							"name": "Visualizza Tutti gli Eventi",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/eventi",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"eventi"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "20",
+											"disabled": true
+										},
+										{
+											"key": "sortBy",
+											"value": "dataOraInizio",
+											"disabled": true
+										},
+										{
+											"key": "sortDirection",
+											"value": "asc",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dettagli Evento Specifico",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/eventi/4",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"eventi",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cerca Eventi",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/eventi/cercaEventi?query=raccolto",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"eventi",
+										"cercaEventi"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "raccolto"
+										}
+									]
+								},
+								"description": "sostituire sagra con l evento"
+							},
+							"response": []
+						},
+						{
+							"name": "Eventi per Organizzatore",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/eventi/organizzatori/6",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"eventi",
+										"organizzatori",
+										"6"
+									]
+								},
+								"description": "sostituire sagra con l evento"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Processi di Trasformazione",
+					"item": [
+						{
+							"name": "Recupera Tutti i Processi di Trasformazione",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/processi-trasformazione",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"processi-trasformazione"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Numero di pagina (default 0)",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "20",
+											"description": "Dimensione della pagina (default 20)",
+											"disabled": true
+										},
+										{
+											"key": "sortBy",
+											"value": "nome",
+											"description": "Campo per l'ordinamento (default nome)",
+											"disabled": true
+										},
+										{
+											"key": "sortDirection",
+											"value": "asc",
+											"description": "Direzione dell'ordinamento (asc/desc, default asc)",
+											"disabled": true
+										},
+										{
+											"key": "trasformatoreId",
+											"value": "",
+											"description": "ID del trasformatore per filtrare i processi (opzionale)",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recupera Processo di Trasformazione per ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/processi-trasformazione/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"processi-trasformazione",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recupera Informazioni di Tracciabilità del Processo",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/processi-trasformazione/1/tracciabilita",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"processi-trasformazione",
+										"1",
+										"tracciabilita"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Aziende",
+					"item": [
+						{
+							"name": "Recupera Dati Azienda per ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/azienda/{id}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"azienda",
+										"{id}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recupera Tutte le Aziende",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/azienda/tutteLeAziende",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"azienda",
+										"tutteLeAziende"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Numero di pagina (default 0)",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "20",
+											"description": "Dimensione della pagina (default 20)",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cerca Aziende",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/azienda/cercaAzienda?query=esempio",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"azienda",
+										"cercaAzienda"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "esempio",
+											"description": "Query di ricerca per nome azienda"
+										},
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Numero di pagina (default 0)",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "20",
+											"description": "Dimensione della pagina (default 20)",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recupera Certificazioni Azienda",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/azienda/1/certificazioni",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"azienda",
+										"1",
+										"certificazioni"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recupera Prodotti Azienda",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/azienda/{id}/prodotti",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"azienda",
+										"{id}",
+										"prodotti"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Geocodifica Azienda",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/azienda/{id}/geocode",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"azienda",
+										"{id}",
+										"geocode"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Calcola Distanza da Azienda",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/azienda/{id}/distanza?partenza=Via%20Roma%2C%201%2C%20Milano",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"azienda",
+										"{id}",
+										"distanza"
+									],
+									"query": [
+										{
+											"key": "partenza",
+											"value": "Via%20Roma%2C%201%2C%20Milano",
+											"description": "Indirizzo di partenza per il calcolo della distanza"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Visualizza tutte le Aziende",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/azienda/tutteLeAziende",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"azienda",
+										"tutteLeAziende"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}

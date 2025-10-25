@@ -1,0 +1,130 @@
+<div class="shopping-cart-container">
+    <mat-card class="cart-card" appearance="outlined">
+        <mat-card-header>
+            <mat-card-title class="cart-title">
+                <span>Il Mio Carrello</span>
+                <div class="cart-actions" *ngIf="!isLoading">
+                    <button mat-icon-button (click)="loadCart()" matTooltip="Aggiorna carrello">
+                        <mat-icon>refresh</mat-icon>
+                    </button>
+                    <button mat-icon-button *ngIf="!isCartEmpty" (click)="clearCart()" matTooltip="Svuota carrello"
+                        color="warn">
+                        <mat-icon>delete_sweep</mat-icon>
+                    </button>
+                </div>
+            </mat-card-title>
+            <mat-card-subtitle *ngIf="!isCartEmpty">
+                {{ cartItemsCount }} articoli - Totale: {{ formatCurrency(cartTotal) }}
+            </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <!-- Loading State -->
+            <div class="loading-container" *ngIf="isLoading">
+                <mat-spinner></mat-spinner>
+                <p>Caricamento carrello...</p>
+            </div>
+
+            <!-- Empty Cart State -->
+            <div class="empty-cart" *ngIf="!isLoading && isCartEmpty">
+                <mat-icon class="empty-icon">shopping_cart</mat-icon>
+                <h3>Il tuo carrello è vuoto</h3>
+                <p>Aggiungi alcuni prodotti per iniziare lo shopping!</p>
+                <button mat-raised-button color="primary" routerLink="/">
+                    Esplora Prodotti
+                </button>
+            </div>
+
+            <!-- Cart Items -->
+            <div class="cart-content" *ngIf="!isLoading && !isCartEmpty">
+                <table mat-table [dataSource]="cartData?.elementiCarrello || []" class="cart-table">
+                    <!-- Product Column -->
+                    <ng-container matColumnDef="prodotto">
+                        <th mat-header-cell *matHeaderCellDef>Prodotto</th>
+                        <td mat-cell *matCellDef="let riga">
+                            <div class="product-info">
+                                <img [src]="getProductImage(riga)" [alt]="riga.nomeAcquistabile" class="product-image"
+                                    (error)="onImageError($event)">
+                                <div class="product-details">
+                                    <div class="product-name">{{ riga.nomeAcquistabile }}</div>
+                                    <div class="product-type">{{ riga.tipoAcquistabile }}</div>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <!-- Price Column -->
+                    <ng-container matColumnDef="prezzo">
+                        <th mat-header-cell *matHeaderCellDef>Prezzo</th>
+                        <td mat-cell *matCellDef="let riga">
+                            <span class="price">{{ formatCurrency(riga.prezzoUnitario) }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Quantity Column -->
+                    <ng-container matColumnDef="quantita">
+                        <th mat-header-cell *matHeaderCellDef>Quantità</th>
+                        <td mat-cell *matCellDef="let riga">
+                            <div class="quantity-controls">
+                                <button mat-icon-button (click)="updateQuantity(riga.idElemento, riga.quantita - 1)"
+                                    [disabled]="riga.quantita <= 1 || isUpdating">
+                                    <mat-icon>remove</mat-icon>
+                                </button>
+                                <span class="quantity-value">{{ riga.quantita }}</span>
+                                <button mat-icon-button (click)="updateQuantity(riga.idElemento, riga.quantita + 1)"
+                                    [disabled]="isUpdating">
+                                    <mat-icon>add</mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <!-- Total Column -->
+                    <ng-container matColumnDef="totale">
+                        <th mat-header-cell *matHeaderCellDef>Totale</th>
+                        <td mat-cell *matCellDef="let riga">
+                            <span class="total-price">{{ formatCurrency(riga.prezzoUnitario * riga.quantita) }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Actions Column -->
+                    <ng-container matColumnDef="azioni">
+                        <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                        <td mat-cell *matCellDef="let riga">
+                            <button mat-icon-button (click)="removeItem(riga.idElemento)" [disabled]="isUpdating"
+                                matTooltip="Rimuovi articolo" color="warn">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions *ngIf="!isLoading && !isCartEmpty" class="card-actions">
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Subtotale ({{ cartItemsCount }} articoli):</span>
+                    <span class="summary-value">{{ formatCurrency(cartTotal) }}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Totale:</span>
+                    <span class="summary-value total-value">{{ formatCurrency(cartTotal) }}</span>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button mat-stroked-button routerLink="/">
+                    Continua Shopping
+                </button>
+                <button mat-raised-button color="primary" (click)="proceedToCheckout()" [disabled]="isUpdating">
+                    <mat-icon *ngIf="isUpdating" class="spinner">refresh</mat-icon>
+                    {{ isUpdating ? 'Elaborazione...' : 'Procedi al Checkout' }}
+                </button>
+            </div>
+        </mat-card-actions>
+    </mat-card>
+</div>

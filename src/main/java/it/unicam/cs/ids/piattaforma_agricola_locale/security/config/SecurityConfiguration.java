@@ -30,11 +30,12 @@ public class SecurityConfiguration {
                 // Definisce le regole di autorizzazione per le richieste HTTP
                 .authorizeHttpRequests(auth -> auth
                         // Permetti a chiunque di accedere agli endpoint di autenticazione, CONSOLE H2,
-                        // SWAGGER e endpoint pubblici per la consultazione di prodotti, pacchetti, aziende ed eventi
+                        // SWAGGER e endpoint pubblici per la consultazione di prodotti, pacchetti,
+                        // aziende ed eventi
                         .requestMatchers(
                                 // Authentication endpoints
                                 new AntPathRequestMatcher("/api/auth/**"),
-                                
+
                                 // Product browsing endpoints (public)
                                 new AntPathRequestMatcher("/api/prodotti"),
                                 new AntPathRequestMatcher("/api/prodotti/{id}"),
@@ -42,14 +43,14 @@ public class SecurityConfiguration {
                                 new AntPathRequestMatcher("/api/prodotti/venditori/{vendorId}"),
                                 new AntPathRequestMatcher("/api/prodotti/*/metodi-coltivazione"),
                                 new AntPathRequestMatcher("/api/prodotti/{id}/certificazioni"),
-                                
+
                                 // Package browsing endpoints (public)
                                 new AntPathRequestMatcher("/api/pacchetti"),
                                 new AntPathRequestMatcher("/api/pacchetti/{id}"),
                                 new AntPathRequestMatcher("/api/pacchetti/cercaPacchetti"),
                                 new AntPathRequestMatcher("/api/pacchetti/distributori/{distributorId}"),
                                 new AntPathRequestMatcher("/api/pacchetti/{id}/composizione"),
-                                
+
                                 // Company browsing endpoints (public)
                                 new AntPathRequestMatcher("/api/azienda/*"),
                                 new AntPathRequestMatcher("/api/azienda/tutteLeAziende"),
@@ -58,18 +59,19 @@ public class SecurityConfiguration {
                                 new AntPathRequestMatcher("/api/azienda/*/certificazioni"),
                                 new AntPathRequestMatcher("/api/azienda/{id}/geocode"),
                                 new AntPathRequestMatcher("/api/azienda/{id}/distanza"),
-                                
+
                                 // Event browsing endpoints (public)
                                 new AntPathRequestMatcher("/api/eventi"),
                                 new AntPathRequestMatcher("/api/eventi/{id}"),
                                 new AntPathRequestMatcher("/api/eventi/cercaEventi"),
                                 new AntPathRequestMatcher("/api/eventi/organizzatori/{organizerId}"),
-                                
+
                                 // Transformation process browsing endpoints (public)
                                 new AntPathRequestMatcher("/api/processi-trasformazione"),
                                 new AntPathRequestMatcher("/api/processi-trasformazione/{id}"),
+                                new AntPathRequestMatcher("/api/processi-trasformazione/pubblico/{id}"),
                                 new AntPathRequestMatcher("/api/processi-trasformazione/{id}/tracciabilita"),
-                                
+
                                 // Development and documentation endpoints
                                 new AntPathRequestMatcher("/h2-console/**"),
                                 new AntPathRequestMatcher("/swagger-ui/**"),

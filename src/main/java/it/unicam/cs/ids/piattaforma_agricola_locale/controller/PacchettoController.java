@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2025 Angelo Albanesi
+ *   All rights reserved.
+ */
 package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo.*;
@@ -125,13 +129,13 @@ public class PacchettoController {
     public ResponseEntity<List<PacchettoSummaryDTO>> getMyPackages(Authentication authentication) {
         String email = authentication.getName();
         log.info("Getting packages for authenticated distributor: {}", email);
-        
+
         DistributoreDiTipicita distributore = (DistributoreDiTipicita) utenteService.getUtenteByEmail(email);
         List<Pacchetto> distributorPackages = pacchettoService.getPacchettiByDistributore(distributore.getId());
         List<PacchettoSummaryDTO> summaryDTOs = distributorPackages.stream()
                 .map(pacchettoMapper::toSummaryDTO)
                 .collect(Collectors.toList());
-        
+
         log.info("Found {} packages for distributor: {}", summaryDTOs.size(), email);
         return ResponseEntity.ok(summaryDTOs);
     }
@@ -162,6 +166,23 @@ public class PacchettoController {
                 .filter(p -> p.getNome().equals(request.getNome()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Package creation failed"));
+
+        // Add products to the package if provided
+        if (request.getElementiInclusi() != null && !request.getElementiInclusi().isEmpty()) {
+            for (ElementoPacchettoRequestDTO elemento : request.getElementiInclusi()) {
+                if ("PRODOTTO".equals(elemento.getTipoElemento())) {
+                    int quantita = elemento.getQuantita() != null ? elemento.getQuantita() : 1;
+                    prodottoService.getProdottoById(elemento.getIdElemento())
+                            .ifPresent(prodotto -> {
+                                // Add the product multiple times based on quantity
+                                for (int i = 0; i < quantita; i++) {
+                                    pacchettoService.aggiungiProdottoAlPacchetto(
+                                            distributore, nuovoPacchetto, prodotto);
+                                }
+                            });
+                }
+            }
+        }
 
         PacchettoDetailDTO responseDTO = pacchettoMapper.toDetailDTO(nuovoPacchetto);
         log.info("Created new package with ID: {} by distributor: {}", nuovoPacchetto.getId(), email);
@@ -361,28 +382,27 @@ public class PacchettoController {
         if (elementi == null || elementi.isEmpty()) {
             return List.of();
         }
-        
+
         Map<Long, Long> conteggi = elementi.stream()
                 .collect(Collectors.groupingBy(
-                    Acquistabile::getId,
-                    Collectors.counting()
-                ));
-        
+                        Acquistabile::getId,
+                        Collectors.counting()));
+
         return conteggi.entrySet().stream()
                 .map(entry -> {
                     Long elementId = entry.getKey();
                     Long count = entry.getValue();
-                    
+
                     // Trova il primo elemento con questo ID per ottenere i dettagli
                     Acquistabile elemento = elementi.stream()
                             .filter(e -> e.getId().equals(elementId))
                             .findFirst()
                             .orElse(null);
-                    
+
                     if (elemento == null) {
                         return null;
                     }
-                    
+
                     return ElementoPacchettoDTO.builder()
                             .tipoElemento(getActualClassName(elemento))
                             .idElemento(elemento.getId())

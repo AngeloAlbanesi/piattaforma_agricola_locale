@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2025 Angelo Albanesi
+ *   All rights reserved.
+ */
 package it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces;
 
 import java.util.List;
@@ -10,6 +14,10 @@ public interface ICuratoreService {
 
     List<DatiAzienda> getDatiAziendaInAttesaRevisione();
 
+    List<DatiAzienda> getDatiAziendaApprovati();
+
+    List<DatiAzienda> getDatiAziendaRifiutati();
+
     void approvaDatiAzienda(Venditore venditore, String feedbackVerifica);
 
     void respingiDatiAzienda(Venditore venditore, String feedbackVerifica);
@@ -18,9 +26,10 @@ public interface ICuratoreService {
 
     void respingiProdotto(Prodotto prodotto, String feedbackVerifica);
 
-
     List<Prodotto> getProdottiInAttesaRevisione();
 
+    List<Prodotto> getProdottiApprovati();
 
+    List<Prodotto> getProdottiRifiutati();
 
 }

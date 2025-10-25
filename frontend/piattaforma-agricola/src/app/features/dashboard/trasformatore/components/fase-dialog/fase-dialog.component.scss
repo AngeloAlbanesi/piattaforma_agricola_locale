@@ -1,0 +1,201 @@
+.fase-dialog-container {
+    min-width: 550px;
+    max-width: 650px;
+
+    .dialog-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+
+        .header-icon {
+            color: #1976d2;
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 0.87);
+        }
+    }
+
+    mat-dialog-content {
+        padding: 0;
+        overflow: visible;
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 8px 0;
+
+            .full-width {
+                width: 100%;
+            }
+
+            mat-form-field {
+                mat-icon[matPrefix] {
+                    margin-right: 8px;
+                    color: rgba(0, 0, 0, 0.54);
+                }
+            }
+
+            textarea {
+                resize: vertical;
+                min-height: 80px;
+            }
+
+            .fonte-section {
+                background-color: #f5f5f5;
+                border-radius: 8px;
+                padding: 16px;
+                margin-top: 8px;
+
+                .section-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: 16px;
+                    font-weight: 500;
+                    color: rgba(0, 0, 0, 0.87);
+                    margin: 0 0 16px 0;
+
+                    mat-icon {
+                        color: #1976d2;
+                        font-size: 24px;
+                        width: 24px;
+                        height: 24px;
+                    }
+                }
+
+                .fonte-radio-group {
+                    display: flex;
+                    gap: 16px;
+                    margin-bottom: 16px;
+
+                    .fonte-radio {
+                        flex: 1;
+
+                        .radio-content {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            padding: 12px;
+                            border: 1px solid #e0e0e0;
+                            border-radius: 4px;
+                            background-color: white;
+                            transition: all 0.2s;
+
+                            mat-icon {
+                                color: rgba(0, 0, 0, 0.54);
+                                font-size: 20px;
+                                width: 20px;
+                                height: 20px;
+                            }
+
+                            span {
+                                font-size: 14px;
+                                color: rgba(0, 0, 0, 0.87);
+                            }
+                        }
+
+                        &.mat-radio-checked .radio-content {
+                            border-color: #1976d2;
+                            background-color: #e3f2fd;
+
+                            mat-icon {
+                                color: #1976d2;
+                            }
+
+                            span {
+                                color: #1976d2;
+                                font-weight: 500;
+                            }
+                        }
+
+                        &:hover .radio-content {
+                            border-color: #1976d2;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        }
+                    }
+                }
+
+                .fornitore-field {
+                    margin-top: 8px;
+                    animation: slideDown 0.3s ease-out;
+                }
+            }
+        }
+    }
+
+    mat-dialog-actions {
+        padding: 20px 0 0 0;
+        margin: 0;
+        gap: 12px;
+
+        .cancel-button {
+            min-width: 100px;
+        }
+
+        .save-button {
+            min-width: 150px;
+
+            mat-icon {
+                margin-right: 8px;
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+            }
+
+            &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+        }
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 650px) {
+    .fase-dialog-container {
+        min-width: 90vw;
+        max-width: 95vw;
+
+        .dialog-header h2 {
+            font-size: 20px;
+        }
+
+        .form-container {
+            .fonte-section {
+                .fonte-radio-group {
+                    flex-direction: column;
+                    gap: 12px;
+                }
+            }
+        }
+
+        mat-dialog-actions {
+            flex-direction: column;
+
+            button {
+                width: 100%;
+            }
+        }
+    }
+}

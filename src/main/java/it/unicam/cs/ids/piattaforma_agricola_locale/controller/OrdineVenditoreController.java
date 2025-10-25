@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2025 Angelo Albanesi
+ *   All rights reserved.
+ */
 package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.ordine.OrdineDetailDTO;
@@ -131,7 +135,14 @@ public class OrdineVenditoreController {
 
             // Filter order lines to show only vendor's products
             Ordine filteredOrder = createFilteredOrderForVendor(ordine, venditore);
-            OrdineDetailDTO ordineDTO = ordineMapper.toDetailDTO(filteredOrder);
+
+            // Inietta l'AcquistabileService nelle righe ordine prima di convertirle in DTO
+            ordineMapper.injectAcquistabileService(filteredOrder,
+                    ((it.unicam.cs.ids.piattaforma_agricola_locale.service.impl.OrdineService) ordineService)
+                            .getCarrelloService().getAcquistabileService());
+
+            // Usa toVenditoreDetailDTO per restituire informazioni specifiche per venditori
+            OrdineVenditoreDetailDTO ordineDTO = ordineMapper.toVenditoreDetailDTO(filteredOrder);
 
             return ResponseEntity.ok(ordineDTO);
 

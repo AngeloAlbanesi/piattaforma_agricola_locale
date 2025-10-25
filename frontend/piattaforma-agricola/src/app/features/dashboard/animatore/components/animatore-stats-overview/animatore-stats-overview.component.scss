@@ -1,0 +1,57 @@
+.stats-card {
+  margin-bottom: 20px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.stat-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+
+  &.events {
+    color: #9b59b6; /* Viola */
+  }
+  &.active {
+    color: #2ecc71; /* Verde */
+  }
+  &.registrations {
+    color: #3498db; /* Blu */
+  }
+  &.companies {
+    color: #f39c12; /* Giallo/Arancio */
+  }
+  &.revenue {
+    color: #1abc9c; /* Turchese */
+  }
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #777;
+}

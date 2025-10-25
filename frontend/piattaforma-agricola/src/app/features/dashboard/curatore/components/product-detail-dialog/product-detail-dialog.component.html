@@ -1,0 +1,150 @@
+<div class="product-detail-dialog">
+    <div class="dialog-header">
+        <h2 mat-dialog-title>
+            <mat-icon>inventory_2</mat-icon>
+            Dettagli Prodotto
+        </h2>
+        <button mat-icon-button (click)="onClose()" aria-label="Chiudi">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Caricamento dettagli...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !isLoading">
+        <mat-icon class="error-icon">error</mat-icon>
+        <p>{{ error }}</p>
+        <button mat-stroked-button color="primary" (click)="onClose()">Chiudi</button>
+    </div>
+
+    <!-- Content -->
+    <mat-dialog-content *ngIf="product && !isLoading">
+        <div class="product-content">
+            <!-- Image Gallery -->
+            <div class="product-images" *ngIf="product.immagini && product.immagini.length > 0">
+                <img [src]="product.immagini[0]" [alt]="product.nomeProdotto" class="main-image">
+                <div class="image-gallery" *ngIf="product.immagini.length > 1">
+                    <img *ngFor="let img of product.immagini.slice(1, 4)" [src]="img" [alt]="product.nomeProdotto"
+                        class="thumbnail">
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info">
+                <h3 class="product-name">{{ product.nomeProdotto }}</h3>
+
+                <div class="info-chips">
+                    <mat-chip-set>
+                        <mat-chip class="category-chip">
+                            <mat-icon>category</mat-icon>
+                            {{ product.categoria }}
+                        </mat-chip>
+                        <mat-chip class="price-chip" highlighted>
+                            {{ formatCurrency(product.prezzo) }}
+                        </mat-chip>
+                        <mat-chip *ngIf="product.tipoOrigine" class="origin-chip">
+                            <mat-icon>eco</mat-icon>
+                            {{ product.tipoOrigine }}
+                        </mat-chip>
+                    </mat-chip-set>
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <div class="info-section">
+                    <h4><mat-icon>description</mat-icon> Descrizione</h4>
+                    <p class="description">{{ product.descrizione }}</p>
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <!-- Vendor Info -->
+                <div class="info-section">
+                    <h4><mat-icon>store</mat-icon> Venditore</h4>
+                    <div class="vendor-info">
+                        <p><strong>{{ product.nomeVenditore }}</strong></p>
+                        <p class="vendor-id">ID: {{ product.venditoreId }}</p>
+                    </div>
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <!-- Additional Details -->
+                <div class="info-section details-grid">
+                    <div class="detail-item" *ngIf="product.quantitaDisponibile !== undefined">
+                        <mat-icon>inventory</mat-icon>
+                        <div>
+                            <p class="detail-label">Quantità Disponibile</p>
+                            <p class="detail-value">{{ product.quantitaDisponibile }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-item" *ngIf="product.statoVerifica">
+                        <mat-icon>verified</mat-icon>
+                        <div>
+                            <p class="detail-label">Stato Verifica</p>
+                            <p class="detail-value">{{ product.statoVerifica }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-item" *ngIf="product.dataCreazione">
+                        <mat-icon>calendar_today</mat-icon>
+                        <div>
+                            <p class="detail-label">Data Creazione</p>
+                            <p class="detail-value">{{ formatDate(product.dataCreazione) }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certifications -->
+                <div class="info-section" *ngIf="product.certificazioni && product.certificazioni.length > 0">
+                    <h4><mat-icon>workspace_premium</mat-icon> Certificazioni</h4>
+                    <mat-chip-set>
+                        <mat-chip *ngFor="let cert of product.certificazioni">
+                            {{ cert.nome || cert }}
+                        </mat-chip>
+                    </mat-chip-set>
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <!-- Actions -->
+    <mat-dialog-actions *ngIf="product && !isLoading" align="end">
+        <button mat-button (click)="onClose()">Chiudi</button>
+        <button mat-raised-button color="warn" (click)="onReject()" [disabled]="isLoading">
+            <mat-icon>cancel</mat-icon>
+            Rifiuta
+        </button>
+        <button mat-raised-button color="primary" (click)="onApprove()" [disabled]="isLoading">
+            <mat-icon>check_circle</mat-icon>
+            Approva
+        </button>
+    </mat-dialog-actions>
+</div>
+
+<!-- Reject Dialog Overlay -->
+<div class="reject-overlay" *ngIf="showRejectDialog" (click)="cancelReject()">
+    <div class="reject-dialog" (click)="$event.stopPropagation()">
+        <h3>Motivo del Rifiuto</h3>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Motivazione</mat-label>
+            <textarea matInput [(ngModel)]="rejectReason" placeholder="Inserisci il motivo del rifiuto..." rows="5"
+                maxlength="500">
+      </textarea>
+            <mat-hint>{{ rejectReason.length }}/500 caratteri</mat-hint>
+        </mat-form-field>
+
+        <div class="reject-actions">
+            <button mat-stroked-button (click)="cancelReject()">Annulla</button>
+            <button mat-raised-button color="warn" (click)="confirmReject()" [disabled]="!rejectReason.trim()">
+                Conferma Rifiuto
+            </button>
+        </div>
+    </div>
+</div>

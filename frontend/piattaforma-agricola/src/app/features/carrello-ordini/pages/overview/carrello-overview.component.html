@@ -1,0 +1,126 @@
+<div class="carrello-overview" role="main" aria-label="Carrello">
+    <!-- Header -->
+    <header class="carrello-header">
+        <h1 class="page-title">
+            <mat-icon>shopping_cart</mat-icon>
+            Il Mio Carrello
+        </h1>
+        <p class="page-subtitle" *ngIf="hasItems">{{ totalItems }} {{ totalItems === 1 ? 'articolo' : 'articoli' }}</p>
+    </header>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container" role="status" aria-live="polite">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Caricamento carrello...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && isEmpty" class="empty-state">
+        <mat-icon>shopping_cart</mat-icon>
+        <h2>Il tuo carrello è vuoto</h2>
+        <p>Esplora il nostro catalogo e aggiungi i prodotti che ti interessano!</p>
+        <button mat-raised-button color="primary" (click)="continueShopping()">
+            <mat-icon>storefront</mat-icon>
+            Vai al Catalogo
+        </button>
+    </div>
+
+    <!-- Cart Content -->
+    <div *ngIf="!isLoading && hasItems" class="carrello-content">
+        <!-- Cart Items -->
+        <section class="cart-items">
+            <mat-card *ngFor="let riga of carrello?.elementiCarrello" class="cart-item-card">
+                <div class="cart-item">
+                    <!-- Image -->
+                    <div class="item-image">
+                        <img [src]="getImageUrl()" [alt]="riga.nomeAcquistabile"
+                            loading="lazy">
+                    </div>
+
+                    <!-- Details -->
+                    <div class="item-details">
+                        <h3 class="item-name">{{ riga.nomeAcquistabile }}</h3>
+                        <p class="item-type">
+                            <mat-icon>{{ riga.tipoAcquistabile === 'PRODOTTO' ? 'shopping_basket' : 'inventory_2'
+                                }}</mat-icon>
+                            {{ riga.tipoAcquistabile }}
+                        </p>
+                        <p class="item-price">{{ formatPrice(riga.prezzoUnitario) }} / unità</p>
+                    </div>
+
+                    <!-- Quantity Controls -->
+                    <div class="item-quantity">
+                        <label>Quantità</label>
+                        <div class="quantity-controls">
+                            <button mat-icon-button (click)="updateQuantity(riga, -1)"
+                                [disabled]="isUpdating || riga.quantita <= 1" matTooltip="Riduci quantità"
+                                aria-label="Riduci quantità">
+                                <mat-icon>remove</mat-icon>
+                            </button>
+                            <span class="quantity-value">{{ riga.quantita }}</span>
+                            <button mat-icon-button (click)="updateQuantity(riga, 1)" [disabled]="isUpdating"
+                                matTooltip="Aumenta quantità" aria-label="Aumenta quantità">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Subtotal -->
+                    <div class="item-subtotal">
+                        <label>Subtotale</label>
+                        <p class="subtotal-value">{{ formatPrice(riga.prezzoUnitario * riga.quantita) }}</p>
+                    </div>
+
+                    <!-- Remove Button -->
+                    <div class="item-actions">
+                        <button mat-icon-button color="warn" (click)="removeItem(riga)" [disabled]="isUpdating"
+                            matTooltip="Rimuovi dal carrello" aria-label="Rimuovi dal carrello">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </mat-card>
+        </section>
+
+        <!-- Summary Sidebar -->
+        <aside class="cart-summary">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>Riepilogo Ordine</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="summary-row">
+                        <span>Subtotale ({{ totalItems }} {{ totalItems === 1 ? 'articolo' : 'articoli' }})</span>
+                        <span class="summary-value">{{ formatPrice(totalPrice) }}</span>
+                    </div>
+
+                    <mat-divider></mat-divider>
+
+                    <div class="summary-row total">
+                        <span>Totale</span>
+                        <span class="summary-value">{{ formatPrice(totalPrice) }}</span>
+                    </div>
+
+                    <button mat-raised-button color="primary" class="checkout-button" (click)="proceedToCheckout()"
+                        [disabled]="isUpdating">
+                        <mat-icon>payment</mat-icon>
+                        Procedi al Pagamento
+                    </button>
+
+                    <button mat-button class="continue-shopping-button" (click)="continueShopping()">
+                        <mat-icon>storefront</mat-icon>
+                        Continua Acquisti
+                    </button>
+
+                    <mat-divider></mat-divider>
+
+                    <button mat-button color="warn" class="clear-cart-button" (click)="clearCart()"
+                        [disabled]="isUpdating">
+                        <mat-icon>delete_sweep</mat-icon>
+                        Svuota Carrello
+                    </button>
+                </mat-card-content>
+            </mat-card>
+        </aside>
+    </div>
+</div>

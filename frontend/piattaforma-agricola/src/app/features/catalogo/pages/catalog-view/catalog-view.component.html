@@ -1,0 +1,101 @@
+<div class="catalog-view" role="main" aria-label="Catalogo prodotti e pacchetti">
+    <!-- Header -->
+    <header class="catalog-header">
+        <button mat-fab color="primary" (click)="navigateToHome()" class="home-button" aria-label="Torna alla home">
+            <mat-icon>home</mat-icon>
+        </button>
+        <div class="header-content">
+            <h1 class="page-title">
+                <mat-icon>storefront</mat-icon>
+                Catalogo Prodotti e Pacchetti
+            </h1>
+            <p class="page-subtitle">Scopri i migliori prodotti locali e le offerte speciali</p>
+        </div>
+    </header>
+
+    <!-- Floating Cart Button -->
+    <button *ngIf="isAuthenticated" mat-fab color="accent" class="cart-fab" (click)="navigateToCart()" 
+            matTooltip="Vai al carrello" matTooltipPosition="left" aria-label="Vai al carrello">
+        <mat-icon [matBadge]="cartItemsCount" [matBadgeHidden]="cartItemsCount === 0" matBadgeColor="warn" matBadgeSize="small">shopping_cart</mat-icon>
+    </button>
+
+    <!-- Search Bar -->
+    <section class="search-section">
+        <app-catalog-search-bar (search)="onSearch($event)" (clear)="onClearSearch()">
+        </app-catalog-search-bar>
+    </section>
+
+    <!-- Main Content -->
+    <div class="catalog-content">
+        <!-- Sidebar Filtri (Desktop) -->
+        <aside class="filters-sidebar desktop-only">
+            <app-catalog-filters [options]="filterOptions" [currentFilters]="filters"
+                (filtersChange)="onFiltersChange($event)" (resetFilters)="onResetFilters()">
+            </app-catalog-filters>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="content-area">
+            <!-- Sort Header -->
+            <app-catalog-sort-header [totalResults]="totalResults" [currentPage]="filters.page"
+                [pageSize]="filters.size" [sortBy]="filters.sortBy || 'nome_asc'" [viewMode]="viewMode"
+                (sortChange)="onSortChange($event)" (viewModeChange)="onViewModeChange($event)">
+            </app-catalog-sort-header>
+
+            <!-- Pulsante Filtri (Mobile) -->
+            <button mat-raised-button color="primary" class="mobile-filters-btn mobile-only" (click)="toggleFilters()">
+                <mat-icon>filter_list</mat-icon>
+                Filtri
+            </button>
+
+            <!-- Loading State -->
+            <div *ngIf="isLoading" class="loading-container" role="status" aria-live="polite">
+                <mat-spinner diameter="48"></mat-spinner>
+                <p>Caricamento catalogo...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="!isLoading && isEmpty" class="empty-state">
+                <mat-icon>search_off</mat-icon>
+                <h2>Nessun risultato trovato</h2>
+                <p>Prova a modificare i filtri o la ricerca</p>
+                <button mat-raised-button color="primary" (click)="onResetFilters()">
+                    <mat-icon>refresh</mat-icon>
+                    Resetta filtri
+                </button>
+            </div>
+
+            <!-- Items Grid/List -->
+            <div *ngIf="!isLoading && hasResults" class="items-container" [ngClass]="gridClass">
+                <app-catalog-item-card *ngFor="let item of results?.items" [item]="item"
+                    [isAuthenticated]="isAuthenticated" [viewMode]="viewMode" (addToCart)="onAddToCart($event)"
+                    (viewDetails)="onViewDetails($event)" (clickAzienda)="onClickAzienda($event)">
+                </app-catalog-item-card>
+            </div>
+
+            <!-- Pagination -->
+            <div *ngIf="!isLoading && hasResults && (results?.totalPages || 0) > 1" class="pagination-container">
+                <mat-paginator [length]="results?.totalElements || 0" [pageSize]="filters.size"
+                    [pageIndex]="filters.page" [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPageChange($event)"
+                    showFirstLastButtons aria-label="Seleziona pagina">
+                </mat-paginator>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Filters Drawer -->
+    <mat-drawer-container class="mobile-only mobile-drawer-container" autosize>
+        <mat-drawer #drawer mode="over" position="start" [opened]="filtersOpened">
+            <div class="mobile-filters-header">
+                <h2>Filtri</h2>
+                <button mat-icon-button (click)="drawer.close()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <app-catalog-filters [options]="filterOptions" [currentFilters]="filters"
+                (filtersChange)="onFiltersChange($event); drawer.close()"
+                (resetFilters)="onResetFilters(); drawer.close()">
+            </app-catalog-filters>
+        </mat-drawer>
+    </mat-drawer-container>
+</div>

@@ -1,0 +1,345 @@
+@use '../../../../../../styles/_variables' as *;
+
+.acquirente-dashboard {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+    color: $text-color-primary;
+
+    .dashboard-header {
+        background: linear-gradient(135deg, #ff9f43 0%, #ffc75f 100%);
+        color: white;
+        padding: 24px 32px;
+        box-shadow: $shadow-elevation-2;
+        margin-bottom: 24px;
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: $max-content-width;
+            margin: 0 auto;
+        }
+
+        .welcome-section {
+            .welcome-title {
+                font-size: 2.5em;
+                font-weight: 700;
+                margin: 0;
+                color: white;
+            }
+
+            .welcome-subtitle {
+                font-size: 1.1em;
+                margin: 4px 0 0;
+                opacity: 0.95;
+                color: white;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+
+            button {
+                color: white;
+
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.15);
+                }
+            }
+        }
+    }
+
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-grow: 1;
+        padding: 48px;
+        color: $text-color-secondary;
+
+        mat-spinner {
+            margin-bottom: 16px;
+        }
+    }
+
+    .dashboard-content {
+        flex-grow: 1;
+        max-width: $max-content-width;
+        margin: 0 auto;
+        padding: 0 32px 32px;
+        width: 100%;
+
+        section {
+            margin-bottom: 24px;
+        }
+
+        .stats-section,
+        .quick-actions-section,
+        .personal-data-section,
+        .tabs-section {
+            background-color: $card-background-color;
+            border-radius: $border-radius-lg;
+            box-shadow: $shadow-elevation-1;
+            padding: 24px;
+        }
+
+        .personal-data-section {
+            .cards-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 24px;
+
+                @media (max-width: 768px) {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+            }
+        }
+
+        .tabs-section {
+            padding: 0;
+
+            ::ng-deep .mat-tab-header {
+                background-color: white;
+                border-radius: 8px 8px 0 0;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            ::ng-deep .mat-tab-label {
+                font-weight: 500;
+                color: $text-color-secondary;
+
+                &.mat-tab-label-active {
+                    color: $primary-color;
+                }
+            }
+
+            ::ng-deep .mat-ink-bar {
+                background-color: $primary-color;
+            }
+
+            ::ng-deep .mat-tab-body-wrapper {
+                background-color: white;
+                border-radius: 0 0 8px 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                padding: 24px;
+            }
+
+            .tab-content {
+                padding: 16px 0;
+            }
+        }
+    }
+
+    .summary-section {
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+
+            @media (max-width: 768px) {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        .summary-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+            &:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            }
+
+            mat-card-header {
+                padding-bottom: 0.5rem;
+
+                mat-card-title {
+                    font-size: clamp(1rem, 1.8vw, 1.4rem);
+                    font-weight: 600;
+                    color: #2c3e50;
+                }
+
+                mat-card-subtitle {
+                    color: #7f8c8d;
+                    font-size: 0.9rem;
+                }
+            }
+
+            mat-card-content {
+                padding-top: 1rem;
+
+                .card-action {
+                    display: flex;
+                    justify-content: flex-end;
+
+                    button {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+
+                        mat-icon {
+                            font-size: 1.2rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .dashboard-footer {
+        background-color: $footer-background-color;
+        color: $footer-text-color;
+        padding: 20px 32px;
+        margin-top: 48px;
+        box-shadow: $shadow-elevation-2-reverse;
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: $max-content-width;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        p {
+            margin: 0;
+            font-size: 0.9em;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1rem;
+
+            @media (max-width: 768px) {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            a {
+                color: $footer-link-color;
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 992px) {
+    .acquirente-dashboard {
+
+        .dashboard-header,
+        .dashboard-content,
+        .dashboard-footer {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .dashboard-header .welcome-section .welcome-title {
+            font-size: 2em;
+        }
+
+        .dashboard-header .welcome-section .welcome-subtitle {
+            font-size: 1em;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .acquirente-dashboard {
+        .dashboard-header .header-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .dashboard-header .header-actions {
+            margin-top: 16px;
+        }
+
+        .dashboard-content {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+
+        .dashboard-content .stats-section,
+        .dashboard-content .quick-actions-section,
+        .dashboard-content .personal-data-section,
+        .dashboard-content .tabs-section .mat-tab-body-wrapper {
+            padding: 16px;
+        }
+
+        .dashboard-footer .footer-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .dashboard-footer .footer-links {
+            margin-top: 12px;
+        }
+    }
+}
+
+// Material Theme Overrides
+::ng-deep .mat-raised-button {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+}
+
+::ng-deep .mat-card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+::ng-deep .mat-spinner {
+    circle {
+        stroke: #ff9f43;
+    }
+}
+
+// Dark Mode Support (optional) - Keeping light theme even in dark mode
+@media (prefers-color-scheme: dark) {
+    .acquirente-dashboard {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #ff9f43 0%, #ffc75f 100%);
+
+            .welcome-title {
+                color: white;
+            }
+
+            .welcome-subtitle {
+                color: white;
+                opacity: 0.95;
+            }
+        }
+
+        .summary-card {
+            background: white;
+            color: #2c3e50;
+
+            mat-card-title {
+                color: #2c3e50 !important;
+            }
+
+            mat-card-subtitle {
+                color: #7f8c8d !important;
+            }
+        }
+    }
+}

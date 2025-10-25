@@ -1,0 +1,109 @@
+<div class="curatore-stats-overview">
+  <div class="stats-grid">
+    <!-- Card Prodotti da approvare -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Prodotti da approvare</h3>
+          <p class="stat-value">{{ productsToApprove }}</p>
+          <p class="stat-subtitle">In attesa di revisione</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card Aziende da approvare -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>business</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Aziende da approvare</h3>
+          <p class="stat-value">{{ companiesToApprove }}</p>
+          <p class="stat-subtitle">In attesa di revisione</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card Contenuti da moderare -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>article</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Contenuti da moderare</h3>
+          <p class="stat-value">{{ contentToModerate }}</p>
+          <p class="stat-subtitle">In attesa di revisione</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card Prodotti approvati -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Prodotti approvati</h3>
+          <p class="stat-value">{{ productsApproved }}</p>
+          <p class="stat-subtitle">Totale approvati</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card Aziende approvate -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>verified</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Aziende approvate</h3>
+          <p class="stat-value">{{ companiesApproved }}</p>
+          <p class="stat-subtitle">Totale approvate</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card Tasso di approvazione -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Tasso di approvazione</h3>
+          <p class="stat-value">{{ formatPercentage(approvalRate) }}</p>
+          <p class="stat-subtitle">Approvati / Totali</p>
+        </div>
+        <div class="stat-progress">
+          <mat-progress-bar 
+            mode="determinate" 
+            [value]="approvalRate"
+            [ngStyle]="{ 'background': getProgressColor(approvalRate) }">
+          </mat-progress-bar>
+          <span class="progress-text">{{ formatPercentage(approvalRate) }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card Trend approvazioni -->
+    <mat-card class="stat-card" appearance="outlined">
+      <mat-card-content class="stat-content">
+        <div class="stat-icon">
+          <mat-icon [style]="{ 'color': getTrendColor() }">{{ getTrendIcon() }}</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-title">Trend mensile</h3>
+          <p class="stat-value" [style]="{ 'color': getTrendColor() }">{{ formatPercentage(approvalTrend) }}</p>
+          <p class="stat-subtitle">Variazione approvazioni</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

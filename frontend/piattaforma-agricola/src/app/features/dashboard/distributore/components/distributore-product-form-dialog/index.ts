@@ -1,0 +1,1 @@
+export { DistributoreProductFormDialogComponent } from './distributore-product-form-dialog.component';

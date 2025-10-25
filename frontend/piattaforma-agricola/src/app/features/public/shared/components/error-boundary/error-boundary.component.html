@@ -1,0 +1,105 @@
+<!-- Stato di caricamento -->
+<div class="error-boundary-container" *ngIf="isLoading">
+  <div class="loading-container" [class.compact]="compact">
+    <div class="loading-content">
+      <!-- Spinner di caricamento -->
+      <div class="loading-spinner" *ngIf="!loadingState?.showProgress">
+        <mat-spinner [diameter]="compact ? 30 : 50"></mat-spinner>
+      </div>
+      
+      <!-- Progress bar personalizzata -->
+      <div class="progress-container" *ngIf="loadingState?.showProgress">
+        <div class="progress-bar">
+          <div class="progress-fill" 
+               [style.width.%]="loadingState?.progress || 0"
+               [attr.aria-label]="`Caricamento: ${loadingState?.progress || 0}%`">
+          </div>
+        </div>
+        <span class="progress-text">{{ loadingState?.progress || 0 }}%</span>
+      </div>
+      
+      <!-- Messaggio di caricamento -->
+      <div class="loading-message">
+        <p>{{ getLoadingMessage() }}</p>
+        <small *ngIf="loadingState?.showProgress" class="loading-hint">
+          Operazione in corso...
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stato di errore -->
+<div class="error-boundary-container" *ngIf="error && !isLoading">
+  <div class="error-container" [class.compact]="compact">
+    <mat-card class="error-card" [style.border-left-color]="getErrorColor()">
+      <mat-card-content>
+        <div class="error-content">
+          <!-- Icona errore -->
+          <div class="error-icon-container">
+            <mat-icon 
+              class="error-icon" 
+              [style.color]="getErrorColor()"
+              [attr.aria-label]="getErrorTitle()">
+              {{ getErrorIcon() }}
+            </mat-icon>
+          </div>
+          
+          <!-- Dettagli errore -->
+          <div class="error-details">
+            <h3 class="error-title">{{ getErrorTitle() }}</h3>
+            <p class="error-message">{{ getErrorMessage() }}</p>
+            
+            <!-- Dettagli aggiuntivi per debug -->
+            <div class="error-debug-info" *ngIf="error?.details && !compact">
+              <mat-expansion-panel class="debug-panel">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Dettagli tecnici
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                
+                <pre class="debug-content">{{ error.details | json }}</pre>
+              </mat-expansion-panel>
+            </div>
+            
+            <!-- Codice stato HTTP -->
+            <div class="error-status" *ngIf="error?.statusCode && !compact">
+              <span class="status-code">Codice: {{ error.statusCode }}</span>
+              <span class="status-type" [style.background-color]="getErrorColor()">
+                {{ error.type.toUpperCase() }}
+              </span>
+            </div>
+          </div>
+          
+          <!-- Azioni -->
+          <div class="error-actions">
+            <button 
+              mat-raised-button 
+              color="primary"
+              *ngIf="isRetryable()"
+              (click)="onRetry()"
+              class="retry-button">
+              <mat-icon>refresh</mat-icon>
+              Riprova
+            </button>
+            
+            <button 
+              mat-stroked-button
+              (click)="onDismiss()"
+              class="dismiss-button">
+              <mat-icon>close</mat-icon>
+              Chiudi
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Stato vuoto (nessun errore né caricamento) -->
+<div class="error-boundary-empty" *ngIf="!isLoading && !error">
+  <!-- Content slot per quando non c'è né errore né caricamento -->
+  <ng-content></ng-content>
+</div>

@@ -1,0 +1,354 @@
+<div class="order-details-dialog">
+    <div class="dialog-header" mat-dialog-title>
+        <div class="header-content">
+            <div class="title-section">
+                <mat-icon>receipt_long</mat-icon>
+                <div class="title-info">
+                    <h2 *ngIf="hasOrder">Ordine {{ orderDetails!.numeroOrdine }}</h2>
+                    <h2 *ngIf="!hasOrder">Dettagli Ordine</h2>
+                    <span class="order-date" *ngIf="hasOrder">{{ formatDateTime(orderDetails!.dataOrdine) }}</span>
+                </div>
+            </div>
+            
+            <div class="status-section" *ngIf="hasOrder">
+                <div class="status-badge" [style.background-color]="getStatoColor(orderDetails!.stato)">
+                    <mat-icon>{{ getStatoIcon(orderDetails!.stato) }}</mat-icon>
+                    {{ getStatoLabel(orderDetails!.stato) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <!-- Loading -->
+        <div class="loading-container" *ngIf="isLoading">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Caricamento dettagli ordine...</p>
+        </div>
+
+        <!-- Content -->
+        <div class="order-content" *ngIf="!isLoading && hasOrder">
+            <mat-tab-group>
+                <!-- Tab Riepilogo -->
+                <mat-tab label="Riepilogo">
+                    <div class="tab-content">
+                        <!-- Order Summary -->
+                        <div class="summary-section">
+                            <div class="summary-cards">
+                                <!-- Customer Info -->
+                                <mat-card class="info-card">
+                                    <mat-card-header>
+                                        <mat-card-title>
+                                            <mat-icon>person</mat-icon>
+                                            Informazioni Cliente
+                                        </mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div class="customer-details">
+                                            <div class="detail-row">
+                                                <label>Nome:</label>
+                                                <span>{{ customerFullName }}</span>
+                                            </div>
+                                            <div class="detail-row">
+                                                <label>Email:</label>
+                                                <span>{{ orderDetails!.acquirente.email }}</span>
+                                            </div>
+                                            <div class="detail-row" *ngIf="orderDetails!.acquirente.telefono">
+                                                <label>Telefono:</label>
+                                                <span>{{ orderDetails!.acquirente.telefono }}</span>
+                                            </div>
+                                            <div class="detail-row">
+                                                <label>Tipo:</label>
+                                                <span>{{ orderDetails!.acquirente.tipo === 'PRIVATO' ? 'Privato' : 'Azienda' }}</span>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+
+                                <!-- Delivery Info -->
+                                <mat-card class="info-card">
+                                    <mat-card-header>
+                                        <mat-card-title>
+                                            <mat-icon>local_shipping</mat-icon>
+                                            Consegna
+                                        </mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div class="delivery-details">
+                                            <div class="address">
+                                                <strong>Indirizzo:</strong><br>
+                                                {{ deliveryAddress }}
+                                            </div>
+                                            <div class="delivery-date" *ngIf="orderDetails!.dataConsegnaRichiesta">
+                                                <strong>Data richiesta:</strong><br>
+                                                {{ formatDate(orderDetails!.dataConsegnaRichiesta) }}
+                                            </div>
+                                            <div class="delivery-notes" *ngIf="orderDetails!.indirizzoConsegna.note">
+                                                <strong>Note:</strong><br>
+                                                {{ orderDetails!.indirizzoConsegna.note }}
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+
+                                <!-- Order Summary -->
+                                <mat-card class="info-card">
+                                    <mat-card-header>
+                                        <mat-card-title>
+                                            <mat-icon>analytics</mat-icon>
+                                            Riepilogo Ordine
+                                        </mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div class="order-summary">
+                                            <div class="summary-row">
+                                                <span>Pacchetti:</span>
+                                                <span>{{ orderDetails!.righeOrdine.length }}</span>
+                                            </div>
+                                            <div class="summary-row">
+                                                <span>Quantità totale:</span>
+                                                <span>{{ totalItems }}</span>
+                                            </div>
+                                            <div class="summary-row">
+                                                <span>Prodotti unici:</span>
+                                                <span>{{ totalProducts }}</span>
+                                            </div>
+                                            <div class="summary-row total">
+                                                <span>Totale:</span>
+                                                <span>{{ formatCurrency(orderDetails!.totale) }}</span>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
+                        </div>
+
+                        <!-- Order Items -->
+                        <mat-card class="items-card">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>inventory_2</mat-icon>
+                                    Pacchetti Ordinati
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="order-items">
+                                    <div 
+                                        class="order-item" 
+                                        *ngFor="let riga of orderDetails!.righeOrdine; trackBy: trackByRigaId">
+                                        <div class="item-main">
+                                            <div class="item-image">
+                                                <img 
+                                                    [src]="riga.pacchetto.immagineUrl || '/assets/images/package-placeholder.jpg'" 
+                                                    [alt]="riga.pacchetto.nome"
+                                                    (error)="$event.target.src='/assets/images/package-placeholder.jpg'">
+                                            </div>
+                                            
+                                            <div class="item-details">
+                                                <h4>{{ riga.pacchetto.nome }}</h4>
+                                                <p class="item-description" *ngIf="riga.pacchetto.descrizione">
+                                                    {{ riga.pacchetto.descrizione }}
+                                                </p>
+                                                
+                                                <div class="item-products">
+                                                    <strong>Prodotti inclusi:</strong>
+                                                    <div class="products-list">
+                                                        <div 
+                                                            class="product-item" 
+                                                            *ngFor="let product of riga.pacchetto.prodotti; trackBy: trackByProductId">
+                                                            <span class="product-name">{{ product.nome }}</span>
+                                                            <span class="product-quantity">{{ product.quantita }} {{ product.unitaMisura || 'pz' }}</span>
+                                                            <span class="product-producer">{{ product.produttore.nomeAzienda }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="item-pricing">
+                                                <div class="quantity">{{ riga.quantita }}x</div>
+                                                <div class="unit-price">{{ formatCurrency(riga.prezzoUnitario) }}</div>
+                                                <div class="total-price">{{ formatCurrency(riga.totaleRiga) }}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="item-notes" *ngIf="riga.note">
+                                            <mat-icon>note</mat-icon>
+                                            <span>{{ riga.note }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Storico -->
+                <mat-tab label="Storico Stati" *ngIf="hasHistory">
+                    <div class="tab-content">
+                        <mat-card class="history-card">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>history</mat-icon>
+                                    Cronologia Cambi di Stato
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="history-timeline">
+                                    <div 
+                                        class="history-item" 
+                                        *ngFor="let item of orderDetails!.storico; trackBy: trackByHistoryId">
+                                        <div class="timeline-marker">
+                                            <mat-icon [style.color]="getStatoColor(item.statoNuovo)">
+                                                {{ getStatoIcon(item.statoNuovo) }}
+                                            </mat-icon>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <div class="status-change">
+                                                <span class="new-status" [style.color]="getStatoColor(item.statoNuovo)">
+                                                    {{ getStatoLabel(item.statoNuovo) }}
+                                                </span>
+                                                <span class="change-date">{{ formatDateTime(item.dataModifica) }}</span>
+                                            </div>
+                                            <div class="change-author">Modificato da: {{ item.modificatoDa }}</div>
+                                            <div class="change-notes" *ngIf="item.note">{{ item.note }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Comunicazioni -->
+                <mat-tab [label]="'Comunicazioni' + (unreadCommunications > 0 ? ' (' + unreadCommunications + ')' : '')" 
+                         *ngIf="hasCommunications">
+                    <div class="tab-content">
+                        <mat-card class="communications-card">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>forum</mat-icon>
+                                    Comunicazioni
+                                    <mat-chip *ngIf="unreadCommunications > 0" class="unread-badge">
+                                        {{ unreadCommunications }} non lette
+                                    </mat-chip>
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="communications-list">
+                                    <div 
+                                        class="communication-item" 
+                                        *ngFor="let comm of orderDetails!.comunicazioni; trackBy: trackByCommunicationId"
+                                        [class.unread]="!comm.letto">
+                                        <div class="comm-header">
+                                            <div class="comm-type">
+                                                <mat-icon [style.color]="getCommunicationTypeColor(comm.tipo)">
+                                                    {{ getCommunicationTypeIcon(comm.tipo) }}
+                                                </mat-icon>
+                                                <span class="type-label">{{ comm.tipo }}</span>
+                                            </div>
+                                            <div class="comm-meta">
+                                                <span class="comm-date">{{ formatDateTime(comm.dataInvio) }}</span>
+                                                <span class="comm-author">{{ comm.mittente }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="comm-content">
+                                            {{ comm.messaggio }}
+                                        </div>
+                                        <div class="comm-actions" *ngIf="!comm.letto">
+                                            <button 
+                                                mat-button 
+                                                (click)="markCommunicationAsRead(comm.id)">
+                                                Segna come letta
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Documenti -->
+                <mat-tab label="Documenti" *ngIf="hasDocuments">
+                    <div class="tab-content">
+                        <mat-card class="documents-card">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>description</mat-icon>
+                                    Documenti Allegati
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="documents-list">
+                                    <div 
+                                        class="document-item" 
+                                        *ngFor="let doc of orderDetails!.documenti; trackBy: trackByDocumentId">
+                                        <div class="doc-icon">
+                                            <mat-icon>{{ getDocumentTypeIcon(doc.tipo) }}</mat-icon>
+                                        </div>
+                                        <div class="doc-info">
+                                            <div class="doc-name">{{ doc.nome }}</div>
+                                            <div class="doc-meta">
+                                                <span class="doc-type">{{ doc.tipo }}</span>
+                                                <span class="doc-date">{{ formatDate(doc.dataCaricamento) }}</span>
+                                                <span class="doc-size">{{ (doc.dimensione / 1024).toFixed(1) }} KB</span>
+                                            </div>
+                                        </div>
+                                        <div class="doc-actions">
+                                            <a 
+                                                mat-icon-button 
+                                                [href]="doc.url" 
+                                                target="_blank"
+                                                matTooltip="Visualizza documento">
+                                                <mat-icon>visibility</mat-icon>
+                                            </a>
+                                            <a 
+                                                mat-icon-button 
+                                                [href]="doc.url" 
+                                                [download]="doc.nome"
+                                                matTooltip="Scarica documento">
+                                                <mat-icon>download</mat-icon>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="dialog-actions">
+        <button mat-button (click)="onClose()">
+            Chiudi
+        </button>
+        
+        <div class="action-buttons" *ngIf="hasOrder">
+            <button 
+                mat-stroked-button 
+                (click)="onAddCommunication()"
+                color="accent">
+                <mat-icon>add_comment</mat-icon>
+                Aggiungi Comunicazione
+            </button>
+            
+            <button 
+                mat-stroked-button 
+                (click)="onUploadDocument()">
+                <mat-icon>upload_file</mat-icon>
+                Carica Documento
+            </button>
+            
+            <button 
+                mat-raised-button 
+                color="primary" 
+                (click)="onUpdateStatus()"
+                [disabled]="!canUpdateStatus">
+                <mat-icon>edit</mat-icon>
+                Aggiorna Stato
+            </button>
+        </div>
+    </mat-dialog-actions>
+</div>

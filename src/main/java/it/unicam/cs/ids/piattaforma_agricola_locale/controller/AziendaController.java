@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2025 Angelo Albanesi
+ *   All rights reserved.
+ */
 package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo.CertificazioneDTO;
@@ -8,6 +12,7 @@ import it.unicam.cs.ids.piattaforma_agricola_locale.exception.ResourceOwnershipE
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Certificazione;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.Prodotto;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.DatiAzienda;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Utente;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.utenti.Venditore;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.ICertificazioneService;
 import it.unicam.cs.ids.piattaforma_agricola_locale.service.interfaces.IProdottoService;

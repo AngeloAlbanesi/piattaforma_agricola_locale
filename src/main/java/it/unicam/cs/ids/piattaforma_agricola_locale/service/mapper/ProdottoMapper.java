@@ -26,18 +26,14 @@ import java.util.Optional;
  * MapStruct mapper for converting between Prodotto entities and Product DTOs.
  * Handles complex relationships with vendors and certifications.
  */
-@Mapper(
-    componentModel = "spring",
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-    uses = {UtenteMapper.class, CertificazioneMapper.class, MetodoDiColtivazioneMapper.class}
-)
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, uses = {
+        UtenteMapper.class, CertificazioneMapper.class, MetodoDiColtivazioneMapper.class })
 @Component
 public abstract class ProdottoMapper {
 
     @Autowired
     protected IMetodoDiColtivazioneRepository metodoDiColtivazioneRepository;
-    
+
     @Autowired
     protected MetodoDiColtivazioneMapper metodoDiColtivazioneMapper;
 
@@ -49,11 +45,14 @@ public abstract class ProdottoMapper {
     @Mapping(target = "nome", source = "nome")
     @Mapping(target = "prezzo", source = "prezzo")
     @Mapping(target = "quantitaDisponibile", source = "quantitaDisponibile")
+    @Mapping(target = "unitaMisura", source = "unitaMisura")
     @Mapping(target = "statoVerifica", source = "statoVerifica")
     @Mapping(target = "tipoOrigine", source = "tipoOrigine")
     @Mapping(target = "metodoDiColtivazione", expression = "java(mapMetodoDiColtivazione(prodotto.getIdMetodoDiColtivazione()))")
     @Mapping(target = "nomeVenditore", expression = "java(prodotto.getVenditore() != null ? prodotto.getVenditore().getNome() + \" \" + prodotto.getVenditore().getCognome() : null)")
     @Mapping(target = "idVenditore", source = "venditore.idUtente")
+    @Mapping(target = "nomeAzienda", expression = "java(prodotto.getVenditore() != null && prodotto.getVenditore().getDatiAzienda() != null ? prodotto.getVenditore().getDatiAzienda().getNomeAzienda() : null)")
+    @Mapping(target = "idAzienda", expression = "java(prodotto.getVenditore() != null && prodotto.getVenditore().getDatiAzienda() != null ? prodotto.getVenditore().getDatiAzienda().getId() : null)")
     public abstract ProductSummaryDTO toSummaryDTO(Prodotto prodotto);
 
     /**
@@ -65,6 +64,7 @@ public abstract class ProdottoMapper {
     @Mapping(target = "descrizione", source = "descrizione")
     @Mapping(target = "prezzo", source = "prezzo")
     @Mapping(target = "quantitaDisponibile", source = "quantitaDisponibile")
+    @Mapping(target = "unitaMisura", source = "unitaMisura")
     @Mapping(target = "statoVerifica", source = "statoVerifica")
     @Mapping(target = "feedbackVerifica", source = "feedbackVerifica")
     @Mapping(target = "tipoOrigine", source = "tipoOrigine")
@@ -73,6 +73,8 @@ public abstract class ProdottoMapper {
     @Mapping(target = "metodoDiColtivazione", expression = "java(mapMetodoDiColtivazione(prodotto.getIdMetodoDiColtivazione()))")
     @Mapping(target = "venditore", source = "venditore", qualifiedByName = "venditoreToUserPublicDTO")
     @Mapping(target = "certificazioni", source = "certificazioni")
+    @Mapping(target = "nomeAzienda", expression = "java(prodotto.getVenditore() != null && prodotto.getVenditore().getDatiAzienda() != null ? prodotto.getVenditore().getDatiAzienda().getNomeAzienda() : null)")
+    @Mapping(target = "idAzienda", expression = "java(prodotto.getVenditore() != null && prodotto.getVenditore().getDatiAzienda() != null ? prodotto.getVenditore().getDatiAzienda().getId() : null)")
     public abstract ProductDetailDTO toDetailDTO(Prodotto prodotto);
 
     /**
@@ -101,14 +103,14 @@ public abstract class ProdottoMapper {
         if (venditore == null) {
             return null;
         }
-        
+
         return UserPublicDTO.builder()
-            .idUtente(venditore.getIdUtente())
-            .nome(venditore.getNome())
-            .cognome(venditore.getCognome())
-            .tipoRuolo(venditore.getTipoRuolo())
-            .isAttivo(venditore.isAttivo())
-            .build();
+                .idUtente(venditore.getIdUtente())
+                .nome(venditore.getNome())
+                .cognome(venditore.getCognome())
+                .tipoRuolo(venditore.getTipoRuolo())
+                .isAttivo(venditore.isAttivo())
+                .build();
     }
 
     /**
@@ -124,8 +126,9 @@ public abstract class ProdottoMapper {
         if (idMetodoDiColtivazione == null) {
             return null;
         }
-        
-        Optional<MetodoDiColtivazione> metodoDiColtivazione = metodoDiColtivazioneRepository.findById(idMetodoDiColtivazione);
+
+        Optional<MetodoDiColtivazione> metodoDiColtivazione = metodoDiColtivazioneRepository
+                .findById(idMetodoDiColtivazione);
         return metodoDiColtivazione.map(metodoDiColtivazioneMapper::toDTO).orElse(null);
     }
 }

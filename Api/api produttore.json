@@ -1,0 +1,653 @@
+{"name": "Produttore",
+"item": [
+    {
+        "name": "Crea prodotto",
+        "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+                "mode": "raw",
+                "raw": "{\n    \"nome\": \"Salame del Produttore Angelo\",\n    \"descrizione\": \"Salame autentico di Angelo\",\n    \"prezzo\": 10.0,\n    \"quantitaDisponibile\": 100,\n    \"tipoOrigine\": \"COLTIVATO\"\n}",
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },
+            "url": {
+                "raw": "localhost:8080/api/prodotti",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Crea Metodo di Coltivazione",
+        "request": {
+            "method": "POST",
+            "header": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT (solo per PRODUTTORE)",
+                    "type": "text"
+                }
+            ],
+            "body": {
+                "mode": "raw",
+                "raw": "{\n    \"nome\": \"Coltivazione Biologica\",\n    \"descrizione\": \"Metodo di coltivazione senza pesticidi e fertilizzanti chimici.\",\n    \"dataInizio\": \"2024-03-01\",\n    \"dataFine\": \"2024-09-30\"\n}",
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },
+            "url": {
+                "raw": "http://localhost:8080/api/prodotti/34/metodi-coltivazione",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti",
+                    "34",
+                    "metodi-coltivazione"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Aggiorna Metodo di Coltivazione",
+        "request": {
+            "method": "PUT",
+            "header": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT (solo per PRODUTTORE)",
+                    "type": "text"
+                }
+            ],
+            "body": {
+                "mode": "raw",
+                "raw": "{\n    \"nome\": \"Coltivazione Biologica Bellissima\",\n    \"descrizione\": \"Metodo di coltivazione avanzato con tecniche di permacultura.\",\n    \"dataInizio\": \"2024-03-01\",\n    \"dataFine\": \"2024-10-15\"\n}",
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },
+            "url": {
+                "raw": "http://localhost:8080/api/prodotti/34/metodi-coltivazione",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti",
+                    "34",
+                    "metodi-coltivazione"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Elimina Metodo di Coltivazione",
+        "request": {
+            "method": "DELETE",
+            "header": [
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT (solo per PRODUTTORE)",
+                    "type": "text"
+                }
+            ],
+            "url": {
+                "raw": "http://localhost:8080/api/prodotti/34/metodi-coltivazione",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti",
+                    "34",
+                    "metodi-coltivazione"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Get prodotti by venditore",
+        "request": {
+            "auth": {
+                "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+                "raw": "localhost:8080/api/prodotti",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Get i prodotti del venditore by idProdotto",
+        "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+                "raw": "localhost:8080/api/prodotti/34",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti",
+                    "34"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Aggiungi certificazione al prodotto",
+        "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+                "mode": "raw",
+                "raw": "{\n  \"nomeCertificazione\": \"Certificazione Biologica EU\",\n  \"enteRilascio\": \"ICEA - Istituto per la Certificazione Etica e Ambientale\",\n  \"dataRilascio\": \"2024-01-15\",\n  \"dataScadenza\": \"2026-01-15\"\n}",
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },
+            "url": {
+                "raw": "localhost:8080/api/prodotti/2/certificazioni",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti",
+                    "2",
+                    "certificazioni"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Aggiorna Prodotto",
+        "request": {
+            "method": "PUT",
+            "header": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT",
+                    "type": "text"
+                }
+            ],
+            "body": {
+                "mode": "raw",
+                "raw": "{\n    \"nome\": \"Pomodori San Marzano Biologici\",\n    \"descrizione\": \"Pomodori freschi di stagione, coltivati biologicamente, ideali per sughi.\",\n    \"prezzo\": 3.00,\n    \"quantitaDisponibile\": 90\n}",
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },
+            "url": {
+                "raw": "http://localhost:8080/api/prodotti/1",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti",
+                    "1"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Recupera i Miei Prodotti",
+        "request": {
+            "method": "GET",
+            "header": [
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT",
+                    "type": "text"
+                }
+            ],
+            "url": {
+                "raw": "http://localhost:8080/api/prodotti/miei-prodotti",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti",
+                    "miei-prodotti"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Crea Prodotto",
+        "request": {
+            "method": "POST",
+            "header": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT",
+                    "type": "text"
+                }
+            ],
+            "body": {
+                "mode": "raw",
+                "raw": "{\n    \"nome\": \"Pomodori San Marzano\",\n    \"descrizione\": \"Pomodori freschi di stagione, ideali per sughi.\",\n    \"prezzo\": 2.50,\n    \"quantitaDisponibile\": 100,\n    \"tipoOrigine\": \"COLTIVATO\",\n    \"idProcessoTrasformazioneOriginario\": null,\n    \"idMetodoDiColtivazione\": null\n}",
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },
+            "url": {
+                "raw": "http://localhost:8080/api/prodotti",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Elimina Prodotto",
+        "request": {
+            "method": "DELETE",
+            "header": [
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT",
+                    "type": "text"
+                }
+            ],
+            "url": {
+                "raw": "http://localhost:8080/api/prodotti/1",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti",
+                    "1"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Aggiorna Quantità Prodotto",
+        "request": {
+            "method": "PUT",
+            "header": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT",
+                    "type": "text"
+                }
+            ],
+            "body": {
+                "mode": "raw",
+                "raw": "{\n    \"quantitaDisponibile\": 150\n}",
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },
+            "url": {
+                "raw": "http://localhost:8080/api/prodotti/1/quantita",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti",
+                    "1",
+                    "quantita"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Aggiungi Certificazione al Prodotto",
+        "request": {
+            "method": "POST",
+            "header": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT",
+                    "type": "text"
+                }
+            ],
+            "body": {
+                "mode": "raw",
+                "raw": "{\n    \"nomeCertificazione\": \"Biologico UE\",\n    \"enteRilascio\": \"ICEA\",\n    \"dataRilascio\": \"2023-01-01\",\n    \"dataScadenza\": \"2025-12-31\"\n}",
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },
+            "url": {
+                "raw": "http://localhost:8080/api/prodotti/1/certificazioni",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti",
+                    "1",
+                    "certificazioni"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Rimuovi Certificazione dal Prodotto",
+        "request": {
+            "method": "DELETE",
+            "header": [
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT",
+                    "type": "text"
+                }
+            ],
+            "url": {
+                "raw": "http://localhost:8080/api/prodotti/1/certificazioni/1",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "prodotti",
+                    "1",
+                    "certificazioni",
+                    "1"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Crea Dati Azienda",
+        "request": {
+            "method": "POST",
+            "header": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT",
+                    "type": "text"
+                }
+            ],
+            "body": {
+                "mode": "raw",
+                "raw": "{\n    \"nomeAzienda\": \"Azienda Agricola Rossi\",\n    \"partitaIva\": \"IT12345678901\",\n    \"indirizzoAzienda\": \"Via del Campo, 10, 00100 Roma\",\n    \"descrizioneAzienda\": \"Azienda specializzata nella produzione di ortaggi biologici.\",\n    \"logoUrl\": \"http://example.com/logo.png\",\n    \"sitoWebUrl\": \"http://www.aziendaagricolarossi.it\"\n}",
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },
+            "url": {
+                "raw": "http://localhost:8080/api/azienda",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "azienda"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Aggiorna Dati Azienda",
+        "request": {
+            "method": "PUT",
+            "header": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT",
+                    "type": "text"
+                }
+            ],
+            "body": {
+                "mode": "raw",
+                "raw": "{\n    \"nomeAzienda\": \"Azienda Agricola Rossi Biologica\",\n    \"partitaIva\": \"IT12345678901\",\n    \"indirizzoAzienda\": \"Via del Campo, 12, 00100 Roma\",\n    \"descrizioneAzienda\": \"Azienda specializzata nella produzione e vendita di ortaggi biologici certificati.\",\n    \"logoUrl\": \"http://example.com/new_logo.png\",\n    \"sitoWebUrl\": \"http://www.aziendaagricolarossibiologica.it\"\n}",
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },
+            "url": {
+                "raw": "http://localhost:8080/api/azienda/1",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "azienda",
+                    "1"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Aggiungi Certificazione Azienda",
+        "request": {
+            "method": "POST",
+            "header": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT",
+                    "type": "text"
+                }
+            ],
+            "body": {
+                "mode": "raw",
+                "raw": "{\n    \"nomeCertificazione\": \"Certificazione Biologica\",\n    \"enteRilascio\": \"Ente Certificatore XYZ\",\n    \"dataRilascio\": \"2023-01-01\",\n    \"dataScadenza\": \"2025-12-31\"\n}",
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },
+            "url": {
+                "raw": "http://localhost:8080/api/azienda/1/certificazioni",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "azienda",
+                    "1",
+                    "certificazioni"
+                ]
+            }
+        },
+        "response": []
+    },
+    {
+        "name": "Rimuovi Certificazione Azienda",
+        "request": {
+            "method": "DELETE",
+            "header": [
+                {
+                    "key": "Authorization",
+                    "value": "Bearer {{bearerToken}}",
+                    "description": "Token di autenticazione JWT",
+                    "type": "text"
+                }
+            ],
+            "url": {
+                "raw": "http://localhost:8080/api/azienda/1/certificazioni/1",
+                "protocol": "http",
+                "host": [
+                    "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                    "api",
+                    "azienda",
+                    "1",
+                    "certificazioni",
+                    "1"
+                ]
+            }
+        },
+        "response": []
+    }
+],
+"auth": {
+    "type": "bearer",
+    "bearer": [
+        {
+            "key": "token",
+            "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJwYW9sby5jYW1wYW5pbGlAZW1haWwuY29tIiwiaWF0IjoxNzUyMzI4NTU1LCJleHAiOjE3NTIzNTczNTV9.MBa1T2SpIu2V6URO26ermavKG3fKyD-7QeQJm_FJlXFZ8nGGaywhrNMRiOVw5JwQ",
+            "type": "string"
+        }
+    ]
+},
+"event": [
+    {
+        "listen": "prerequest",
+        "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [
+                ""
+            ]
+        }
+    },
+    {
+        "listen": "test",
+        "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [
+                ""
+            ]
+        }
+    }
+]
+}

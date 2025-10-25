@@ -1,0 +1,66 @@
+<mat-card class="recent-orders-card">
+    <mat-card-header>
+        <mat-card-title>
+            <mat-icon>shopping_bag</mat-icon>
+            Ordini Recenti
+        </mat-card-title>
+        <button mat-icon-button (click)="viewAllOrders()" matTooltip="Visualizza tutti gli ordini" class="view-all-btn">
+            <mat-icon>arrow_forward</mat-icon>
+        </button>
+    </mat-card-header>
+
+    <mat-card-content>
+        <!-- Loading State -->
+        <div class="loading-container" *ngIf="isLoading">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Caricamento ordini...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!isLoading && !hasOrders">
+            <mat-icon class="empty-icon">receipt_long</mat-icon>
+            <h3>Nessun ordine</h3>
+            <p>Non hai ancora effettuato nessun ordine.</p>
+            <button mat-raised-button color="primary" routerLink="/catalogo">
+                Inizia a fare acquisti
+            </button>
+        </div>
+
+        <!-- Orders List -->
+        <div class="orders-list" *ngIf="!isLoading && hasOrders">
+            <div class="order-item" *ngFor="let order of recentOrders" (click)="viewOrderDetails(getOrderId(order))">
+                <div class="order-header">
+                    <div class="order-number">
+                        <mat-icon>receipt</mat-icon>
+                        <span>#{{ getOrderId(order) }}</span>
+                    </div>
+                    <mat-chip [color]="getStatusColor(getOrderStatus(order))" class="status-chip">
+                        {{ getStatusLabel(getOrderStatus(order)) }}
+                    </mat-chip>
+                </div>
+
+                <div class="order-details">
+                    <div class="order-info">
+                        <div class="info-row">
+                            <mat-icon>store</mat-icon>
+                            <span class="vendor-name">{{ getVendorName(order) }}</span>
+                        </div>
+                        <div class="info-row">
+                            <mat-icon>calendar_today</mat-icon>
+                            <span class="order-date">{{ formatDate(order.dataOrdine) }}</span>
+                        </div>
+                    </div>
+                    <div class="order-total">
+                        <span class="total-label">Totale</span>
+                        <span class="total-amount">{{ formatCurrency(getOrderTotal(order)) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <button mat-stroked-button color="primary" class="view-all-orders-btn" (click)="viewAllOrders()">
+                Visualizza tutti gli ordini
+                <mat-icon>arrow_forward</mat-icon>
+            </button>
+        </div>
+    </mat-card-content>
+</mat-card>

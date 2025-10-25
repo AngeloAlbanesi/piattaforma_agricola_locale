@@ -1,0 +1,562 @@
+<div class="prodotto-detail-container">
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="loading">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <p>Caricamento dettagli prodotto...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !loading">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <h3>Oops! Qualcosa è andato storto</h3>
+        <p>{{ error }}</p>
+        <div class="error-actions">
+            <button mat-raised-button color="primary" (click)="retryLoad()">
+                Riprova
+            </button>
+            <button mat-stroked-button (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon>
+                Torna ai prodotti
+            </button>
+        </div>
+    </div>
+
+    <!-- Product Detail Content -->
+    <div class="product-content" *ngIf="prodotto && !loading">
+        <!-- Header with Back Button -->
+        <div class="content-header">
+            <button mat-icon-button (click)="goBack()" class="back-button">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h1 class="page-title">{{ prodotto.nome }}</h1>
+        </div>
+
+        <!-- Main Product Info -->
+        <div class="product-main">
+            <div class="product-image-section">
+                <div class="product-image-container">
+                    <img [src]="getMainImage()" [alt]="prodotto.nome" class="product-image">
+                    <div class="availability-badge" [ngClass]="getAvailabilityColor(prodotto.quantitaDisponibile)">
+                        {{ getAvailabilityText(prodotto.quantitaDisponibile) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-info-section">
+                <div class="product-header">
+                    <h1 class="product-name">{{ prodotto.nome }}</h1>
+                    <div class="product-meta">
+                        <span class="category">{{ prodotto.categoria || 'Senza categoria' }}</span>
+                        <span class="separator">•</span>
+                        <span class="unit">{{ prodotto.unitaMisura || 'pz' }}</span>
+                    </div>
+                </div>
+
+                <div class="product-price">
+                    <span class="current-price">{{ formatCurrency(prodotto.prezzo) }}</span>
+                    <span class="price-unit">/ {{ prodotto.unitaMisura || 'pz' }}</span>
+                </div>
+
+                <!-- Info Principali -->
+                <div class="product-main-info">
+                    <mat-card appearance="outlined" class="info-card">
+                        <mat-card-content>
+                            <div class="info-row">
+                                <mat-icon>inventory</mat-icon>
+                                <div class="info-content">
+                                    <span class="info-label">Quantità Disponibile</span>
+                                    <span class="info-value">{{ prodotto.quantitaDisponibile }} {{ prodotto.unitaMisura
+                                        || 'pz' }}</span>
+                                </div>
+                            </div>
+                            <mat-divider></mat-divider>
+                            <div class="info-row">
+                                <mat-icon>category</mat-icon>
+                                <div class="info-content">
+                                    <span class="info-label">Tipo Origine</span>
+                                    <span class="info-value">{{ getTipoOrigineLabel() }}</span>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
+                <div class="product-description">
+                    <p>{{ prodotto.descrizione || 'Nessuna descrizione disponibile' }}</p>
+                </div>
+
+                <div class="product-origin" *ngIf="prodotto.luogoOrigine">
+                    <mat-icon>location_on</mat-icon>
+                    <span>Origine: {{ prodotto.luogoOrigine }}</span>
+                </div>
+
+                <!-- Info Azienda -->
+                <div class="company-info" *ngIf="prodotto.nomeAzienda || prodotto.venditore">
+                    <h4>Info Azienda</h4>
+                    <mat-card appearance="outlined" class="company-card">
+                        <mat-card-content>
+                            <div class="company-row">
+                                <mat-icon>business</mat-icon>
+                                <div class="company-content">
+                                    <span class="company-label">Nome Azienda</span>
+                                    <span class="company-value">{{ prodotto.nomeAzienda || 'N/D' }}</span>
+                                </div>
+                            </div>
+                            <mat-divider></mat-divider>
+                            <div class="company-row" *ngIf="prodotto.venditore">
+                                <mat-icon>person</mat-icon>
+                                <div class="company-content">
+                                    <span class="company-label">Venditore</span>
+                                    <span class="company-value">{{ prodotto.venditore.nome }} {{
+                                        prodotto.venditore.cognome }}</span>
+                                </div>
+                            </div>
+                            <mat-divider *ngIf="prodotto.venditore"></mat-divider>
+                            <div class="company-row" *ngIf="prodotto.venditore">
+                                <mat-icon>badge</mat-icon>
+                                <div class="company-content">
+                                    <span class="company-label">Ruolo</span>
+                                    <span class="company-value">{{ prodotto.venditore.tipoRuolo }}</span>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
+                <div class="producer-info" *ngIf="prodotto.produttore">
+                    <h4>Produttore</h4>
+                    <div class="producer-card">
+                        <div class="producer-avatar">
+                            <mat-icon>agriculture</mat-icon>
+                        </div>
+                        <div class="producer-details">
+                            <span class="producer-name">{{ prodotto.produttore.nomeAzienda }}</span>
+                            <button mat-button color="primary" (click)="navigateToAzienda(prodotto.produttore.id)">
+                                Visualizza azienda
+                                <mat-icon>arrow_forward</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-actions">
+                    <button mat-raised-button color="primary" size="large" (click)="addToCart()"
+                        [disabled]="!isAvailable(prodotto.quantitaDisponibile)">
+                        <mat-icon>shopping_cart</mat-icon>
+                        Aggiungi al carrello
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details Tabs -->
+        <div class="product-details">
+            <mat-tab-group>
+                <!-- Informazioni Generali -->
+                <mat-tab label="Informazioni">
+                    <div class="tab-content">
+                        <div class="info-grid">
+                            <div class="info-item" *ngIf="prodotto.dataRaccolta">
+                                <h4>Data Raccolta</h4>
+                                <p>{{ formatDate(prodotto.dataRaccolta) }}</p>
+                            </div>
+
+                            <div class="info-item" *ngIf="prodotto.dataDisponibilita">
+                                <h4>Disponibilità</h4>
+                                <p>Dal {{ formatDate(prodotto.dataDisponibilita) }}</p>
+                            </div>
+
+                            <div class="info-item" *ngIf="prodotto.valutazioneMedia">
+                                <h4>Valutazione</h4>
+                                <div class="rating">
+                                    <mat-icon>star</mat-icon>
+                                    <span>{{ prodotto.valutazioneMedia }}/5</span>
+                                    <span class="rating-count">({{ prodotto.numeroRecensioni || 0 }} recensioni)</span>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <h4>Quantità Disponibile</h4>
+                                <p>{{ prodotto.quantitaDisponibile }} {{ prodotto.unitaMisura || 'pezzi' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Metodi di Coltivazione (solo per produttori) -->
+                <mat-tab label="Metodi di Coltivazione" *ngIf="showMetodiColtivazione()">
+                    <div class="tab-content">
+                        <div class="cultivation-section" *ngIf="hasMetodiColtivazione()">
+                            <mat-card class="cultivation-card" appearance="outlined">
+                                <mat-card-header>
+                                    <mat-card-title>{{ getMetodoColtivazione()?.nome }}</mat-card-title>
+                                    <mat-card-subtitle>{{ getMetodoColtivazione()?.tipo || 'Metodo di coltivazione'
+                                        }}</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <div class="cultivation-description">
+                                        <h4>Descrizione</h4>
+                                        <p>{{ getMetodoColtivazione()?.descrizione }}</p>
+                                    </div>
+
+                                    <div class="cultivation-techniques"
+                                        *ngIf="getMetodoColtivazione()?.principi?.length">
+                                        <h4>Principi</h4>
+                                        <mat-chip-listbox>
+                                            <mat-chip *ngFor="let principio of getMetodoColtivazione()?.principi">
+                                                {{ principio }}
+                                            </mat-chip>
+                                        </mat-chip-listbox>
+                                    </div>
+
+                                    <div class="cultivation-restrictions"
+                                        *ngIf="getMetodoColtivazione()?.restrizioni?.length">
+                                        <h4>Restrizioni</h4>
+                                        <mat-chip-listbox>
+                                            <mat-chip *ngFor="let restrizione of getMetodoColtivazione()?.restrizioni">
+                                                {{ restrizione }}
+                                            </mat-chip>
+                                        </mat-chip-listbox>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+
+                        <!-- Messaggio quando non ci sono metodi di coltivazione -->
+                        <div class="empty-state" *ngIf="!hasMetodiColtivazione()">
+                            <mat-icon class="empty-icon">agriculture</mat-icon>
+                            <h3>Nessun Metodo di Coltivazione</h3>
+                            <p>Al momento questo prodotto non ha un metodo di coltivazione associato.</p>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Processi di Trasformazione (solo per trasformatori) -->
+                <mat-tab label="Processi di Trasformazione" *ngIf="showProcessiTrasformazione()">
+                    <div class="tab-content">
+
+                        <!-- Loading state -->
+                        <div *ngIf="loadingProcesso" class="loading-container">
+                            <mat-spinner diameter="50"></mat-spinner>
+                            <p>Caricamento processo di trasformazione...</p>
+                        </div>
+
+                        <!-- Process Details -->
+                        <div *ngIf="!loadingProcesso && hasProcessiTrasformazione()" class="process-content">
+
+                            <!-- Process Overview Card -->
+                            <mat-card appearance="outlined" class="overview-card mat-elevation-z2">
+                                <mat-card-header>
+                                    <div mat-card-avatar class="process-avatar">
+                                        <mat-icon>science</mat-icon>
+                                    </div>
+                                    <mat-card-title class="mat-headline-6">Informazioni Generali</mat-card-title>
+                                    <mat-card-subtitle>Dettagli del processo di trasformazione</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <div class="info-icon">
+                                                <mat-icon color="primary">tag</mat-icon>
+                                            </div>
+                                            <div class="info-content">
+                                                <span class="info-label mat-caption">ID Processo</span>
+                                                <span class="info-value mat-body-1">{{ processo!.idProcesso }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="info-icon">
+                                                <mat-icon color="primary">label</mat-icon>
+                                            </div>
+                                            <div class="info-content">
+                                                <span class="info-label mat-caption">Nome Processo</span>
+                                                <span class="info-value mat-body-1">{{ processo!.nomeProcesso }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="info-icon">
+                                                <mat-icon color="primary">person</mat-icon>
+                                            </div>
+                                            <div class="info-content">
+                                                <span class="info-label mat-caption">Trasformatore</span>
+                                                <span class="info-value mat-body-1">{{
+                                                    prodotto!.produttore?.nomeAzienda }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="info-icon">
+                                                <mat-icon color="primary">format_list_numbered</mat-icon>
+                                            </div>
+                                            <div class="info-content">
+                                                <span class="info-label mat-caption">Numero Fasi</span>
+                                                <span class="info-value mat-body-1">
+                                                    <mat-chip>{{ processo!.fasiLavorazione?.length || 0 }}</mat-chip>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-item full-width">
+                                            <div class="info-icon">
+                                                <mat-icon color="primary">description</mat-icon>
+                                            </div>
+                                            <div class="info-content">
+                                                <span class="info-label mat-caption">Descrizione</span>
+                                                <span class="info-value mat-body-1">{{ processo!.descrizioneProcesso ||
+                                                    'Nessuna descrizione disponibile' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+
+                            <!-- Fasi di Lavorazione Section -->
+                            <mat-card appearance="outlined" class="fasi-card mat-elevation-z2">
+                                <mat-card-header>
+                                    <div mat-card-avatar class="fasi-avatar">
+                                        <mat-icon>engineering</mat-icon>
+                                    </div>
+                                    <mat-card-title class="mat-headline-6">Fasi di Lavorazione</mat-card-title>
+                                    <mat-card-subtitle>Visualizza tutte le fasi associate a questo
+                                        processo</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+
+                                    <!-- Empty State -->
+                                    <div *ngIf="!processo!.fasiLavorazione?.length" class="empty-state-fasi">
+                                        <mat-icon>info</mat-icon>
+                                        <p>Nessuna fase di lavorazione associata a questo processo.</p>
+                                    </div>
+
+                                    <!-- Fasi List -->
+                                    <mat-accordion *ngIf="processo!.fasiLavorazione?.length" class="fasi-accordion"
+                                        multi>
+                                        <mat-expansion-panel *ngFor="let fase of processo!.fasiLavorazione"
+                                            class="fase-panel mat-elevation-z1">
+                                            <mat-expansion-panel-header>
+                                                <mat-panel-title>
+                                                    <div class="panel-title-content">
+                                                        <mat-icon class="fase-icon">build_circle</mat-icon>
+                                                        <div class="fase-info">
+                                                            <span class="fase-name mat-body-1">{{ fase.nome }}</span>
+                                                            <span class="fase-order mat-caption">Fase {{
+                                                                fase.numeroFase }}</span>
+                                                        </div>
+                                                    </div>
+                                                </mat-panel-title>
+                                                <mat-panel-description>
+                                                    <mat-chip class="fonte-chip" [color]="getFonteColor(fase)">
+                                                        <mat-icon>{{ getFonteIcon(fase) }}</mat-icon>
+                                                        {{ getFonteLabel(fase) }}
+                                                    </mat-chip>
+                                                </mat-panel-description>
+                                            </mat-expansion-panel-header>
+
+                                            <div class="fase-details">
+                                                <div class="details-grid">
+                                                    <div class="detail-item">
+                                                        <mat-icon class="detail-icon">tag</mat-icon>
+                                                        <div class="detail-content">
+                                                            <span class="detail-label mat-caption">ID</span>
+                                                            <span class="detail-value mat-body-2">{{ fase.id }}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="detail-item">
+                                                        <mat-icon class="detail-icon">sort</mat-icon>
+                                                        <div class="detail-content">
+                                                            <span class="detail-label mat-caption">Ordine
+                                                                Esecuzione</span>
+                                                            <span class="detail-value mat-body-2">{{
+                                                                fase.numeroFase }}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="detail-item full-width">
+                                                        <mat-icon class="detail-icon">description</mat-icon>
+                                                        <div class="detail-content">
+                                                            <span class="detail-label mat-caption">Descrizione</span>
+                                                            <span class="detail-value mat-body-2">{{ fase.descrizione ||
+                                                                'Nessuna descrizione' }}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="detail-item full-width highlight">
+                                                        <mat-icon class="detail-icon">inventory_2</mat-icon>
+                                                        <div class="detail-content">
+                                                            <span class="detail-label mat-caption">Materie Prime
+                                                                Utilizzate</span>
+                                                            <div class="detail-value mat-body-2">
+                                                                <div *ngIf="fase.fontiMateriePrime?.length; else noFonti"
+                                                                    class="fonti-list-compact">
+                                                                    <div *ngFor="let fonte of fase.fontiMateriePrime"
+                                                                        class="fonte-compact">
+                                                                        <mat-icon class="fonte-icon-small">{{
+                                                                            fonte.tipoFonte === 'INTERNA' ? 'home' :
+                                                                            'public' }}</mat-icon>
+                                                                        <span><strong>{{ fonte.prodottoNome ||
+                                                                                fonte.descrizioneFonte || 'Non
+                                                                                specificato' }}</strong></span>
+                                                                        <mat-chip class="tipo-chip-small">{{
+                                                                            fonte.tipoFonte === 'INTERNA' ? 'Interna' :
+                                                                            'Esterna' }}</mat-chip>
+                                                                    </div>
+                                                                </div>
+                                                                <ng-template #noFonti>
+                                                                    <span class="text-muted">Nessuna fonte
+                                                                        specificata</span>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </mat-expansion-panel>
+                                    </mat-accordion>
+
+                                </mat-card-content>
+                            </mat-card>
+
+                        </div>
+
+                        <!-- Messaggio quando non ci sono processi di trasformazione -->
+                        <div class="empty-state" *ngIf="!loadingProcesso && !hasProcessiTrasformazione()">
+                            <mat-icon class="empty-icon">precision_manufacturing</mat-icon>
+                            <h3>Nessun Processo di Trasformazione</h3>
+                            <p>Al momento questo prodotto non ha un processo di trasformazione associato.</p>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Certificazioni -->
+                <mat-tab label="Certificazioni" *ngIf="showCertificazioni()">
+                    <div class="tab-content">
+                        <div class="certifications-grid" *ngIf="hasCertificazioni()">
+                            <mat-card class="certification-card" *ngFor="let cert of getCertificazioni()"
+                                [ngClass]="getStatoCertificazione(cert.dataScadenza)">
+                                <mat-card-header>
+                                    <mat-card-title>{{ cert.tipoCertificazione || cert.nomeCertificazione
+                                        }}</mat-card-title>
+                                    <mat-card-subtitle>{{ cert.enteRilascio }}</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <div class="cert-info">
+                                        <p *ngIf="cert.numeroRiferimento"><strong>Numero:</strong> {{
+                                            cert.numeroRiferimento }}</p>
+                                        <p><strong>Rilasciata:</strong> {{ formatDate(cert.dataRilascio) }}</p>
+                                        <p><strong>Scadenza:</strong> {{ formatDate(cert.dataScadenza) }}</p>
+                                    </div>
+
+                                    <div class="cert-status">
+                                        <mat-chip [color]="getStatoCertificazioneColor(cert.dataScadenza)">
+                                            {{ getStatoCertificazioneText(cert.dataScadenza) }}
+                                        </mat-chip>
+                                    </div>
+
+                                    <button mat-stroked-button *ngIf="cert.documentoUrl" class="view-cert-btn">
+                                        <mat-icon>description</mat-icon>
+                                        Visualizza certificato
+                                    </button>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+
+                        <!-- Messaggio quando non ci sono certificazioni -->
+                        <div class="empty-state" *ngIf="!hasCertificazioni()">
+                            <mat-icon class="empty-icon">verified</mat-icon>
+                            <h3>Nessuna Certificazione</h3>
+                            <p>Al momento questo prodotto non ha certificazioni associate.</p>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Tracciabilità -->
+                <mat-tab label="Tracciabilità" *ngIf="hasTracciabilita()">
+                    <div class="tab-content">
+                        <div class="traceability-info">
+                            <h3>Catena di Tracciabilità</h3>
+
+                            <mat-expansion-panel class="trace-panel">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Prodotto Finale
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                        {{ prodotto.tracciabilita?.prodottoFinale?.nome }}
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+
+                                <div class="trace-details">
+                                    <p><strong>Codice Tracciabilità:</strong> {{ prodotto.tracciabilita?.catenaCompleta
+                                        ? 'Completa' : 'Parziale' }}</p>
+                                </div>
+                            </mat-expansion-panel>
+
+                            <mat-expansion-panel class="trace-panel"
+                                *ngFor="let processo of prodotto.tracciabilita?.processiTrasformazione || []">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Processo di Trasformazione
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                        {{ processo?.nome }} - {{ processo?.data ? formatDate(processo.data) : '' }}
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+                            </mat-expansion-panel>
+
+                            <mat-expansion-panel class="trace-panel">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Prodotti di Origine
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                        {{ prodotto.tracciabilita?.prodottiOrigine?.length || 0 }} materie prime
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+
+                                <div class="origin-products">
+                                    <div class="origin-product"
+                                        *ngFor="let origine of prodotto.tracciabilita?.prodottiOrigine || []">
+                                        <h4>{{ origine?.nome }}</h4>
+                                        <p><strong>Produttore:</strong> {{ origine?.produttore }}</p>
+                                        <p><strong>Quantità:</strong> {{ origine?.quantita }} {{ origine?.unitaMisura }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+
+        <!-- Related Products -->
+        <div class="related-products" *ngIf="prodottiCorrelati.length > 0">
+            <h2>Prodotti Correlati</h2>
+            <div class="related-grid">
+                <mat-card class="related-product-card" *ngFor="let prodotto of prodottiCorrelati"
+                    (click)="navigateToProdottoObj(prodotto)">
+                    <mat-card-header>
+                        <div mat-card-avatar class="related-avatar">
+                            <mat-icon>shopping_basket</mat-icon>
+                        </div>
+                        <mat-card-title>{{ prodotto.nome }}</mat-card-title>
+                        <mat-card-subtitle>{{ prodotto.produttore?.nomeAzienda }}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p class="related-description">{{ prodotto.descrizione | slice:0:100 }}...</p>
+                        <div class="related-price">{{ formatCurrency(prodotto.prezzo) }}</div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-button color="primary">
+                            Visualizza
+                            <mat-icon>arrow_forward</mat-icon>
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

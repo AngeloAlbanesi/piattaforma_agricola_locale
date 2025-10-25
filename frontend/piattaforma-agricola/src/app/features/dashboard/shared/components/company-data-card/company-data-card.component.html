@@ -1,0 +1,75 @@
+<mat-card class="company-data-card" appearance="outlined" *ngIf="isCompanyUser">
+    <mat-card-header class="card-header">
+        <mat-card-title class="card-title">
+            <mat-icon class="title-icon">business</mat-icon>
+            Dati azienda
+        </mat-card-title>
+        <mat-card-subtitle class="card-subtitle">
+            Informazioni della tua azienda
+        </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="card-content">
+        <!-- Stato di caricamento -->
+        <div *ngIf="isLoading" class="loading-container">
+            <mat-progress-spinner mode="indeterminate" diameter="40" color="primary">
+            </mat-progress-spinner>
+            <span class="loading-text">Caricamento dati azienda...</span>
+        </div>
+
+        <!-- Stato di errore -->
+        <div *ngIf="hasError && !isLoading" class="error-container">
+            <mat-icon class="error-icon">error_outline</mat-icon>
+            <span class="error-text">Impossibile caricare i dati aziendali</span>
+            <button mat-icon-button (click)="refreshCompanyData()" matTooltip="Riprova a caricare"
+                class="refresh-button">
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </div>
+
+        <!-- Dati aziendali -->
+        <div *ngIf="!isLoading && !hasError && company" class="company-data">
+            <div class="data-grid">
+                <!-- Nome azienda -->
+                <div class="data-item full-width">
+                    <span class="data-label">Nome azienda:</span>
+                    <span class="data-value company-name">{{ company.nomeAzienda }}</span>
+                </div>
+
+                <!-- Partita IVA -->
+                <div class="data-item">
+                    <span class="data-label">Partita IVA:</span>
+                    <span class="data-value">{{ company.partitaIva }}</span>
+                </div>
+
+                <!-- Indirizzo azienda -->
+                <div class="data-item full-width">
+                    <span class="data-label">Indirizzo azienda:</span>
+                    <span class="data-value">{{ getIndirizzoAzienda() }}</span>
+                </div>
+
+                <!-- Descrizione azienda -->
+                <div class="data-item full-width">
+                    <span class="data-label">Descrizione azienda:</span>
+                    <span class="data-value description">{{ getDescrizioneAzienda() }}</span>
+                </div>
+
+                <!-- Stato accreditamento -->
+                <div class="data-item full-width">
+                    <span class="data-label">Stato accreditamento:</span>
+                    <mat-chip [color]="getAccreditationStatusColor(company.statoAccreditamento)" class="status-chip">
+                        {{ getAccreditationStatusLabel(company.statoAccreditamento) }}
+                    </mat-chip>
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+
+    <mat-card-actions class="card-actions" align="end" *ngIf="!isLoading && !hasError && company">
+        <button mat-raised-button color="primary" (click)="manageCompany()"
+            matTooltip="Gestisci i dati della tua azienda" class="manage-company-button">
+            <mat-icon>settings</mat-icon>
+            Gestisci azienda
+        </button>
+    </mat-card-actions>
+</mat-card>

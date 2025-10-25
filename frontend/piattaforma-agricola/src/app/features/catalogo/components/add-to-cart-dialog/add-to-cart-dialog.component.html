@@ -1,0 +1,69 @@
+<div class="add-to-cart-dialog">
+    <h2 mat-dialog-title>Aggiungi al Carrello</h2>
+
+    <mat-dialog-content>
+        <div class="product-info">
+            <div class="product-image" *ngIf="data.immagine">
+                <img [src]="data.immagine" [alt]="data.nome" />
+            </div>
+            <div class="product-details">
+                <h3>{{ data.nome }}</h3>
+                <p class="price">{{ data.prezzo.toFixed(2) }} €</p>
+                <p class="availability">
+                    <span *ngIf="data.quantitaDisponibile > 0" class="available">
+                        <mat-icon>check_circle</mat-icon>
+                        {{ data.quantitaDisponibile }} disponibili
+                    </span>
+                    <span *ngIf="data.quantitaDisponibile === 0" class="unavailable">
+                        <mat-icon>cancel</mat-icon>
+                        Non disponibile
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <div class="quantity-selector" *ngIf="data.quantitaDisponibile > 0">
+            <label class="quantity-label">Quantità:</label>
+            <div class="quantity-controls">
+                <button mat-icon-button (click)="decrementQuantity()" [disabled]="quantita <= 1" type="button">
+                    <mat-icon>remove</mat-icon>
+                </button>
+
+                <mat-form-field appearance="outline" class="quantity-input">
+                    <input matInput type="number" [(ngModel)]="quantita" [min]="1" [max]="data.quantitaDisponibile"
+                        (blur)="quantita = Math.max(1, Math.min(quantita, data.quantitaDisponibile))" />
+                </mat-form-field>
+
+                <button mat-icon-button (click)="incrementQuantity()" [disabled]="quantita >= data.quantitaDisponibile"
+                    type="button">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+
+            <div class="quantity-warning" *ngIf="!isQuantityValid()">
+                <mat-icon>warning</mat-icon>
+                <span>La quantità deve essere tra 1 e {{ data.quantitaDisponibile }}</span>
+            </div>
+
+            <div class="subtotal">
+                <span class="subtotal-label">Subtotale:</span>
+                <span class="subtotal-value">{{ (data.prezzo * quantita).toFixed(2) }} €</span>
+            </div>
+        </div>
+
+        <div class="unavailable-message" *ngIf="data.quantitaDisponibile === 0">
+            <p>Questo prodotto non è attualmente disponibile.</p>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button (click)="onCancel()" type="button">
+            Annulla
+        </button>
+        <button mat-raised-button color="primary" (click)="onConfirm()"
+            [disabled]="!isQuantityValid() || data.quantitaDisponibile === 0" type="button">
+            <mat-icon>shopping_cart</mat-icon>
+            Aggiungi al Carrello
+        </button>
+    </mat-dialog-actions>
+</div>

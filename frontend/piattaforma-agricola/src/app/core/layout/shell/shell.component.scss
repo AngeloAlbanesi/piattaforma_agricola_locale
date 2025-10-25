@@ -1,0 +1,199 @@
+.shell {
+    /* preferire min-height per consentire lo scroll quando il contenuto eccede l'altezza della finestra */
+    min-height: 100vh;
+}
+
+// Stili full-screen per landing page
+.shell.landing-fullscreen {
+    /* landing page in full-screen: mantenere overflow hidden solo per effetti full-screen controllati */
+    min-height: 100vh;
+    /* rendere la landing scrollabile se il contenuto eccede l'altezza */
+    overflow-y: auto;
+}
+
+// Stili full-screen per pagine di autenticazione
+.shell.auth-fullscreen {
+    min-height: 100vh;
+    /* auth centra il contenuto: permettere lo scroll su dispositivi piccoli */
+    overflow-y: auto;
+}
+
+// Stili full-screen per dashboard
+.shell.dashboard-fullscreen {
+    /* dashboard dovrebbe permettere lo scroll: usare min-height e consentire overflow-y */
+    min-height: 100vh;
+    overflow: visible;
+}
+
+// Stili full-screen per catalogo
+.shell.catalogo-fullscreen {
+    /* catalogo in full-screen senza shell */
+    min-height: 100vh;
+    overflow: visible;
+}
+
+.shell__brand {
+    padding: 1.5rem 1.25rem 1rem;
+}
+
+.shell__brand h1 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+nav {
+    display: flex;
+    flex-direction: column;
+}
+
+a[mat-list-item] {
+    gap: 0.75rem;
+    padding-block: 0.75rem;
+}
+
+a[mat-list-item].active {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.shell__toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+// Stile per la toolbar sulla landing page (più trasparente e meno invasiva)
+.shell__toolbar.landing-toolbar {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(10px);
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shell__toolbar.landing-toolbar .shell__toolbar-title {
+    color: white;
+}
+
+.shell__toolbar.landing-toolbar a[mat-button] {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.shell__toolbar.landing-toolbar a[mat-button]:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.shell__menu {
+    display: none;
+}
+
+.shell__toolbar-title {
+    font-weight: 600;
+}
+
+.shell__spacer {
+    flex: 1;
+}
+
+.shell__content {
+    padding: 2rem;
+    /* lasciare che il contenuto determini l'altezza. Se si vuole una barra toolbar fissa, usare min-height calcolata ma non forzare height */
+    min-height: calc(100vh - 64px);
+    background-color: #f8f9fa;
+    overflow-y: auto;
+}
+
+// Stili per landing page full-screen
+.shell__content.landing-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    background-color: transparent !important;
+    /* permettere lo scroll verticale sulla landing quando necessario */
+    overflow-y: auto;
+}
+
+// Stili per pagine di autenticazione full-screen
+.shell__content.auth-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+}
+
+// Stili per dashboard full-screen
+.shell__content.dashboard-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: transparent !important;
+}
+
+// Stili per catalogo full-screen
+.shell__content.catalogo-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: transparent !important;
+}
+
+// Stili full-screen per pagine di dettaglio pubbliche (prodotti, pacchetti, eventi, ecc.)
+.shell.public-detail-fullscreen {
+    min-height: 100vh;
+    overflow: visible;
+}
+
+// Stili per pagine di dettaglio pubbliche full-screen
+.shell__content.public-detail-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: transparent !important;
+}
+
+// Stili full-screen per pagina eventi pubblica
+.shell.eventi-fullscreen {
+    min-height: 100vh;
+    overflow: visible;
+}
+
+// Stili per pagina eventi pubblica full-screen
+.shell__content.eventi-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: transparent !important;
+}
+
+// Stili full-screen per pagine carrello/ordini
+.shell.carrello-ordini-fullscreen {
+    min-height: 100vh;
+    overflow: visible;
+}
+
+// Stili per pagine carrello/ordini full-screen
+.shell__content.carrello-ordini-fullscreen-content {
+    padding: 0 !important;
+    min-height: 100vh !important;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #f8f9fa !important;
+}
+
+@media (max-width: 960px) {
+    .shell__menu {
+        display: inline-flex;
+    }
+}

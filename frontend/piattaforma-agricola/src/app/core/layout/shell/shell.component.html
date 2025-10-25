@@ -1,0 +1,49 @@
+<mat-sidenav-container class="shell" [class.landing-fullscreen]="isLandingPage()" [class.auth-fullscreen]="isAuthPage()"
+    [class.dashboard-fullscreen]="isDashboardPage()" [class.catalogo-fullscreen]="isCatalogoPage()"
+    [class.public-detail-fullscreen]="isPublicDetailPage()" [class.eventi-fullscreen]="isEventiPage()"
+    [class.carrello-ordini-fullscreen]="isCarrelloOrdiniPage()">
+    <!-- Sidenav nascosto sulla landing page, sulle pagine di autenticazione, sulle dashboard, sul catalogo, sulla pagina eventi, carrello/ordini e sulle pagine di dettaglio -->
+    @if (!isLandingPage() && !isAuthPage() && !isDashboardPage() && !isCatalogoPage() && !isPublicDetailPage() &&
+    !isEventiPage() && !isCarrelloOrdiniPage()) {
+    <mat-sidenav mode="side" opened>
+        <div class="shell__brand">
+            <h1>{{ appName() }}</h1>
+        </div>
+        <nav>
+            @for (item of navItems; track item.route) {
+            <a mat-list-item [routerLink]="item.route" routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: item.exact ?? false }">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                <span>{{ item.label }}</span>
+            </a>
+            }
+        </nav>
+    </mat-sidenav>
+    }
+
+    <mat-sidenav-content>
+        <!-- Toolbar nascosta sulle pagine di autenticazione, sulle dashboard, sul catalogo, sulla pagina eventi, carrello/ordini e sulle pagine di dettaglio -->
+        @if (!isAuthPage() && !isDashboardPage() && !isCatalogoPage() && !isPublicDetailPage() && !isEventiPage() &&
+        !isCarrelloOrdiniPage()) {
+        <mat-toolbar color="primary" class="shell__toolbar" [class.landing-toolbar]="isLandingPage()">
+            <button mat-icon-button class="shell__menu" aria-label="toggle navigation" disabled>
+                <mat-icon>menu</mat-icon>
+            </button>
+            <span class="shell__toolbar-title">{{ appName() }}</span>
+            <span class="shell__spacer"></span>
+            <a mat-button routerLink="/auth/register">Registrati</a>
+            <a mat-button routerLink="/auth/login">Accedi</a>
+        </mat-toolbar>
+        }
+
+        <!-- Main content con stile condizionale per landing page, pagine di autenticazione, dashboard, catalogo, pagina eventi, carrello/ordini e pagine di dettaglio -->
+        <main class="shell__content" [class.landing-fullscreen-content]="isLandingPage()"
+            [class.auth-fullscreen-content]="isAuthPage()" [class.dashboard-fullscreen-content]="isDashboardPage()"
+            [class.catalogo-fullscreen-content]="isCatalogoPage()"
+            [class.public-detail-fullscreen-content]="isPublicDetailPage()"
+            [class.eventi-fullscreen-content]="isEventiPage()"
+            [class.carrello-ordini-fullscreen-content]="isCarrelloOrdiniPage()">
+            <router-outlet></router-outlet>
+        </main>
+    </mat-sidenav-content>
+</mat-sidenav-container>

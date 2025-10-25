@@ -1,0 +1,150 @@
+@use 'sass:color';
+
+// Colori primari
+$primary-color: #3f51b5;
+$primary-color-light: rgba(63, 81, 181, 0.1);
+$primary-color-dark: #303f9f;
+$accent-color: #ff4081;
+$warn-color: #f44336;
+$success-color: #4caf50;
+$info-color: #2196f3;
+// Colore secondario (alias per compatibilità)
+$secondary-color: $accent-color;
+
+// Colori di sfondo
+$background-color: #fafafa;
+$background-color-light: #f5f5f5;
+$card-background: #ffffff;
+$card-background-color: #ffffff;
+$hover-background: #f5f5f5;
+$hover-color: #f5f5f5;
+$footer-background-color: #ffffff;
+$footer-text-color: rgba(0, 0, 0, 0.54);
+$footer-link-color: #3f51b5;
+
+// Colori del testo
+$text-primary: rgba(0, 0, 0, 0.87);
+$text-color-primary: rgba(0, 0, 0, 0.87);
+$text-color-dark: rgba(0, 0, 0, 0.87);
+$text-secondary: rgba(0, 0, 0, 0.54);
+$text-color-secondary: rgba(0, 0, 0, 0.54);
+$text-color-tertiary: rgba(0, 0, 0, 0.38);
+$text-disabled: rgba(0, 0, 0, 0.38);
+$text-color-light: rgba(255, 255, 255, 0.87);
+
+// Colori specifici per dashboard
+$color-users: #3498db;
+$color-users-active: #27ae60;
+$color-users-new: #2ecc71;
+$color-products: #e67e22;
+$color-products-approved: #27ae60;
+$color-companies: #9b59b6;
+$color-companies-approved: #27ae60;
+$color-events: #f39c12;
+$color-events-published: #27ae60;
+$color-transactions: #16a085;
+$color-transactions-revenue: #27ae60;
+
+// Spacing
+$spacing-unit: 8px;
+$spacing-xs: $spacing-unit * 0.5; // 4px
+$spacing-sm: $spacing-unit; // 8px
+$spacing-md: $spacing-unit * 2; // 16px
+$spacing-lg: $spacing-unit * 3; // 24px
+$spacing-xl: $spacing-unit * 4; // 32px
+
+// Breakpoints
+$mobile: 600px;
+$tablet: 960px;
+$desktop: 1280px;
+$wide: 1920px;
+
+// Layout
+$max-content-width: 1200px;
+
+// Border radius
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+// Borders
+$border-color: rgba(0, 0, 0, 0.12);
+$border-color-light: rgba(0, 0, 0, 0.08);
+
+// Shadows
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+$shadow-elevation-1: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+$shadow-elevation-2: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+$shadow-elevation-2-reverse: 0 -3px 1px -2px rgba(0, 0, 0, 0.2), 0 -2px 2px 0 rgba(0, 0, 0, 0.14), 0 -1px 5px 0 rgba(0, 0, 0, 0.12);
+$shadow-elevation-3: 0 3px 3px -2px rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 1px 8px 0 rgba(0, 0, 0, 0.12);
+
+// Transitions
+$transition-fast: 150ms ease-in-out;
+$transition-normal: 300ms ease-in-out;
+$transition-slow: 500ms ease-in-out;
+
+// -------------------------------------------------------------------
+// Aliases e token aggiuntivi per compatibilità con gli SCSS dei componenti
+// -------------------------------------------------------------------
+
+// Colori principali (alias)
+$color-primary: $primary-color;
+$color-primary-light: $primary-color-light;
+$color-primary-dark: $primary-color-dark;
+$color-accent: $accent-color;
+$color-secondary: $secondary-color;
+$color-warn: $warn-color;
+$color-error: $warn-color;
+$color-success: $success-color;
+$color-info: $info-color;
+
+// Testo (alias)
+$color-text-primary: $text-color-primary;
+$color-text-secondary: $text-color-secondary;
+$color-text-tertiary: $text-color-tertiary;
+$color-text-disabled: $text-disabled;
+
+// Variante scura (token aggiuntivi usati dai componenti)
+$color-text-primary-dark: rgba(255, 255, 255, 0.87);
+$color-text-secondary-dark: rgba(255, 255, 255, 0.6);
+
+// Divider/bordi
+$color-divider: $border-color;
+$color-divider-light: $border-color-light;
+
+// Background (alias più espliciti)
+$color-background: $background-color;
+$color-background-light: $background-color-light;
+$color-card-background: $card-background-color;
+
+// Raggi bordo (alias)
+$border-radius-xs: 2px;
+$border-radius-sm: $border-radius-sm;
+$border-radius-md: $border-radius-md;
+$border-radius-lg: $border-radius-lg;
+
+// Tipografia base (aggiunta)
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-md: 16px; // alias di base
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// Breakpoint (alias usati nei componenti)
+$breakpoint-sm: $mobile;
+$breakpoint-md: $tablet;
+$breakpoint-lg: $desktop;
+$breakpoint-xl: $wide;
+
+// Derivati utili
+$color-secondary-light: color.adjust($color-secondary, $lightness: 10%);
+$color-secondary-dark: color.adjust($color-secondary, $lightness: -10%);
+$color-primary-contrast: #fff;

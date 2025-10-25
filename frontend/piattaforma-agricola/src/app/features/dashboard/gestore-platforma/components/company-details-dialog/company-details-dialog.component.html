@@ -1,0 +1,77 @@
+<h2 mat-dialog-title>
+    <mat-icon>business</mat-icon>
+    Dettagli Azienda
+</h2>
+
+<mat-dialog-content>
+    <div class="company-header">
+        <h3 class="company-name">{{ data.nomeAzienda }}</h3>
+        <mat-chip [class]="'status-chip status-' + getStatoColor()">
+            {{ getStatoLabel() }}
+        </mat-chip>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="company-details">
+        <div class="detail-row">
+            <div class="detail-label">
+                <mat-icon>badge</mat-icon>
+                Partita IVA
+            </div>
+            <div class="detail-value">{{ data.partitaIva }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">
+                <mat-icon>location_on</mat-icon>
+                Indirizzo
+            </div>
+            <div class="detail-value">{{ data.indirizzo }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">
+                <mat-icon>phone</mat-icon>
+                Telefono
+            </div>
+            <div class="detail-value">{{ data.telefono }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">
+                <mat-icon>email</mat-icon>
+                Email
+            </div>
+            <div class="detail-value">{{ data.email }}</div>
+        </div>
+
+        <div class="detail-row" *ngIf="data.sitoWeb">
+            <div class="detail-label">
+                <mat-icon>language</mat-icon>
+                Sito Web
+            </div>
+            <div class="detail-value">
+                <a [href]="data.sitoWeb" target="_blank" rel="noopener noreferrer">
+                    {{ data.sitoWeb }}
+                    <mat-icon inline>open_in_new</mat-icon>
+                </a>
+            </div>
+        </div>
+
+        <div class="detail-row" *ngIf="data.feedbackVerifica">
+            <div class="detail-label">
+                <mat-icon>feedback</mat-icon>
+                Feedback Verifica
+            </div>
+            <div class="detail-value feedback-text">{{ data.feedbackVerifica }}</div>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="close()" type="button">
+        <mat-icon>close</mat-icon>
+        Chiudi
+    </button>
+</mat-dialog-actions>

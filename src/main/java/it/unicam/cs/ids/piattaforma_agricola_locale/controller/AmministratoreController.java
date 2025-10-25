@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2025 Angelo Albanesi
+ *   All rights reserved.
+ */
 
 package it.unicam.cs.ids.piattaforma_agricola_locale.controller;
 
@@ -63,6 +67,34 @@ public class AmministratoreController {
         return ResponseEntity.ok(dtos);
     }
 
+    @GetMapping("/prodotti/approved")
+    @PreAuthorize("hasRole('CURATORE')")
+    @RequiresAccreditation
+    public ResponseEntity<List<ProductSummaryDTO>> getApprovedProducts(Authentication authentication) {
+        List<Prodotto> prodottiApprovati = curatoreService.getProdottiApprovati();
+        List<ProductSummaryDTO> dtos = prodottiApprovati.stream()
+                .map(prodottoMapper::toSummaryDTO)
+                .collect(Collectors.toList());
+
+        String email = authentication.getName();
+        log.info("Retrieved {} approved products by curator: {}", dtos.size(), email);
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/prodotti/rejected")
+    @PreAuthorize("hasRole('CURATORE')")
+    @RequiresAccreditation
+    public ResponseEntity<List<ProductSummaryDTO>> getRejectedProducts(Authentication authentication) {
+        List<Prodotto> prodottiRifiutati = curatoreService.getProdottiRifiutati();
+        List<ProductSummaryDTO> dtos = prodottiRifiutati.stream()
+                .map(prodottoMapper::toSummaryDTO)
+                .collect(Collectors.toList());
+
+        String email = authentication.getName();
+        log.info("Retrieved {} rejected products by curator: {}", dtos.size(), email);
+        return ResponseEntity.ok(dtos);
+    }
+
     @PutMapping("/prodotti/{id}/approva")
     @PreAuthorize("hasRole('CURATORE')")
     @RequiresAccreditation
@@ -122,6 +154,34 @@ public class AmministratoreController {
 
         String email = authentication.getName();
         log.info("Retrieved {} companies pending approval by curator: {}", dtos.size(), email);
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/aziende/approved")
+    @PreAuthorize("hasRole('CURATORE')")
+    @RequiresAccreditation
+    public ResponseEntity<List<CompanyModerationDTO>> getApprovedCompanies(Authentication authentication) {
+        List<DatiAzienda> aziendeApprovate = curatoreService.getDatiAziendaApprovati();
+        List<CompanyModerationDTO> dtos = aziendeApprovate.stream()
+                .map(this::mapDatiAziendaToModerationDTO)
+                .collect(Collectors.toList());
+
+        String email = authentication.getName();
+        log.info("Retrieved {} approved companies by curator: {}", dtos.size(), email);
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/aziende/rejected")
+    @PreAuthorize("hasRole('CURATORE')")
+    @RequiresAccreditation
+    public ResponseEntity<List<CompanyModerationDTO>> getRejectedCompanies(Authentication authentication) {
+        List<DatiAzienda> aziendeRifiutate = curatoreService.getDatiAziendaRifiutati();
+        List<CompanyModerationDTO> dtos = aziendeRifiutate.stream()
+                .map(this::mapDatiAziendaToModerationDTO)
+                .collect(Collectors.toList());
+
+        String email = authentication.getName();
+        log.info("Retrieved {} rejected companies by curator: {}", dtos.size(), email);
         return ResponseEntity.ok(dtos);
     }
 
@@ -457,6 +517,36 @@ public class AmministratoreController {
         return ResponseEntity.ok(userDTOs);
     }
 
+    // =================== CURATOR STATISTICS ===================
+
+    @GetMapping("/stats")
+    @PreAuthorize("hasRole('CURATORE')")
+    @RequiresAccreditation
+    public ResponseEntity<CuratorStatsDTO> getCuratorStats(Authentication authentication) {
+        int prodottiPending = curatoreService.getProdottiInAttesaRevisione().size();
+        int prodottiApproved = curatoreService.getProdottiApprovati().size();
+        int prodottiRejected = curatoreService.getProdottiRifiutati().size();
+
+        int aziendePending = curatoreService.getDatiAziendaInAttesaRevisione().size();
+        int aziendeApproved = curatoreService.getDatiAziendaApprovati().size();
+        int aziendeRejected = curatoreService.getDatiAziendaRifiutati().size();
+
+        CuratorStatsDTO stats = CuratorStatsDTO.builder()
+                .prodottiDaApprovare(prodottiPending)
+                .prodottiApprovati(prodottiApproved)
+                .prodottiRifiutati(prodottiRejected)
+                .aziendeDaApprovare(aziendePending)
+                .aziendeApprovate(aziendeApproved)
+                .aziendeRifiutate(aziendeRejected)
+                .contenutiDaModerare(0)
+                .contenutiModerati(0)
+                .build();
+
+        String email = authentication.getName();
+        log.info("Retrieved curator statistics for: {}", email);
+        return ResponseEntity.ok(stats);
+    }
+
     // =================== HELPER METHODS ===================
 
     private CompanyModerationDTO mapDatiAziendaToModerationDTO(DatiAzienda datiAzienda) {
@@ -467,6 +557,7 @@ public class AmministratoreController {
                 .indirizzo(datiAzienda.getIndirizzo())
                 .telefono(datiAzienda.getTelefono())
                 .email(datiAzienda.getEmail())
+                .descrizione(datiAzienda.getDescrizioneAzienda())
                 .sitoWeb(datiAzienda.getSitoWeb())
                 .statoVerifica(datiAzienda.getStatoVerifica().toString())
                 .feedbackVerifica(datiAzienda.getFeedbackVerifica())
@@ -491,8 +582,27 @@ public class AmministratoreController {
         private String indirizzo;
         private String telefono;
         private String email;
+        private String descrizione;
         private String sitoWeb;
         private String statoVerifica;
         private String feedbackVerifica;
+    }
+
+    /**
+     * DTO for curator statistics
+     */
+    @lombok.Data
+    @lombok.Builder
+    @lombok.AllArgsConstructor
+    @lombok.NoArgsConstructor
+    public static class CuratorStatsDTO {
+        private int prodottiDaApprovare;
+        private int prodottiApprovati;
+        private int prodottiRifiutati;
+        private int aziendeDaApprovare;
+        private int aziendeApprovate;
+        private int aziendeRifiutate;
+        private int contenutiDaModerare;
+        private int contenutiModerati;
     }
 }

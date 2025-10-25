@@ -1,0 +1,133 @@
+<div class="fase-dialog-container">
+    <div class="dialog-header">
+        <mat-icon class="header-icon">{{ isEditMode ? 'edit' : 'playlist_add' }}</mat-icon>
+        <h2 mat-dialog-title>{{ isEditMode ? 'Modifica Fase' : 'Nuova Fase di Lavorazione' }}</h2>
+    </div>
+
+    <form [formGroup]="faseForm" (ngSubmit)="onSave()">
+        <mat-dialog-content>
+            <div class="form-container">
+                <!-- Nome Fase -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Nome Fase</mat-label>
+                    <input matInput formControlName="nome" placeholder="Es: Impastamento, Cottura, Confezionamento"
+                        maxlength="100">
+                    <mat-icon matPrefix>label</mat-icon>
+                    <mat-hint align="end">{{ faseForm.get('nome')?.value?.length || 0 }}/100</mat-hint>
+                    <mat-error *ngIf="faseForm.get('nome')?.invalid && faseForm.get('nome')?.touched">
+                        {{ getErrorMessage('nome') }}
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Ordine Esecuzione -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Ordine di Esecuzione</mat-label>
+                    <input matInput type="number" formControlName="ordineEsecuzione" min="1" max="100" placeholder="1">
+                    <mat-icon matPrefix>format_list_numbered</mat-icon>
+                    <mat-hint>Numero progressivo della fase nel processo (1-100)</mat-hint>
+                    <mat-error
+                        *ngIf="faseForm.get('ordineEsecuzione')?.invalid && faseForm.get('ordineEsecuzione')?.touched">
+                        {{ getErrorMessage('ordineEsecuzione') }}
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Descrizione -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Descrizione</mat-label>
+                    <textarea matInput formControlName="descrizione"
+                        placeholder="Descrivi dettagliatamente questa fase di lavorazione..." rows="4" maxlength="500">
+          </textarea>
+                    <mat-icon matPrefix>description</mat-icon>
+                    <mat-hint align="end">{{ faseForm.get('descrizione')?.value?.length || 0 }}/500</mat-hint>
+                    <mat-error *ngIf="faseForm.get('descrizione')?.invalid && faseForm.get('descrizione')?.touched">
+                        {{ getErrorMessage('descrizione') }}
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Materia Prima Utilizzata -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Materia Prima Utilizzata</mat-label>
+                    <input matInput formControlName="materiaPrimaUtilizzata"
+                        placeholder="Es: Farina di grano duro, Uova fresche" maxlength="200">
+                    <mat-icon matPrefix>shopping_basket</mat-icon>
+                    <mat-hint align="end">{{ faseForm.get('materiaPrimaUtilizzata')?.value?.length || 0
+                        }}/200</mat-hint>
+                    <mat-error
+                        *ngIf="faseForm.get('materiaPrimaUtilizzata')?.invalid && faseForm.get('materiaPrimaUtilizzata')?.touched">
+                        {{ getErrorMessage('materiaPrimaUtilizzata') }}
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Sezione Fonte -->
+                <div class="fonte-section" formGroupName="fonte">
+                    <h3 class="section-title">
+                        <mat-icon>source</mat-icon>
+                        Fonte Materia Prima
+                    </h3>
+
+                    <!-- Tipo Fonte -->
+                    <mat-radio-group formControlName="tipo" class="fonte-radio-group">
+                        <mat-radio-button value="ESTERNA" class="fonte-radio">
+                            <div class="radio-content">
+                                <mat-icon>business</mat-icon>
+                                <span>Fornitore Esterno</span>
+                            </div>
+                        </mat-radio-button>
+                        <mat-radio-button value="INTERNA" class="fonte-radio">
+                            <div class="radio-content">
+                                <mat-icon>home</mat-icon>
+                                <span>Produzione Interna</span>
+                            </div>
+                        </mat-radio-button>
+                    </mat-radio-group>
+
+                    <!-- Nome Fornitore (solo se fonte ESTERNA) -->
+                    <mat-form-field appearance="outline" class="full-width fornitore-field" *ngIf="isFonteEsterna()">
+                        <mat-label>Nome Fornitore</mat-label>
+                        <input matInput formControlName="nomeFornitore" placeholder="Es: Azienda Agricola Rossi"
+                            maxlength="100">
+                        <mat-icon matPrefix>store</mat-icon>
+                        <mat-hint align="end">{{ faseForm.get('fonte.nomeFornitore')?.value?.length || 0
+                            }}/100</mat-hint>
+                        <mat-error
+                            *ngIf="faseForm.get('fonte.nomeFornitore')?.invalid && faseForm.get('fonte.nomeFornitore')?.touched">
+                            Campo obbligatorio per fonte esterna
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!-- Select Produttore (solo se fonte INTERNA) -->
+                    <mat-form-field appearance="outline" class="full-width fornitore-field" *ngIf="!isFonteEsterna()">
+                        <mat-label>Seleziona Produttore</mat-label>
+                        <mat-select formControlName="produttoreId" placeholder="Scegli un produttore">
+                            <mat-option *ngIf="isLoadingProduttori" disabled>
+                                <mat-spinner diameter="20"></mat-spinner> Caricamento...
+                            </mat-option>
+                            <mat-option *ngFor="let produttore of produttori" [value]="produttore.id">
+                                {{ getProduttoreLabel(produttore) }}
+                            </mat-option>
+                            <mat-option *ngIf="!isLoadingProduttori && produttori.length === 0" disabled>
+                                Nessun produttore disponibile
+                            </mat-option>
+                        </mat-select>
+                        <mat-icon matPrefix>person</mat-icon>
+                        <mat-hint>Seleziona il produttore fornitore della materia prima</mat-hint>
+                        <mat-error
+                            *ngIf="faseForm.get('fonte.produttoreId')?.invalid && faseForm.get('fonte.produttoreId')?.touched">
+                            Campo obbligatorio per fonte interna
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-dialog-content>
+
+        <mat-dialog-actions align="end">
+            <button mat-button type="button" (click)="onCancel()" class="cancel-button">
+                Annulla
+            </button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="!faseForm.valid" class="save-button">
+                <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+                {{ isEditMode ? 'Salva Modifiche' : 'Crea Fase' }}
+            </button>
+        </mat-dialog-actions>
+    </form>
+</div>

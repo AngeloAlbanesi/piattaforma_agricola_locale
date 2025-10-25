@@ -55,7 +55,6 @@ public class CreateEventoRequestDTO {
 
     @NotNull(message = "La capienza massima è obbligatoria")
     @Min(value = 1, message = "La capienza massima deve essere almeno 1")
-    @Max(value = 1000, message = "La capienza non può superare 1000 persone")
     private Integer capienzaMassima;
 
     private List<Long> idAziendePartecipanti;

@@ -1,0 +1,253 @@
+<div class="product-detail-dialog">
+    <!-- Header -->
+    <div class="dialog-header">
+        <h2 mat-dialog-title class="dialog-title">
+            <mat-icon class="title-icon">visibility</mat-icon>
+            Dettagli Prodotto Trasformato
+        </h2>
+        <button mat-icon-button class="close-button" (click)="onClose()" aria-label="Chiudi dialog">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading" role="status" aria-live="polite">
+        <mat-spinner diameter="50" aria-label="Caricamento dettagli prodotto"></mat-spinner>
+        <p class="loading-text">Caricamento dettagli prodotto...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error && !isLoading" role="alert">
+        <mat-icon class="error-icon">error</mat-icon>
+        <p class="error-text">{{ error }}</p>
+        <button mat-raised-button color="primary" (click)="loadProductDetails()">
+            <mat-icon>refresh</mat-icon>
+            Riprova
+        </button>
+    </div>
+
+    <!-- Content -->
+    <div mat-dialog-content class="dialog-content" *ngIf="product && !isLoading && !error">
+
+        <!-- Informazioni Base Prodotto -->
+        <mat-card class="product-overview-card" appearance="outlined">
+            <mat-card-header>
+                <div class="product-header-info">
+                    <div class="product-title-section">
+                        <h3 class="product-name">{{ product.nome }}</h3>
+                        <div class="product-meta">
+                            <span class="product-id">ID: {{ product.id }}</span>
+                            <mat-chip [class]="getStatoClass(product.stato)"
+                                [attr.aria-label]="'Stato: ' + product.stato">
+                                <mat-icon>{{ getStatoIcon(product.stato) }}</mat-icon>
+                                {{ product.stato }}
+                            </mat-chip>
+                        </div>
+                    </div>
+                    <div class="product-image" *ngIf="product.immagini && product.immagini.length > 0">
+                        <img [src]="product.immagini[0]" [alt]="'Immagine di ' + product.nome" />
+                    </div>
+                </div>
+            </mat-card-header>
+
+            <mat-card-content>
+                <div class="product-key-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <mat-icon class="info-icon">euro</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Prezzo</span>
+                                <span class="info-value price">{{ formatCurrency(product.prezzo) }}</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <mat-icon class="info-icon">inventory_2</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Quantità Disponibile</span>
+                                <span class="info-value">{{ product.quantitaDisponibile }} {{ product.unitaMisura
+                                    }}</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <mat-icon class="info-icon">factory</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Tipo</span>
+                                <span class="info-value">Prodotto Trasformato</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item" *ngIf="product.mediaValutazione">
+                            <mat-icon class="info-icon">star</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Valutazione</span>
+                                <span class="info-value">{{ product.mediaValutazione.toFixed(1) || 'N/A' }} ({{
+                                    product.numeroRecensioni || 0 }} recensioni)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <mat-divider class="section-divider"></mat-divider>
+
+                <div class="product-description">
+                    <h4 class="section-title">Descrizione</h4>
+                    <p class="description-text">{{ product.descrizione }}</p>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Tab Navigation -->
+        <mat-tab-group class="detail-tabs" dynamicHeight>
+
+            <!-- Tab Processo di Trasformazione -->
+            <mat-tab label="Processo di Trasformazione">
+                <div class="tab-content">
+                    <div class="process-section" *ngIf="product.processoTrasformazioneId; else noProcess">
+                        <mat-card class="process-card" appearance="outlined">
+                            <mat-card-header>
+                                <mat-card-title>
+                                    <mat-icon>engineering</mat-icon>
+                                    <span *ngIf="product.processoTrasformazioneNome; else loadingNome">
+                                        {{ product.processoTrasformazioneNome }}
+                                    </span>
+                                    <ng-template #loadingNome>
+                                        Processo di Trasformazione
+                                    </ng-template>
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="process-info">
+                                    <div class="info-row">
+                                        <mat-icon>tag</mat-icon>
+                                        <span><strong>ID Processo:</strong> {{ product.processoTrasformazioneId
+                                            }}</span>
+                                    </div>
+                                    <p class="process-description">
+                                        Questo prodotto è stato ottenuto tramite un processo di trasformazione
+                                        documentato e tracciabile.
+                                    </p>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+
+                    <ng-template #noProcess>
+                        <div class="empty-state">
+                            <mat-icon class="empty-icon">engineering</mat-icon>
+                            <h4>Nessun processo di trasformazione</h4>
+                            <p>Questo prodotto non è associato a un processo di trasformazione specifico.</p>
+                        </div>
+                    </ng-template>
+                </div>
+            </mat-tab>
+
+            <!-- Tab Certificazioni -->
+            <mat-tab label="Certificazioni">
+                <div class="tab-content">
+                    <div class="certifications-section" *ngIf="product.certificazioni?.length; else noCertifications">
+                        <div class="certifications-grid">
+                            <mat-card class="certification-card" appearance="outlined"
+                                *ngFor="let cert of product.certificazioni; trackBy: trackByCertId">
+                                <mat-card-header>
+                                    <mat-card-title class="cert-name">{{ cert.nomeCertificazione }}</mat-card-title>
+                                    <mat-card-subtitle class="cert-entity">{{ cert.enteRilascio }}</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <div class="cert-details">
+                                        <div class="cert-dates">
+                                            <div class="cert-date">
+                                                <mat-icon>event</mat-icon>
+                                                <span>Rilascio: {{ formatDate(cert.dataRilascio) }}</span>
+                                            </div>
+                                            <div class="cert-date">
+                                                <mat-icon>event_available</mat-icon>
+                                                <span>Scadenza: {{ formatDate(cert.dataScadenza) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+
+                    <ng-template #noCertifications>
+                        <div class="empty-state">
+                            <mat-icon class="empty-icon">verified</mat-icon>
+                            <h4>Nessuna certificazione</h4>
+                            <p>Questo prodotto non ha ancora certificazioni associate.</p>
+                        </div>
+                    </ng-template>
+                </div>
+            </mat-tab>
+
+            <!-- Tab Informazioni Azienda -->
+            <mat-tab label="Info Azienda">
+                <div class="tab-content">
+                    <mat-card class="company-info-card" appearance="outlined">
+                        <mat-card-header>
+                            <mat-card-title>Informazioni Azienda</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="company-details">
+                                <div class="company-detail">
+                                    <mat-icon>business</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Nome Azienda</span>
+                                        <span class="detail-value">{{ getNomeAzienda() }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="company-detail">
+                                    <mat-icon>assignment_ind</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Partita IVA</span>
+                                        <span class="detail-value">{{ getPartitaIva() }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="company-detail">
+                                    <mat-icon>location_on</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Indirizzo Azienda</span>
+                                        <span class="detail-value">{{ getIndirizzoAzienda() }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="company-detail">
+                                    <mat-icon>description</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label">Descrizione Azienda</span>
+                                        <span class="detail-value">{{ getDescrizioneAzienda() }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+
+    <!-- Actions -->
+    <div mat-dialog-actions class="dialog-actions">
+        <div class="product-dates">
+            <div class="date-info">
+                <mat-icon>add</mat-icon>
+                <span>Creato: {{ product && formatDateTime(product.dataCreazione) }}</span>
+            </div>
+            <div class="date-info" *ngIf="product && product.dataUltimaModifica !== product.dataCreazione">
+                <mat-icon>edit</mat-icon>
+                <span>Modificato: {{ product && formatDateTime(product.dataUltimaModifica) }}</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button mat-button (click)="onClose()">
+                <mat-icon>close</mat-icon>
+                Chiudi
+            </button>
+        </div>
+    </div>
+</div>

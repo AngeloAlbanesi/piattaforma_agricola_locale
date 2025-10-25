@@ -1,0 +1,319 @@
+<div class="azienda-detail-container">
+    <!-- Header con navigazione -->
+    <div class="page-header">
+        <button mat-icon-button (click)="goBack()" class="back-button" aria-label="Torna indietro">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <div class="header-actions">
+            <button mat-icon-button (click)="shareAzienda()" class="share-button" aria-label="Condividi azienda">
+                <mat-icon>share</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stato di caricamento -->
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Caricamento dettagli azienda...</p>
+    </div>
+
+    <!-- Messaggio di errore -->
+    <div class="error-container" *ngIf="error && !isLoading">
+        <mat-card class="error-card">
+            <mat-card-content>
+                <div class="error-content">
+                    <mat-icon class="error-icon">error_outline</mat-icon>
+                    <h3>Errore nel caricamento</h3>
+                    <p>{{ error }}</p>
+                    <button mat-raised-button color="primary" (click)="retry()">
+                        <mat-icon>refresh</mat-icon>
+                        Riprova
+                    </button>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Contenuto principale dell'azienda -->
+    <div class="azienda-content" *ngIf="azienda && !isLoading">
+        <!-- Card principale con informazioni base -->
+        <mat-card class="main-azienda-card">
+            <mat-card-header class="azienda-header">
+                <div mat-card-avatar class="azienda-avatar"
+                    [style.background-color]="getTipologiaColor(azienda.tipologia)">
+                    <mat-icon>{{ getTipologiaIcon(azienda.tipologia) }}</mat-icon>
+                </div>
+
+                <div class="azienda-header-content">
+                    <mat-card-title class="azienda-title">{{ azienda.nomeAzienda }}</mat-card-title>
+                    <mat-card-subtitle class="azienda-subtitle">
+                        {{ getTipologiaLabel(azienda.tipologia) }}
+                        <span *ngIf="azienda.dataFondazione" class="founded-info">
+                            • Fondata nel {{ getFormattedDate(azienda.dataFondazione) }}
+                        </span>
+                    </mat-card-subtitle>
+
+                    <!-- Rating -->
+                    <div class="azienda-rating" *ngIf="azienda.rating">
+                        <div class="rating-stars">
+                            <mat-icon *ngFor="let star of getRatingStars(azienda.rating); let i = index"
+                                [color]="getRatingColor(azienda.rating)" class="rating-star">
+                                {{ star === 1 ? 'star' : star === 0.5 ? 'star_half' : 'star_border' }}
+                            </mat-icon>
+                        </div>
+                        <span class="rating-value">{{ azienda.rating.toFixed(1) }}</span>
+                    </div>
+                </div>
+            </mat-card-header>
+
+            <!-- Logo azienda -->
+            <div class="azienda-logo-container" *ngIf="azienda.logo">
+                <img [src]="azienda.logo" [alt]="azienda.nomeAzienda" class="azienda-logo">
+            </div>
+
+            <mat-card-content class="azienda-content">
+                <!-- Informazioni principali -->
+                <div class="azienda-info-grid">
+                    <div class="info-item">
+                        <mat-icon class="info-icon">location_on</mat-icon>
+                        <div class="info-content">
+                            <span class="info-label">Sede</span>
+                            <span class="info-value">{{ getFormattedAddress(azienda.indirizzo) }}</span>
+                            <div class="location-actions">
+                                <button mat-button color="primary" (click)="openGoogleMaps()" class="map-button">
+                                    <mat-icon>map</mat-icon>
+                                    Mappa
+                                </button>
+                                <button mat-button color="accent" (click)="openDirections()" class="directions-button">
+                                    <mat-icon>directions</mat-icon>
+                                    Indicazioni
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-item" *ngIf="hasContactInfo()">
+                        <mat-icon class="info-icon">contact_phone</mat-icon>
+                        <div class="info-content">
+                            <span class="info-label">Contatti</span>
+                            <div class="contact-list">
+                                <div class="contact-item" *ngIf="azienda.telefono">
+                                    <mat-icon class="contact-icon">phone</mat-icon>
+                                    <span>{{ azienda.telefono }}</span>
+                                    <button mat-icon-button (click)="callPhone()" aria-label="Chiama">
+                                        <mat-icon>call</mat-icon>
+                                    </button>
+                                </div>
+                                <div class="contact-item" *ngIf="azienda.email">
+                                    <mat-icon class="contact-icon">email</mat-icon>
+                                    <span>{{ azienda.email }}</span>
+                                    <button mat-icon-button (click)="sendEmail()" aria-label="Invia email">
+                                        <mat-icon>send</mat-icon>
+                                    </button>
+                                </div>
+                                <div class="contact-item" *ngIf="azienda.sito">
+                                    <mat-icon class="contact-icon">language</mat-icon>
+                                    <span>{{ azienda.sito }}</span>
+                                    <button mat-icon-button (click)="openExternalLink(azienda.sito)"
+                                        aria-label="Visita sito">
+                                        <mat-icon>open_in_new</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-item" *ngIf="azienda.numeroProdotti">
+                        <mat-icon class="info-icon">inventory_2</mat-icon>
+                        <div class="info-content">
+                            <span class="info-label">Prodotti</span>
+                            <span class="info-value">{{ azienda.numeroProdotti }} prodotti disponibili</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item" *ngIf="calculatedDistance !== null">
+                        <mat-icon class="info-icon">directions_car</mat-icon>
+                        <div class="info-content">
+                            <span class="info-label">Distanza</span>
+                            <span class="info-value">{{ calculatedDistance.toFixed(1) }} km da te</span>
+                            <button mat-icon-button (click)="refreshDistance()" matTooltip="Aggiorna distanza">
+                                <mat-icon>refresh</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Tabs per diverse sezioni -->
+        <mat-tab-group class="azienda-tabs" [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event)">
+            <!-- Tab Descrizione -->
+            <mat-tab label="Descrizione">
+                <div class="tab-content">
+                    <mat-card class="description-card">
+                        <mat-card-content>
+                            <div class="azienda-description" *ngIf="hasDescription()">
+                                <h3>Chi siamo</h3>
+                                <div class="description-content" [innerHTML]="sanitizeHtml(azienda!.descrizione!)">
+                                </div>
+                            </div>
+
+                            <div class="azienda-storia" *ngIf="hasStoria()">
+                                <mat-divider></mat-divider>
+                                <h3>La nostra storia</h3>
+                                <div class="storia-content" [innerHTML]="sanitizeHtml(azienda!.storia!)"></div>
+                            </div>
+
+                            <div class="azienda-valori" *ngIf="hasValori()">
+                                <mat-divider></mat-divider>
+                                <h3>I nostri valori</h3>
+                                <mat-chip-listbox>
+                                    <mat-chip *ngFor="let valore of azienda!.valori" class="value-chip">
+                                        {{ valore }}
+                                    </mat-chip>
+                                </mat-chip-listbox>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+
+            <!-- Tab Prodotti -->
+            <mat-tab label="Prodotti">
+                <div class="tab-content">
+                    <mat-card class="products-card">
+                        <mat-card-content>
+                            <h3>I nostri prodotti</h3>
+
+                            <div class="products-grid" *ngIf="hasProdotti()">
+                                <mat-card class="product-card" *ngFor="let prodotto of azienda!.prodotti.content"
+                                    [attr.aria-label]="getAriaLabelForProdotto(prodotto)">
+                                    <mat-card-content>
+                                        <div class="product-info" (click)="viewProdotto(prodotto)">
+                                            <h4>{{ prodotto.nome }}</h4>
+                                            <p *ngIf="prodotto.descrizione">{{ prodotto.descrizione | slice:0:100 }}...
+                                            </p>
+                                            <div class="product-details">
+                                                <span class="product-price">€{{ prodotto.prezzo.toFixed(2) }}</span>
+                                                <span class="product-availability">{{ prodotto.quantitaDisponibile }}
+                                                    disponibili</span>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
+
+                            <div class="empty-state" *ngIf="!hasProdotti()">
+                                <mat-icon class="empty-icon">inventory_2</mat-icon>
+                                <h4>Nessun prodotto disponibile</h4>
+                                <p>Questa azienda non ha prodotti al momento.</p>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+
+            <!-- Tab Mappa -->
+            <mat-tab label="Mappa">
+                <div class="tab-content">
+                    <mat-card class="map-card">
+                        <mat-card-content>
+                            <h3>Dove ci troviamo</h3>
+
+                            <!-- Stato di caricamento mappa -->
+                            <div class="map-loading" *ngIf="!showMap && !mapError">
+                                <mat-spinner diameter="30"></mat-spinner>
+                                <p>Caricamento mappa...</p>
+                            </div>
+
+                            <!-- Errore mappa -->
+                            <div class="map-error" *ngIf="mapError">
+                                <mat-icon class="error-icon">map</mat-icon>
+                                <p>{{ mapError }}</p>
+                            </div>
+
+                            <!-- Mappa -->
+                            <div class="map-container" *ngIf="showMap && mapCenter">
+                                <div class="map-placeholder">
+                                    <mat-icon class="map-icon">map</mat-icon>
+                                    <h4>Mappa interattiva</h4>
+                                    <p>Coordinate: {{ mapCenter.lat.toFixed(6) }}, {{ mapCenter.lng.toFixed(6) }}</p>
+                                    <div class="map-actions">
+                                        <button mat-raised-button color="primary" (click)="openGoogleMaps()">
+                                            <mat-icon>map</mat-icon>
+                                            Apri in Google Maps
+                                        </button>
+                                        <button mat-raised-button color="accent" (click)="openDirections()">
+                                            <mat-icon>directions</mat-icon>
+                                            Ottieni indicazioni
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+
+            <!-- Tab Certificazioni -->
+            <mat-tab label="Certificazioni" *ngIf="hasCertificazioni()">
+                <div class="tab-content">
+                    <mat-card class="certifications-card">
+                        <mat-card-content>
+                            <h3>Le nostre certificazioni</h3>
+
+                            <div class="certifications-grid">
+                                <mat-card class="certification-card"
+                                    *ngFor="let certificazione of azienda!.certificazioni">
+                                    <mat-card-content>
+                                        <div class="certification-header">
+                                            <mat-icon class="certification-icon">verified</mat-icon>
+                                            <h4>{{ certificazione.tipoCertificazione }}</h4>
+                                        </div>
+
+                                        <div class="certification-details">
+                                            <p><strong>Numero:</strong> {{ certificazione.numeroRiferimento }}</p>
+                                            <p><strong>Ente:</strong> {{ certificazione.enteRilascio }}</p>
+                                            <p><strong>Rilascio:</strong> {{
+                                                getFormattedDate(certificazione.dataRilascio) }}</p>
+                                            <p><strong>Scadenza:</strong> {{
+                                                getFormattedDate(certificazione.dataScadenza) }}</p>
+                                        </div>
+
+                                        <div class="certification-actions" *ngIf="certificazione.documentoUrl">
+                                            <button mat-stroked-button
+                                                (click)="openExternalLink(certificazione.documentoUrl)">
+                                                <mat-icon>description</mat-icon>
+                                                Visualizza documento
+                                            </button>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+
+            <!-- Tab Social -->
+            <mat-tab label="Social" *ngIf="hasSocial()">
+                <div class="tab-content">
+                    <mat-card class="social-card">
+                        <mat-card-content>
+                            <h3>Seguici sui social</h3>
+
+                            <div class="social-grid">
+                                <a *ngFor="let social of azienda!.social" [href]="social.url" target="_blank"
+                                    rel="noopener noreferrer" class="social-link" mat-raised-button>
+                                    <mat-icon>{{ getSocialIcon(social.tipo) }}</mat-icon>
+                                    {{ getSocialLabel(social.tipo) }}
+                                </a>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

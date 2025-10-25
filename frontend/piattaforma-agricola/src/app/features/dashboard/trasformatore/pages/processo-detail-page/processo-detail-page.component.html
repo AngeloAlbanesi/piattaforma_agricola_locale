@@ -1,0 +1,217 @@
+<div class="processo-detail-page">
+    <!-- Header with Back Button -->
+    <div class="page-header">
+        <button mat-icon-button (click)="goBack()" class="back-button" matTooltip="Torna alla lista processi">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-content">
+            <h1 class="mat-headline-5">Dettagli Processo di Trasformazione</h1>
+            <p class="mat-body-2 header-subtitle">Visualizza informazioni complete e fasi di lavorazione</p>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+    </div>
+
+    <!-- Error State -->
+    <mat-card *ngIf="error && !isLoading" appearance="outlined" class="error-card">
+        <mat-card-content>
+            <div class="error-content">
+                <mat-icon color="warn">error_outline</mat-icon>
+                <p>Impossibile caricare i dettagli del processo.</p>
+                <button mat-raised-button color="primary" (click)="goBack()">
+                    Torna alla Lista
+                </button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Process Details -->
+    <div *ngIf="processo && !isLoading" class="process-content">
+
+        <!-- Process Overview Card -->
+        <mat-card appearance="outlined" class="overview-card mat-elevation-z2">
+            <mat-card-header>
+                <div mat-card-avatar class="process-avatar">
+                    <mat-icon>science</mat-icon>
+                </div>
+                <mat-card-title class="mat-headline-6">Informazioni Generali</mat-card-title>
+                <mat-card-subtitle>Dettagli del processo di trasformazione</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <mat-icon color="primary">tag</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label mat-caption">ID Processo</span>
+                            <span class="info-value mat-body-1">{{ processo.idProcesso }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <mat-icon color="primary">label</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label mat-caption">Nome Processo</span>
+                            <span class="info-value mat-body-1">{{ processo.nomeProcesso }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <mat-icon color="primary">person</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label mat-caption">Trasformatore</span>
+                            <span class="info-value mat-body-1">{{ processo.nomeTrasformatore }} {{
+                                processo.cognomeTrasformatore }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <mat-icon color="primary">business</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label mat-caption">Azienda</span>
+                            <span class="info-value mat-body-1">{{ processo.aziendaTrasformatore }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <mat-icon color="primary">format_list_numbered</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label mat-caption">Numero Fasi</span>
+                            <span class="info-value mat-body-1">
+                                <mat-chip>{{ processo.fasi.length || 0 }}</mat-chip>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="info-item full-width">
+                        <div class="info-icon">
+                            <mat-icon color="primary">description</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label mat-caption">Descrizione</span>
+                            <span class="info-value mat-body-1">{{ processo.descrizioneProcesso || 'Nessuna descrizione
+                                disponibile' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item full-width" *ngIf="processo.noteTecniche">
+                        <div class="info-icon">
+                            <mat-icon color="primary">sticky_note_2</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label mat-caption">Note Tecniche</span>
+                            <span class="info-value mat-body-1">{{ processo.noteTecniche }}</span>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Fasi di Lavorazione Section -->
+        <mat-card appearance="outlined" class="fasi-card mat-elevation-z2">
+            <mat-card-header>
+                <div mat-card-avatar class="fasi-avatar">
+                    <mat-icon>engineering</mat-icon>
+                </div>
+                <mat-card-title class="mat-headline-6">Fasi di Lavorazione</mat-card-title>
+                <mat-card-subtitle>Visualizza tutte le fasi associate a questo processo</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+
+                <!-- Empty State -->
+                <div *ngIf="!processo.fasi || processo.fasi.length === 0" class="empty-state">
+                    <mat-icon>info</mat-icon>
+                    <p>Nessuna fase di lavorazione associata a questo processo.</p>
+                </div>
+
+                <!-- Fasi List -->
+                <mat-accordion *ngIf="processo.fasi && processo.fasi.length > 0" class="fasi-accordion" multi>
+                    <mat-expansion-panel *ngFor="let fase of processo.fasi" class="fase-panel mat-elevation-z1">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <div class="panel-title-content">
+                                    <mat-icon class="fase-icon">build_circle</mat-icon>
+                                    <div class="fase-info">
+                                        <span class="fase-name mat-body-1">{{ fase.nome }}</span>
+                                        <span class="fase-order mat-caption">Fase {{ fase.ordineEsecuzione }}</span>
+                                    </div>
+                                </div>
+                            </mat-panel-title>
+                            <mat-panel-description>
+                                <mat-chip class="fonte-chip"
+                                    [color]="fase.fonteMateriaPrima.tipo === 'INTERNA' ? 'accent' : 'primary'">
+                                    <mat-icon>{{ fase.fonteMateriaPrima.tipo === 'INTERNA' ? 'home' : 'public'
+                                        }}</mat-icon>
+                                    {{ getFonteTipoLabel(fase.fonteMateriaPrima.tipo) }}
+                                </mat-chip>
+                            </mat-panel-description>
+                        </mat-expansion-panel-header>
+
+                        <div class="fase-details">
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <mat-icon class="detail-icon">tag</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label mat-caption">ID</span>
+                                        <span class="detail-value mat-body-2">{{ fase.id }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="detail-item">
+                                    <mat-icon class="detail-icon">sort</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label mat-caption">Ordine Esecuzione</span>
+                                        <span class="detail-value mat-body-2">{{ fase.ordineEsecuzione }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="detail-item full-width">
+                                    <mat-icon class="detail-icon">description</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label mat-caption">Descrizione</span>
+                                        <span class="detail-value mat-body-2">{{ fase.descrizione || 'Nessuna
+                                            descrizione' }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="detail-item full-width">
+                                    <mat-icon class="detail-icon">inventory_2</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label mat-caption">Materia Prima Utilizzata</span>
+                                        <span class="detail-value mat-body-2">{{ fase.materiaPrimaUtilizzata }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="detail-item full-width highlight">
+                                    <mat-icon class="detail-icon">{{ fase.fonteMateriaPrima.tipo === 'INTERNA' ? 'home'
+                                        : 'public' }}</mat-icon>
+                                    <div class="detail-content">
+                                        <span class="detail-label mat-caption">Fonte Materia Prima</span>
+                                        <span class="detail-value mat-body-2">
+                                            <strong>{{ getFonteTipoLabel(fase.fonteMateriaPrima.tipo) }}:</strong> {{
+                                            getFonteName(fase) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+
+            </mat-card-content>
+        </mat-card>
+
+    </div>
+</div>

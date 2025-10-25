@@ -1,0 +1,29 @@
+<mat-card class="evento-card" appearance="outlined" *ngIf="evento">
+  <mat-card-header>
+    <mat-card-title>{{ evento.titolo }}</mat-card-title>
+    <mat-card-subtitle>{{ evento.organizzatoreNome }} - {{ evento.categoria }}</mat-card-subtitle>
+  </mat-card-header>
+  <img mat-card-image [src]="evento.immagineUrl || 'assets/placeholder.jpg'" alt="Immagine evento">
+  <mat-card-content>
+    <p class="description">{{ evento.descrizione | slice:0:100 }}...</p>
+    
+    <div class="details">
+      <p><mat-icon>schedule</mat-icon> <strong>Inizio:</strong> {{ evento.dataInizio | date:'short' }}</p>
+      <p><mat-icon>schedule</mat-icon> <strong>Fine:</strong> {{ evento.dataFine | date:'short' }}</p>
+      <p><mat-icon>location_on</mat-icon> <strong>Luogo:</strong> {{ evento.luogo }}</p>
+      <p><mat-icon>paid</mat-icon> <strong>Costo:</strong> {{ evento.costo === 0 || evento.costo === undefined ? 'Gratuito' : (evento.costo | currency:'EUR':'symbol':'1.2-2') }}</p>
+      <p><mat-icon>how_to_reg</mat-icon> <strong>Partecipanti:</strong> {{ evento.partecipantiConfermati }} / {{ evento.partecipantiPrevisti }}</p>
+    </div>
+
+    <div class="status-chips">
+      <mat-chip-listbox>
+        <mat-chip [color]="getStatoClass(evento.stato)" selected>{{ evento.stato }}</mat-chip>
+      </mat-chip-listbox>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button color="primary" (click)="onViewDetails()">DETTAGLI</button>
+    <button mat-button color="accent" (click)="onEditEvent()">MODIFICA</button>
+    <button mat-button color="warn" (click)="onDeleteEvent()">ELIMINA</button>
+  </mat-card-actions>
+</mat-card>

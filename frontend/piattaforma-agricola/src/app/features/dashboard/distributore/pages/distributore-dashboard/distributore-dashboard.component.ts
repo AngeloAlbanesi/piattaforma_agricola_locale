@@ -1,0 +1,229 @@
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { Subject, takeUntil, catchError } from 'rxjs';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+
+import { AuthService } from '../../../../../core/services/auth.service';
+import { DistributoreService } from '../../../../../core/services/distributore.service';
+import { DistributoreStatsDTO } from '../../../../../core/models/distributore.models';
+import { DistributoreStatsOverviewComponent } from '../../components/distributore-stats-overview/distributore-stats-overview.component';
+import { DistributoreQuickActionsComponent } from '../../components/distributore-quick-actions/distributore-quick-actions.component';
+import { PacchettiManagementComponent } from '../../components/pacchetti-management/pacchetti-management.component';
+import { DistributoreProductFormDialogComponent } from '../../components/distributore-product-form-dialog/distributore-product-form-dialog.component';
+import { PersonalDataCardComponent, CompanyDataCardComponent } from '../../../shared/components';
+import { DistributoreProdottiManagementComponent } from '../../components/distributore-prodotti-management/distributore-prodotti-management.component';
+import { CertificazioniDistributoreComponent } from '../../components/certificazioni-management/certificazioni-distributore.component';
+
+@Component({
+    selector: 'app-distributore-dashboard',
+    standalone: true,
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
+        MatProgressSpinnerModule,
+        MatTabsModule,
+        MatTooltipModule,
+        MatDialogModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        DistributoreStatsOverviewComponent,
+        DistributoreQuickActionsComponent,
+        PacchettiManagementComponent,
+        PersonalDataCardComponent,
+        CompanyDataCardComponent,
+        DistributoreProdottiManagementComponent,
+        CertificazioniDistributoreComponent
+    ],
+    templateUrl: './distributore-dashboard.component.html',
+    styleUrls: ['./distributore-dashboard.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class DistributoreDashboardComponent implements OnInit, OnDestroy {
+    private destroy$ = new Subject<void>();
+
+    // Dati utente
+    userName: string = '';
+    userId: number | null = null;
+
+    // Statistiche dashboard
+    stats: DistributoreStatsDTO | null = null;
+    isLoading = false;
+
+    // Tab selezionata
+    selectedTab = 0;
+
+    constructor(
+        private authService: AuthService,
+        private distributoreService: DistributoreService,
+        private router: Router,
+        private snackBar: MatSnackBar,
+        private dialog: MatDialog
+    ) { }
+
+    ngOnInit(): void {
+        this.initializeUserData();
+        this.loadDashboardStats();
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    // === INIZIALIZZAZIONE ===
+
+    private initializeUserData(): void {
+        const authState = this.authService.authState();
+        this.userName = authState.nome || 'Distributore';
+        this.userId = authState.userId || null;
+    }
+
+    private loadDashboardStats(): void {
+        // Statistiche disabilitate temporaneamente: il backend per le statistiche distributore
+        // non è ancora implementato e la chiamata bloccava il rendering della pagina.
+        // Evitiamo la chiamata e mostriamo la dashboard senza dati statistici.
+        // Quando l'API sarà disponibile, ripristinare la chiamata a
+        // this.distributoreService.getDistributoreStats() e rimuovere queste righe.
+        this.stats = null;
+        this.isLoading = false;
+    }
+
+    // === NAVIGAZIONE ===
+
+    navigateToPackages(): void {
+        this.router.navigate(['/pacchetti']);
+    }
+
+    navigateToProducts(): void {
+        this.router.navigate(['/prodotti']);
+    }
+
+    navigateToCreateProduct(): void {
+        this.router.navigate(['/prodotti/nuovo']);
+    }
+
+    navigateToOrders(): void {
+        this.router.navigate(['/ordini']);
+    }
+
+    navigateToHome(): void {
+        this.router.navigate(['/']);
+    }
+
+    navigateToProfile(): void {
+        this.router.navigate(['/profilo']);
+    }
+
+    // === GESTIONE TAB ===
+
+    onTabChange(index: number): void {
+        this.selectedTab = index;
+    }
+
+    // === AZIONI RAPIDE ===
+
+    onQuickAction(action: string): void {
+        switch (action) {
+            case 'create-product':
+                this.openCreateProductDialog();
+                break;
+            case 'create-package':
+                this.router.navigate(['/pacchetti/nuovo']);
+                break;
+            case 'manage-packages':
+                this.navigateToPackages();
+                break;
+            case 'view-products':
+                this.navigateToProducts();
+                break;
+            case 'view-orders':
+                this.navigateToOrders();
+                break;
+            case 'edit-profile':
+                this.navigateToProfile();
+                break;
+            default:
+                console.log('Azione non gestita:', action);
+        }
+    }
+
+    // === UTILITIES ===
+
+    openCreateProductDialog(): void {
+        const dialogRef = this.dialog.open(DistributoreProductFormDialogComponent, {
+            width: '600px',
+            data: {
+                mode: 'create'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.snackBar.open('Prodotto creato con successo', 'Chiudi', { duration: 3000 });
+            }
+        });
+    }
+
+    refreshData(): void {
+        this.loadDashboardStats();
+    }
+
+    logout(): void {
+        this.authService.logout();
+    }
+
+    // === METODI PUBBLICI PER TEMPLATE ===
+
+    formatCurrency(value: number): string {
+        return this.distributoreService.formatCurrency(value);
+    }
+
+    // === GETTERS PER TEMPLATE ===
+
+    get welcomeMessage(): string {
+        const hour = new Date().getHours();
+        let greeting = 'Buongiorno';
+
+        if (hour >= 12 && hour < 18) {
+            greeting = 'Buon pomeriggio';
+        } else if (hour >= 18) {
+            greeting = 'Buonasera';
+        }
+
+        return `${greeting}, ${this.userName}!`;
+    }
+
+    get hasStats(): boolean {
+        return this.stats !== null;
+    }
+
+    get totalPackages(): number {
+        return this.stats?.pacchettiTotali || 0;
+    }
+
+    get activePackages(): number {
+        return this.stats?.pacchettiAttivi || 0;
+    }
+
+    get soldPackages(): number {
+        return this.stats?.pacchettiVenduti || 0;
+    }
+
+    get totalRevenue(): number {
+        return this.stats?.ricavoTotale || 0;
+    }
+
+    get averagePackagePrice(): number {
+        return this.stats?.mediaPrezzoPacchetto || 0;
+    }
+}

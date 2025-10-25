@@ -1,0 +1,83 @@
+// Stili per le notifiche MatSnackBar
+.mat-snack-bar {
+  // Stili di base
+  &.success-notification {
+    background-color: #4caf50;
+    color: white;
+    
+    .mat-simple-snackbar-action {
+      color: white;
+    }
+  }
+  
+  &.error-notification {
+    background-color: #f44336;
+    color: white;
+    
+    .mat-simple-snackbar-action {
+      color: white;
+    }
+  }
+  
+  &.warning-notification {
+    background-color: #ff9800;
+    color: white;
+    
+    .mat-simple-snackbar-action {
+      color: white;
+    }
+  }
+  
+  &.info-notification {
+    background-color: #2196f3;
+    color: white;
+    
+    .mat-simple-snackbar-action {
+      color: white;
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .mat-snack-bar {
+    &.success-notification {
+      background-color: #388e3c;
+    }
+    
+    &.error-notification {
+      background-color: #d32f2f;
+    }
+    
+    &.warning-notification {
+      background-color: #f57c00;
+    }
+    
+    &.info-notification {
+      background-color: #1976d2;
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .mat-snack-bar {
+    border: 2px solid currentColor;
+    
+    &.success-notification {
+      border-color: #4caf50;
+    }
+    
+    &.error-notification {
+      border-color: #f44336;
+    }
+    
+    &.warning-notification {
+      border-color: #ff9800;
+    }
+    
+    &.info-notification {
+      border-color: #2196f3;
+    }
+  }
+}

@@ -1,0 +1,237 @@
+<div class="gestore-platforma-dashboard">
+    <!-- Header Dashboard -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="welcome-section">
+                <h1 class="welcome-title">{{ welcomeMessage }}</h1>
+                <p class="welcome-subtitle">La tua dashboard per la gestione della piattaforma</p>
+            </div>
+
+            <div class="header-actions">
+                <button mat-icon-button (click)="navigateToHome()" matTooltip="Home">
+                    <mat-icon>home</mat-icon>
+                </button>
+                <button mat-icon-button (click)="refreshData()" matTooltip="Aggiorna dati">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+                <button mat-icon-button (click)="logout()" matTooltip="Logout">
+                    <mat-icon>logout</mat-icon>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner></mat-spinner>
+        <p>Caricamento dashboard...</p>
+    </div>
+
+    <!-- Main Content -->
+    <main class="dashboard-content" *ngIf="!isLoading">
+        <!-- Dati Personali Section -->
+        <section class="personal-data-section">
+            <app-personal-data-card></app-personal-data-card>
+        </section>
+
+        <!-- Statistiche Overview -->
+        <section class="stats-section" *ngIf="hasStats">
+            <app-gestore-stats-overview [totalUsers]="totalUsers" [activeUsers]="activeUsers"
+                [newUsersThisMonth]="newUsersThisMonth" [totalProducts]="totalProducts"
+                [approvedProducts]="approvedProducts" [totalCompanies]="totalCompanies"
+                [approvedCompanies]="approvedCompanies" [totalEvents]="totalEvents" [publishedEvents]="publishedEvents"
+                [totalTransactions]="totalTransactions" [totalRevenue]="totalRevenue" [userGrowthRate]="userGrowthRate"
+                [productGrowthRate]="productGrowthRate" [eventGrowthRate]="eventGrowthRate">
+            </app-gestore-stats-overview>
+        </section>
+
+        <!-- Placeholder quando le statistiche non sono disponibili -->
+        <section class="stats-placeholder-section" *ngIf="!hasStats">
+            <mat-card appearance="outlined">
+                <mat-card-content>
+                    <p class="placeholder-text">
+                        <mat-icon>insights_off</mat-icon>
+                        Statistiche non disponibili al momento.
+                    </p>
+                </mat-card-content>
+            </mat-card>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions-section">
+            <app-gestore-quick-actions (action)="onQuickAction($event)"></app-gestore-quick-actions>
+        </section>
+
+        <!-- Tab Navigation -->
+        <section class="tabs-section">
+            <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event.index)">
+                <!-- Tab Utenti -->
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>people</mat-icon>
+                        Utenti
+                    </ng-template>
+                    <div class="tab-content">
+                        <app-utenti-management></app-utenti-management>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Accreditamenti -->
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>assignment_turned_in</mat-icon>
+                        Accreditamenti
+                    </ng-template>
+                    <div class="tab-content">
+                        <app-accreditamenti-management></app-accreditamenti-management>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Prodotti -->
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>inventory_2</mat-icon>
+                        Prodotti
+                    </ng-template>
+                    <div class="tab-content">
+                        <div class="placeholder-section">
+                            <mat-card appearance="outlined">
+                                <mat-card-content>
+                                    <p class="placeholder-text">
+                                        <mat-icon>inventory_2</mat-icon>
+                                        Gestione prodotti in sviluppo.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Aziende -->
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>business</mat-icon>
+                        Aziende
+                    </ng-template>
+                    <div class="tab-content">
+                        <div class="placeholder-section">
+                            <mat-card appearance="outlined">
+                                <mat-card-content>
+                                    <p class="placeholder-text">
+                                        <mat-icon>business</mat-icon>
+                                        Gestione aziende in sviluppo.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Eventi -->
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>event</mat-icon>
+                        Eventi
+                    </ng-template>
+                    <div class="tab-content">
+                        <div class="placeholder-section">
+                            <mat-card appearance="outlined">
+                                <mat-card-content>
+                                    <p class="placeholder-text">
+                                        <mat-icon>event</mat-icon>
+                                        Gestione eventi in sviluppo.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Tab Report -->
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>analytics</mat-icon>
+                        Report
+                    </ng-template>
+                    <div class="tab-content">
+                        <div class="placeholder-section">
+                            <mat-card appearance="outlined">
+                                <mat-card-content>
+                                    <p class="placeholder-text">
+                                        <mat-icon>analytics</mat-icon>
+                                        Report e analisi in sviluppo.
+                                    </p>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </section>
+
+        <!-- Sezione Riepilogo -->
+        <section class="summary-section" *ngIf="hasStats">
+            <div class="summary-grid">
+                <!-- Card Gestione Utenti -->
+                <mat-card class="summary-card" appearance="outlined">
+                    <mat-card-header>
+                        <mat-card-title>Gestione Utenti</mat-card-title>
+                        <mat-card-subtitle>{{ totalUsers }} utenti totali</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="card-action">
+                            <button mat-raised-button color="primary" (click)="onQuickAction('view-users')">
+                                Gestisci utenti
+                                <mat-icon>people</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Card Gestione Prodotti -->
+                <mat-card class="summary-card" appearance="outlined">
+                    <mat-card-header>
+                        <mat-card-title>Gestione Prodotti</mat-card-title>
+                        <mat-card-subtitle>{{ totalProducts }} prodotti totali</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="card-action">
+                            <button mat-raised-button color="accent" (click)="onQuickAction('view-products')">
+                                Gestisci prodotti
+                                <mat-icon>inventory_2</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <!-- Card Gestione Aziende -->
+                <mat-card class="summary-card" appearance="outlined">
+                    <mat-card-header>
+                        <mat-card-title>Gestione Aziende</mat-card-title>
+                        <mat-card-subtitle>{{ totalCompanies }} aziende totali</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="card-action">
+                            <button mat-raised-button color="warn" (click)="onQuickAction('view-companies')">
+                                Gestisci aziende
+                                <mat-icon>business</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Dashboard -->
+    <footer class="dashboard-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Piattaforma Agricola Locale. Tutti i diritti riservati.</p>
+            <div class="footer-links">
+                <a mat-button color="primary" href="/help">Aiuto</a>
+                <a mat-button color="primary" href="/terms">Termini</a>
+                <a mat-button color="primary" href="/privacy">Privacy</a>
+            </div>
+        </div>
+    </footer>
+</div>

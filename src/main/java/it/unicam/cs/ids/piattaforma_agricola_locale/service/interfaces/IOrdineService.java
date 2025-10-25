@@ -142,7 +142,7 @@ public interface IOrdineService {
      *                                                                                                          degli
      *                                                                                                          ordini
      */
-    List<Ordine> creaOrdiniDaCarrello(Acquirente acquirente) throws OrdineException;
+    List<Ordine> creaOrdiniDaCarrello(Acquirente acquirente, String metodoPagamento) throws OrdineException;
 
     /**
      * Conferma il pagamento di un ordine utilizzando la strategia di pagamento

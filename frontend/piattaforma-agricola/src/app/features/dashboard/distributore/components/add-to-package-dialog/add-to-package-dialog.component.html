@@ -1,0 +1,190 @@
+<div class="add-to-package-dialog">
+    <div class="dialog-header" mat-dialog-title>
+        <div class="title-section">
+            <mat-icon>add_box</mat-icon>
+            <h2>Aggiungi a Pacchetto</h2>
+        </div>
+    </div>
+
+    <form [formGroup]="addForm" (ngSubmit)="onSubmit()" class="add-form">
+        <mat-dialog-content class="dialog-content">
+            <!-- Product Summary -->
+            <div class="product-summary">
+                <div class="product-info">
+                    <div class="product-image">
+                        <img 
+                            [src]="data.product.immagineUrl || '/assets/images/product-placeholder.jpg'" 
+                            [alt]="data.product.nome"
+                            (error)="$event.target.src='/assets/images/product-placeholder.jpg'">
+                    </div>
+                    
+                    <div class="product-details">
+                        <h3>{{ data.product.nome }}</h3>
+                        <p class="product-description" *ngIf="data.product.descrizione">
+                            {{ data.product.descrizione | slice:0:100 }}{{ data.product.descrizione.length > 100 ? '...' : '' }}
+                        </p>
+                        
+                        <div class="product-meta">
+                            <div class="meta-item">
+                                <mat-icon>euro</mat-icon>
+                                <span>{{ formatCurrency(data.product.prezzo) }}</span>
+                                <span class="unit" *ngIf="data.product.unitaMisura">/ {{ data.product.unitaMisura }}</span>
+                            </div>
+                            
+                            <div class="meta-item">
+                                <mat-icon>inventory</mat-icon>
+                                <span>{{ data.product.quantitaDisponibile }} {{ data.product.unitaMisura || 'unità' }} disponibili</span>
+                            </div>
+                            
+                            <div class="meta-item" *ngIf="data.product.produttore">
+                                <mat-icon>business</mat-icon>
+                                <span>{{ data.product.produttore.nomeAzienda }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Selection -->
+            <div class="action-selection">
+                <h4>Dove vuoi aggiungere questo prodotto?</h4>
+                
+                <mat-radio-group formControlName="action" (change)="onActionChange()">
+                    <mat-radio-button value="existing" [disabled]="!hasAvailablePackages">
+                        <div class="radio-option">
+                            <div class="option-header">
+                                <mat-icon>inventory_2</mat-icon>
+                                <span>Aggiungi a pacchetto esistente</span>
+                            </div>
+                            <div class="option-description">
+                                Seleziona uno dei tuoi pacchetti esistenti
+                            </div>
+                        </div>
+                    </mat-radio-button>
+                    
+                    <mat-radio-button value="new">
+                        <div class="radio-option">
+                            <div class="option-header">
+                                <mat-icon>add_circle</mat-icon>
+                                <span>Crea nuovo pacchetto</span>
+                            </div>
+                            <div class="option-description">
+                                Inizia un nuovo pacchetto con questo prodotto
+                            </div>
+                        </div>
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+            <!-- Package Selection (for existing packages) -->
+            <div class="package-selection" *ngIf="isExistingAction">
+                <div class="loading-packages" *ngIf="isLoadingPackages">
+                    <mat-spinner diameter="30"></mat-spinner>
+                    <span>Caricamento pacchetti...</span>
+                </div>
+
+                <div class="no-packages" *ngIf="!isLoadingPackages && !hasAvailablePackages">
+                    <mat-icon class="warning-icon">warning</mat-icon>
+                    <h4>Nessun pacchetto disponibile</h4>
+                    <p>Non hai pacchetti in progettazione o attivi. Crea prima un nuovo pacchetto.</p>
+                </div>
+
+                <div class="packages-list" *ngIf="!isLoadingPackages && hasAvailablePackages">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Seleziona Pacchetto</mat-label>
+                        <mat-select formControlName="packageId">
+                            <mat-option 
+                                *ngFor="let package of availablePackages" 
+                                [value]="package.id">
+                                <div class="package-option">
+                                    <div class="package-info">
+                                        <span class="package-name">{{ package.nome }}</span>
+                                        <span class="package-price">{{ formatCurrency(package.prezzo) }}</span>
+                                    </div>
+                                    <div class="package-meta">
+                                        <span class="package-status" [style.color]="getPackageStatusColor(package.stato)">
+                                            {{ getPackageStatusLabel(package.stato) }}
+                                        </span>
+                                        <span class="package-products">{{ package.prodotti.length || 0 }} prodotti</span>
+                                    </div>
+                                </div>
+                            </mat-option>
+                        </mat-select>
+                        <mat-icon matSuffix>inventory_2</mat-icon>
+                        <mat-error *ngIf="addForm.get('packageId')?.hasError('required') && addForm.get('packageId')?.touched">
+                            {{ packageValidationMessage }}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- New Package Info (for new packages) -->
+            <div class="new-package-info" *ngIf="isNewAction">
+                <div class="info-card">
+                    <mat-icon class="info-icon">info</mat-icon>
+                    <div class="info-content">
+                        <h4>Creazione Nuovo Pacchetto</h4>
+                        <p>Sarai reindirizzato alla creazione di un nuovo pacchetto con questo prodotto già selezionato.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quantity Selection -->
+            <div class="quantity-selection">
+                <h4>Quantità</h4>
+                
+                <mat-form-field appearance="outline" class="quantity-field">
+                    <mat-label>Quantità</mat-label>
+                    <input 
+                        matInput 
+                        type="number" 
+                        formControlName="quantity"
+                        [max]="maxQuantity"
+                        min="1"
+                        (input)="onQuantityChange()">
+                    <span matSuffix>{{ data.product.unitaMisura || 'unità' }}</span>
+                    <mat-hint>Massimo {{ maxQuantity }} {{ data.product.unitaMisura || 'unità' }}</mat-hint>
+                    <mat-error *ngIf="addForm.get('quantity')?.invalid && addForm.get('quantity')?.touched">
+                        {{ quantityValidationMessage }}
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Quantity Summary -->
+                <div class="quantity-summary">
+                    <div class="summary-row">
+                        <span class="label">Prezzo unitario:</span>
+                        <span class="value">{{ formatCurrency(data.product.prezzo) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Quantità:</span>
+                        <span class="value">{{ selectedQuantity }} {{ data.product.unitaMisura || 'unità' }}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span class="label">Totale:</span>
+                        <span class="value">{{ formatCurrency(totalPrice) }}</span>
+                    </div>
+                </div>
+            </div>
+        </mat-dialog-content>
+
+        <mat-dialog-actions class="dialog-actions">
+            <button 
+                mat-button 
+                type="button" 
+                (click)="onCancel()"
+                [disabled]="isLoading">
+                Annulla
+            </button>
+            
+            <button 
+                mat-raised-button 
+                color="primary" 
+                type="submit"
+                [disabled]="isLoading || addForm.invalid || (!hasAvailablePackages && isExistingAction)">
+                <mat-icon *ngIf="!isLoading">{{ isExistingAction ? 'add' : 'create' }}</mat-icon>
+                <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                {{ isExistingAction ? 'Aggiungi al Pacchetto' : 'Crea Nuovo Pacchetto' }}
+            </button>
+        </mat-dialog-actions>
+    </form>
+</div>

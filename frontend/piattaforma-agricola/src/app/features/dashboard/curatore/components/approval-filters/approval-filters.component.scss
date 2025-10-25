@@ -1,0 +1,180 @@
+.approval-filters {
+    margin-bottom: 24px;
+
+    .filters-card {
+        mat-card-content {
+            padding: 16px;
+        }
+    }
+
+    .filters-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .search-section {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .search-field {
+            width: 100%;
+            font-size: 16px;
+
+            mat-icon {
+                color: #757575;
+            }
+        }
+
+        .quick-filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+
+            .filter-select {
+                flex: 1;
+                min-width: 200px;
+
+                mat-icon {
+                    color: #757575;
+                }
+            }
+        }
+    }
+
+    .advanced-filters {
+        margin-top: 8px;
+        box-shadow: none !important;
+        border: 1px solid #e0e0e0;
+
+        mat-expansion-panel-header {
+            mat-panel-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: #666;
+
+                mat-icon {
+                    color: #2196f3;
+                }
+            }
+        }
+
+        .advanced-filters-content {
+            padding: 16px 0;
+
+            .date-filters {
+                display: flex;
+                gap: 16px;
+                margin-bottom: 16px;
+                flex-wrap: wrap;
+
+                .date-field {
+                    flex: 1;
+                    min-width: 200px;
+                }
+            }
+
+            .filter-actions {
+                display: flex;
+                justify-content: flex-end;
+
+                button {
+                    mat-icon {
+                        margin-right: 4px;
+                    }
+                }
+            }
+        }
+    }
+
+    .main-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding-top: 8px;
+
+        button {
+            mat-icon {
+                margin-right: 4px;
+            }
+        }
+
+        .filter-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background-color: #e3f2fd;
+            border-radius: 16px;
+            color: #1976d2;
+            font-size: 13px;
+            font-weight: 500;
+
+            mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+            }
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .approval-filters {
+        .search-section {
+            .quick-filters {
+                flex-direction: column;
+
+                .filter-select {
+                    width: 100%;
+                    min-width: unset;
+                }
+            }
+        }
+
+        .advanced-filters {
+            .advanced-filters-content {
+                .date-filters {
+                    flex-direction: column;
+
+                    .date-field {
+                        width: 100%;
+                        min-width: unset;
+                    }
+                }
+            }
+        }
+
+        .main-actions {
+            flex-direction: column;
+            align-items: stretch;
+
+            button {
+                width: 100%;
+            }
+
+            .filter-indicator {
+                justify-content: center;
+            }
+        }
+    }
+}
+
+// Material overrides
+::ng-deep {
+    .approval-filters {
+        .mat-mdc-form-field {
+            .mat-mdc-text-field-wrapper {
+                background-color: white;
+            }
+        }
+
+        .mat-expansion-panel-body {
+            padding: 0 16px !important;
+        }
+    }
+}

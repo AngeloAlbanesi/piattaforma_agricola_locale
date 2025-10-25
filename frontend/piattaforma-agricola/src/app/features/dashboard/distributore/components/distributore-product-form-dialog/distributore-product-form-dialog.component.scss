@@ -1,0 +1,50 @@
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 500px;
+  padding: 16px 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.half-width {
+  flex: 1;
+}
+
+h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #9b59b6;
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+mat-dialog-actions button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+mat-form-field {
+  mat-icon[matPrefix] {
+    color: #9b59b6;
+  }
+}
+
+mat-progress-spinner {
+  margin: 0 16px;
+}

@@ -7,6 +7,7 @@ package it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.coltivazione.MetodoDiColtivazioneDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.dto.utente.UserPublicDTO;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.UnitaMisura;
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.common.StatoVerificaValori;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,19 +18,21 @@ import java.util.List;
 
 /**
  * DTO for detailed product information, used in single product view.
- * Contains all product fields plus related entities like vendor and certifications.
+ * Contains all product fields plus related entities like vendor and
+ * certifications.
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetailDTO {
-    
+
     private Long idProdotto;
     private String nome;
     private String descrizione;
     private double prezzo;
     private int quantitaDisponibile;
+    private UnitaMisura unitaMisura;
     private StatoVerificaValori statoVerifica;
     private String feedbackVerifica;
     private TipoOrigineProdotto tipoOrigine;
@@ -38,4 +41,8 @@ public class ProductDetailDTO {
     private MetodoDiColtivazioneDTO metodoDiColtivazione;
     private UserPublicDTO venditore;
     private List<CertificazioneDTO> certificazioni;
+
+    // Informazioni azienda del venditore
+    private String nomeAzienda;
+    private Long idAzienda;
 }

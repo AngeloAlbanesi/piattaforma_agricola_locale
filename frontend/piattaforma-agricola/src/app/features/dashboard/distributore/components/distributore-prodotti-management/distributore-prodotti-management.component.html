@@ -1,0 +1,110 @@
+<div class="prodotti-management">
+    <mat-card appearance="outlined" class="management-card">
+        <mat-card-header class="card-header">
+            <mat-card-title class="card-title">
+                <mat-icon class="title-icon">inventory</mat-icon>
+                I Miei Prodotti
+            </mat-card-title>
+            <mat-card-subtitle>Gestisci i prodotti che crei e vendi</mat-card-subtitle>
+            <mat-card-actions class="header-actions">
+                <button mat-raised-button color="primary" (click)="openCreateProductDialog()">
+                    <mat-icon>add</mat-icon>
+                    Nuovo Prodotto
+                </button>
+            </mat-card-actions>
+        </mat-card-header>
+
+        <mat-card-content class="card-content">
+            <!-- Loading State -->
+            <div class="loading-container" *ngIf="isLoading">
+                <mat-spinner diameter="40"></mat-spinner>
+                <p>Caricamento prodotti...</p>
+            </div>
+
+            <!-- Products Table -->
+            <div class="table-container" *ngIf="!isLoading">
+                <table mat-table [dataSource]="products" class="products-table">
+                    <!-- Nome Column -->
+                    <ng-container matColumnDef="nome">
+                        <th mat-header-cell *matHeaderCellDef>Nome</th>
+                        <td mat-cell *matCellDef="let product">
+                            <div class="product-name">
+                                <strong>{{ product.nome }}</strong>
+                                <br>
+                                <small class="product-description" *ngIf="product.descrizione">{{ product.descrizione |
+                                    slice:0:80 }}{{ product.descrizione.length > 80 ? '...' : '' }}</small>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <!-- Prezzo Column -->
+                    <ng-container matColumnDef="prezzo">
+                        <th mat-header-cell *matHeaderCellDef>Prezzo</th>
+                        <td mat-cell *matCellDef="let product">
+                            <span class="price">{{ formatCurrency(product.prezzo) }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Quantità Column -->
+                    <ng-container matColumnDef="quantita">
+                        <th mat-header-cell *matHeaderCellDef>Quantità</th>
+                        <td mat-cell *matCellDef="let product">
+                            <span class="quantity">{{ product.quantitaDisponibile }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Unità Misura Column -->
+                    <ng-container matColumnDef="unitaMisura">
+                        <th mat-header-cell *matHeaderCellDef>Unità</th>
+                        <td mat-cell *matCellDef="let product">
+                            <span class="unit">{{ product.unitaMisura }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Stato Column -->
+                    <ng-container matColumnDef="stato">
+                        <th mat-header-cell *matHeaderCellDef>Stato</th>
+                        <td mat-cell *matCellDef="let product">
+                            <span class="status" [ngClass]="getStatusClass(product.stato)">{{ getStatusDisplay(product.stato) }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Azioni Column -->
+                    <ng-container matColumnDef="azioni">
+                        <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                        <td mat-cell *matCellDef="let product">
+                            <div class="action-buttons">
+                                <button mat-icon-button color="primary" (click)="openEditProductDialog(product)"
+                                    matTooltip="Modifica">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button color="primary" (click)="viewProductDetails(product)"
+                                    matTooltip="Visualizza Dettagli">
+                                    <mat-icon>visibility</mat-icon>
+                                </button>
+                                <button mat-icon-button color="warn" (click)="deleteProduct(product)"
+                                    matTooltip="Elimina">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+
+                <!-- Empty State -->
+                <div class="empty-state" *ngIf="products.length === 0">
+                    <mat-icon class="empty-icon">inventory_2</mat-icon>
+                    <h3>Nessun prodotto trovato</h3>
+                    <p>Non hai ancora creato nessun prodotto. Inizia creandone uno nuovo!</p>
+                    <button mat-raised-button color="primary" (click)="openCreateProductDialog()">
+                        <mat-icon>add</mat-icon>
+                        Crea il tuo primo prodotto
+                    </button>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

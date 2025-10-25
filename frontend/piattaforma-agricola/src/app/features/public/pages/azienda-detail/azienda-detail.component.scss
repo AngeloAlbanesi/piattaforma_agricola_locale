@@ -1,0 +1,899 @@
+// Variabili e mixins
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+@use 'sass:color';
+
+.azienda-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+    min-height: 100vh;
+
+    // Header con navigazione
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding: 8px 0;
+
+        .back-button {
+            background-color: $primary-color;
+            color: white;
+
+            &:hover {
+                background-color: color.adjust($primary-color, $lightness: -10%);
+            }
+        }
+
+        .share-button {
+            background-color: $secondary-color;
+            color: white;
+
+            &:hover {
+                background-color: color.adjust($secondary-color, $lightness: -10%);
+            }
+        }
+    }
+
+    // Stato di caricamento
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+
+        mat-spinner {
+            margin-bottom: 16px;
+        }
+
+        p {
+            color: $text-secondary;
+            font-size: 16px;
+            margin: 0;
+        }
+    }
+
+    // Messaggio di errore
+    .error-container {
+        padding: 20px 0;
+
+        .error-card {
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 8px;
+
+            .error-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 20px;
+
+                .error-icon {
+                    font-size: 48px;
+                    color: #e53e3e;
+                    margin-bottom: 16px;
+                }
+
+                h3 {
+                    color: #e53e3e;
+                    margin: 0 0 8px 0;
+                }
+
+                p {
+                    color: $text-secondary;
+                    margin: 0 0 20px 0;
+                }
+
+                button {
+                    min-width: 120px;
+                }
+            }
+        }
+    }
+
+    // Contenuto principale
+    .azienda-content {
+
+        // Card principale
+        .main-azienda-card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+
+            .azienda-header {
+                display: flex;
+                align-items: flex-start;
+                gap: 16px;
+                padding: 24px 24px 0 24px;
+
+                .azienda-avatar {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 64px;
+                    height: 64px;
+                    border-radius: 50%;
+                    color: white;
+                    flex-shrink: 0;
+
+                    mat-icon {
+                        font-size: 32px;
+                        height: 32px;
+                        width: 32px;
+                    }
+                }
+
+                .azienda-header-content {
+                    flex: 1;
+
+                    .azienda-title {
+                        font-size: 28px;
+                        font-weight: 600;
+                        color: $text-primary;
+                        margin: 0 0 4px 0;
+                        line-height: 1.3;
+                    }
+
+                    .azienda-subtitle {
+                        font-size: 16px;
+                        color: $text-secondary;
+                        margin: 0 0 12px 0;
+                        display: flex;
+                        align-items: center;
+                        flex-wrap: wrap;
+                        gap: 8px;
+
+                        .founded-info {
+                            font-size: 14px;
+                            opacity: 0.8;
+                        }
+                    }
+
+                    .azienda-rating {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+
+                        .rating-stars {
+                            display: flex;
+                            gap: 2px;
+
+                            .rating-star {
+                                font-size: 20px;
+                                height: 20px;
+                                width: 20px;
+                            }
+                        }
+
+                        .rating-value {
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: $text-primary;
+                        }
+                    }
+                }
+            }
+
+            // Logo azienda
+            .azienda-logo-container {
+                width: 100%;
+                height: 200px;
+                overflow: hidden;
+                position: relative;
+                background-color: #f8f9fa;
+
+                .azienda-logo {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                    padding: 20px;
+                    transition: transform 0.3s ease;
+
+                    &:hover {
+                        transform: scale(1.05);
+                    }
+                }
+            }
+
+            .azienda-content {
+                padding: 24px;
+
+                .azienda-info-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 20px;
+
+                    .info-item {
+                        display: flex;
+                        align-items: flex-start;
+                        gap: 12px;
+                        padding: 16px;
+                        background-color: #f8f9fa;
+                        border-radius: 8px;
+                        border-left: 4px solid $primary-color;
+
+                        .info-icon {
+                            color: $primary-color;
+                            font-size: 20px;
+                            height: 20px;
+                            width: 20px;
+                            margin-top: 2px;
+                            flex-shrink: 0;
+                        }
+
+                        .info-content {
+                            flex: 1;
+
+                            .info-label {
+                                display: block;
+                                font-size: 12px;
+                                font-weight: 600;
+                                color: $text-secondary;
+                                text-transform: uppercase;
+                                letter-spacing: 0.5px;
+                                margin-bottom: 4px;
+                            }
+
+                            .info-value {
+                                display: block;
+                                font-size: 14px;
+                                color: $text-primary;
+                                font-weight: 500;
+                                line-height: 1.4;
+                                margin-bottom: 8px;
+                            }
+
+                            .location-actions {
+                                display: flex;
+                                gap: 8px;
+                                flex-wrap: wrap;
+
+                                .map-button,
+                                .directions-button {
+                                    padding: 4px 8px;
+                                    font-size: 12px;
+                                    min-height: 32px;
+
+                                    mat-icon {
+                                        font-size: 16px;
+                                        height: 16px;
+                                        width: 16px;
+                                        margin-right: 4px;
+                                    }
+                                }
+                            }
+
+                            .contact-list {
+                                .contact-item {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    margin-bottom: 8px;
+
+                                    .contact-icon {
+                                        color: $primary-color;
+                                        font-size: 16px;
+                                        height: 16px;
+                                        width: 16px;
+                                    }
+
+                                    span {
+                                        flex: 1;
+                                        font-size: 13px;
+                                        color: $text-primary;
+                                    }
+
+                                    button {
+                                        color: $primary-color;
+
+                                        &:hover {
+                                            background-color: rgba($primary-color, 0.1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Tabs
+        .azienda-tabs {
+            margin-bottom: 24px;
+
+            .tab-content {
+                padding: 0;
+
+                mat-card {
+                    border-radius: 12px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+                    mat-card-content {
+                        padding: 24px;
+
+                        h3 {
+                            font-size: 20px;
+                            font-weight: 600;
+                            color: $text-primary;
+                            margin: 0 0 20px 0;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+
+                            &::before {
+                                content: '';
+                                width: 4px;
+                                height: 20px;
+                                background-color: $primary-color;
+                                border-radius: 2px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Tab Descrizione
+        .description-card {
+
+            .azienda-description,
+            .azienda-storia {
+                margin-bottom: 24px;
+
+                .description-content,
+                .storia-content {
+                    line-height: 1.6;
+                    color: $text-primary;
+                    font-size: 15px;
+
+                    // Stili per contenuto HTML
+                    p {
+                        margin: 0 0 12px 0;
+
+                        &:last-child {
+                            margin-bottom: 0;
+                        }
+                    }
+
+                    ul,
+                    ol {
+                        margin: 12px 0;
+                        padding-left: 20px;
+
+                        li {
+                            margin-bottom: 6px;
+                        }
+                    }
+                }
+            }
+
+            .azienda-valori {
+                .value-chip {
+                    background-color: #e3f2fd;
+                    color: #1976d2;
+                    font-size: 13px;
+                    margin: 4px;
+                }
+            }
+        }
+
+        // Tab Prodotti
+        .products-card {
+            .products-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 16px;
+
+                .product-card {
+                    cursor: pointer;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+                    &:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    }
+
+                    .product-info {
+                        h4 {
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: $text-primary;
+                            margin: 0 0 8px 0;
+                        }
+
+                        p {
+                            font-size: 13px;
+                            color: $text-secondary;
+                            margin: 0 0 12px 0;
+                            line-height: 1.4;
+                        }
+
+                        .product-details {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+
+                            .product-price {
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: $primary-color;
+                            }
+
+                            .product-availability {
+                                font-size: 12px;
+                                color: $text-secondary;
+                                background-color: #f0f0f0;
+                                padding: 2px 6px;
+                                border-radius: 4px;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .empty-state {
+                text-align: center;
+                padding: 40px 20px;
+
+                .empty-icon {
+                    font-size: 48px;
+                    color: #cbd5e0;
+                    margin-bottom: 16px;
+                }
+
+                h4 {
+                    font-size: 18px;
+                    color: $text-primary;
+                    margin: 0 0 8px 0;
+                }
+
+                p {
+                    font-size: 14px;
+                    color: $text-secondary;
+                    margin: 0;
+                }
+            }
+        }
+
+        // Tab Mappa
+        .map-card {
+            .map-loading {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 40px 20px;
+
+                mat-spinner {
+                    margin-bottom: 16px;
+                }
+
+                p {
+                    color: $text-secondary;
+                    margin: 0;
+                }
+            }
+
+            .map-error {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 40px 20px;
+                text-align: center;
+
+                .error-icon {
+                    font-size: 48px;
+                    color: #e53e3e;
+                    margin-bottom: 16px;
+                }
+
+                p {
+                    color: $text-secondary;
+                    margin: 0;
+                }
+            }
+
+            .map-container {
+                .map-placeholder {
+                    background-color: #f8f9fa;
+                    border: 2px dashed #dee2e6;
+                    border-radius: 8px;
+                    padding: 40px 20px;
+                    text-align: center;
+
+                    .map-icon {
+                        font-size: 64px;
+                        color: #adb5bd;
+                        margin-bottom: 16px;
+                    }
+
+                    h4 {
+                        font-size: 18px;
+                        color: $text-primary;
+                        margin: 0 0 8px 0;
+                    }
+
+                    p {
+                        font-size: 14px;
+                        color: $text-secondary;
+                        margin: 0 0 20px 0;
+                        font-family: monospace;
+                    }
+
+                    .map-actions {
+                        display: flex;
+                        gap: 12px;
+                        justify-content: center;
+                        flex-wrap: wrap;
+
+                        button {
+                            mat-icon {
+                                margin-right: 6px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Tab Certificazioni
+        .certifications-card {
+            .certifications-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 16px;
+
+                .certification-card {
+                    border-left: 4px solid #4caf50;
+
+                    .certification-header {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        margin-bottom: 16px;
+
+                        .certification-icon {
+                            color: #4caf50;
+                            font-size: 24px;
+                            height: 24px;
+                            width: 24px;
+                        }
+
+                        h4 {
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: $text-primary;
+                            margin: 0;
+                        }
+                    }
+
+                    .certification-details {
+                        p {
+                            font-size: 13px;
+                            color: $text-secondary;
+                            margin: 0 0 8px 0;
+                            line-height: 1.4;
+
+                            strong {
+                                color: $text-primary;
+                            }
+                        }
+                    }
+
+                    .certification-actions {
+                        margin-top: 16px;
+                        text-align: center;
+
+                        button {
+                            width: 100%;
+                            font-size: 13px;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Tab Social
+        .social-card {
+            .social-grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                justify-content: center;
+
+                .social-link {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    text-decoration: none;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    transition: transform 0.2s ease;
+
+                    &:hover {
+                        transform: translateY(-2px);
+                    }
+
+                    // Colori basati sul tipo di social
+                    &:nth-child(1) {
+                        background-color: #1877f2;
+                    }
+
+                    // Facebook
+                    &:nth-child(2) {
+                        background-color: #e4405f;
+                    }
+
+                    // Instagram
+                    &:nth-child(3) {
+                        background-color: #1da1f2;
+                    }
+
+                    // Twitter
+                    &:nth-child(4) {
+                        background-color: #0077b5;
+                    }
+
+                    // LinkedIn
+                    &:nth-child(5) {
+                        background-color: #ff0000;
+                    }
+
+                    // YouTube
+
+                    mat-icon {
+                        font-size: 18px;
+                        height: 18px;
+                        width: 18px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .azienda-detail-container {
+        padding: 12px;
+
+        .page-header {
+            margin-bottom: 16px;
+        }
+
+        .azienda-content {
+            .main-azienda-card {
+                .azienda-header {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 12px;
+                    padding: 20px 20px 0 20px;
+
+                    .azienda-header-content {
+                        .azienda-title {
+                            font-size: 24px;
+                        }
+
+                        .azienda-subtitle {
+                            justify-content: center;
+                        }
+                    }
+                }
+
+                .azienda-logo-container {
+                    height: 150px;
+                }
+
+                .azienda-content {
+                    padding: 16px;
+
+                    .azienda-info-grid {
+                        grid-template-columns: 1fr;
+                        gap: 12px;
+
+                        .info-item {
+                            padding: 12px;
+
+                            .location-actions {
+                                justify-content: center;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .azienda-tabs {
+                .tab-content {
+                    mat-card {
+                        mat-card-content {
+                            padding: 16px;
+
+                            .products-grid {
+                                grid-template-columns: 1fr;
+                            }
+
+                            .certifications-grid {
+                                grid-template-columns: 1fr;
+                            }
+
+                            .social-grid {
+                                .social-link {
+                                    flex: 1;
+                                    min-width: 120px;
+                                    justify-content: center;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .azienda-detail-container {
+        padding: 8px;
+
+        .main-azienda-card {
+            .azienda-header {
+                .azienda-header-content {
+                    .azienda-title {
+                        font-size: 20px;
+                    }
+                }
+            }
+
+            .azienda-content {
+                padding: 12px;
+
+                .azienda-info-grid {
+                    .info-item {
+                        padding: 8px;
+                    }
+                }
+            }
+        }
+
+        .azienda-tabs {
+            .tab-content {
+                mat-card {
+                    mat-card-content {
+                        padding: 12px;
+
+                        .map-container {
+                            .map-placeholder {
+                                padding: 30px 15px;
+
+                                .map-actions {
+                                    flex-direction: column;
+
+                                    button {
+                                        width: 100%;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+    .azienda-detail-container {
+        .main-azienda-card {
+            background-color: #2d3748;
+            color: #e2e8f0;
+
+            .azienda-header {
+                .azienda-header-content {
+                    .azienda-title {
+                        color: #f7fafc;
+                    }
+
+                    .azienda-subtitle {
+                        color: #cbd5e0;
+                    }
+                }
+            }
+
+            .azienda-logo-container {
+                background-color: #4a5568;
+            }
+
+            .azienda-content {
+                .azienda-info-grid {
+                    .info-item {
+                        background-color: #4a5568;
+                        color: #e2e8f0;
+                    }
+                }
+            }
+        }
+
+        .azienda-tabs {
+            .tab-content {
+                mat-card {
+                    background-color: #2d3748;
+                    color: #e2e8f0;
+
+                    .products-grid {
+                        .product-card {
+                            background-color: #4a5568;
+                            color: #e2e8f0;
+                        }
+                    }
+
+                    .map-container {
+                        .map-placeholder {
+                            background-color: #4a5568;
+                            border-color: #718096;
+                        }
+                    }
+
+                    .certifications-grid {
+                        .certification-card {
+                            background-color: #4a5568;
+                            color: #e2e8f0;
+                        }
+                    }
+                }
+            }
+        }
+
+        .error-container {
+            .error-card {
+                background-color: #742a2a;
+                border-color: #fc8181;
+            }
+        }
+    }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+    .azienda-detail-container {
+        .main-azienda-card {
+            border: 2px solid currentColor;
+        }
+
+        .azienda-tabs {
+            .tab-content {
+                mat-card {
+                    border: 2px solid currentColor;
+                }
+            }
+        }
+    }
+}
+
+// Print styles
+@media print {
+    .azienda-detail-container {
+
+        .page-header,
+        .azienda-tabs {
+            display: none;
+        }
+
+        .main-azienda-card {
+            box-shadow: none;
+            border: 1px solid #000;
+
+            .azienda-actions {
+                display: none;
+            }
+        }
+    }
+}

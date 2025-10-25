@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>
+    <mat-icon>assignment_turned_in</mat-icon>
+    Gestione Accreditamento
+</h2>
+
+<mat-dialog-content>
+    <p class="dialog-description">
+        Stai per modificare l'accreditamento di <strong>{{ data.displayName }}</strong> ({{ data.ruolo }}).
+    </p>
+
+    <mat-radio-group [formControl]="azione" class="accreditamento-radio-group">
+        <mat-radio-button value="ACCREDITATO" color="primary">
+            <mat-icon>check_circle</mat-icon>
+            Approva Accreditamento
+        </mat-radio-button>
+        <mat-radio-button value="RIFIUTATO" color="warn">
+            <mat-icon>cancel</mat-icon>
+            Rifiuta Accreditamento
+        </mat-radio-button>
+    </mat-radio-group>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Note aggiuntive {{ isRifiuto ? '(Obbligatorie per rifiuto)' : '(Opzionali)' }}</mat-label>
+        <textarea matInput [formControl]="nota" rows="4" placeholder="Inserisci eventuali note o motivazioni..."
+            [required]="isRifiuto"></textarea>
+        <mat-icon matPrefix>note</mat-icon>
+        <mat-hint *ngIf="isRifiuto">Specifica il motivo del rifiuto</mat-hint>
+    </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cancel()" type="button">
+        Annulla
+    </button>
+    <button mat-raised-button [color]="azione.value === 'ACCREDITATO' ? 'primary' : 'warn'" (click)="confirm()"
+        [disabled]="azione.invalid || (isRifiuto && !nota.value.trim())" type="button">
+        <mat-icon>{{ azione.value === 'ACCREDITATO' ? 'check' : 'block' }}</mat-icon>
+        {{ azione.value === 'ACCREDITATO' ? 'Approva' : 'Rifiuta' }}
+    </button>
+</mat-dialog-actions>

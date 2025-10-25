@@ -5,6 +5,7 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.dto.catalogo;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.TipoOrigineProdotto;
+import it.unicam.cs.ids.piattaforma_agricola_locale.model.catalogo.UnitaMisura;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +36,9 @@ public class CreateProductRequestDTO {
     @NotNull(message = "La quantità disponibile è obbligatoria")
     @Min(value = 0, message = "La quantità deve essere non negativa")
     private Integer quantitaDisponibile;
+    
+    @NotNull(message = "L'unità di misura è obbligatoria")
+    private UnitaMisura unitaMisura;
     
     @NotNull(message = "Il tipo di origine è obbligatorio")
     private TipoOrigineProdotto tipoOrigine;

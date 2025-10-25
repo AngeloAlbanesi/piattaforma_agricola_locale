@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2025 Angelo Albanesi
+ *   All rights reserved.
+ */
 package it.unicam.cs.ids.piattaforma_agricola_locale.security.service;
 
 import it.unicam.cs.ids.piattaforma_agricola_locale.model.repository.IUtenteBaseRepository;
@@ -28,14 +32,18 @@ public class AuthenticationService {
                 request.getEmail(),
                 request.getPassword(),
                 request.getNumeroTelefono(),
-                request.getDatiAzienda()
-        );
+                request.getDatiAzienda());
 
         var jwtToken = jwtService.generateToken(utente);
 
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .idUtente(utente.getIdUtente())
+                .username(request.getUsername() != null ? request.getUsername() : request.getEmail())
+                .email(request.getEmail())
+                .nome(request.getNome())
+                .roles(new String[] { request.getTipoRuolo().toString() })
+                .tokenType("Bearer")
                 .build();
     }
 
@@ -43,18 +51,28 @@ public class AuthenticationService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
-                        request.getPassword()
-                )
-        );
+                        request.getPassword()));
 
         var utente = utenteRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalStateException("Utente non trovato dopo autenticazione riuscita."));
 
         var jwtToken = jwtService.generateToken(utente);
 
+        // Fornire un fallback se il nome è null o vuoto
+        String nome = utente.getNome();
+        if (nome == null || nome.trim().isEmpty()) {
+            // Come fallback, usiamo la prima parte dell'email o il tipo di ruolo
+            nome = utente.getEmail().split("@")[0];
+        }
+
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .idUtente(utente.getIdUtente())
+                .username(utente.getUsername() != null ? utente.getUsername() : utente.getEmail())
+                .email(utente.getEmail())
+                .nome(nome)
+                .roles(new String[] { utente.getTipoRuolo().toString() })
+                .tokenType("Bearer")
                 .build();
     }
 }

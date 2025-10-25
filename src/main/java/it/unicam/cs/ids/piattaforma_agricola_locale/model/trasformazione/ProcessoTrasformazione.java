@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.piattaforma_agricola_locale.model.trasformazione;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,13 +33,16 @@ public class ProcessoTrasformazione {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_trasformatore", nullable = false)
+    @JsonIgnoreProperties({"prodottiOfferti", "datiAzienda", "passwordHash", "email", "numeroTelefono", "authorities", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "enabled"})
     private Trasformatore trasformatore;
     
     @OneToMany(mappedBy = "processoTrasformazione", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"processoTrasformazione"})
     private List<FaseLavorazione> fasiLavorazione;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_prodotto_finale")
+    @JsonIgnoreProperties({"venditore", "certificazioniProdotto"})
     private Prodotto prodottoFinale;
 
     @Column(name = "metodo_produzione")
